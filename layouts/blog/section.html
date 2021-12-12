@@ -1,0 +1,66 @@
+{{ define "main" }}
+<div class="top">
+  <header class="header__wrapper bgcolor__header">
+    {{ if eq .Params.blogHeaderType "img" }}
+      {{ partial "header/blog-header.html" . }}
+    {{ else }}
+      <div class="divider">
+        <div class="lmr">
+          {{ partial "header/blog-header.html" . }}
+        </div>
+      </div>
+    {{ end }}
+  </header>
+</div>
+
+<div class="mid blog__bg">
+  <main class="main blog__bg">
+    <div class="sv">
+      <div class="blog-post">
+        {{ $paginator := .Paginate (where .RegularPages "Type" .Type) }}
+        {{ range $paginator.Pages }}
+          {{ .Render "summary" }}
+        {{ end }}
+        {{ partial "main/component/pagination.html" . }}
+      </div>
+      <div class="blog-tags">
+        {{ partial "main/component/tag-cloud" . }}
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  var singleViewElem = document.querySelectorAll('.sv');
+  var postElem = document.querySelector('.blog-post');
+  var tagsElem = document.querySelector('.blog-tags');
+
+  enquire.register("screen and (max-width:1280px)", {
+    match: function () {
+      singleViewElem.forEach(function(elem) {
+        postElem.className = "blog-post";
+        tagsElem.className = "blog-tags";
+      });
+    },
+    unmatch: function () {
+      singleViewElem.forEach(function (elem) {
+        postElem.className = "blog-post";
+        tagsElem.className = "blog-tags";
+      });
+    },
+  }).register("screen and (max-width:769px)", {
+    match: function () {
+      singleViewElem.forEach(function (elem) {
+        postElem.className = "blog-total";
+        tagsElem.className = "hide";
+      });
+    },
+    unmatch: function () {
+      singleViewElem.forEach(function (elem) {
+        postElem.className = "blog-post";
+        tagsElem.className = "blog-tags";
+      });
+    },
+  });
+</script>
+{{ end }}

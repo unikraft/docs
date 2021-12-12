@@ -1,0 +1,79 @@
+/* The switch - the box around the slider */
+.switch {
+  cursor: pointer;
+
+  @include flexbox();
+  @include align-items(center);
+  @include justify-content(center);
+
+  &__rel {
+    position: relative;
+    height: auto;
+    padding: 0 6px;
+    
+    @include themify($themes) {
+      color: themed('landing-button-default');
+      @include on-event {
+        color: themed('body-color');
+        background-color: themed('dropdown-hover-background-color');
+      }
+    }
+  }
+
+  &__abs {
+    position: absolute;
+    z-index: z('menu');
+    width: 50px;
+    height: 50px;
+    margin: auto 0;
+    display: none;
+
+    &[data-dir="rtl"] {
+      left: 0;
+      top: -16px;
+    }
+
+    &[data-dir="ltr"] {
+      right: 0;
+      top: -16px;
+    }
+
+    @include themify($themes) {
+      color: themed('landing-button-default');
+      @include on-event {
+        color: themed('body-color');
+      }
+    }
+
+    @media only screen and (min-width: 1280px) {
+        display: block;
+    }
+  }
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  background-color: transparent;
+  -webkit-transition: .2s;
+  transition: .2s;
+
+  &__icon {
+    svg {
+      @include flexbox();
+      @include align-items(center);
+    }
+  }
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}

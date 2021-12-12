@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}" dir="{{ $.Param "languagedir" | default "ltr" }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ block "title" . }}{{ .Title }} – {{ .Site.Title }}{{ end }}</title>
+    {{ partial "head/scripts" . }}
+    {{ partial "head/styles" . }}
+    {{ partial "head/meta" . }}
+    {{ partial "head/meta_json_ld" . }}
+    {{ partial "head/services" . }}
+</head>
+
+{{ $themeOptions := .Site.Params.themeOptions }}
+<body id="root" class="theme__{{ index $themeOptions 0 }}">
+    <script>
+        var rootElem = document.getElementById('root');
+        var themeOptions = JSON.parse({{ $themeOptions | jsonify }});
+        var localTheme = localStorage.getItem('theme');
+
+        if (localTheme) {
+            if (themeOptions && themeOptions.length > 0) {
+                themeOptions.includes(localTheme) ? 
+                rootElem.className = `theme__${localTheme}` :
+                rootElem.className = `theme__${themeOptions[0]}`;
+            }
+        }
+    </script>
+    
+    <div id="container">
+        {{ partial "drawer/drawer.html" . }}
+        {{ partial "navbar/navbar.html" . }}
+        {{ block "header" . }}{{ end }}
+        {{ block "main" . }}{{ end }}
+        {{ partial "footer/footer.html" . }}
+    </div>
+
+</body>
+
+</html>

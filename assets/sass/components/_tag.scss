@@ -1,0 +1,53 @@
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0;
+  width: 100%;
+  text-decoration: none !important;
+
+  @include themify($themes) {
+    color: darken(themed('subtitle-color'), 5%);
+    @include on-event {
+      color: themed('link-hover');
+    }
+  }
+
+  &__wrapper {
+    padding: 0.3rem 0;
+    margin: auto 0;
+  }
+
+  &__text {
+    color: inherit;
+  }
+
+  &__num {
+    color: inherit;
+  }
+
+  &-cloud {
+    position: relative;
+
+    &__label {
+      font-family: $title-font;
+      font-size: 1rem;
+      margin: 3.5rem 0 0 0;
+      margin-left: 1.25rem;
+      padding-left: 2.5rem;
+
+      @include themify($themes) {
+        color: themed('toc-label-color');
+      }
+    }
+
+    &__tags {
+      // position: -webkit-sticky;
+      // position: sticky;
+      top: $grid-nav-height;
+      padding: 1rem;
+      padding-left: 3rem;
+      height: calc(100vh - $grid-nav-height);
+      overflow-y: auto;
+      z-index: z('menu');
+    }
+  }
+}
