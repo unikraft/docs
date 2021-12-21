@@ -1,6 +1,5 @@
-baseURL = "http://example.org"
-title = "Hugo Zdoc Theme"
-theme = "zdoc"
+baseURL = "http://unikraft.org"
+title = "Unikraft"
 
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false
