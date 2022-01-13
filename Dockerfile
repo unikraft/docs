@@ -32,6 +32,7 @@ FROM unikraft/kraft:staging AS devenv
 LABEL maintainer "Alexander Jung <a.jung@lancs.ac.uk>"
 
 ARG HUGO_VER=0.85.0
+ARG GO_VER=1.17.6
 ARG BUILD_REF=latest
 
 RUN mkdir /usr/src/docs
@@ -58,7 +59,12 @@ RUN set -xe; \
     cd /tmp; \
     curl -LO https://github.com/gohugoio/hugo/releases/download/v${HUGO_VER}/hugo_extended_${HUGO_VER}_Linux-64bit.tar.gz; \
     tar -xzf hugo_extended_${HUGO_VER}_Linux-64bit.tar.gz; \
-    mv ./hugo /usr/local/bin/hugo
+    mv ./hugo /usr/local/bin/hugo; \
+    wget -O /tmp/go.tar.gz https://go.dev/dl/go${GO_VER}.linux-amd64.tar.gz; \
+    tar -C /usr/local -xzf /tmp/go.tar.gz; \
+    rm /tmp/go.tar.gz
+
+ENV PATH="${PATH}:/usr/local/go/bin"
 
 ENTRYPOINT [ "" ]
 
