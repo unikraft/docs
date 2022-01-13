@@ -36,6 +36,7 @@ REG           ?= ghcr.io
 ORG           ?= unikraft
 REPO          ?= docs
 IMAGE         ?= $(REG)/$(ORG)/$(REPO)
+PORT          ?= 1313
 
 #
 # Dirs
@@ -65,7 +66,7 @@ container:
 .PHONY: devenv
 devenv:
 	$(DOCKER) run -it --rm \
-		-p 1313:1313 \
+		-p $(PORT):$(PORT) \
 		--volume $(WORKDIR):/usr/src/docs \
 		--entrypoint bash \
 		$(IMAGE):devenv
