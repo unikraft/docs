@@ -1,0 +1,9 @@
+- title: "Toward Specialization of Memory Management in Unikernels"
+  year: 2020
+  link: https://os.itec.kit.edu/deutsch/mitarbeiter_3740.php
+  pdf: https://os.itec.kit.edu/downloads/2020_BA_Lefeuvre_Toward_Specialization_of_Memory_Management_in_Unikernels.pdf
+  university: Karlsruhe Institute for Technology
+  author: Hugo Lefeuvre
+  supervisors:
+    - name: Prof. Dr. Frank Bellosa
+    - name: Dr. Marc Rittinghaus
