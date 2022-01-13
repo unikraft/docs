@@ -1,0 +1,14 @@
+
+
+
+@layer components {
+  .badge {
+    @apply rounded-full;
+    @apply inline-block;
+  }
+
+  .badge-primary {
+    @apply bg-primary;
+    @apply text-white;
+  }
+}

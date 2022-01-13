@@ -5,9 +5,9 @@
   weight = 1
 
 [[main]]
-  identifier = "updates"
-  name = "Updates"
-  url = "updates"
+  identifier = "releases"
+  name = "Releases"
+  url = "releases"
   weight = 2
 
 [[main]]
@@ -15,3 +15,9 @@
   name = "Blog"
   url = "blog"
   weight = 3
+
+[[main]]
+  identifier = "community"
+  name = "Community"
+  url = "community"
+  weight = 4

@@ -1,12 +1,12 @@
 {{ if $.Param "enableSearch" }}
-<div id="mobileSearchBtn" class="mobile-search__btn">
+<div id="mobileSearchBtn" class="mobile-search__btn text-white">
   {{ partial "svgs/search.svg" (dict "width" 22 "height" 22) }}
 </div>
 
 <div id="search-mobile-container" class="mobile-search hide">
   <div class="mobile-search__top">
-    <input id="search-mobile" type="text" aria-label="Mobile Search" placeholder="Search..." class="mobile-search__top--input"/>
-    <div id="search-mobile-close" class="mobile-search__top--icon">
+    <input id="search-mobile" type="text" aria-label="Mobile Search" placeholder="{{ i18n "search-docs" }}" class="mobile-search__top--input text-white"/>
+    <div id="search-mobile-close" class="mobile-search__top--icon text-white">
       {{ partial "svgs/cancel.svg" (dict "width" 22 "height" 22) }}
     </div>
   </div>

@@ -2,13 +2,18 @@
   position: -webkit-sticky;
   position: sticky;
   top: $grid-nav-height;
-  padding: 0.5rem;
-  margin: 0.5rem;
   margin-top: 0;
-  padding-top: 0.85rem;
+  @apply pt-2;
   height: calc(100vh - $grid-nav-height);
   overflow-y: auto;
   z-index: z('menu');
+  @apply pl-4;
+
+  > ul {
+    // @apply py-4;
+    @apply pr-4;
+    @apply pb-2;
+  }
 
   @media only screen and (max-width: 600px) {
     top: 0;

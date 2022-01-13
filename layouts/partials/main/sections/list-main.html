@@ -1,14 +1,16 @@
 <div class="single" data-display="block">
-  {{ if eq .Type "blog" }}
-    <div class="single__title">
-      {{ .Title }}
-    </div>
-    <div class="single__meta">
-      {{ partial "main/component/article-meta.html" . }}
-    </div>
-  {{ end }}
-
   <article class="single__contents" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
+    {{ if $.Param "showTitle" }}
+      <h1 class="text-3xl font-bold">
+        {{ .Title }}
+      </h1>
+    {{ end }}
+    {{ if eq .Type "blog" }}
+      <div class="single__meta">
+        {{ partial "main/component/article-meta.html" . }}
+      </div>
+    {{ end }}
+  
     {{ .Content }}
   </article>
 </div>

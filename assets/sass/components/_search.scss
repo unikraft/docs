@@ -1,31 +1,19 @@
 .search {
+  @apply rounded;
+ 
   height: 30px;
   width: 240px;
   position: relative;
-  border-radius: 0.175rem;
+  // border-radius: 0.175rem;
   z-index: z('search'); 
-  margin: 0 0.75rem;
+  // margin: 0 0.75rem;
 
-  &[data-bgimg="true"] {
-    @include themify($themes) {
-      border: 2px solid transparent;
-      background-color: transparent;
-      &:focus-within {
-        background-color: themed("search-background-color");
-        border: 2px solid themed('search-border-active-color');
-        @include box-shadow(0, 0, 0, 3px, themed('search-border-outline-color'));
-      }
-    }
-  }
-
-  &[data-bgimg="false"] {
-    @include themify($themes) {
-      border: 2px solid themed('search-border-color');
-      background-color: themed("search-background-color");
-      &:focus-within {
-        border: 2px solid themed('search-border-active-color');
-        @include box-shadow(0, 0, 0, 3px, themed('search-border-outline-color'));
-      }
+  @include themify($themes) {
+    // border: 2px solid themed('search-border-color');
+    background-color: themed("search-background-color");
+    &:focus-within {
+      // border: 2px solid themed('search-border-active-color');
+      @include box-shadow(0, 0, 0, 3px, var(--colors-yellow-300));
     }
   }
 
@@ -68,7 +56,7 @@
   }
 
   &-content {
-    margin-top: 0.25rem;
+    // margin-top: 0.25rem;
     max-height: 350px;
     width: 325px;
     overflow: auto;
@@ -78,9 +66,10 @@
   }
 
   &__highlight {
-    @include themify($themes) {
-      color: themed('search-highlight-color');
-    }
+    color: var(--colors-orange-400);
+    // @include themify($themes) {
+    //   color: themed('search-highlight-color');
+    // }
   }
 
   &-result {
@@ -190,12 +179,17 @@
     &.is-active {
       display: inline-block;
       position: absolute;
-      top: 40px;
-      right: 0;
-      width: 325px;
-      border-radius: .175rem;
-      
-      @include box-shadow(0, 1px, 3px, 0, rgba(0, 0, 0, 0.4));
+      top: 35px;
+      right: -2px;
+      @apply w-96;
+      @apply rounded-lg;
+      @apply shadow-lg;
+      @apply ring-1;
+      @apply ring-black;
+      @apply ring-opacity-5;
+      @apply overflow-hidden;
+
+      // @include box-shadow(0, 1px, 3px, 0, rgba(0, 0, 0, 0.4));
       @include themify($themes) {
         background-color: themed('back-background-color');
       }
@@ -204,6 +198,8 @@
 
   .dd {
     &-content {
+      @apply w-full;
+
       @include flexbox();
       @include flex-direction(column);
       @include themify($themes) {
@@ -341,9 +337,9 @@
 
     &--title {
       font-size: 1.2rem;      
-      @include themify($themes) {
-        color: themed('body-color');
-      }
+      // @include themify($themes) {
+      //   color: themed('body-color');
+      // }
 
       &::before {
         content: "📋 ";

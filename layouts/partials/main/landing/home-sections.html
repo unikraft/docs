@@ -1,15 +1,312 @@
-{{ range .Params.sections }}
-  <section style="background-color: {{ .bgcolor }};">
-    <div class="divider">
-      <div class="lmr">
-        {{ if eq .type "card" }}
-          {{ partial "main/landing/section-card.html" . }}
-        {{ else if eq .type "normal" }}
-          {{ partial "main/landing/section-normal" . }}
-        {{ else }}
-          {{ printf "%#v" "Not supported type" }}
-        {{ end }}
+{{ with .Params.blazingFast }}
+{{ $blazingFast := . }}
+<div id="blazing-fast" class="py-12 bg-gradient-to-br from-blue-100 to-blue-50 border-b-4 border-blue-400">
+  <div class="container px-4 md:px-0 mx-auto">
+    <h2 class="text-base font-semibold text-left sm:text-center text-blue-400 uppercase tracking-wide">{{ .feature }}</h2>
+    <p class="mt-2 text-3xl text-gray-900 text-left sm:text-center">{{ .header }}</p>
+    <p class="text-left sm:text-center mt-2 md:mb-8 text-xl">{{ .leader }}</p>
+    <div class="flex grid lg:grid-cols-3 lg:grid-flow-col-dense lg:gap-8">
+      <div class="col-span-2 order-2 lg:order-1">
+        <div class="grid gap-y-4 md:gap-y-0 md:grid-cols-2 lg:gap-8 pt-4 pb-8 border-b border-blue-200">
+          <p class="text-lg prose">
+            {{ .left | markdownify }}
+          </p>
+          <p class="text-lg prose">
+            {{ .right | markdownify }}
+          </p>
+        </div>
+        <div class="pt-8 pb-8 lg:pb-0 text-base">
+          {{ .callToAction | markdownify }}
+        </div>
+      </div>
+      <div class="col-span-2 lg:col-span-1 md:px-24 lg:px-0 order-1">
+        <div class="p-8 lg:p-4 mt-8 md:mt-0 mb-4 lg:mb-0 bg-white rounded-lg ring-1 ring-blue-200">
+          <img class="w-full width-fit img-fluid" src="/assets/imgs/figs/nginx-perf.svg" />
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.developerFriendly }}
+{{ $developerFriendly := . }}
+<div id="developer-friendly" class="developer-friendly relative bg-white py-16">
+  <div class="mx-auto container lg:grid lg:grid-cols-2 lg:grid-flow-col-dense lg:gap-8">
+    <div class="flex items-center">
+      <div class="px-4 sm:px-0">
+        <h2 class="text-base font-semibold text-orange-400 uppercase tracking-wide">{{ .feature }}</h2>
+        <p class="mt-4 text-3xl text-gray-900">{{ .header }}</p>
+        <p class="mt-4 text-lg text-gray-500 prose">
+          {{ .about | markdownify }}
+        </p>
+        <div class="mt-6 mb-12 lg:mb-0 text-center lg:text-left hidden xs:block">
+          <a href="/docs/getting-started/" class="text-xl inline-block p-2 text-center inline-flex items-center justify-center text-white font-semibold bg-blue-400 rounded-lg shadow-sm hover:shadow-lg py-3 px-5 border border-blue-500 transform-gpu hover:-translate-y-0.5 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2">
+            {{ .getStarted }}
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="md:px-24 lg:px-0 hidden xs:block">
+      <div id="kraft-cast" class="w-full overflow-hidden"></div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.multiFeature }}
+{{ $multiFeature := . }}
+<div class="bg-backdrop -bg-backdrop-20 bg-gradient-to-br from-cool-gray-700 to-cool-gray-600 py-4 xs:py-8 border-b-4 border-t-4 border-cool-gray-700">
+  <div class="container mx-auto px-4 md:px-0">
+    <div class="grid grid-cols-1 space-y-4 lg:space-y-0 lg:grid-cols-3 lg:gap-8">
+      <a id="{{ .id1 }}" href="{{ .link1 }}" class="group bg-gradient-to-br from-cool-gray-400 to-cool-gray-500 py-12 px-10 flex flex-col sm:flex-row lg:flex-col items-center rounded-lg ring-1 ring-inset ring-cool-gray-400 shadow-lg hover:shadow-xl transform-gpu hover:-translate-y-1 transition-all duration-150 gap-8 lg:gap-0 focus:outline-none focus:ring-2 focus:ring-offset-2">
+        <div class="text-center col-3 flex flex-items-center flex-items-start grid items-center rounded h-20 w-20 bg-gradient-to-br from-cool-gray-700 to-cool-gray-600 lg:mb-4 ring-1 ring-cool-gray-400">
+          <img class="w-16 h-16 mx-auto" src="{{ .icon1 }}">
+        </div>
+        <div class="md:col-12 col-10 flex flex-col justify-center items-center">
+          <h1 class="pb-2 text-3xl text-cool-gray-800 text-center">
+            {{ .feature1 }}
+          </h1>
+          <p class="text-cool-gray-700 text-base text-center">
+            {{ .leader1 }}
+          </p>
+          <p class="pt-4 lg:pt-8">
+            <span class="text-cool-gray-200 font-medium group-hover:underline">{{ .learnMore | markdownify }}</span>
+          </p>
+        </div>
+      </a>
+      <a id="{{ .id2 }}" href="{{ .link2 }}" class="group bg-gradient-to-br from-cool-gray-300 to-cool-gray-400 py-12 px-10 flex flex-col sm:flex-row lg:flex-col items-center rounded-lg ring-1 ring-inset ring-cool-gray-200 shadow-lg hover:shadow-xl transform-gpu hover:-translate-y-1 transition-all duration-150 gap-8 lg:gap-0 focus:outline-none focus:ring-2 focus:ring-offset-2">
+        <div class="text-center col-3 flex flex-items-center flex-items-start grid items-center rounded h-20 w-20 bg-gradient-to-br from-cool-gray-700 to-cool-gray-600 lg:mb-4 ring-1 ring-cool-gray-100">
+          <img class="w-16 h-16 mx-auto" src="{{ .icon2 }}">
+        </div>
+        <div class="md:col-12 col-10 flex flex-col justify-center items-center">
+          <h1 class="pb-2 text-3xl text-cool-gray-800 text-center">
+            {{ .feature2 }}
+          </h1>
+          <p class="text-cool-gray-700 text-base text-center">
+            {{ .leader2 }}
+          </p>
+          <p class="pt-4 lg:pt-8">
+            <span class="text-cool-gray-100 font-medium group-hover:underline">{{ .learnMore | markdownify }}</span>
+          </p>
+        </div>
+      </a>
+      <a id="{{ .id3 }}" href="{{ .link3 }}" class="group bg-gradient-to-br from-cool-gray-200 to-cool-gray-300 py-12 px-10 flex flex-col sm:flex-row lg:flex-col items-center rounded-lg ring-1 ring-inset ring-cool-gray-100 hover:shadow-xl transform-gpu hover:-translate-y-1 transition-all duration-150 gap-8 lg:gap-0 focus:outline-none focus:ring-2 focus:ring-offset-2">
+        <div class="text-center col-3 flex flex-items-center flex-items-start grid items-center rounded h-20 w-20 bg-gradient-to-br from-cool-gray-700 to-cool-gray-600 lg:mb-4 ring-1 ring-cool-gray-100">
+          <img class="w-16 h-16 mx-auto" src="/assets/imgs/puzzle.svg">
+        </div>
+        <div class="md:col-12 col-10 flex flex-col justify-center items-center">
+          <h1 class="pb-2 text-3xl text-cool-gray-800 text-center">
+            {{ .feature3 }}
+          </h1>
+          <p class="text-cool-gray-700 text-base text-center">
+            {{ .leader3 }}
+          </p>
+          <p class="pt-4 lg:pt-8">
+            <span class="text-white font-medium group-hover:underline">{{ .learnMore | markdownify }}</span>
+          </p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.researchBacked }}
+{{ $researchBacked := . }}
+<div id="research-backed" class="affiliate-institutions py-12 bg-white">
+  <div class="container mx-auto px-4 sm:px-0">
+    <h2 class="text-base font-semibold text-left sm:text-center text-orange-400 uppercase tracking-wide">
+      {{ .feature }}
+    </h2>
+    <p class="mt-2 text-3xl text-gray-900 text-left sm:text-center">
+      {{ .leader }}
+    </p>
+    <p class="text-left sm:text-center mt-2 mb-8 text-lg lg:px-24 xl:px-40">
+      {{ .about }}
+    </p>
+    <div class="mx-auto">
+      <div class="grid grid-cols-2 gap-8 md:grid-cols-6 lg:grid-cols-5">
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-upb.png"
+            alt="Politehnica University of Bucharest" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-lancs.svg"
+            alt="Lancaster University" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-manchester.svg"
+            alt="University of Manchester" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-kit.svg"
+            alt="Karlsruher Institut Für Technologie" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-liege.svg"
+            alt="University of Liège" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/company-nec.svg"
+            alt="NEC" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/company-arm.svg"
+            alt="ARM" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/company-opensynergy.svg"
+            alt="OpenSynergy" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-2 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-texas.svg"
+            alt="University of Texas in Austin" />
+        </div>
+        <div class="col-span-1 flex justify-center md:col-span-6 lg:col-span-1">
+          <img class="h-12" src="/assets/imgs/uni-icl.svg"
+            alt="Imperial College London" />
+        </div>
+      </div>
+    </div>
+    <div class="pt-8 text-base text-center sm:px-20 md:px-32 lg:px-0">
+      {{ .callToAction | markdownify }}
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.fullyModular }}
+{{ $fullyModular := . }}
+<div id="fully-modular" class="highly-modular relative">
+  <div style="background-position: 10px 10px;" class="absolute inset-0 bg-grid-gray-700/25 bg-grid z-1"></div>
+  <div class="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-x-8 z-2">
+    <div class="grid justify-items-center items-center">
+      <img class="md:px-24 lg:px-0 pt-12 lg:pt-0 px-4 sm:px-0" src="/assets/imgs/unikraft-overview-inverse.svg" />
+    </div>
+    <div class="relative py-12 xl:py-24 px-4 sm:px-0">
+      <h2 class="text-sm font-semibold text-orange-400 tracking-wide uppercase">
+        {{ .feature }}
+      </h2>
+      <p class="mt-3 text-3xl text-white">
+        {{ .leader }}
+      </p>
+      <p class="mt-5 text-lg text-blue-100">
+        {{ .about | markdownify }}
+      </p>
+      <div class="mt-12">
+        <h2 id="feature-rich" class="text-sm font-semibold text-orange-400 tracking-wide uppercase">
+          {{ .featureRich }}
+        </h2>
+        <div class="grid mt-3 grid-cols-1 gap-y-8 gap-x-6 sm:grid-cols-2">
+          {{ range .features }}
+          <p>
+            <span class="block text-2xl font-bold text-white">{{ .count }}</span>
+            <span class="mt-1 block text-base text-blue-100">{{ .feature | markdownify }}</span>
+          </p>
+          {{ end }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.productionReady }}
+{{ $productionReady := . }}
+<div class="py-12 bg-white">
+  <div class="container mx-auto px-4 sm:px-0">
+    <h2 class="text-base font-semibold text-center text-orange-400 uppercase tracking-wide">
+      {{ .feature }}
+    </h2>
+    <p class="mt-2 text-3xl text-gray-900 text-center">
+      {{ .leader }}
+    </p>
+    <p class="text-center mt-2 mb-8 text-lg">
+      {{ .about }}
+    </p>
+    <div class="mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="col-span-1 flex justify-center">
+        <img class="h-12" src="/assets/imgs/company-aws.svg"
+          alt="Amazon Web Services" />
+      </div>
+      <div class="col-span-1 flex justify-center">
+        <img class="h-10" src="/assets/imgs/company-google-cloud.svg"
+          alt="Google Cloud" />
+      </div>
+      <div class="col-span-1 flex justify-center">
+        <img class="h-10" src="/assets/imgs/company-digitalocean.svg"
+          alt="DigitalOcean" />
+      </div>
+      <div class="col-span-1 flex justify-center">
+        <img class="h-10" src="/assets/imgs/company-ovhcloud.svg"
+          alt="OVHCloud" />
+      </div>
+    </div>
+    <div class="pt-8 text-base text-center">
+      {{ .callToAction | markdownify }}
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.smallFootprint }}
+{{ $smallFootprint := . }}
+<div id="small-footprint" class="bg-backdrop bg-backdrop-bottom relative py-12 bg-gradient-to-br from-green-900 to-green-700 border-b-4 border-t-4 border-green-900">
+  <div class="container sm:px-0 xl:max-w-6xl mx-auto px-4">
+    <div class="grid grid-cols-12 md:grid-cols-24 gap-8">
+      <div class="order-2 col-span-12 sm:col-span-6 md:col-span-8 lg:col-span-6 xl:order-none xl:col-start-1 xl:col-span-5 xl:mt-8 transform rounded-lg ring-1 ring-inset ring-green-400 shadow-lg bg-gradient-to-br from-green-400 to-green-500 py-8 px-4 text-center border border-green-900">
+        <span class="block font-bold text-white text-xl">{{ .bubble1heading | markdownify }}</span>
+        <span class="mt-1 block text-base text-green-100">{{ .bubble1about | markdownify }}</span>
+      </div>
+      <div class="order-1 col-span-12 md:col-span-24 xl:order-none xl:col-span-12 xl:mt-2 rounded-lg shadow-lg bg-white py-8 px-8  border border-green-900">
+        <h2 class="text-base font-semibold text-center text-green-600 uppercase tracking-wide">
+          {{ .feature }}
+        </h2>
+        <p class="text-3xl text-green-900 text-center">
+          {{ .leading | markdownify }}
+        </p>
+        <p class="text-center mt-2 text-green-700">
+          {{ .about }}
+        </p>
+      </div>
+      <div class="order-3 col-span-12 sm:col-span-6 md:order-5 md:col-span-8 lg:order-3 lg:col-span-7 xl:order-none xl:col-span-7 xl:mt-14 rounded-lg shadow-lg ring-1 ring-inset ring-green-300 bg-gradient-to-br from-green-300 to-green-400 p-8 text-center  border border-green-900">
+        <span class="block font-bold text-white text-xl">{{ .bubble2heading | markdownify }}</span>
+        <span class="mt-1 block text-base text-green-100">{{ .bubble2about | markdownify }}</span>
+      </div>
+      <div class="order-3 col-span-12 md:col-span-16 lg:order-4 lg:col-span-11 xl:order-none xl:col-start-2 xl:col-span-10 rounded-lg shadow-lg bg-green-300 p-6 ring-1 ring-inset ring-green-200  border border-green-900">
+        <img class="h-32 md:h-auto mx-auto" src="/assets/imgs/figs/power-usage.svg" />
+      </div>
+      <a href="/docs/features/embedded" class="group order-5 col-span-12 md:order-4 md:col-span-16 lg:order-5 lg:col-span-24 xl:order-none xl:col-span-12 xl:mb-5 rounded-lg shadow-lg bg-white p-8 text-center grid items-center  hover:shadow-xl transform-gpu hover:-translate-y-1 transition-all duration-150 border border-green-900 focus:outline-none focus:ring-2 focus:ring-offset-2">
+        <p class="block mb-4 text-green-700">{{ .bubble3about | markdownify }}</p>
+        <span class="text-green-400 font-medium group-hover:underline">{{ .callToAction }}</span>
+      </a>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ with .Params.cloudNativeReady }}
+{{ $cloudNativeReady := . }}
+<div id="cloud-native-ready" class="cloud-native-ready container mx-auto py-8 px-4 xs:px-0">
+  <div class="bg-cloud-native-ready rounded-lg shadow-xl overflow-hidden lg:grid lg:grid-cols-2 lg:gap-4">
+    <div class="pt-10 pb-12 px-6 sm:pt-16 sm:px-16 lg:py-16 lg:pr-0 xl:py-20 xl:px-20">
+      <div class="lg:self-center">
+        <h2 class="text-3xl text-white sm:text-4xl leading-2">
+          <span class="block font-bold text-transparent bg-clip-text bg-gradient-to-br from-orange-500 to-orange-300">{{ .unikraftCloudPlatform }}</span>
+          <span class="block font-medium text-bluie">{{ .startFreeTrial }}</span>
+        </h2>
+        <p class="mt-4 text-lg leading-6 text-indigo-200">
+          {{ .about | markdownify }}
+        </p>
+        <a href="https://unikraft.io" class="mt-8 text-white hover:text-white text-xl font-semibold bg-orange-400 border border-transparent rounded-lg shadow px-5 py-3 inline-flex items-center text-base hover:bg-orange-500 transform-gpu hover:-translate-y-0.5 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 hover:shadow-lg ring-1 ring-orange-400">
+          {{ .learnMore }}
+        </a>
+      </div>
+    </div>
+    <div class="-mt-6 aspect-w-5 aspect-h-3 md:aspect-w-2 md:aspect-h-1">
+      <img class="transform translate-x-6 translate-y-6 md:rounded-lg object-cover object-left-top sm:translate-x-16 lg:translate-y-20 shadow-xl ring-1 ring-black ring-opacity-5" src="https://unikraft.io/imgs/unikraft-dashboard-preview.png" alt="App screenshot">
+    </div>
+  </div>
+</div>
 {{ end }}

@@ -1,10 +1,8 @@
 {{ if $.Param "enableEditBtn" }}
   {{ $root := .}}
   {{ with .FirstSection }}
-    <a href="{{ .Params.editBaseURL | default ($.Param "editBaseURL") }}{{ strings.TrimSuffix "/" ($root.Permalink | relLangURL) }}.md" target="_blank" rel="noreferrer">
-      <button class="editBtn" aria-label="Edit This Page Button">
-        {{ i18n "edit-this-page" | default "EDIT THIS PAGE" }}
-      </button>
+    <a href="{{ .Params.editBaseURL | default ($.Param "editBaseURL") }}{{ strings.TrimSuffix "/" ($root.Permalink | relLangURL) }}.md" target="_blank" class="py-3 px-4" rel="noreferrer">
+      <span class="ml-2 text-sm font-medium text-gray-500">{{ i18n "edit-this-page" | default "Edit this page" }}</span>
     </a>
   {{ end }}
 {{ end }}

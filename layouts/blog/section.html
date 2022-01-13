@@ -1,66 +1,29 @@
 {{ define "main" }}
-<div class="top">
-  <header class="header__wrapper bgcolor__header">
-    {{ if eq .Params.blogHeaderType "img" }}
-      {{ partial "header/blog-header.html" . }}
-    {{ else }}
-      <div class="divider">
-        <div class="lmr">
-          {{ partial "header/blog-header.html" . }}
-        </div>
-      </div>
-    {{ end }}
-  </header>
+<div class="top bg-backdrop bg-blue-800">
+  <div class="mx-auto container py-12 border-b-4 border-orange-400">
+    <h1 class="text-white text-3xl font-semibold">{{ i18n "unikraft-blog" }}</h1>
+  </div>
 </div>
 
-<div class="mid blog__bg">
-  <main class="main blog__bg">
-    <div class="sv">
-      <div class="blog-post">
-        {{ $paginator := .Paginate (where .RegularPages "Type" .Type) }}
-        {{ range $paginator.Pages }}
-          {{ .Render "summary" }}
-        {{ end }}
-        {{ partial "main/component/pagination.html" . }}
-      </div>
-      <div class="blog-tags">
-        {{ partial "main/component/tag-cloud" . }}
+<div class="mid">
+  <main class="main">
+    <div class="mx-auto container">
+      <div class="grid grid-cols-4">
+        <div class="sm:border-l sm:border-r sm:border-gray-200 bg-white xl:px-6 col-span-3">
+          <div class="divide-y">
+            {{ $paginator := .Paginate (where .RegularPages "Type" .Type) }}
+            {{ range $paginator.Pages }}
+              {{ .Render "summary" }}
+            {{ end }}
+            {{ partial "main/component/pagination.html" . }}
+          </div>
+        </div>
+        <div class="space-y-1 pt-4 ml-3">
+          {{ partial "main/component/blog-sidebar.html" . }}
+          {{ partial "main/component/tag-cloud" . }}
+        </div>
       </div>
     </div>
   </main>
 </div>
-
-<script>
-  var singleViewElem = document.querySelectorAll('.sv');
-  var postElem = document.querySelector('.blog-post');
-  var tagsElem = document.querySelector('.blog-tags');
-
-  enquire.register("screen and (max-width:1280px)", {
-    match: function () {
-      singleViewElem.forEach(function(elem) {
-        postElem.className = "blog-post";
-        tagsElem.className = "blog-tags";
-      });
-    },
-    unmatch: function () {
-      singleViewElem.forEach(function (elem) {
-        postElem.className = "blog-post";
-        tagsElem.className = "blog-tags";
-      });
-    },
-  }).register("screen and (max-width:769px)", {
-    match: function () {
-      singleViewElem.forEach(function (elem) {
-        postElem.className = "blog-total";
-        tagsElem.className = "hide";
-      });
-    },
-    unmatch: function () {
-      singleViewElem.forEach(function (elem) {
-        postElem.className = "blog-post";
-        tagsElem.className = "blog-tags";
-      });
-    },
-  });
-</script>
 {{ end }}

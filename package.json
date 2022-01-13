@@ -9,6 +9,7 @@
     "tailwindcss": "^2.2.19"
   },
   "devDependencies": {
+    "asciinema-player": "^3.0.0-rc.1",
     "postcss-easy-import": "^3.0.0"
   }
 }

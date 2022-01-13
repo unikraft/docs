@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 330.3 101.8" style="enable-background:new 0 0 330.3 101.8;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;}
+	.st1{fill:#014737;}
+	.st2{font-family:'Inter';}
+	.st3{font-size:12px;}
+	.st4{font-family:'Inter';font-weight:600;}
+	.st5{font-size:15px;}
+	.st6{font-size:10px;}
+	.st7{fill:#057a55;}
+	.st8{fill:#def7ec;}
+</style>
+<rect x="6.1" y="42.7" class="st0" width="70.5" height="15.8"/>
+<text transform="matrix(1 0 0 1 14.2966 55.0214)" class="st1 st2 st3">RaspianOS</text>
+<rect x="6.1" y="79" class="st0" width="70.5" height="15.8"/>
+<text transform="matrix(1 0 0 1 17.1087 92.4037)" class="st1 st4 st5">Unikraft</text>
+<rect x="6.1" y="6.4" class="st0" width="70.5" height="15.8"/>
+<text transform="matrix(1 0 0 1 6.7806 18.7288)" class="st1 st2 st3">Alpine Linux</text>
+<rect x="290.4" y="76.5" class="st0" width="35.5" height="15.8"/>
+<text transform="matrix(1 0 0 1 290.3878 88.0375)" class="st1 st2 st6">Amps</text>
+<rect x="235.4" y="76.5" class="st0" width="37.5" height="15.8"/>
+<text transform="matrix(1 0 0 1 235.3878 88.0375)" class="st1 st2 st6">Watts</text>
+<path class="st7" d="M322.6,12.6H90.5c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h232.2c2.5,0,4.6,2.1,4.6,4.6v0
+	C327.3,10.5,325.2,12.6,322.6,12.6z"/>
+<path class="st7" d="M303.9,48.9H90.5c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h213.4c2.5,0,4.6,2.1,4.6,4.6v0
+	C308.5,46.8,306.4,48.9,303.9,48.9z"/>
+<path class="st8" d="M127.4,25.7H90.5c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h36.9c2.5,0,4.6,2.1,4.6,4.6v0
+	C132,23.6,129.9,25.7,127.4,25.7z"/>
+<path class="st8" d="M123.9,62H90.5c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h33.4c2.5,0,4.6,2.1,4.6,4.6v0
+	C128.5,59.9,126.4,62,123.9,62z"/>
+<path class="st7" d="M151.6,84.9H90.5c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h61.1c2.5,0,4.6,2.1,4.6,4.6v0
+	C156.3,82.8,154.2,84.9,151.6,84.9z"/>
+<path class="st8" d="M94.6,98.2h-4.1c-2.5,0-4.6-2.1-4.6-4.6v0c0-2.5,2.1-4.6,4.6-4.6h4.1c2.5,0,4.6,2.1,4.6,4.6v0
+	C99.2,96.2,97.2,98.2,94.6,98.2z"/>
+<circle class="st7" cx="227.9" cy="84.4" r="4.6"/>
+<circle class="st8" cx="282.9" cy="84.4" r="4.6"/>
+</svg>

@@ -9,7 +9,9 @@
   &__rel {
     position: relative;
     height: auto;
-    padding: 0 6px;
+    @apply px-4;
+    @apply border-l;
+    @apply border-r;
     
     @include themify($themes) {
       color: themed('landing-button-default');

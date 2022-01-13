@@ -24,17 +24,17 @@ html {
 /**
  * Basic styles for links
  */
-a {
-  @include themify($themes) {
-    text-decoration: none;
-    color: themed('link');
+// a {
+//   @include themify($themes) {
+//     text-decoration: none;
+//     // color: themed('link');
 
-    @include on-event {
-      color: themed('link-hover');
-      text-decoration: underline;
-    }
-  }
-}
+//     @include on-event {
+//       // color: themed('link-hover');
+//       text-decoration: underline;
+//     }
+//   }
+// }
 
 /*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */
 // Blocks

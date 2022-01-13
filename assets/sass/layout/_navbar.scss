@@ -2,7 +2,6 @@
   position: relative;
 }
 .navbar {
-  padding: 0 0.75rem;
   height: 100%;
   position: relative;
   
@@ -18,16 +17,10 @@
     top: 0;
     z-index: z('navbar');
     color: inherit;
+    // border-bottom: solid 2px #032b59;
 
-    &[data-bgimg="true"] {
-      background-color: transparent;
-    }
-
-    &[data-bgimg="false"] {
-      box-shadow: 0 1px 0 rgba(12,13,14,0.1), 0 1px 6px rgba(60,65,70,0.1);
-      @include themify($themes) {
-        background-color: themed('navbar-background-color');
-      }
+    @include themify($themes) {
+      background-color: themed('navbar-background-color');
     }
 
     @include flexbox();
@@ -37,9 +30,8 @@
 
   &__menu {
     height: 100%;
-    padding: 0 0.75rem;
-
-    @include flexbox();
+    // padding: 0 0.25rem;
+    // @include flexbox();
 
     &--wrapper {
       height: 100%;
@@ -49,26 +41,33 @@
 
     &--item {
       height: $grid-nav-height;
-      padding: 0rem 0.75rem;
+      @apply text-blue-100;
+
+      &.active {
+        color: #ffffff;
+        background-color: #032b59;
+
+        &:hover a {
+          text-decoration: none;
+          color: #ffffff;
+        }
+      }
 
       & > a {
+        padding: 0rem 1rem;
         height: 100%;
-        font-family: $title-font;
-        font-size: 16.8px;
+        // font-family: $title-font;
+        // font-size: 16.8px;
         color: inherit;
-        text-decoration: none !important;
+        text-decoration: none;
         
         @include flexbox();
         @include align-items(center);
         @include justify-content(center);
       }
 
-      @include themify($themes) {
-        color: themed('navbar-menu-color');
-        &.active {
-          // font-weight: bold;
-          color: themed('active-font-color');
-        }
+      &:hover > a {
+        text-decoration: underline;
       }
     }
 
@@ -90,7 +89,7 @@
         padding: 0.5rem 1rem;
         
         @include themify($themes) {
-          color: themed('body-color');
+          color: white;
           
           @include on-event {
             text-decoration: none;  
@@ -127,13 +126,20 @@
     }
   }
 
+  &.navbar-is-home .navbar__logo--wrapper {
+    background-color: #032b59;
+  }
+
   &__logo {
     width: 100%;
     height: 100%;
-    margin: 0 0.25rem;
+    // margin: 0 1rem;
+    padding: 0 0.25rem;
 
     &--wrapper {
       height: 100%;
+      width: auto;
+      padding: 0 0.5rem;
       @include flexbox();
       @include align-items(center);
       @include justify-content(flex-start);
@@ -146,6 +152,7 @@
 
       a {
         color: inherit;
+        height: $grid-nav-height;
         @include on-event {
           color: inherit;
           text-decoration: none;
@@ -172,16 +179,6 @@
 
       @include flexbox();
       @include align-items(flex-end);
-
-      @include themify($themes) {
-        &[data-bgimg="true"] {
-          // color
-        }
-
-        &[data-bgimg="false"] {
-          color: themed('body-color');
-        }
-      }
     }
   }
 
@@ -216,7 +213,7 @@
       @include themify($themes) {
         color: themed('navbar-icon-color');
         @include on-event {
-          color: themed('body-color');
+          color: white;
           background-color: themed('dropdown-hover-background-color');
         }
 
@@ -268,7 +265,7 @@
       @include flexbox();
       @include align-items(center);
       @include themify($themes) {
-        color: themed('body-color');
+        color: white;
         background-color: themed('navbar-background-color');
       }
     }

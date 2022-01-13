@@ -1,3 +1,9 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "asciinema-player/dist/bundle/asciinema-player";
+
 $enable-navbar: {{ .Param "enableNavbar" }};
 
 $title-font: {{ .Site.Data.font.title_font }};
@@ -27,7 +33,7 @@ $light-nav-icon-color: {{ .Site.Data.color.light_nav_icon_color }};
 @import 'base/reset';
 @import 'base/fonts';
 @import 'base/helpers';
-@import 'base/typography';
+// @import 'base/typography';
 @import 'base/animation';
 
 @import 'components/menu';
@@ -64,3 +70,4 @@ $light-nav-icon-color: {{ .Site.Data.color.light_nav_icon_color }};
 @import 'pages/single';
 @import 'pages/list';
 @import 'pages/blog';
+@import 'pages/people';

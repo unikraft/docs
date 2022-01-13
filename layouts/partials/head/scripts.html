@@ -13,6 +13,10 @@
   <script defer src="{{ $fuse.RelPermalink }}"></script>
 {{ end }}
 
+{{ if .IsHome }}
+{{ $kraftcast := resources.Get "js/kraft-cast.js" | js.Build | resources.Minify }}
+<script defer src="{{ $kraftcast.RelPermalink }}"></script>
+{{ end }}
 {{ $enquire := resources.Get "js/enquire.min.js" | resources.Fingerprint }}
 <script src="{{ $enquire.RelPermalink }}"></script>
 {{ $lazysizes := resources.Get "js/lazysizes.min.js" | resources.Fingerprint }}

@@ -1,9 +1,3 @@
-.top {
-  @include themify($themes) {
-    background-color: themed('single-header-title-background-color');
-  }
-}
-
 .header {
   @include flexbox();
   @include justify-content(center);

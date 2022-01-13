@@ -1,93 +1,29 @@
 {{ $wideViewAsDefault := ($.Param "wideViewAsDefault") }}
 
 <div class="mid">
-  <div class="divider">
+  <div class="container mx-auto grid grid-cols-12 h-full">
     
-    <nav id="single-menu" class="l" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
+    <nav id="list-menu" class="hidden md:block md:col-span-3 lg:col-span-2">
       {{ if $.Param "enableMenu" }}
         {{ partial "main/sections/single-menu.html" . }}
       {{ end }}
     </nav>
 
-    <article id="list-main" class="{{ if $wideViewAsDefault }}mr{{ else }}m{{ end }}" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
+    <article id="list-main" class="col-span-12 md:col-span-9 lg:col-span-10 {{ if $.Param "enableToc" }}xl:col-span-7{{ end }} border-l border-r border-gray-200">
       {{ partial "main/sections/list-main.html" . }}
       {{ partial "main/component/pagination-single.html" . }}
+      {{ partial "main/component/page-details.html" . }}
       {{ partial "comments/comments.html" . }}
     </article>
     
-    <section id="list-side" class="{{ if $wideViewAsDefault }}hide{{ else }}r{{ end }}" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
-      {{ if $.Param "enableToc" }}
-        {{ partial "main/component/toc.html" . }}
-      {{ end }}
+    {{ if $.Param "enableToc" }}
+    <section id="list-side" class="hidden xl:block col-span-3">
+      {{ partial "main/component/toc.html" . }}
     </section>
+    {{ end }}
 
   </div>
 </div>
 
 {{ partial "script/codeblock-script.html" . }}
 {{ partial "script/single-script.html" . }}
-
-<script>
-  var listSide = document.getElementById('list-side');
-  var listMain = document.getElementById('list-main');
-  var singleMenu = document.getElementById('single-menu');
-  var switchElem = document.querySelector('.switch');
-  var wideViewAsDefault = JSON.parse({{ $wideViewAsDefault | jsonify }});
-  
-  enquire.register("screen and (max-width:1280px)", {
-    match: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'l';  
-        listMain.className = 'mr';
-        listSide.className = 'hide';
-      } else {
-        singleMenu.className = 'l';
-        listMain.className = 'm';
-        listSide.className = 'r';
-      }
-    },
-    unmatch: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'l';
-        listMain.className = 'mr';
-        listSide.className = 'hide';
-      } else {
-        listSide.className = 'r';
-        listMain.className = 'm';
-        singleMenu.className = 'l';
-      }
-    },
-  }).register("screen and (max-width:960px)", {
-    match: function () {
-      singleMenu.className = 'l';
-      listMain.className = 'mr';
-      listSide.className = 'hide';
-      switchElem.className = 'hide';
-    },
-    unmatch: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'l';
-        listMain.className = 'mr';
-        listSide.className = 'hide';
-      } else {
-        singleMenu.className = 'l';
-        listMain.className = 'm';
-        listSide.className = 'r';
-      }
-      switchElem.className = 'switch';
-    },
-  }).register("screen and (max-width:600px)", {
-    match: function () {
-      listSide.className = 'hide';
-      listMain.className = 'lmr';
-      singleMenu.className = 'hide';
-      switchElem.className = 'hide';
-    },
-    unmatch: function () {
-      listSide.className = 'hide';
-      listMain.className = 'mr';
-      singleMenu.className = 'l';
-      switchElem.className = 'hide';
-    },
-  });
-</script>

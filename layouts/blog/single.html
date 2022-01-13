@@ -1,88 +1,46 @@
 {{ define "main" }}
-{{ $wideViewAsDefault := ($.Param "wideViewAsDefault") }}
-<div class="mid">
-  <div class="divider">
-    
-    <nav id="single-menu" class="{{ if $wideViewAsDefault }}hide{{ else }}l{{ end }}" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
-    </nav>
-
-    <article id="list-main" class="{{ if $wideViewAsDefault }}lm{{ else }}m{{ end }}" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
-      {{ if $.Param "enableBlogBreadcrumb" }}
-        {{ partial "main/component/breadcrumb.html" . }}
-      {{ end }}
-      {{ partial "main/sections/list-main.html" . }}
-      {{ partial "main/component/pagination-single.html" . }}
-    </article>
-    
-    <section id="list-side" class="r" data-dir="{{ $.Param "languagedir" | default "ltr" }}">
-      {{ if $.Param "enableToc" }}
-        {{ partial "main/component/toc.html" . }}
-      {{ end }}
-    </section>
-
+<div class="top bg-backdrop bg-blue-800">
+  <div class="mx-auto container py-12 border-b-4 border-orange-400">
+    <h1 class="text-white text-3xl font-semibold">{{ i18n "unikraft-blog" }}</h1>
   </div>
 </div>
 
-{{ partial "script/codeblock-script.html" . }}
-{{ partial "script/single-script.html" . }}
-
-<script>
-  var singleMenu = document.getElementById('single-menu');
-  var listMain = document.getElementById('list-main');
-  var listSide = document.getElementById('list-side');
-  var wideViewAsDefault = JSON.parse({{ $wideViewAsDefault | jsonify }});
-
-  enquire.register("screen and (max-width:1280px)", {
-    match: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'hide';
-        listMain.className = 'lm';
-        listSide.className = 'r';
-      } else {
-        singleMenu.className = 'l';
-        listMain.className = 'm';
-        listSide.className = 'r';
-      }
-    },
-    unmatch: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'hide';
-        listMain.className = 'lm';
-        listSide.className = 'r';
-      } else {
-        singleMenu.className = 'l';
-        listMain.className = 'm';
-        listSide.className = 'r';
-      }
-    },
-  }).register("screen and (max-width:960px)", {
-    match: function () {
-      listSide.className = 'r';
-      listMain.className = 'lm';
-      singleMenu.className = 'hide';
-    },
-    unmatch: function () {
-      if (wideViewAsDefault) {
-        singleMenu.className = 'hide';
-        listMain.className = 'lm';
-        listSide.className = 'r';
-      } else {
-        singleMenu.className = 'l';
-        listMain.className = 'm';
-        listSide.className = 'r';
-      }
-    },
-  }).register("screen and (max-width:600px)", {
-    match: function () {
-      listSide.className = 'hide';
-      listMain.className = 'lmr';
-      singleMenu.className = 'hide';
-    },
-    unmatch: function () {
-      listSide.className = 'r';
-      listMain.className = 'lm';
-      singleMenu.className = 'hide';
-    },
-  });
-</script>
+<div class="mid">
+  <main class="main">
+    <div class="mx-auto container">
+      <div class="grid grid-cols-4">
+        <div class="sm:border-l sm:border-r sm:border-gray-200 bg-white xl:px-6 col-span-3">
+          <div class="grid py-8 sm:grid-cols-4">
+            <div class="mb-4 sm:mb-0">
+              <div class="space-y-1 text-xs font-semibold tracking-wide uppercase">
+                {{ partial "main/component/article-meta.html" . }}
+              </div>
+            </div>
+            <div class="col-span-3">
+              <div class="mb-3">
+                <a href="{{ .Permalink }}" aria-label="Article" class="inline-block text-black transition-colors duration-200 hover:text-deep-purple-accent-700">
+                  <p class="text-2xl font-medium leading-none hover:underline">
+                    {{ .Title }}
+                  </p>
+                </a>
+              </div>
+              <div class="text-gray-700 prose">
+                {{ .Content }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-1 pt-4 ml-3">
+          {{ partial "main/component/blog-sidebar.html" . }}
+          <div class="toc pt-3">
+            <h3 class="text-gray-900 font-semibold mb-4 text-sm leading-6 dark:text-gray-100">
+              {{ i18n "toc-label" }}
+            </h3>
+            {{ .TableOfContents }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
 {{ end }}

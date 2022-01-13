@@ -1,5 +1,5 @@
 [toc-label]
-other = "What's on this Page"
+other = "On this Page"
 
 [tooltip-written]
 other = "Written At"
@@ -17,7 +17,25 @@ other = "Jan 2, 2006"
 other = "min read"
 
 [single-writtenBy]
-other = "WRITTEN BY"
+other = "Written By"
 
 [edit-this-page]
-other = "EDIT THIS PAGE"
+other = "Edit this page"
+
+[unikraft-blog]
+other = "Unikraft Blog"
+
+[unikraft-releases]
+other = "Unikraft Releases"
+
+[search-docs]
+other = "Search docs..."
+
+[submit-blog-post]
+other = "Submit a post"
+
+[view-releases-on-github]
+other = "View releases on GitHub"
+
+[follow-next-milestone]
+other = "Follow next release milestone"

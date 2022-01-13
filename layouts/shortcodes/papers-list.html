@@ -1,0 +1,29 @@
+<ul class="publications">
+  {{ $pubs := index $.Site.Data $.Params.source }}
+  {{ range $pubs }}
+  <li class="publication">
+    <div class="publication-title">
+      <a href="{{ .link }}">{{ .title }}</a>{{ with .venue }} ({{ . }}){{ end }}{{ with .author }} by {{ . }}{{ end }}
+    </div>
+    <div class="publication-badges">
+      {{ with .pdf }}
+      <a href="{{ . }}"><img class="inline-block" src="https://img.shields.io/badge/-paper-red?logo=adobe-acrobat-reader" /></a>
+      {{ end }}
+      {{ with .slides }}
+      <a href="{{ . }}"><img class="inline-block" src="https://img.shields.io/badge/-slides-red?logo=adobe-acrobat-reader" /></a>
+      {{ end }}
+      {{ with .video }}
+      <a href="{{ . }}"><img class="inline-block" src="https://img.shields.io/badge/-video-red?logo=youtube" /></a>
+      {{ end }}
+      {{ if .bestpaper }}
+      <img class="inline-block" src="https://img.shields.io/badge/-%F0%9F%8F%86%20Best%20Paper%20Award-yellow" />
+      {{ end }}
+    </div>
+    <span class="publication-authors">
+      {{ range .authors }}
+        {{ .name }}, 
+      {{ end }}
+    </span>
+  </li>
+  {{ end }}
+</ul>
