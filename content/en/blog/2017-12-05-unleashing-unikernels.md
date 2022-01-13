@@ -1,0 +1,102 @@
++++
+title = "Unleasing the Power of Unikernels"
+date = "2017-12-05T00:00:00+01:00"
++++
+
+The team at [NEC Laboratories Europe](http://sysml.neclab.eu/) spent quite a bit of time over the
+last few years developing unikernels (specialized virtual machine
+images targeting specific applications). This technology is fascinating
+to us because of its fantastic performance benefits: tiny memory
+footprints (hundreds of KBs or a few MBs), boot times comparable to
+those of processes or throughput in the range of 10-40 Gb/s, among
+many other attributes. Specific metrics can be found in these
+articles:
+
+* [My VM is Lighter (and Safer) than your Container](http://dl.acm.org/ft_gateway.cfm?id=3132763&type=pdf)
+* [Unikernels Everywhere: The Case for Elastic CDNs](https://dl.acm.org/citation.cfm?id=3050757)
+* [ClickOS and the Art of Network Function Virtualization](https://www.usenix.org/node/179772)
+
+The potential of unikernels is great (as you can see from the work
+above), but there hasn'st been a massive adoption of unikernels. Why?
+Development time. For example, developing [Minipython](https://github.com/sysml/minipython), a MicroPython
+unikernel, took the better part of three months to put together and
+test. [ClickOS](https://github.com/sysml/clickos), a unikernel for NFV, was the result of a couple of
+years of work.
+
+What's particularly bad about this development model, besides the
+considerable time spent, is each unikernel is basically a throwaway:
+every time we want to create a new unikernel targeting a different
+application, developers have to start from scratch. Essentially, there
+is a lack of shared research and development when it comes to building
+unikernels.
+
+We (at NEC) wanted to change this, so we started to re-use the work
+and created a separate repo consisting of a toolstack hat would
+contain functionality useful to multiple unikernels — mostly
+platform-independent versions of newlib and lwip (a C library and
+network stack intended for embedded systems).  This got us thinking
+that we should take our work to a much bigger level. We asked the
+question: Wouldn't it be great to be able to very quickly choose,
+perhaps from a menu, the bits of functionality that we want for a
+unikernel, and to have a system automatically build all of these
+pieces together into a working image? It would also be great if we
+could choose multiple platforms (e.g., Xen, KVM, bare metal) without
+having to do additional work for each of them.
+
+The result of that thought process is Unikraft. Unikraft decomposes
+operating systems into elementary pieces called libraries (e.g.,
+schedulers, memory allocators, drivers, filesystems, network stacks,
+etc.) that users can then pick and choose from, using a menu to
+quickly build images tailored to the needs of specific
+applications. In greater detail, Unikraft consists of two basic
+components (see Figure 1):
+
+* **Library pools** contain libraries that the user of Unikraft can
+    select from to create the unikernel. From the bottom up, library
+    pools are organized into (1) the architecture library tool,
+    containing libraries specific to a computer architecture (e.g.,
+    x86_64, ARM32 or MIPS); (2) the platform tool, where target
+    platforms can be Xen, KVM, bare metal (i.e. no virtualization),
+    user-space Linux and potentially even containers; and (3) the main
+    library pool, containing a rich set of functionality to build the
+    unikernel. This last library includes drivers (both virtual such
+    as netback/netfront and physical such as ixgbe), filesystems,
+    memory allocators, schedulers, network stacks, standard libs
+    (e.g. libc, openssl, etc.), and runtimes (e.g. a Python
+    interpreter and debugging and profiling tools). These pools of
+    libraries constitute a codebase for creating unikernels. As shown,
+    a library can be relatively large (e.g libc) or quite small (a
+    scheduler), which allows for customization for the unikernel.
+
+* **The Unikraft build tool** is in charge of compiling the
+    application and the selected libraries together to create a binary
+    for a specific platform and architecture (e.g., Xen on
+    x86_64). The tool is currently inspired by Linuxâ€™s KCONFIG
+    system and consists of a set of Makefiles. It allows users to
+    select libraries, to configure them, and to warn them when library
+    dependencies are not met. In addition, the tool can also
+    simultaneously generate binaries for multiple platforms.
+
+<div class="figure">
+  <img src="/assets/imgs/unikraft-arch.jpg" alt="Unikraft's architecture." />
+  <span class="caption">Unikraft's architecture.</span>
+</div>
+
+## Getting Involved
+
+We are very excited about the recent open source release of Unikraft
+as a Xen Project Foundation incubator project. The Xen Project is a
+part of the Linux Foundation umbrella. We welcome developers willing
+to help improve Unikraft. Whether you're interested in particular
+applications, programming languages, platforms, architectures or OS
+primitive. We are more than happy to build and receive contributions
+from the community. To get you started, here are a number of available
+resources:
+
+* **Developer's guide**: available in the docs directory of the Unikraft sources or [here](http://docs.unikraft.org/)
+* **Website**: The main Unikraft website: http://unikraft.org
+* **Mailing list**: we share the mailing list with MiniOS, please subscribe [here](https://lists.xenproject.org/cgi-bin/mailman/listinfo/minios-devel)
+
+Please don't be shy about getting in touch with us, we would be more
+than happy to answer any questions you may have. You can reach the
+core Unikraft development team at sysml@listserv.neclab.eu .
