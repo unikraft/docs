@@ -13,8 +13,8 @@
       {{ if and (.section_to_display) ($.context.Param "enableToc") }}
         {{ partial "main/sections/list-section.html" (dict "section_to_display" .section_to_display) }}
       {{ end }}
-      {{ partial "main/component/page-details.html" . }}
       {{ partial "main/component/pagination-single.html" .context }}
+      {{ partial "main/component/page-details.html" .context }}
     </article>
 
     {{ if $.context.Param "enableToc" }}
