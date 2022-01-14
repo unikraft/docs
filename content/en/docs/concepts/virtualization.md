@@ -2,6 +2,9 @@
 title: Virtualization
 date: 2020-01-11T14:09:21+09:00
 weight: 202
+description: |
+  Understand the main differences in virtualization technologies and what
+  Unikraft supports.
 ---
 
 ## Virtualization Technologies & Unikraft
