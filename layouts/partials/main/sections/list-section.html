@@ -1,13 +1,13 @@
 {{ $.context.Content }}
-<div class="list-section">
+<div class="space-y-4 px-4 pb-6 h-full">
   {{ range .section_to_display }}
-    <div class="list-section__item">
-      <a href="{{ .Permalink }}" class="list-section__item--link">
+    <a href="{{ .Permalink }}" class="group p-4 bg-gray-100 rounded-lg hover:bg-gray-200 block">
+      <div class="text-lg font-medium group-hover:underline">
         {{ .Title }}
-      </a>
-      <div class="list-section__item--desc">
+      </div>
+      <div class="text-gray-500">
         {{ .Description }}
       </div>
-    </div>
+    </a>
   {{ end }}
-  </div>
+</div>
