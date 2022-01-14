@@ -1,9 +1,9 @@
 {{ if and (.GitInfo) (.Site.Params.github) -}}
 <div class="p-5 border-t border-gray-200">
-  {{ T "post_last_mod" }} {{ .Lastmod.Format .Site.Params.time_format_default -}}
+  {{ printf (i18n "last-mod") (.Lastmod.Format .Site.Params.time_format_default) -}}
   {{ with .GitInfo }}: {{/* Trim WS */ -}}
-    <a href="{{ $.Site.Params.github }}/commit/{{ .Hash }}">
-      {{- .Subject }} ({{ .AbbreviatedHash }}) {{- /* Trim WS */ -}}
+    <a href="{{ $.Site.Params.github }}/commit/{{ .Hash }}" class="text-blue-400 hover:underline">
+      {{- .Subject }} (<code>{{ .AbbreviatedHash }}</code>) {{- /* Trim WS */ -}}
     </a>
   {{- end }}
 </div>

@@ -39,3 +39,6 @@ other = "View releases on GitHub"
 
 [follow-next-milestone]
 other = "Follow next release milestone"
+
+[last-mod]
+other = "Last modfied %s"
