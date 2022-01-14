@@ -42,3 +42,6 @@ other = "Follow next release milestone"
 
 [last-mod]
 other = "Last modfied %s"
+
+[overview]
+other = "Overview"
