@@ -71,3 +71,4 @@ $light-nav-icon-color: {{ .Site.Data.color.light_nav_icon_color }};
 @import 'pages/list';
 @import 'pages/blog';
 @import 'pages/people';
+@import 'pages/talks';

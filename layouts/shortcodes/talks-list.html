@@ -1,0 +1,21 @@
+<ul class="list-of-talks">
+  {{ range $.Site.Data.talks }}
+  <li class="talk">
+    <div class="talk-title">
+      <a href="{{ .link }}" class="pr-2">{{ .title }}</a>
+      {{ with .slides }}
+      <a href="{{ . }}"><img class="inline-block" src="https://img.shields.io/badge/-slides-red?logo=adobe-acrobat-reader" /></a>
+      {{ end }}
+      {{ with .video }}
+      <a href="{{ . }}"><img class="inline-block" src="https://img.shields.io/badge/-video-red?logo=youtube" /></a>
+      {{ end }}
+    </div>
+    <div class="talk-author">
+      <em>presented by</em> <span class="font-medium">{{ .speaker }}</span> {{ with .affiliation }}({{ . }}){{ end }}
+    </div>
+    <div class="talk-venue">
+      <em>at</em> {{ .venue }}
+    </div>
+  </li>
+  {{ end }}
+</ul>
