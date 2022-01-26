@@ -30,3 +30,11 @@ The Unikraft unikernel targets a specific platform and hardware architecture, wh
 The steps in the lifecycle above are discussed in this tutorial in greater depth.
 Particularly, we cover `fetch`ing, `prepare`ing and compiling (`build`ing) "external" code which is to be used as a Unikraft unikernel application (or library for that matter).
 
+{{< img
+  class="max-w-xl mx-auto"
+  src="/assets/imgs/unikraft-build-process.svg"
+  title="Steps of the Unikraft build process"
+  caption="..."
+  position="center"
+>}}
+
