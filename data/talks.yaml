@@ -1,3 +1,32 @@
+- title: "Debugging and Monitoring in Unikraft: Everything beyond printf()"
+  year: 2022
+  link: https://fosdem.org/2022/schedule/event/skuenzer/
+  slides: https://fosdem.org/2022/schedule/event/skuenzer/attachments/slides/4949/export/events/attachments/skuenzer/slides/4949/unikraft_microkernel_devroom_fosdem22.pdf
+  speaker: Simon Kuenzer & Marc Rittinghaus
+  affiliation: NEC Laboratories Europe & KIT
+  venue: FOSDEM'22
+
+- title: "Rethinking the OS for Isolation Flexibility with FlexOS"
+  year: 2022
+  link: https://fosdem.org/2022/schedule/event/tee_flexos/
+  speaker: Hugo Lefeuvre & Jan Tobias Muehlberg
+  affiliation: The University of Manchester & imec-DistriNet Researchc Group, KU Leuven
+  venue: FOSDEM'22
+
+- title: "Massive Unikernel Matrices with Unikraft, Concourse and More!"
+  year: 2022
+  link: https://fosdem.org/2022/schedule/event/massive_unikernel_matrices_with_unikraft_concourse_and_more/
+  speaker: Alexander Jung
+  affiliation: Unikraft UG (haftungsbeschränkt)
+  venue: FOSDEM'22
+
+- title: "Unikraft Performance Monitoring with Prometheus"
+  year: 2022
+  link: https://fosdem.org/2022/schedule/event/unikraft/
+  speaker: Cezar Crăciunoiu
+  affiliation: University Politehnica of Bucharest
+  venue: FOSDEM'22
+
 - title: "It's Time to Debloat the Cloud with Unikraft"
   year: 2021
   link: https://www.usenix.org/conference/lisa21/presentation/huici
@@ -91,7 +120,8 @@
   link: https://design-sessions.xenproject.org/uid/discussion/disc_XDcFeEdVUkuj2EYDADLX/view
   video: https://www.youtube.com/watch?v=GtocEKztfHY
   slides: https://pub.nderjung.net/presentations/unikraft-xendesignsummit20.pdf
-  speaker: Alexander Jung, NEC Laboratories Europe GmbH
+  speaker: Alexander Jung
+  affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit Design Session '20
 
 - title: "Unikraft Weather Report"
@@ -141,7 +171,7 @@
 - title: "Building Stub Domains with Unikraft"
   year: 2019
   link: https://xensummit19.sched.com/event/Pdzc/design-session-building-stub-domains-with-unikraft?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
-  speaker: Simon Kuenzer &amp; Felipe Huici
+  speaker: Simon Kuenzer & Felipe Huici
   affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit '19
 
@@ -149,7 +179,7 @@
   year: 2019
   link: https://xensummit19.sched.com/event/PFVr/keynote-unikraft-weather-report-simon-kuenzer-senior-researcher-felipe-huici-chief-researcher-nec-laboratories-europe-gmbh?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
   video: https://www.youtube.com/watch?v=hn3Nna-GevY&amp;list=PLYyw7IQjL-zHmP6CuqwuqfXNK5QLmU7Ur&amp;index=29&amp;t=0s
-  speaker: Simon Kuenzer &amp; Felipe Huici
+  speaker: Simon Kuenzer & Felipe Huici
   affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit '19
 
