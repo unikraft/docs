@@ -3,7 +3,8 @@
   link: https://www.usenix.org/conference/lisa21/presentation/huici
   video: https://www.youtube.com/watch?v=ixpsOhPtvR0
   speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH (USENIX LISA '21
+  affiliation: NEC Laboratories Europe GmbH
+  venue: USENIX LISA '21
 
 - title: "Unikraft Weather Report"
   year: 2021
