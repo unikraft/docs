@@ -46,24 +46,22 @@ or ill-suited to single application use cases:
 * For RPC-style server applications, threading is not needed, with a single,
   run-to-completion event loop sufficing for high performance. This would remove
   the need for a scheduler within the VM and its associated overheads, as well
-  as the mismatch between the guest and hypervisor
-  schedulers~\cite{Faggioli2019}.
+  as the mismatch between the guest and hypervisor schedulers.
 
 * For performance-oriented UDP-based apps, much of the OS networking stack is
   useless: the app could simply use the driver API, much like DPDK-style
   applications already do. There is currently no way to easily remove just the
   network stack but not the entire network sub-system from standard OSes.
 
-* Direct access to NVMe storage from apps removes the need for file
-  descriptors, a VFS layer and a filesystem, but removing such support from
-  existing OSes, built around layers of the storage API, is very difficult.
+* Direct access to NVMe storage from apps removes the need for file descriptors,
+  a VFS layer and a filesystem, but removing such support from existing OSes,
+  built around layers of the storage API, is very difficult.
 
-* Memory allocators have a large impact on application
-  performance, and general purpose allocators have been shown to be
-  suboptimal for many apps~\cite{Savage2020}. It would therefore
-  be ideal if each app could choose its own allocator; this is
-  however very difficult to do in today's operating systems because
-  the allocators that kernels use are baked in.
+* Memory allocators have a large impact on application performance, and general
+  purpose allocators have been shown to be suboptimal for many apps.  It would
+  therefore be ideal if each app could choose its own allocator; this is however
+  very difficult to do in today's operating systems because the allocators that
+  kernels use are baked in.
 
 
 This admittedly non-exhaustive list of application-specific optimizations
