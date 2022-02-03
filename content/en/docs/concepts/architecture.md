@@ -9,14 +9,14 @@ weight: 202
 
 In contrast to classical OS work, which can be roughly split between monolithic
 kernels (with great performance) versus micro-kernels that provide great
-isolation between OS com- ponents (at the expense of performance), our work
-embraces both the monolithic design (no protection between compo- nents) and the
+isolation between OS components (at the expense of performance), our work
+embraces both the monolithic design (no protection between components) and the
 modularity that micro-kernels advocated.
 
 We use modularity to enable specialization, splitting OS functionality into
-fine-grained components that only commu- nicate across well-defined API
-boundaries. Our key observa- tion is that we can obtain performance via careful
-API design and static linking, rather than short-circuiting API bound- aries for
+fine-grained components that only communicate across well-defined API
+boundaries. Our key observation is that we can obtain performance via careful
+API design and static linking, rather than short-circuiting API boundaries for
 performance. To achieve the overarching principle of modularity, Unikraft
 consists of two main components:
 
