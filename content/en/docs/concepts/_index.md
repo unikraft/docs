@@ -6,7 +6,7 @@ collapsible: true
 weight: 200
 ---
 
-## What is a unkernel?
+## What is a unikernel?
 
 **The high level goal of Unikraft is to be able to build specialized OS images,
 known as unikernels, easily, quickly and without time-consuming expert work.**
@@ -99,8 +99,16 @@ Unikraft consists of three basic components:
 
 ## Unikraft Libraries
 
-Unikraft libraries are grouped into two large groups: core (or internal) libraries, and external libraries. Core libraries generally provide functionality typically found in operating systems. Such libraries are grouped into categories such as memory allocators, schedulers, filesystems, network stacks and drivers, among others. Core libraries are part of the main Unikraft repo which also contains the build tool and configuration menu.
+Unikraft libraries are grouped into two large groups: core (or internal)
+libraries, and external libraries. Core libraries generally provide
+functionality typically found in operating systems. Such libraries are grouped
+into categories such as memory allocators, schedulers, filesystems, network
+stacks and drivers, among others. Core libraries are part of the main Unikraft
+repo which also contains the build tool and configuration menu.
 
-External libraries consist of existing code not specifically meant for Unikraft. This includes standard libraries such as libc or openssl, but also run-times like Python.
+External libraries consist of existing code not specifically meant for Unikraft.
+This includes standard libraries such as libc or openssl, but also run-times
+like Python.
 
-Whether core or external, from a user’s perspective these are indistinguishable: they simply show up as libraries in the menu.
+Whether core or external, from a user’s perspective these are indistinguishable:
+they simply show up as libraries in the menu.
