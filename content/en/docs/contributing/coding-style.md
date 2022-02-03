@@ -26,8 +26,7 @@ We would also be very happy to accept `.clang-format` definitions for those.
 
 ### Code Documentation
 
-Unikraft does not have a strict rule for formatting code comments.
-It tries to follow mostly the code comments style of the [Linux kernel](https://www.kernel.org/doc/html/v4.10/process/coding-style.html#commenting) or the [Doxygen](https://www.doxygen.nl/manual/docblocks.html) style.
+Internal Unikraft code follows mostly the code comments style of the [Linux kernel](https://www.kernel.org/doc/html/v4.10/process/coding-style.html#commenting) and the [Doxygen](https://www.doxygen.nl/manual/docblocks.html) style.
 Try to keep comments uniform across the file you are editing.
 
 ### Commit Message Format
