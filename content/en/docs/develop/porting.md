@@ -10,67 +10,47 @@ weight: 402
 
 _Segments of this tutorial were developed as part of the [Unikraft Summer of Code (2021)](https://usoc21.unikraft.org)_.
 
-Unikraft makes it easy to bring an existing application into the ecosystem or to
-be built as we dive into the ways in which you can bring an application which
-does not already exist within the Unikraft ecosystem. You wish to make a
-traditional Linux user space application (which you have access to its source
-code) to run using Unikraft and to be listed in the command above, and, of
-course, be run as a single, specialized unikernel. This tutorial shows you
-exactly how to do this.
+As we dive into the methods by which you may introduce a new application within the Unikraft ecosystem, the process becomes rather easy.
+If you want to port a standard Linux user-space program (for which you have the source code) to operate as a single, customized unikernel, this guide will teach you how to do it correctly.
 
-The scope of this tutorial only covers how to bring an application to Unikraft
-"from first principles"; that is, before you use Unikraft, you can access the
-source files of the application and compile the application natively for Linux
-user space. You wish to compile this application against the Unikraft core and
-any auxiliary necessary third-party libraries in order to make it a unikernel.
-Classic examples of these types of applications are open-source ones, such as
-NGINX, Redis, etc. Of course, you can work with code which is not open-source,
-but again, you must be able to access the source files and the build system
-before you can begin.
+The scope of this tutorial only covers how to bring an application to Unikraft "from first principles" (i.e. before porting the app into Unikraft, you have access to the source code and can compile it natively for Linux user space).
+The best applications you can port are open-source, such as NGINX, Redis, etc.
+Of course, you can work with code that is not open-source, but again, you need access to the source files and the build system beforehand.
 
-For the sake of simplicity, this tutorial will only be targeting applications
-which are C/C++-based. Unikraft supports other compile-time languages, such as
-Golang, Rust and WASM. However, the scope of this tutorial only follows an
-example with a C/++-based program. Many of the principles in this tutorial,
-however, can be applied in the same way for said languages, with a bit of
-context-specific work. Namely, this may include additional build rules for
-target files, using specific compilers and linkers, etc.
+For the sake of simplicity, this tutorial will only be targeting C/C++ applications. 
+Unikraft supports other compile-time languages, such as Golang, Rust, and WASM.
+Many of the principles in this tutorial, however, can be applied in the same way for the mentioned  languages, with a bit of context-specific work.
+Namely, this may include additional build rules for target files, using specific compilers and linkers, etc.
 
-It is worth noting that we are only targeting compile-time applications in this
-tutorial. Applications written a runtime language, such as Python or Lua,
-require an interpreter which must be brought to Unikraft first. There are
-already lots of these high-level languages supported by Unikraft. If you wish to
-run an application written in such a language, please check out the list of
-available applications. However, if the language you wish to run is interpreted
-and not yet available on Unikraft, porting the interpreter would be in the scope
-of this tutorial, as the steps here would cover the ones needed to bring the
-interpreter, which is a program after all, as a Unikraft unikernel application.
+It is worth noting that we are only targeting compile-time applications in this tutorial.
+Applications written in a runtime language, such as Python or Lua, require an interpreter which must be brought to Unikraft first.
+There are already lots of these high-level languages supported by Unikraft.
+If you wish to run an application written in such a language, please check out the list of available applications.
+However, if the language you wish to run is interpreted and not yet available on Unikraft, porting the interpreter would be in the scope of this tutorial, as the steps here would cover the ones needed to bring the interpreter, which is a program after all, as a Unikraft unikernel application.
 
 {{< alert theme="info" >}}
-In the case of higher-level languages which are interpreted, you do
-not need to follow this tutorial. Instead, simply mount the application code
-with the relevant Unikernel binary. For example, mounting a directory with
-python code to the python Unikraft unikernel. Please review [Session 04: Complex
-Applications](/docs/sessions/04-complex-applications/index.md) for more
-information on this topic.
+In the case of higher-level languages which are interpreted, you do not need to follow this tutorial.
+Instead, simply mount the application code with the relevant Unikernel binary.
+For example, mounting a directory with python code to the python Unikraft unikernel.
+Please review [Session 04: Complex Applications](/docs/sessions/04-complex-applications/index.md) for more information on this topic.
 {{< /alert >}}
 
 ### Starting with a Linux User Space Build
 
-For the remainder of this tutorial, we will be targeting the network utility program [`iperf3`](https://github.com/esnet/iperf) as our application example we wish to bring to Unikraft.
+For this tutorial, we will be targeting the network utility program [`iperf3`](https://github.com/esnet/iperf) as our application example we wish to bring to Unikraft.
 `iperf3` is a benchmarking tool, and is used to determine the bandwidth between a client and server.
-It makes for an excellent application to be run as a Unikernel because:
+It is an excellent application to be run as a Unikernel for several reasons:
 
  * It can run as a "server-type" application, receiving and processing requests for clients;
  * It is a standalone tool which does one thing;
- * It's [GNU Make](https://www.gnu.org/software/make/) and C-based; and,
- * It's quite useful :)
+ * It's [GNU Make](https://www.gnu.org/software/make/) and C-based;
+ * And it's quite useful :)
 
-Bringing an application to Unikraft will involve understanding some of the way in which the application works, especially how it is built.
+Understanding some aspects of how an application works, particularly how it is built, is required when bringing it to Unikraft.
 Usually during the porting process we also end up diving through the source code, and in the worst-case scenario, have to make a change to it.
-More on this is covered [later in this tutorial](#patching-the-application).
+More on this is covered in the [Patching](./docs/develop/patching) section.
 
-We start by simply trying to follow the steps to compile the application from source.
+Let's start by simply trying to follow the steps to compile the application from source.
 
 
 ### Compiling the Application from Source
@@ -84,21 +64,17 @@ Let's walk through the build process of `iperf3` from its `README`:
 
 1. First we obtain the source code of the application:
 
-   {{< code >}}
    ```bash
    $ git clone https://github.com/esnet/iperf.git
    ```
-   {{< /code >}}
 
 2. Then, we are asked to configure and build the application:
 
-   {{< code >}}
    ```bash
    $ cd ./iperf
    $ ./configure;
    $ make
    ```
-   {{< /code >}}
 
 If this has worked for you, your terminal will be greeted with several pieces of useful information:
 
@@ -108,13 +84,13 @@ If this has worked for you, your terminal will be greeted with several pieces of
    Usually this "`./configure`"-type program will raise any issues when it finds something missing.
    One of the things it is checking is whether you have relevant shared libraries (e.g. `.so` files) installed on your system which are necessary for the application to run.
    The application will be dynamically linked to these shared libraries and they will be referenced at runtime in a traditional Linux user space manner.
-   If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as via `apt-get`.
+   If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as `apt-get`.
 
    The `./configure` program also comes with a useful `--help` page where we can learn about which features we would like to turn on and off before the build.
-   It's useful to study this page and see what is available, as these can later become build options (see [exercise 2](#02-add-fortunes-to-unikrafts-boot-sequence)) for the application when it is brought to the Unikraft ecosystem. The only thing to notice for the case of `iperf3` is that it uses [OpenSSL](https://www.openssl.org).
-   [Unikraft already has a port of OpenSSL](https://github.com/unikraft/lib-openssl), which means we do not have to port this before starting.
+   It's useful to study this page and see what is available, as these can later become build options for the application when it is brought to the Unikraft ecosystem. The only thing to notice for the case of `iperf3` is that it uses [OpenSSL](https://www.openssl.org).
+   Unikraft already has a [port of OpenSSL](https://github.com/unikraft/lib-openssl), which means we do not have to port this before starting.
    **If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.**
-   The remainder of this tutorial also applies to porting libraries to Unikraft.
+   This tutorial also applies to porting libraries to Unikraft.
 
 1. When we next run `make` in the sequence above, we can see the intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application.
    It can be useful to note these files down, as we will be compiling these files with respect to Unikraft's build system.
@@ -126,10 +102,9 @@ In the next section, we prepare ourselves to bring this application to Unikraft.
 ### Setting up Your Workspace
 
 Applications which are brought to Unikraft are actually libraries.
-Everything in Unikraft is "libracized", so it is no surprise to find out that even applications are a form of library: they are a single component which interact with other components; have their own options and build files; and, interact in the same ways in which other libraries interact with each other.
-The "main" difference between actual libraries and applications, is that we later invoke the application's `main` method.
-The different ways to do this are [covered later in this tutorial](#invoking-the-applications-main-method).
-
+Everything in Unikraft is "librarized", even applications are a form of library: they are a single component which interact with other components; have their own options and build files; and, interact in the same ways in which libraries interact with each other.
+The "main" difference between actual libraries and applications, is that we later invoke the application's entry point (e.g. `main` function).
+The different ways to do this are covered later in this tutorial.
 
 ### Creating a Boilerplate Microlibrary for Your Application
 
@@ -141,19 +116,16 @@ Let's first start by initializing a working environment for ourselves:
 
 1. Let's create a workspace with a typical Unikraft structure using `kraft`:
 
-   {{< code >}}
    ```bash
    $ cd ~/workspace
    $ export UK_WORKDIR=$(pwd)
    $ kraft list update
    $ kraft list pull unikraft@staging
    ```
-   {{< /code >}}
 
    This will generate the necessary directory structure to build a new Unikraft application, and will also download the latest `staging` branch of Unikraft's core.
    When we list the directories, we should get something like this:
 
-   {{< code >}}
    ```bash
    tree -L 1
    .
@@ -165,7 +137,6 @@ Let's first start by initializing a working environment for ourselves:
 
    5 directories, 0 files
    ```
-   {{< /code >}}
 
 2. Let's now create a library for `iperf3`. We can use `kraft` to initialize
    some boilerplate for us too. To do this, we must first retrieve some
@@ -180,7 +151,6 @@ Let's first start by initializing a working environment for ourselves:
 
    We can now use `kraft` to initialize a template library for us:
 
-   {{< code >}}
    ```bash
    $ cd ~/workspace/libs
    $ kraft lib init \
@@ -191,66 +161,56 @@ Let's first start by initializing a working environment for ourselves:
       --origin https://github.com/esnet/iperf \
       iperf3
    ```
-   {{< /code >}}
 
    `kraft` will have now generated a new Git repository in `~/workspace/libs/iperf3` which contains some of the necessary files used to create an external library.
    It has also checked out the repository with a default branch of `staging` and created a blank (empty) commit as the base of the repository.
    This is standard practice for Unikraft repositories.
 
-   **Note:** Our new library is called `libiperf3` to Unikraft.
+   {{< alert theme="info" >}}
+   Our new library is called `libiperf3` to Unikraft.
    The last argument of `kraft lib init` will simply prepend `lib` to whatever string name you give it.
    If you are porting a library which is called `libsomething`, still pass the full name to `kraft`, it will replace instances of `liblibsomething` with `libsomething` during the initialization of the project where appropriate.
+   {{< /alert >}}
 
 3. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain. To do this, simply add the path of the newly initialized library like so:
 
-   {{< code >}}
    ```bash
    $ kraft list add ~/workspace/libs/iperf3
    ```
-   {{< /code >}}
 
    This will modify your `.kraftrc` file with a new local library.
    When you have added this library directory, run the update command so that `kraft` can realize it:
 
-   {{< code >}}
    ```bash
    $ kraft list update
    ```
-   {{< /code >}}
 
 4. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
    To view basic information about the library and to confirm everything has worked, you can run:
 
-   {{< code >}}
    ```bash
    $ kraft list show iperf3
    ```
-   {{< /code >}}
 
 ### Using Your Library in a Unikraft Unikernel Application
 
 Now that we have a library set up in `iperf3`'s name, located at
-`~/workspace/libs/iperf3`, we should immediately start using it so that we can
-start the porting effort.
+`~/workspace/libs/iperf3`, we should immediately start using it so that we can start the porting.
 
-To do this, we create a parallel application which uses both the library we are
-porting and the Unikraft core source code.
+To do this, we create a parallel application which uses both the library we are porting and the Unikraft core source code.
 
 1. First start by creating a new application structure, which we can do by
    initializing a blank project:
 
-   {{< code >}}
    ```bash
    $ cd ~/workspace/apps
    $ kraft init iperf3
    ```
-   {{< /code >}}
 
-2. We will now have a "empty" initialized project; you'll find boilerplate in
+2. We will now have an "empty" initialized project; you'll find boilerplate in
    this directory, including a `kraft.yaml` file which will look something like
    this:
 
-   {{< code >}}
    ```bash
    $ cd ~/workspace/apps/iperf3
    $ cat kraft.yaml
@@ -262,26 +222,22 @@ porting and the Unikraft core source code.
       - architecture: x86_84
         platform: kvm
    ```
-   {{< /code >}}
 
 3. After setting up your application project, we should add the new library we
    are working on to the application. This is done via:
 
-   {{< code >}}
    ```bash
    $ kraft lib add iperf3@staging
    ```
-   {{< /code >}}
 
    {{< alert theme="info" >}}
-   **Note:** Remember that the default branch of the library is `staging` from
+   Remember that the default branch of the library is `staging` from
    the `kraft lib init` command used above. If you change branch or use an
    alternative `--initial-branch`, set it in this step.
    {{< /alert >}}
 
    This command will update your `kraft.yaml` file:
 
-   {{< code >}}
    ```diff
    diff --git a/kraft.yaml b/kraft.yaml
    index 33696bb..c14e480 100644
@@ -295,25 +251,20 @@ porting and the Unikraft core source code.
    +  iperf3:
    +    version: staging
    ```
-   {{< /code >}}
 
 4. We are ready to configure the application to use the library.
    It should be possible to now see the boilerplate `iperf3` library within the [`menuconfig`](https://en.wikipedia.org/wiki/Menuconfig) system by running:
 
-   {{< code >}}
    ```bash
    $ kraft menuconfig
    ```
-   {{< /code >}}
 
    within the application folder.
    However, it will also be selected automatically since it is in the `kraft.yaml` file now if you run the configure step:
 
-   {{< code >}}
    ```bash
    $ kraft configure
    ```
-   {{< /code >}}
 
    By default, the application targets `kvm` on `x86_64`.
    Adjust appropriately for your use case either by updating the `kraft.yaml` file or by setting it the `menuconfig`.
@@ -329,17 +280,14 @@ This process is usually very iterative because it requires building the unikerne
 1. The first thing we must do before we start is to check that `fetch`ing the remote code for `iperf3` is possible.
    Let's try and do this by running in our application workspace:
 
-   {{< code >}}
    ```bash
    $ cd ~/workspace/apps/iperf3
    $ kraft fetch
    ```
-   {{< /code >}}
 
    If this is successful, we should see it download the remote zip file and we should see it saved within our Unikraft application's `build/`.
    The directory with the extracted contents should be located at:
 
-   {{< code >}}
    ```bash
    $ ls -lsh build/libiperf3/origin/iperf-3.10.1/
    total 988K
@@ -362,7 +310,6 @@ This process is usually very iterative because it requires building the unikerne
       0 drwxr-xr-x 2 root root  980 Jun  2 22:29 src
    4.0K -rwxr-xr-x 1 root root 1.9K Jun  2 22:29 test_commands.sh
    ```
-   {{< /code >}}
 
    If this has not worked, you must fiddle with the preamble at the top of the library's `Makefile.uk` to ensure that correct paths are being set.
    Remove the `build/` directory and try `fetch`ing again.
@@ -376,33 +323,27 @@ This process is usually very iterative because it requires building the unikerne
    `iperf3` has an `iperf_config.h` file, so let's copy this file into our Unikraft port of the application.
    Make an `include/` directory in the library's repository and copy the file:
 
-   {{< code >}}
    ```bash
    $ mkdir ~/workspace/libs/iperf3/include
    $ cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
    ```
-   {{< /code >}}
 
    Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that
    this directory exists:
 
-   {{< code >}}
    ```Makefile
    LIBIPERF3_CINCLUDES-y += -I$(LIBIPERF3_BASE)/include
    ```
-   {{< /code >}}
 
    We'll come back to `iperf_config.h`: likely it needs edits from us to turn features on or off depending on availability or applicability based on the unikernel-context.
-   We can also wrap build options here (see [exercise 2](#02-add-fortunes-to-unikrafts-boot-sequence)).
+   We can also wrap build options here.
 
 1. Next, let's run `make` with a special flag:
 
-   {{< code >}}
    ```bash
    $ cd build/libiperf3/origin/iperf-3.10.1/
    $ make -n
    ```
-   {{< /code >}}
 
    This flag, `-n`, has just shown us what `make` will run; the full commands for `gcc` including flags.
    What's interesting here is any line which start with:
@@ -436,12 +377,17 @@ This process is usually very iterative because it requires building the unikerne
    LIBIPERF3_SRCS-y += $(LIBIPERF3_SRC)/iperf_error.c
    ...
    ```
+   {{< alert theme="info" >}}
+   The path in the variable `LIBIPERF3_SRC` may need to be adjusted from the boilerplate code to match the layout of the application you are porting.
+   {{< /alert >}}
 
-   **Note:** The path in the variable `LIBIPERF3_SRC` may need to be adjusted from the boilerplate code to match the layout of the application you are porting.
 
-   **Tip:** It's best to add these files iteratively, i.e. one-by-one, and attempt the compilation process (step 5) in between adding all files.
+   {{< alert theme="info" >}}
+   It's best to add these files iteratively, i.e. one-by-one, and attempt the compilation process (step 5) in between adding all files.
    This will show you errors about what's missing and you can accurately determine which files are truly necessary for the build.
    In addition to this, we can also find intermittent errors which will be the result of incompatibilities between Unikraft and the application in question (covered in the next section on making patches).
+   {{< /alert >}}
+
 
 1. Now that we have added all the source files, let's try and build the application!  This step, again, usually occurs iteratively along with the previous step of adding a new file one-by-one.
    Because the application has been `configure`d and we have `fetch`ed the contents, we can simply try running the build in the Unikraft application directory:
@@ -452,7 +398,7 @@ This process is usually very iterative because it requires building the unikerne
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.
-   Remember in [the Unikraft build lifecycle](#the-unikraft-build-lifecycle) that there is a step which occurs between fetching the remote origin code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
+   Remember in [the Unikraft build lifecycle](./docs/concepts/build-process/) that there is a step which occurs between fetching the remote origin code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
    This may be useful for applications which have complex build systems or auxiliary files which need to be created or modified before they are built.
    Examples for `prepare`ing include:
 
