@@ -6,13 +6,31 @@ weight: 403
 ---
 
 ## Unikraft Boot Sequence
+The Unikraft boot sequence is dependent on the selected platform (linuxu, kvm, xen), but is very similar to how any other operating system would behave.
 
-In this task, we are diving a little deeper into Unikraft's core and finding an opportunity to meddle with internal features which can prove handy for certain application contexts.
-In this case, we are going to play with Unikraft's extensible boot sequence to provide fortunes during the boot of an application.
-After word got out, we found that everybody wanted fortunes, right before the application started and `main()` was called.
-This will provide the runtime of the unikernel with good fortune and save it from crashes.
+In the case of `linuxu`, the kernel is an ELF image, and it is loaded by the Linux loader.
 
-Unikraft calls various "constructor" (`ctor`) and "initialiser" (`init`) methods during its boot sequence.
+In the case of the `KVM` platform, the booting process involves more steps.
+First, the image is loaded from the disk into memory and the program sections are defined (see `plat/kvm/x86/link64.lds.S`, as example for the x86 architecture).
+Those sections include the `CTORTAB` and `INITTAB` sections, which are used later in the booting process.
+
+### x86_64 
+
+The next step is done by the bootloader, `Multiboot` in our case, which sets up some of the sections (zero-ing the `.bss`, writing the `.text` with the effective code) and passes information about the memory layout and available devices to the entry function, `_libkvmplat_start32`.
+The CPU is left in the `Protected Mode`, and a small piece of code is needed to enable the `Long Mode`, paging and extended instruction sets, like `AVX`.
+All those are done in `plat/kvm/x86/entry64.S`.
+After that, interrupts, traps, the heap, the ACPI tables, and others, are initialized, in the `_libkvmplat_entry` function, in `plat/kvm/x86/setup.c`.
+This is the last step of the booting sequence that depends on the platform or the architecture.
+Booting continues in the bootstraper library, `ukboot`, where constructors and initializers are called.
+
+### ARM
+
+In the case of `ARM`, there is no bootloader to load information about the system and set up the sections. Those steps are done manually, in `plat/kvm/arm/entry64.S`, along with other component initialization.
+After that, the booting sequence is similar to the one from `x86_64`.
+
+### CTORTAB and INITTAB
+
+Unikraft calls various "constructor" (`ctor`) and "initialiser" (`init`) methods during the booting step done in the boostrapping library.
 These constructors and initialisers are located in a static section of the final binary image, `ctortab` and `inittab`, respectively.
 There are 7 entry points during the boot sequence:
 
