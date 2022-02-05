@@ -7,10 +7,8 @@ weight: 600
 
 ## Community Events
 
-Unikraft makes frequent appearances in academic and open-source conferences and
-summits, including FOSDEM, XenSummit, and USENIX LISA.  Check out [past talks
-and presentations](/community/talks) for video recordings and access to slide
-materials.
+Unikraft makes frequent appearances in academic and open-source conferences and summits, including FOSDEM, XenSummit, and USENIX LISA.
+Check out [past talks and presentations](/community/talks) for video recordings and access to slide materials.
 
 ### Upcoming Events
 
@@ -22,13 +20,9 @@ Subscribe via [iCal](https://calendar.google.com/calendar/ical/c_0g04rms4mhv2gvl
 
 ## General Meetings
 
-Weekly technical meetings occur Wednesday at 13:00 CET on the [Unikraft Discord
-Server](https://bit.ly/UnikraftDiscord) on the `#monkey-business` voice channel.
-All meetings are minuted, you can access past and future meeting notes at
-https://github.com/unikraft/meeting-notes.  The general topics of weekly
-technical meetings vary and largely plays as a round-table for discussion of
-on-going projects, software releases and more.
+Weekly technical meetings occur Wednesday at 13:00 CET on the [Unikraft Discord Server](https://bit.ly/UnikraftDiscord) on the `#monkey-business` voice channel.
+All meetings are minuted, you can access past and future meeting notes at https://github.com/unikraft/meeting-notes.
+The general topics of weekly technical meetings vary and largely plays as a round-table for discussion of on-going projects, software releases and more.
 
-A weekly hacakthon occurs where project members hack on particular projects
-together. This occurs every Saturday between 09:00 and 15:00 CET and is led by
-[Răzvan Deaconescu](https://github.com/razvand).
+A weekly hacakthon occurs where project members hack on particular projects together.
+This occurs every Saturday between 09:00 and 13:00 CET and is led by [Răzvan Deaconescu](https://github.com/razvand).
