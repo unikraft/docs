@@ -28,7 +28,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
       <svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-red-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4H6v6h4V4z"></path><path d="M18 14h-4v6h4v-6z"></path><path d="M14 4h2v6m-2 0h4"></path><path d="M6 14h2v6m-2 0h4"></path></svg>
     </div>
     <div class="flex-auto ml-4">
-      <a class="mb-2 text-xl font-bold text-red-900 dark:text-red-200" href="/docs/utility-first">
+      <a class="mb-2 text-xl font-bold text-red-900 dark:text-red-200" href="/docs/concepts">
         What's a unikernel?
       </a>
       <div class="prose prose-sm text-red-900 dark:prose-dark">
@@ -42,7 +42,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
       <svg xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"></path></svg>
     </div>
     <div class="flex-auto ml-4">
-      <a class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200" href="/docs/responsive-design">
+      <a class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200" href="/docs/getting-started">
         Building your first unikernel
       </a>
       <div class="prose prose-sm text-blue-900 dark:prose-dark">
@@ -57,7 +57,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
     </div>
     <div class="flex-auto ml-4">
       <span class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200">
-        <a class="before:absolute before:inset-0" href="/docs/hover-focus-and-other-states">Operating a unikernel in production</a>
+        <a class="before:absolute before:inset-0" href="/docs/operations">Operating a unikernel in production</a>
       </span>
       <div class="prose prose-sm text-green-900 dark:prose-dark">
         Platform-specific tools, tutorials, techniques, troubleshooting guides and more for running unikernels in production environments.
@@ -71,7 +71,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
     </div>
     <div class="flex-auto ml-4">
       <span class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200">
-        <a class="before:absolute before:inset-0" href="/docs/dark-mode">
+        <a class="before:absolute before:inset-0" href="/docs/help-and-support">
           Help &amp; Support
         </a>
       </span>
@@ -87,7 +87,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
     </div>
     <div class="flex-auto ml-4">
       <span class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200">
-        <a class="before:absolute before:inset-0" href="/docs/reusing-styles">Specialised APIs</a>
+        <a class="before:absolute before:inset-0" href="/docs/concepts/architecture">Specialised APIs</a>
       </span>
       <div class="prose prose-sm text-gray-900 dark:prose-dark">
         Dive deeper into Unikraft internals and expose high-performance APIs and more to your application, for specific usecases.
@@ -101,7 +101,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
     </div>
     <div class="flex-auto ml-4">
       <span class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200">
-        <a class="before:absolute before:inset-0" href="/docs/adding-custom-styles">
+        <a class="before:absolute before:inset-0" href="/docs/develop"">
           Research &amp; Development
         </a>
       </span>
