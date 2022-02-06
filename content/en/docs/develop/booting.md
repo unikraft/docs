@@ -3,12 +3,18 @@ title: Booting
 date: 2020-01-11T14:09:21+09:00
 draft: false
 weight: 403
+description: |
+  Unikraft has an prograrmmable boot sequence which provides the ability to inject functionality at different moments of system initialization.  Learn how to how and where to introduce custom functionality.
 ---
 
 ## Unikraft Boot Sequence
 The Unikraft boot sequence is dependent on the selected platform (linuxu, kvm, xen), but is very similar to how any other operating system would behave.
 
+<<<<<<< Updated upstream
 In the case of `linuxu`, the kernel is an ELF image, and it is loaded by the Linux loader.
+=======
+Unikraft has an prograrmmable boot sequence which provides the ability to inject functionality at different moments of system initialization.
+>>>>>>> Stashed changes
 
 In the case of the `KVM` platform, the booting process involves more steps.
 First, the image is loaded from the disk into memory and the program sections are defined (see `plat/kvm/x86/link64.lds.S`, as example for the x86 architecture).

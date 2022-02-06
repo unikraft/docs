@@ -47,10 +47,15 @@ WORKDIR       ?= $(CURDIR)
 # Tools
 #
 DOCKER        ?= docker
+HUGO          ?= hugo
 
 #
 # Targets
 #
+.PHONY: all
+all:
+	$(HUGO)
+
 .PHONY: container
 container: DOCKER_BUILD_EXTRA ?=
 container: TAG ?= devenv

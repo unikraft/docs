@@ -13,8 +13,6 @@ The Unikraft project uses the Linux kernel coding style which is mostly true for
 Please note that ported libraries from existing sources may use different style definitions (e.g., `lib/fdt`).
 Please follow the appropriate style depending on where you want to modify or introduce new code.
 
-{{< alert icon="💡" text="You can find the documentation of the Linux kernel style <a href='https://www.kernel.org/doc/html/latest/process/coding-style.html'>here</a>." />}}
-
 You can also use `.clang-format` to check your patches.
 Most code closely follows an automatically-formatted style defined by the [.clang-format](https://github.com/unikraft/unikraft/blob/staging/.clang-format) file in the repository's root directory.
 However, since this is an automated formatting tool, it's not perfect, and the Unikraft code can deviate from the `clang-format`'s programmatically created output (especially in the aesthetics of assignment alignments).

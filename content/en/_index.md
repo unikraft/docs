@@ -12,13 +12,13 @@ landing:
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
-  subtext: By tailoring the operating system, libraries and configuration to the particular needs of your application, it vastly reduces virtual machine and container image sizes to a few KBs, drastically cutting down your software stack's attack surface.
+  subtext: By tailoring the operating system, libraries and configuration to the particular needs of your application, it vastly reduces virtual machine and container image sizes to a few KBs, provides blazing performance, and drastically cuts down your software stack's attack surface.
   points:
     - text: Blazing fast
       link: "#blazing-fast"
     - text: Developer-friendly
       link: "#developer-friendly"
-    - text: Small footprint
+    - text: Small footprint & green
       link: "#small-footprint"
     - text: Cloud-native ready
       link: "#cloud-native-ready"
@@ -36,8 +36,8 @@ blazingFast:
   feature: Blazing Fast
   header: Unikraft is faster than Linux
   leader: On Unikraft, NGINX is 166% faster than on Linux and 182% faster than on Docker
-  left: <strong>Unikraft out performs even well-configured custom Linux kernel images</strong>, even those with security mitigations turned off!  Compared to other Unikernel Development Kits, library OSes and containers, Unikraft still out performs.
-  right: We benchmarked NGINX throughput by throttling requests to the same payload size on other unikernels, Linux and Docker and demonstrate 182% performance improvement against the traditional containerization method Docker.
+  left: <strong>Unikraft outperforms well-configured custom Linux kernel images</strong>, even those with security mitigations turned off!  Compared to other Unikernel Development Kits, library OSes and containers, Unikraft still comes out on top.
+  right: We benchmarked NGINX throughput in terms of requests per second compared to other unikernels, Linux and Docker; Unikraft achieves 182% performance improvement with respect to Docker.
   callToAction: Unikraft has been extensively and carefully benchmarked, <a class=" font-medium text-blue-400 hover:underline" href="/docs/features/performance">read more about performance &rarr;</a>
 developerFriendly:
   feature: Developer Friendly
@@ -49,8 +49,8 @@ multiFeature:
   id1: "#"
   icon1: /assets/imgs/pallet.svg
   feature1: High density
-  leader1: Saturate servers and squeeze maximum utility.  8K VM guests on a single server.
-  link1: "#"
+  leader1: Saturate servers and squeeze maximum utility.  1K+ VM guests on a single server.
+  link1: /docs/features/performance
   id2: "#"
   icon2: /assets/imgs/binary-code.svg
   feature2: Binary Optimizations
@@ -64,26 +64,26 @@ researchBacked:
   feature: Research Backed
   leader: Built and used by leading academic institutes and companies
   about: Unikraft's design, performance and security have been extensively developed, evaluated and put into production at leading companies and academic institutes.
-  callToAction: Unikraft has appeared in top-tier research and industry conferences, <a class="font-medium text-blue-400 hover:underline" href="/community/research">read more about research and development &rarr;</a>
+  callToAction: The award-winning Unikraft research work has appeared in top-tier research and industry conferences, <a class="font-medium text-blue-400 hover:underline" href="/community/research">read more about research and development &rarr;</a>
 fullyModular:
   feature: Fully Modular
-  leader: Build highly customized, performant and secure VM images for your usecase
-  about: Unikraft is fully modular, with a constantly growing ecosystem with many popular open-source operating system and application libraries  like <code>musl</code> and <code>openssl</code> available for use, allowing you to pick and choose exactly what you need for your target.
+  leader: Build highly customized, performant and secure VM images for your use case
+  about: Unikraft is fully modular, with a constantly growing ecosystem with many popular open-source operating system and application libraries  like <code>musl</code> and <code>openssl</code> available for use, allowing you to pick and choose exactly what you need for your target application.
   featureRich: Feature Rich
   features:
     - count: 100+
       feature: <span class="font-medium text-white">Libraries</span> to choose from.
     - count: 25K+
-      feature: <span class="font-medium text-white">Options</span> to configure your application to.
+      feature: <span class="font-medium text-white">Options</span> to configure your application with.
     - count: 160+
-      feature: <span class="font-medium text-white">Syscalls</span> are available, covering more than 90% of usecases.
+      feature: <span class="font-medium text-white">Syscalls</span> are available, covering more than 90% of use cases.
 productionReady:
   feature: Production Ready
-  leader: Runs on all major cloud platforms
+  leader: Runs on Major Cloud Platforms
   about: Along with major CPU architectures, Unikraft can be deployed on leading cloud providers.
   callToAction: To target a specific cloud vendor, <a class=" font-medium text-blue-400 hover:underline" href="/docs/operations/cloud/">read more about deployments &rarr;</a>
 smallFootprint:
-  feature: Small Footprint
+  feature: Small Footprint & green
   leading: Unikraft is green &amp; efficient
   about: From cloud to embedded devices, running an application on Unikraft both increases efficiency and reduces power consumption as less resources are necessary.
   bubble1heading: <span class="text-4xl">70%</span> less
@@ -113,12 +113,16 @@ footer:
       links:
         - title: Meetings
           link: /docs/community/meetings
-        - title: Publictions
+        - title: Publications
           link: /docs/community/publications
         - title: Presentations & Talks
           link: /docs/community/talks
         - title: People
           link: /docs/community/people
+        - title: Privacy Policy
+          link: /privacy
+        - title: Imprint
+          link: /imprint
     - title: Features
       links:
         - title: Performance

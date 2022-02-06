@@ -56,6 +56,7 @@ RUN set -xe; \
     apt-get install -y \
       nodejs yarn; \
     npm install -g esbuild-linux-64; \
+    npm install; \
     cd /tmp; \
     curl -LO https://github.com/gohugoio/hugo/releases/download/v${HUGO_VER}/hugo_extended_${HUGO_VER}_Linux-64bit.tar.gz; \
     tar -xzf hugo_extended_${HUGO_VER}_Linux-64bit.tar.gz; \
@@ -69,16 +70,17 @@ ENV PATH="${PATH}:/usr/local/go/bin"
 ENTRYPOINT [ "" ]
 
 EXPOSE 1313
-CMD hugo server --bind=0.0.0.0
+CMD hugo server --bind=0.0.0.0 -p 1313
 
-FROM scratch AS production
+FROM devenv AS build-production
 
-COPY --from=build-production /etc/passwd /etc/group /etc/
-COPY --from=build-production /usr/local/nginx /usr/local/nginx
-COPY --from=local /src/public /usr/local/ngiwnx/html
-COPY etc/nginx.conf /usr/local/nginx/conf/nginx.conf
+RUN set -xe; \
+    make
 
-STOPSIGNAL SIGQUIT
-EXPOSE 80
-ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
-CMD ["-g", "daemon off;"]
+FROM nginx:1.21.6-alpine AS production
+
+COPY --from=build-production /usr/src/docs/public /usr/share/nginx/html
+COPY etc/nginx.conf /etc/nginx/nginx.conf
+
+# ENTRYPOINT ["/usr/local/nginx/sbin/nginx"]
+# CMD ["-g", "daemon off;"]

@@ -14,7 +14,7 @@
         @include on-event {
           @include themify($themes) {
             color: themed('pagination-number-color');
-            text-decoration: none;
+            text-decoration: underline;
           }      
         }
       }

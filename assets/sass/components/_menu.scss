@@ -114,6 +114,8 @@
       @include on-event {
         @include themify($themes) {
           color: themed('link-hover');
+          text-decoration: underline;
+
           svg {
             color: themed('link-hover');
             @include translateX(0.125rem);

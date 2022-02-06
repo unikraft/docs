@@ -110,6 +110,11 @@
   //   }
   // }
 
+  li > input {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
   code:not([class^=language]) {  
     padding: 3px 0;
     border-radius: 4px;

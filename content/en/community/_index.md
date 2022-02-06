@@ -9,5 +9,4 @@ enableToc: false
 
 ## Unikraft Open-Source Community
 
-The Unikraft Open-Source community, its users, contributors, and the culture
 
