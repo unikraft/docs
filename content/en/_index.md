@@ -102,7 +102,7 @@ footer:
     - title: Getting Started
       links:
         - title: What is a unikernel?
-          link: /docs/concepts/introduction
+          link: /docs/concepts/
         - title: Install CLI companion tool
           link: /docs/usage/install
         - title: Unikraft Cloud
