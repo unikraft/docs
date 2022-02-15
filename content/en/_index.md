@@ -112,13 +112,13 @@ footer:
     - title: Community
       links:
         - title: Meetings
-          link: /docs/community/meetings
+          link: /community/events
         - title: Publications
-          link: /docs/community/publications
+          link: /community/publications
         - title: Presentations & Talks
-          link: /docs/community/talks
+          link: /community/talks
         - title: People
-          link: /docs/community/people
+          link: /community/people
         - title: Privacy Policy
           link: /privacy
         - title: Imprint
