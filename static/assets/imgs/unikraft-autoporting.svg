@@ -30,9 +30,9 @@
 	.st24{fill:none;stroke:#12100B;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:2.7795,2.7795;}
 	.st25{fill:none;stroke:#12100B;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:2.8578,2.8578;}
 	.st26{fill:none;}
-	.st27{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
+	.st27{font-family:'Arial','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
 	.st28{font-size:7px;}
-	.st29{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
+	.st29{font-family:'Arial','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st30{font-size:9px;}
 	.st31{font-size:6px;}
 	.st32{font-family:Monaco, Menlo, "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", "Lucida Console", "Lucida Sans Typewriter", "Liberation Mono", "Nimbus Mono L", Monaco, Courier, monospace;}

@@ -5,7 +5,7 @@
 <style type="text/css">
 	.st0{fill:none;stroke:#808080;stroke-width:0.375;stroke-dasharray:1.5,3;}
 	.st1{fill:#808080;}
-	.st2{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
+	.st2{font-family:'Arial','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st3{font-size:9px;}
 	.st4{fill:none;stroke:#808080;stroke-width:0.75;stroke-dasharray:1.5,3;}
 	.st5{fill:none;stroke:#000000;stroke-width:0.75;stroke-dasharray:1.5,3;}
@@ -16,7 +16,7 @@
 	.st10{fill:#AFC1D6;}
 	.st11{fill:#CEF9F2;}
 	.st12{fill:#A9FFCB;}
-	.st13{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
+	.st13{font-family:'Arial','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
 </style>
 <line class="st0" x1="44" y1="116.2" x2="431.1" y2="116.2"/>
 <text transform="matrix(1 0 0 1 32.7451 119.1752)" class="st1 st2 st3">0</text>

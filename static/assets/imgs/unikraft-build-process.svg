@@ -20,7 +20,7 @@
 	.st14{font-size:8px;}
 	.st15{font-size:6px;}
 	.st16{font-size:7px;}
-	.st17{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
+	.st17{font-family:'Arial','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
 </style>
 <g id="Diagram">
 	<rect x="331.7" y="104.9" class="st0" width="48.2" height="17"/>
