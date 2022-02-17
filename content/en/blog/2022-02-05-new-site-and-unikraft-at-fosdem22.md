@@ -37,7 +37,7 @@ Mimas adds core features to support its development and deployment, including:
 For more details on this release, please check out the [release
 page](https://unikraft.org/release).
 
-#### Unikaft VSCode Extension
+#### Unikraft VSCode Extension
 
 A Visual Studio Code extension allowing developers to get the full benefits of
 the IDE when working on Unikraft source code.
