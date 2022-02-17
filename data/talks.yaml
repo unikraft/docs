@@ -31,6 +31,14 @@
   affiliation: University Politehnica of Bucharest
   venue: FOSDEM'22
 
+- title: "Deploying Unikernels in Production with Kubernetes"
+  year: 2021
+  link: https://kccncna2021.sched.com/event/lV2y/deploying-unikernels-in-production-with-kubernetes-alexander-jung-lancaster-university
+  video: https://www.youtube.com/watch?v=cV-xawN9_cg
+  speaker: Alexander Jung
+  affiliation: Lancaster University
+  venue: KubeCon + CloudNative North America 2021
+
 - title: "It's Time to Debloat the Cloud with Unikraft"
   year: 2021
   link: https://www.usenix.org/conference/lisa21/presentation/huici
