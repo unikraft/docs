@@ -2,6 +2,7 @@
   year: 2022
   link: https://fosdem.org/2022/schedule/event/skuenzer/
   slides: https://fosdem.org/2022/schedule/event/skuenzer/attachments/slides/4949/export/events/attachments/skuenzer/slides/4949/unikraft_microkernel_devroom_fosdem22.pdf
+  video: https://video.fosdem.org/2022/D.microkernel/skuenzer.webm
   speaker: Simon Kuenzer & Marc Rittinghaus
   affiliation: NEC Laboratories Europe & KIT
   venue: FOSDEM'22
@@ -9,6 +10,7 @@
 - title: "Rethinking the OS for Isolation Flexibility with FlexOS"
   year: 2022
   link: https://fosdem.org/2022/schedule/event/tee_flexos/
+  video: https://video.fosdem.org/2022/D.trusted-hardware/tee_flexos.webm
   speaker: Hugo Lefeuvre
   affiliation: The University of Manchester & imec-DistriNet Researchc Group, KU Leuven
   venue: FOSDEM'22
@@ -16,6 +18,7 @@
 - title: "Massive Unikernel Matrices with Unikraft, Concourse and More!"
   year: 2022
   link: https://fosdem.org/2022/schedule/event/massive_unikernel_matrices_with_unikraft_concourse_and_more/
+  video: https://video.fosdem.org/2022/D.cicd/massive_unikernel_matrices_with_unikraft_concourse_and_more.webm
   speaker: Alexander Jung
   affiliation: Unikraft UG (haftungsbeschränkt)
   venue: FOSDEM'22
@@ -23,6 +26,7 @@
 - title: "Unikraft Performance Monitoring with Prometheus"
   year: 2022
   link: https://fosdem.org/2022/schedule/event/unikraft/
+  video: https://youtu.be/hBiq2xjwECA
   speaker: Cezar Crăciunoiu
   affiliation: University Politehnica of Bucharest
   venue: FOSDEM'22
