@@ -12,7 +12,7 @@
   link: https://fosdem.org/2022/schedule/event/tee_flexos/
   video: https://video.fosdem.org/2022/D.trusted-hardware/tee_flexos.webm
   speaker: Hugo Lefeuvre
-  affiliation: The University of Manchester & imec-DistriNet Researchc Group, KU Leuven
+  affiliation: The University of Manchester
   venue: FOSDEM'22
 
 - title: "Massive Unikernel Matrices with Unikraft, Concourse and More!"
