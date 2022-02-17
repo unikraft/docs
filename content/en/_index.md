@@ -7,8 +7,8 @@ landing:
   quickStart: Quick Start
   notify:
     pill: What's New
-    text: Just released v0.7 (Mimas)
-    link: /blog/2022-02-05-new-site-and-unikraft-at-fosdem22
+    text: Security paper & tutorial at ASPLOS'22
+    link: /blog/2022-02-17-unikraft-at-asplos22
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
