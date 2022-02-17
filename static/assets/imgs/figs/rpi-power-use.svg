@@ -16,7 +16,7 @@
 	.st8{clip-path:url(#SVGID_00000152963731129025427360000010237854729825089194_);fill:#FFFFFF;}
 	
 		.st9{clip-path:url(#SVGID_00000152963731129025427360000010237854729825089194_);fill:none;stroke:#000000;stroke-width:0.5;stroke-miterlimit:10;}
-	.st10{font-family:'Inter';}
+	.st10{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st11{font-size:5.8362px;}
 	.st12{clip-path:url(#SVGID_00000103972769263614916190000016353466525330818433_);}
 	.st13{font-size:4.5392px;}

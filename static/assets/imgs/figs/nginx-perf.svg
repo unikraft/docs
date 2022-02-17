@@ -6,10 +6,10 @@
 	.st0{fill:none;stroke:#BBE0F5;stroke-width:0.964;stroke-linejoin:round;stroke-opacity:0.5;stroke-dasharray:4;}
 	.st1{fill:url(#SVGID_1_);}
 	.st2{fill:none;}
-	.st3{font-family:'Inter';font-weight:600;}
+	.st3{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
 	.st4{font-size:15px;}
 	.st5{opacity:0.8;enable-background:new;}
-	.st6{font-family:'Inter';}
+	.st6{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st7{font-size:12px;}
 	.st8{fill:#549BD2;}
 	.st9{font-size:11px;}

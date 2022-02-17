@@ -4,9 +4,9 @@
 <style type="text/css">
 	.st0{fill:none;}
 	.st1{fill:#014737;}
-	.st2{font-family:'Inter';}
+	.st2{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st3{font-size:12px;}
-	.st4{font-family:'Inter';font-weight:600;}
+	.st4{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;font-weight:600;}
 	.st5{font-size:15px;}
 	.st6{font-size:10px;}
 	.st7{fill:#057a55;}
