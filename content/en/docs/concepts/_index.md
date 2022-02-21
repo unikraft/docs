@@ -20,7 +20,7 @@ specifically designed for use in cloud environments where the host of such
 environments must be trusted to not interfere or intercept the data passed
 through the virtualized instance and must be trusted to keep the underlying
 system secure. This level of trust depends on many factors, where even one
-weakness could lead to the security benefits offered by unikernels mute.
+weakness could make the security benefits offered by unikernels moot.
 
 By tailoring the OS, libraries and tools to the particular needs of your
 specifically targeted application, a Unikraft unikernel image is both highly
