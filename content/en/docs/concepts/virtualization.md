@@ -17,7 +17,7 @@ Unikernels come somewhere between those 2.
 A virtual machine represents an abstraction of the hardware, over which an operating system can run, thinking that it is alone on the system and that it controls the hardware below it.
 Virtual machines rely on hypervisors to run properly.
 
-A hypervisor incorporates hardware-enabled multiplexing and segmentation of compute resources in order to better utilize, better secure and better facilitate the instantenous runtime of user-defined programs. Through By the means of a virtaul machine, an operating system is unaware of the multiplexing which happens to facilitate its existence. The hypervisor emulates devices on behalf of the guest OS, including providing access to virtual CPUs, virtual Interrupt Controllers and virtual NICs, which are segmented from the underlying hardware.
+A hypervisor incorporates hardware-enabled multiplexing and segmentation of compute resources in order to better utilize, better secure and better facilitate the instantenous runtime of user-defined programs. Through By the means of a virtual machine, an operating system is unaware of the multiplexing which happens to facilitate its existence. The hypervisor emulates devices on behalf of the guest OS, including providing access to virtual CPUs, virtual Interrupt Controllers and virtual NICs, which are segmented from the underlying hardware.
 
 The hypervisors can be classified in 2 categories: Type 1 and Type 2:
 
