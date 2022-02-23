@@ -2,6 +2,7 @@
   venue: ACM ASPLOS'22
   year: 2022
   pdf: https://arxiv.org/pdf/2112.06566.pdf
+  slides: https://unikraft.org/assets/files/asplos2022-slides.pdf
   authors:
     - name: Lefeuvre, H.
     - name: Bădoiu, V-A.
@@ -68,6 +69,7 @@
   link: https://dl.acm.org/doi/10.1145/3458336.3465292
   pdf: https://dl.acm.org/doi/pdf/10.1145/3458336.3465292
   video: https://www.youtube.com/watch?v=0abQORrJLS4
+  slides: https://unikraft.org/assets/files/hotos2021-slides.pdf
   authors:
     - name: Lefeuvre, H.
     - name: Bădoiu, V-A.
