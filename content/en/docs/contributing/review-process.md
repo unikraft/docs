@@ -26,7 +26,9 @@ following goals are met:**
    best approach.
  * **Efficiency**: Unikraft aims to be highly performant, as a result, new code
    introduced into Unikraft must itself be efficient.  Often-times this means
-   that 
+   that even if the new code is working, the reviewer could and should require
+   changes if the same functionality can be achieved in a more efficient way
+   (regarding both time and memory).
  * **Safety & security**: Unikraft's core code is kernel code and thus acts as a
    mission critical layer for the runtime of applications which are compiled
    against it.  To prevent disruption to the operation of application code and
