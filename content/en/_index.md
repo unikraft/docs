@@ -7,8 +7,8 @@ landing:
   quickStart: Quick Start
   notify:
     pill: What's New
-    text: Security paper & tutorial at ASPLOS'22
-    link: /blog/2022-02-17-unikraft-at-asplos22
+    text: Unikraft at Google Summer of Code!
+    link: /blog/2022-03-16-unikraft-gsoc-org
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
