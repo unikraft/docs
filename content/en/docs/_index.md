@@ -57,11 +57,7 @@ Get familiar with some of the core concepts which makes using a unikernel:
     </div>
     <div class="flex-auto ml-4">
       <span class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-200">
-<<<<<<< Updated upstream
         <a class="before:absolute before:inset-0" href="/docs/operations">Operating a unikernel in production</a>
-=======
-        <a class="before:absolute before:inset-0" href="/docs/operations/">Operating a unikernel in production</a>
->>>>>>> Stashed changes
       </span>
       <div class="prose prose-sm text-green-900 dark:prose-dark">
         Platform-specific tools, tutorials, techniques, troubleshooting guides and more for running unikernels in production environments.
