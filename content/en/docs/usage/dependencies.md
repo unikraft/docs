@@ -94,6 +94,18 @@ After every update to `.kraftrc`, run:
 $ kraft list update
 ```
 
+You may get the following error when running `kraft update`:
+
+```text
+GitHub rate limit exceeded. You can tell kraft to use a personal access token by setting the UK_KRAFT_GITHUB_TOKEN environmental variable.
+```
+
+In this case, create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and use the following command:
+
+```
+$ UK_KRAFT_GITHUB_TOKEN=<your_GitHub_token_here> kraft list update
+```
+
 ### Overview of `kraft list` command
 
 ```text
