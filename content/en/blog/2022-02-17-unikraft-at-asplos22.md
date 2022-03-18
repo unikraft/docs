@@ -15,6 +15,10 @@ The OS ships with an exploration technique helping the user navigate the vast sa
 We implement a prototype of the system and demonstrate, for several applications (Redis/NGINX/SQLite), FlexOS' vast configuration space as well as the efficiency of the exploration technique: we evaluate 80 FlexOS configurations for Redis and show how that space can be probabilistically subset to the 5 safest ones under a given performance budget.
 We also show that, under equivalent configurations, FlexOS performs similarly or better than several baselines/competitors.
 
+{{< alert theme="info" >}}
+**Update**: Following the presentation at the conference, **FlexOS was awarded "Distinguised Artifacts" at [ASPLOS'22](https://asplos-conference.org/2022/).** 🏆
+{{</ alert >}}
+
 More details about FlexOS can be found at https://project-flexos.github.io 
 
 ### Unikraft Tutorial
