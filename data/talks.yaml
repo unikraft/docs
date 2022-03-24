@@ -1,7 +1,7 @@
 - title: "Debugging and Monitoring in Unikraft: Everything beyond printf()"
   year: 2022
   link: https://fosdem.org/2022/schedule/event/skuenzer/
-  slides: https://fosdem.org/2022/schedule/event/skuenzer/attachments/slides/4949/export/events/attachments/skuenzer/slides/4949/unikraft_microkernel_devroom_fosdem22.pdf
+  slides: https://fosdem.org/2022/schedule/event/skuenzer/attachments/slides/5153/export/events/attachments/skuenzer/slides/5153/unikraft_microkerneldevroom_fosdem2022.pdf
   video: https://video.fosdem.org/2022/D.microkernel/skuenzer.webm
   speaker: Simon Kuenzer & Marc Rittinghaus
   affiliation: NEC Laboratories Europe & KIT
