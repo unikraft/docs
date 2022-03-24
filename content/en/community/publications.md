@@ -17,5 +17,6 @@ weight: 600
 Interested in doing a thesis on Unikraft?  Many current students and staff are
 active and offer support for practical and research-focused dissertation
 projects based on Unikraft at Bachelors, Masters and Ph.D level.  If you are
-iterested, please join the [Unikraft Discord Server](#) to get started a
+iterested, please join the
+[Unikraft Discord Server](https://bit.ly/UnikraftDiscord) to get started.
 {{</ alert >}}
