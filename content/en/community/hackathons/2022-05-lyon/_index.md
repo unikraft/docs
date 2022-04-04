@@ -4,9 +4,8 @@ date: 2022-03-31T03:40:00+02:00
 draft: false
 collapsible: true
 description: Information on the Lyon Unikraft Hackathon, May 14-15, 2022
+image: /assets/imgs/2022-05-hack-lyon.png
 ---
-
-<img src="/assets/imgs/2022-05-hack-lyon.png" />
 
 ## Lyon Unikraft Hackathon
 

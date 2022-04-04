@@ -9,6 +9,9 @@
     </nav>
 
     <article id="list-main" class="col-span-12 md:col-span-9 lg:col-span-10 {{ if $.context.Param "enableToc" }}xl:col-span-7{{ end }} border-l border-r border-gray-200">
+      {{ if $.context.Param "image" }}
+        <img src='{{ $.context.Param "image" }}' />
+      {{ end }}
       {{ partial "main/sections/list-main.html" .context }}
       {{ if and (.section_to_display) ($.context.Param "enableToc") }}
         {{ partial "main/sections/list-section.html" (dict "section_to_display" .section_to_display) }}
