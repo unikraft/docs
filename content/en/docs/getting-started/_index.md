@@ -55,7 +55,7 @@ pacman -Sy base-devel \
   python-setuptools 
 ```
 
-Use following command to install `uuid` package, which is available on Arch User Repository. Run following commands to install `uuid` from Arch User Repository. 
+Use following command to install `uuid` package, which is available on Arch User Repository. 
 
 ```shell-script
 git clone https://aur.archlinux.org/uuid.git
