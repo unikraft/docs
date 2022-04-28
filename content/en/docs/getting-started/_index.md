@@ -15,9 +15,11 @@ environment for your unikernel and painlessly manage dependencies for its build.
 
 ## Installing the CLI companion tool `kraft`
 
-The kraft tool and Unikraft build system have a number of package requirements;
-please run the following command (on apt-get-based systems) to install the
-requirements:
+The kraft tool and Unikraft build system have a number of package requirements. Follow the steps according to your Linux distribution.
+
+### Ubuntu, Debian & other APT-based distributions
+
+Please run the following command (on apt-get-based distributions) to install the requirements:
 
 ```shell-script
 apt-get install -y --no-install-recommends \
@@ -34,6 +36,35 @@ apt-get install -y --no-install-recommends \
   python3 \
   python3-setuptools
 ```
+
+### Arch Linux, Manjaro & other Pacman-based distributions
+
+Please run the following command (on pacman-based distributions) to install the requirements:
+
+```shell-script
+pacman -Sy base-devel \
+  ncurses \
+  libyaml \
+  flex \
+  git \
+  wget \
+  socat \
+  bison \
+  unzip \
+  python \
+  python-setuptools 
+```
+
+Use following command to install `uuid` package, which is available on Arch User Repository. Run following commands to install `uuid` from Arch User Repository. 
+
+```shell-script
+git clone https://aur.archlinux.org/uuid.git
+cd uuid
+makepkg -si
+```
+
+
+### Install Kraft
 
 To install kraft simply run:
 
