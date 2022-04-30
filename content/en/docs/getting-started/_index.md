@@ -52,7 +52,8 @@ pacman -Sy base-devel \
   bison \
   unzip \
   python \
-  python-setuptools 
+  python-setuptools \
+  python-pip
 ```
 
 Use following command to install `uuid` package, which is available on Arch User Repository. 
