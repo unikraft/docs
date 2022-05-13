@@ -103,7 +103,13 @@ Hence, in the `Library Configuration` section, we select the `9pfs` filesystem w
 Make sure, that both options `Virtio PCI device support` and `Virtio 9P device` are selected.
 Those can be found in: `Platform Configuration` -> `KVM guest` -> `Virtio`.
 
-![9pfs options](/complex-apps/images/9pfs_options.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/9pfs_options.png"
+  title="Figure 1"
+  caption="Selecting Virtio PCI device support within menuconfig"
+  position="center"
+>}}
 
 #### Build
 
@@ -187,7 +193,13 @@ Find the support files in the `work/02-change-filesystem-sqlite/` folder of the 
 First, we need to change the filesystem to InitRD.
 We can obtain that by using the command `make menuconfig` and from the `vfscore: Configuration` option, we select the default root filesystem as `InitRD`.
 
-![filesystems menu](/complex-apps/images/filesystems.png)
+{{< img
+  class="max-w-xl mx-auto"
+  src="./images/filesystems.png"
+  title="Figure 2"
+  caption="Selecting initramfs as the boot filesystem"
+  position="center"
+>}}
 
 The InitRD filesystem can load only [cpio archives](https://www.ibm.com/docs/en/zos/2.2.0?topic=formats-cpio-format-cpio-archives), so to load our SQLite script into RamFS filesystem, we need to create a cpio out of it.
 This can be achieved the following way: Create a folder, move the SQLite script in it, and `cd `in it.
@@ -291,7 +303,13 @@ $ make menuconfig
 We select  the Redis library from the configuration menu, `Library Configuration` section.
 For starters, we select the option to generate the main source file used to run the application.
 
-![redis selection menu](/complex-apps/images/redis_menu.png)
+{{< img
+  class="max-w-2xl mx-auto"
+  src="./images/redis_menu.png"
+  title="Figure 3"
+  caption="Viewing and selecting Redis configuration options"
+  position="center"
+>}}
 
 #### Build
 
@@ -313,7 +331,13 @@ Hence, in the configuration menu in the `Library Configuration` section, within 
 * `DHCP support`
 * `Socket API`
 
-![lwip selection menu](/complex-apps/images/lwip_redis_menu.png)
+{{< img
+  class="max-w-xl mx-auto"
+  src="./images/lwip_redis_menu.png"
+  title="Figure 4"
+  caption="Selecting LwIP options"
+  position="center"
+>}}
 
 The Redis application needs a configuration file to start.
 Thus, a filesystem should be selected in Unikraft.
@@ -354,12 +378,24 @@ The Redis server start command has several parameters:
 
 The following image is presenting an overview of our setup:
 
-![lwip selection menu](/complex-apps/images/redis_setup.png)
+{{< img
+  class="max-w-xl mx-auto"
+  src="./images/redis_setup.png"
+  title="Figure 5"
+  caption="Overview of the networking setup"
+  position="center"
+>}}
 
 Consequently, after running the script the Redis server will start and dnsmasq will dynamically assign an IP address.
 The IP can be seen in the output of qemu as bellow:
 
-![redis ip](/complex-apps/images/redis_ip.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/redis_ip.png"
+  title="Figure 6"
+  caption="Console log indicating the assignment of the IP address of the Redis server"
+  position="center"
+>}}
 
 Using the received IP, it will be possible to connect clients to it using `redis-cli` (the binary `redis-cli` is the folder for this work item):
 
