@@ -914,4 +914,4 @@ To test if your application ran successfully, check to see whether the original 
 
 ## Further Reading
 
-[Unikraft Documentation](http://docs.unikraft.org/index.html)
+[Unikraft Documentation](/docs)
