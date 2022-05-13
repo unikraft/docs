@@ -5,7 +5,7 @@ weight: 2
 summary: "Basic working (configure, build, run) with Unikraft and kraft. Expected time: 60min."
 ---
 
-_The presentation of this session can be found [here](/getting-started/slides.pdf)._
+_The presentation of this session can be found [here](/community/hackathons/2022-05-lyon/getting-started/slides.pdf)._
 
 In this session we are going to understand the basic layout of the Unikraft working directory, its environment variables, as well as what the most common Unikraft specific files mean.
 We are also going to take a look at how we can build basic applications and how we can extend their functionality and support by adding ported external libraries.
