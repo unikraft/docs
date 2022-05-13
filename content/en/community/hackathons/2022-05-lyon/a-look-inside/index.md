@@ -117,9 +117,13 @@ Those symbols are usable both in the C code, to include certain functionalities 
 This last thing is done in **Makefile.uk**, where source code files are added to libraries.
 During the build process, all the `Makefile.uk` files (from the Unikraft core and external libraries) are evaluated, and the selected files are compiled and linked, to form the Unikraft image.
 
-| ![unikraft build](/a-look-inside/images/build_uk.svg) |
-| :--: 									 |
-| The build process of Unikraft 					 |
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/build_uk.svg"
+  title="Figure 1"
+  caption="The build process of Unikraft"
+  position="center"
+>}}
 
 ## Summary
 
