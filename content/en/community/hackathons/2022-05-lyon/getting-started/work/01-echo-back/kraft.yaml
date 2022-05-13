@@ -1,0 +1,12 @@
+specification: '0.4'
+
+unikraft: '0.5'
+
+architectures:
+  x86_64: true
+  arm64: true
+      
+platforms:
+  linuxu: true
+  kvm: true
+  xen: true

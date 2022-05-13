@@ -1,0 +1,19 @@
+---
+specification: '0.5'
+name: 02-adding-filesystems
+unikraft:
+  version: 'staging'
+  kconfig:
+    - TODO
+    - TODO
+    - TODO
+targets:
+  - architecture: x86_64
+    platform: kvm
+libraries:
+  newlib:
+    version: 'staging'
+    kconfig:
+      - CONFIG_LIBNEWLIBC=y
+volumes:
+  TODO
