@@ -18,7 +18,13 @@ A unikernel is a single image file that can be loaded and run as a separate runn
 
 Summarily, Unikraft components are shown in the image below:
 
-![arch selection menu](/getting-started/images/unikraft_components.png)
+{{< img
+  class="max-w-sm mx-auto"
+  src="./images/unikraft_components.png"
+  title="Figure 1"
+  caption="Unikraft components"
+  position="center"
+>}}
 
 Unikraft is the core component, consisting of core / internal libraries, the build system, and platform and architecture code.
 It is the basis of any unikernel image.
@@ -428,20 +434,50 @@ $ UK_WORKDIR=~/.unikraft UK_ROOT=~/.unikraft/unikraft UK_LIBS=~/.unikraft/libs m
 
 We are met with the following configuration menu. Let's pick the architecture:
 
-![arch selection menu](/getting-started/images/menuconfig_select_arch.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_arch.png"
+  title="Figure 2"
+  caption="Top-level menu for accesing architecture selections"
+  position="center"
+>}}
 
-![arch selection menu2](/getting-started/images/menuconfig_select_arch2.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_arch2.png"
+  title="Figure 3"
+  caption="Second-level select to specify an architecture"
+  position="center"
+>}}
 
-![arch selection menu3](/getting-started/images/menuconfig_select_arch3.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_arch3.png"
+  title="Figure 4"
+  caption="Final selection of architecture"
+  position="center"
+>}}
 
 Now, press `Exit` (or hit the `Esc` key twice) until you return to the initial menu.
 
 We have now set our desired architecture, let's now proceed with the platform.
 We will choose both `linuxu` and `kvm`:
 
-![plat selection menu](/getting-started/images/menuconfig_select_plat.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_plat.png"
+  title="Figure 5"
+  caption="Top-level menu for accessing platform selection"
+  position="center"
+>}}
 
-![plat selection menu2](/getting-started/images/menuconfig_select_plat2.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_plat2.png"
+  title="Figure 6"
+  caption="Platform multiselect"
+  position="center"
+>}}
 
 `Save` and exit the configuration menu by repeatedly selecting `Exit`.
 
@@ -674,9 +710,21 @@ $(MAKECMDGOALS):
 
 Now, we configure it through `make menuconfig`.
 
-![lwip selection menu](/getting-started/images/menuconfig_select_lwip.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_lwip.png"
+  title="Figure 7"
+  caption="Top-level menu for accessing libraries"
+  position="center"
+>}}
 
-![lwip2 selection menu](/getting-started/images/menuconfig_select_lwip2.png)
+{{< img
+  class="max-w-3xl mx-auto"
+  src="./images/menuconfig_select_lwip2.png"
+  title="Figure 8"
+  caption="Selection of lwip (pressing the space bar will toggle)"
+  position="center"
+>}}
 
 If you noticed, the menu also automatically selected some other internal components that would be required by `lwip`.
 Now `Save` and `Exit` the configuration and run `make`.
@@ -823,11 +871,29 @@ LIBS := $(UK_LIBS)/lwip:$(UK_LIBS)/newlib
 And now, for the final step, through `make menuconfig` make sure you have selected `libnewlib` as well as `9pfs: 9p filesystem` inside the `Library Configuration` menu.
 We will also check these options inside `Library Configuration` -> `vfscore: Configuration`:
 
-![fs selection menu](/getting-started/images/menuconfig_select_fs.png)
+{{< img
+  class="max-w-2xl mx-auto"
+  src="./images/menuconfig_select_fs.png"
+  title="Figure 9"
+  caption="Configuring vfscore"
+  position="center"
+>}}
 
-![fs2 selection menu](/getting-started/images/menuconfig_select_fs2.png)
+{{< img
+  class="max-w-2xl mx-auto"
+  src="./images/menuconfig_select_fs2.png"
+  title="Figure 10"
+  caption="Option to change the default root filesystem driver"
+  position="center"
+>}}
 
-![fs3 selection menu](/getting-started/images/menuconfig_select_fs3.png)
+{{< img
+  class="max-w-2xl mx-auto"
+  src="./images/menuconfig_select_fs3.png"
+  title="Figure 11"
+  caption="Selection to specify 9pfs as the default filesystem driver"
+  position="center"
+>}}
 
 What is more, you should also have present in the current directory an additional directory called `fs0`:
 ```
