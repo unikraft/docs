@@ -5,7 +5,7 @@ weight: 3
 summary: "We take a look inside Unikraft internals - its build system and runtime infrastructure. Expected time 75min."
 ---
 
-## Required Tools and Resources
+## Inside the Config and Build System
 
 For this session, the following tools are needed: `qemu-kvm`, `qemu-system-x86_64`, `qemu-system-aarch64`, `gcc-aarch64-linux-gnu`.
 To install on Debian/Ubuntu use the following command
