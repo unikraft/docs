@@ -5,6 +5,8 @@ weight: 7
 summary: "We use the syscall shim layer to run unmodified (binary) applications. Expected time: 75min."
 ---
 
+##  Syscall Shim and Binary Compatibility Layer
+
 In this session we are going to understand how we can run applications using the binary compatibility layer as well as the inner workings of the system call shim layer.
 
 One of the obstacles when trying to use Unikraft could be the porting effort of your application.
