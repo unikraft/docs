@@ -73,7 +73,13 @@ Let's take an example that you can see in the below image:
 1. We reach a trap handler, that will call the correct kernel function based on the id we passed.
 1. The system call service routine is called.
 
-![system_call_image](https://qph.fs.quoracdn.net/main-qimg-0cb5c3a6e1fd7642ac988badc7598c0c)
+{{< img
+  class="max-w-xl mx-auto"
+  src="https://qph.fs.quoracdn.net/main-qimg-0cb5c3a6e1fd7642ac988badc7598c0c"
+  title="Figure 1"
+  caption="Overview of userspace and kernel space separation"
+  position="center"
+>}}
 
 Now, let's take a quick look at unikernels.
 As stated above, in Linux, we use system calls to talk to the operating system, but there is a slight problem.
@@ -395,7 +401,13 @@ To check that the config file is the correct one, go to the `app-elfloader/` dir
    It should look like the below picture.
    Take a moment and inspect all the sub-menus, especially the syscall-shim one.
 
-   ![Libraries configuration](images/config-image.png)
+   {{< img
+      class="max-w-xl mx-auto"
+      src="images/config-image.png"
+      title="Figure 2"
+      caption="Overview of library selection"
+      position="center"
+   >}}
 
 If everything seems correct, build the unikernel loader image:
 
