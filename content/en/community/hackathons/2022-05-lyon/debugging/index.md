@@ -84,7 +84,13 @@ The build system always creates two image files for each selected platform:
 Before using GDB, go to the configuration menu under `Build Options` and select a `Debug information level` that is bigger than 0.
 We recommend 3, the highest level.
 
-![debug information level](./images/debug_information_level.png)
+{{< img
+  class="max-w-xl mx-auto"
+  src="./images/debug_information_level.png"
+  title="Figure 1"
+  caption="Setting an optimization level"
+  position="center"
+>}}
 
 Once set, save the configuration and build your images.
 
