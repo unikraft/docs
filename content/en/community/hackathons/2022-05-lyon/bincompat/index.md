@@ -110,46 +110,6 @@ After the unikernel gets the binary the next step is to load it into memory.
 The dominant format for executables is the *Executable and Linkable File* format (ELF), so, in order to run executables we need an ELF loader.
 The job of the ELF Loader is to load the executable into the main memory.
 It does so by reading the program headers located in the ELF formatted executable and acting accordingly.
-For example, you can see the program headers of a program by running `readelf -l binary`:
-
-```
-$ readelf -l helloworld_binary
-
-Elf file type is DYN (Shared object file)
-Entry point 0x8940
-There are 8 program headers, starting at offset 64
-
-Program Headers:
-  Type           Offset             VirtAddr           PhysAddr
-                 FileSiz            MemSiz              Flags  Align
-  LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
-                 0x00000000000c013e 0x00000000000c013e  R E    0x200000
-  LOAD           0x00000000000c0e40 0x00000000002c0e40 0x00000000002c0e40
-                 0x00000000000053b8 0x0000000000006aa0  RW     0x200000
-  DYNAMIC        0x00000000000c3c18 0x00000000002c3c18 0x00000000002c3c18
-                 0x00000000000001b0 0x00000000000001b0  RW     0x8
-  NOTE           0x0000000000000200 0x0000000000000200 0x0000000000000200
-                 0x0000000000000044 0x0000000000000044  R      0x4
-  TLS            0x00000000000c0e40 0x00000000002c0e40 0x00000000002c0e40
-                 0x0000000000000020 0x0000000000000060  R      0x8
-  GNU_EH_FRAME   0x00000000000b3d00 0x00000000000b3d00 0x00000000000b3d00
-                 0x0000000000001afc 0x0000000000001afc  R      0x4
-  GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
-                 0x0000000000000000 0x0000000000000000  RW     0x10
-  GNU_RELRO      0x00000000000c0e40 0x00000000002c0e40 0x00000000002c0e40
-                 0x00000000000031c0 0x00000000000031c0  R      0x1
-
- Section to Segment mapping:
-  Segment Sections...
-   00     .note.ABI-tag .note.gnu.build-id .gnu.hash .dynsym .dynstr .rela.dyn .rela.plt .init .plt .plt.got .text __libc_freeres_fn __libc_thread_freeres_fn .fini .rodata .stapsdt.base .eh_frame_hdr .eh_frame .gcc_except_table
-   01     .tdata .init_array .fini_array .data.rel.ro .dynamic .got .data __libc_subfreeres __libc_IO_vtables __libc_atexit __libc_thread_subfreeres .bss __libc_freeres_ptrs
-   02     .dynamic
-   03     .note.ABI-tag .note.gnu.build-id
-   04     .tdata .tbss
-   05     .eh_frame_hdr
-   06
-   07     .tdata .init_array .fini_array .data.rel.ro .dynamic .got
-```
 
 As an overview of the whole process, when we want to run an application on Unikraft using binary compatibility, the first step is to pass the application to the unikernel as an initial ramdisk.
 Once the unikernel gets the application, the loader reads the executable segments and loads them accordingly.
@@ -332,18 +292,18 @@ It helps us run applications that were not build for Unikraft while, at the same
 
 ### Support Files
 
-Session support files are available [in the repository](https://github.com/unikraft/asplos22-tutorial).
+Session support files are available [in the repository](https://github.com/unikraft/docs/tree/main/content/en/community/hackathons/2022-05-lyon).
 The repository is already cloned in the virtual machine.
 
 If you want to clone the repository yourself, do
 
 ```
-$ git clone https://github.com/unikraft/asplos22-tutorial
+$ git clone https://github.com/unikraft/docs
 
-$ cd asplos22-tutorial/content/syscall_shim-bincompat/
+$ cd docs/content/en/community/hackathons/2022-05-lyon/bincompat/
 
-$ ls -F
-demo/  images/  index.md  work/
+$ ls
+images/  index.md  sol/  work/
 ```
 
 ### 00. Setup
@@ -353,281 +313,101 @@ For the practical work we will need the following prerequisites:
 * **gcc version >= 8** - installation guide [here](https://linuxize.com/post/how-to-install-gcc-compiler-on-ubuntu-18-04/)
 
 * **the elfloader application** - this is the implementation of our loader which is build like a normal Unikraft application.
-  You can clone the [ELF Loader repository](https://github.com/skuenzer/app-elfloader/), on the `usoc21` branch.
+  You can clone the [ELF Loader repository](https://github.com/unikraft/app-elfloader/), on the `lyon-hackathon` branch.
   This cloned repo should go into the `apps` folder in your Unikraft directory structure.
 
-* **the configuration file** - you can find the `config` files in the `work/01/` and `work/03/` folders of this session.
-
 * **lwip, zydis, libelf libs** - we have to clone all the repos coresponding to the previously mentioned libraries into the libs folder.
-  All of them have to be on the `staging` branch.
-    * [lwip](https://github.com/unikraft/lib-lwip)
+    * [forked lwip](https://github.com/razvand/lib-lwip), on the `lyon-hackathon` branch
     * [zydis](https://github.com/unikraft/lib-zydis)
     * [libelf](https://github.com/unikraft/lib-libelf)
 
-* **unikraft** - the [Unikraft repository](https://github.com/unikraft/unikraft) must also be cloned and checked out on the `usoc21` branch.
+* **unikraft** - the [forked Unikraft repository](https://github.com/razvand/unikraft-bincompat) must also be cloned and checked out on the `bin-compat` branch.
 
-These repositories are already cloned in the virtual machine, in the `~/syscall_shim-bincompat/` folder.
+* **test scripts** - the [run-app-elfloader repository](https://github.com/unikraft/run-app-elfloader) with the scripts to run the resulting Unikraft image with binary applications
+    * see the [README file](https://github.com/unikraft/run-app-elfloader/blob/master/README.md#run-app-elf-loader) for detailed information
 
-```
-syscall_shim-bincompat/
-`-- apps/
-|   `-- app-elfloader/ [usoc21]
-`-- libs/
-|   |-- libelf/ [staging]
-|   |-- lwip/ [staging]
-|   `-- zydis/ [staging]
-`-- unikraft/ [usoc21]
-```
+* **test applications** - the [static-pie-apps repository](https://github.com/unikraft/static-pie-apps) stores pre-compiled `static-pie` ELF files
 
-### 01. Compiling the ELF Loader Application
-
-The goal of this task is to make sure that our setup is correct.
-The first step is to copy the correct `.config` file into our application.
+In the end you would have the following setup:
 
 ```
-$ cp ~/asplos22-tutorial/content/syscall_shim-bincompat/work/01/config ~/syscall_shim-bincompat/apps/app-elfloader/.config
+.
+|-- apps/
+|   |-- app-elfloader/     [lyon-hackathon]
+|   |-- run-app-elfloader/
+|   `-- static-pie-apps/
+|-- libs/
+|   |-- libelf/
+|   |-- lwip/              [lyon-hackathon]
+|   `-- zydis/
+`-- unikraft/              [bincompat]
 ```
 
-To check that the config file is the correct one, go to the `app-elfloader/` directory and configure it:
+### 01. Run Binary Applications
 
-1. Change the directory to `~/syscall_shim-bincompat/apps/app-elfloader/`.
-1. Check the configuration:
+We want to test the `run-app-elfloader/` setup together with applications in `static-pie-apps/` repository.
 
-   ```
-   make menuconfig
-   ```
+Run as many executables as possible from the `static-pie-apps/` repository.
 
-1. Select `Library Configuration`.
-   It should look like the below picture.
-   Take a moment and inspect all the sub-menus, especially the syscall-shim one.
+See the instructions in the [README](https://github.com/unikraft/run-app-elfloader/blob/master/README.md) and run `redis-server` and `sqlite3` static PIE executables.
 
-   {{< img
-      class="max-w-xl mx-auto"
-      src="images/config-image.png"
-      title="Figure 2"
-      caption="Overview of library selection"
-      position="center"
-   >}}
+### 02. Debug Run
 
-If everything seems correct, build the unikernel loader image:
+See the instructions in the [README](https://github.com/unikraft/run-app-elfloader/blob/master/README.md#running-in-debugging-mode) to run an application in debugging mode.
+Add breakpoints to system call functions such as `uk_syscall_r_open`.
+
+### 03. Build app-elfloader from Existing Config
+
+Build the `app-elfloader` from an existing configuration.
+
+Copy the `.config` file from `work/03/config` to the `app-elfloader` folder.
+Now you can build it:
 
 ```
 $ make
 ```
 
-In the `build/` folder you should have the `elfloader_kvm-x86_64` binary.
-To also test if it runs correctly, copy the `qemu-guest` script from the `a-look-inside/` session:
+In the `build/` folder you should have the `app-elfloader_kvm-x86_64` binary.
+
+To run it, go to the `run-app-elfloader` folder and run the `run_elfloader` script by passing it the `-k` option with the correct path to the built binary.
+
+### 04. Doing it From Scratch
+
+Inside the `app-elfloder` folder, remove previous build and configuration files:
 
 ```
-$ cp ~/asplos22-tutorial/content/a-look-inside/work/02-adding-filesystems/qemu-guest ~/syscall_shim-bincompat/apps/app-elfloader/
+$ make distclean
 ```
 
-And use `qemu-guest` to run the ELF loader image:
+Now configure it from scratch by running:
 
 ```
-.../apps/app-elfloader$ ./qemu-guest -k build/elfloader_kvm-x86_64
-
-SeaBIOS (version 1.10.2-1ubuntu1)
-Booting from ROM...
-Powered by
-o.   .o       _ _               __ _
-Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
-oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
-oOo oOO| | | | |   (| | | (_) |  _) :_
- OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
-                  Tethys 0.5.0~825b1150
-[    0.105192] ERR:  <0x3f20000> [appelfloader] No image found (initrd parameter missing?)
+$ make menuconfig
 ```
 
-Because we did not pass an initial ramdisk, the loader does not have anything to load and prints the above error.
+Select the proper `ukdebug` configuration.
 
-### 02. Compile a Static-Pie Executable and Run It On Top of Unikraft
+Select `9PFS` as the default filesystem and mount it at boot time.
 
-The next step is to get an executable with the correct format.
-We require a static executable that is also PIE (*Position-Independent Executable*).
-
-We go to the `apps/app-elfloader/example/helloworld` directory.
-We can see that the directory has a `helloworld.c` (a simple helloworld program) and a `Makefile`.
-The program will be compiled as a static PIE:
-
-```Makefile
-RM = rm -f
-CC = gcc
-CFLAGS += -O2 -g -fpie # fpie generates position independet code in the object file
-LDFLAGS += -static-pie # static-pie makes the final linking generate a static and a pie executable
-LDLIBS +=
-
-all: helloworld
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-%: %.o
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
-helloworld: helloworld.o
-
-clean:
-	$(RM) *.o *~ core helloworld
-```
-
-We can now run `make` so we can get the `helloworld` executable:
+Now you can build it:
 
 ```
-.../apps/app-elfloader/example/helloworld$ make
-gcc -O2 -g -fpie -c helloworld.c -o helloworld.o
-gcc -static-pie helloworld.o  -o helloworld
-
-.../apps/app-elfloader/example/helloworld$ ldd helloworld
-	statically linked
-
-.../apps/app-elfloader/example/helloworld$ checksec --file=helloworld
-    Arch:     amd64-64-little
-    RELRO:    Full RELRO
-    Stack:    Canary found
-    NX:       NX enabled
-    PIE:      PIE enabled
+$ make
 ```
 
-We can see above from the `ldd` and `checksec` output that the `helloworld` executable is a static PIE.
+Test it using the `run_elfloader` script in the the `run-app-elfloader` repository.
 
-Now, the last part is to pass this executable to our unikernel.
-We can use the `-i` option to pass the initial ramdisk to the virtual machine.
+### 05. Build with Debugging
 
-```
-.../apps/app-elfloader$ qemu-guest -k build/elfloader_kvm-x86_64 -i example/helloworld/helloworld
+Use different `ukdebug` configurations and build the `app-elfloader` with those.
+Run applications and see the different messages they print.
 
-SeaBIOS (version 1.10.2-1ubuntu1)
-Booting from ROM...
-Powered by
-o.   .o       _ _               __ _
-Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
-oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
-oOo oOO| | | | |   (| | | (_) |  _) :_
- OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
-                  Tethys 0.5.0~825b1150
-Hello world!
-```
+### 06. Create your Own Application
 
-The binary is successfully loaded and executed.
+Create your own application as a static PIE ELF file.
+Use a programming language that provides static PIE ELF files.
 
-### 03. Diving Deeper
-
-Now that we saw how we can run an executable on top of Unikraft through binary compatibility, let's take a look at what happens behind the scenes.
-For this we have to compile the unikernel with debug printing.
-
-Copy the `config_debug` file to our application folder:
-
-```
-$ cp ~/asplos22-tutorial/content/syscall_shim-bincompat/work/03/config_debug ~/syscall_shim-bincompat/apps/app-elfloader/.config
-```
-
-Now, recompile the unikernel:
-
-```
-.../apps/app-elfloader$ make properclean
-[...]
-.../apps/app-elfloader$ make
-```
-
-Now, let's rerun the previously compiled executable on top of Unikraft:
-
-```
-.../apps/app-elfloader$ qemu-guest -k build/elfloader_kvm-x86_64 -i example/helloworld/helloworld
-
-SeaBIOS (version 1.10.2-1ubuntu1)
-Booting from ROM...
-Powered by
-o.   .o       _ _               __ _
-Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
-oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
-oOo oOO| | | | |   (| | | (_) |  _) :_
- OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
-                  Tethys 0.5.0~825b1150
-[    0.153848] dbg:  <0x3f20000> [libukboot] Call constructor: 0x10b810()...
-[    0.156271] dbg:  <0x3f20000> [appelfloader] Searching for image...
-[    0.159115] dbg:  <0x3f20000> [appelfloader] Load image...
-[    0.161569] dbg:  <0x3f20000> [appelfloader] build/elfloader_kvm-x86_64: ELF machine type: 62
-[    0.164844] dbg:  <0x3f20000> [appelfloader] build/elfloader_kvm-x86_64: ELF OS ABI: 3
-[    0.167843] dbg:  <0x3f20000> [appelfloader] build/elfloader_kvm-x86_64: ELF object type: 3
-[...]
-```
-
-We now have a more detailed output to see exactly what happens.
-The debug output is divided as follows:
-
-1. Debug information that comes from when the unikernel is executing.
-1. Debug information that comes from when the binary is executing.
-
-When the unikernel is executing (so our loader application) there are two phases:
-
-1. The *loading phase*: copies the contents of the binary at certain memory zones, as specified by the ELF header.
-   You can see the loading phase in the debug output:
-
-   ```
-   [appelfloader] Load image...
-   [...]
-   [appelfloader] build/elfloader_kvm-x86_64: Program/Library memory region: 0x3801000-0x3ac88e0 <- this is the memory zone where our binary will be mapped
-   [appelfloader] build/elfloader_kvm-x86_64: Copying 0x171000 - 0x23113e -> 0x3801000 - 0x38c113e <- actual copying of the binary
-   [appelfloader] build/elfloader_kvm-x86_64: Zeroing 0x38c113e - 0x38c113e <- zeroing out zones of the binary, like the bss
-   [...]
-   ```
-
-2. The *execution phase*: sets the correct information on the stack (for example environment variables) and jumps to the program entry point.
-
-   ```
-   [appelfloader] Execute image...
-   [appelfloader] build/elfloader_kvm-x86_64: image:          0x3801000 - 0x3ac88e0
-   [appelfloader] build/elfloader_kvm-x86_64: start:          0x3801000
-   [appelfloader] build/elfloader_kvm-x86_64: entry:          0x3809940
-   [appelfloader] build/elfloader_kvm-x86_64: ehdr_phoff:     0x40
-   [appelfloader] build/elfloader_kvm-x86_64: ehdr_phnum:     8
-   [appelfloader] build/elfloader_kvm-x86_64: ehdr_phentsize: 0x38
-   [appelfloader] build/elfloader_kvm-x86_64: rnd16 at 0x3f1ff20
-   [appelfloader] Jump to program entry point at 0x3809940...
-   ```
-
-From this point forward, the binary that we passed in the initial ramdisk starts executing.
-Now all the debug messages come from an operation that happened in the binary.
-We can also now see the syscall shim layer in action:
-
-```
-[libsyscall_shim] Binary system call request "write" (1) at ip:0x3851c21 (arg0=0x1, arg1=0x3c01640, ...)
-Hello world!
-```
-
-In the above case, the binary used a `write` system call in order to write *Hello world!* to standard output.
-
-### 04. Solve the Missing Syscall
-
-Let's try to run another binary on top of Unikraft.
-You can find the C program in the `04-missing-syscall/` directory.
-Try compiling it as static-pie and then run it on top of Unikraft.
-
-```
-[libsyscall_shim] Binary system call request "getcpu" (309) at ip:0x3851926 (arg0=0x3f1fc14, arg1=0x0, ...)
-[libsyscall_shim] syscall "getcpu" is not available
-[libsyscall_shim] Binary system call request "write" (1) at ip:0x3851cb1 (arg0=0x1, arg1=0x3c01640, ...)
-Here we are in the binary, calling getcpu
-Getcpu returned: -1
-```
-
-Your task is to print a debug message betweem the `Here we are in the binary` and `Getcpu returned` message above and also make the `sched_getcpu()` return 0.
-
-**Hint 1**: [Syscall Shim Layer](http://docs.unikraft.org/developers-app.html#syscall-shim-layer)
-
-**Hint 2**: Check the `brk.c`, `Makefile.uk` and `exportsyms.uk` files in the `app-elfloader` directory.
-You do not have to use `UK_LLSYSCALL_R_DEFINE`, instead, use the two other macros previously described in the session (eg. `UK_SYSCALL_DEFINE` and `UK_SYSCALL_R_DEFINE`).
-
-### 05. Load the Binary from the Filesystem
-
-Up until now, we passed the binary as an initial ramdisk image.
-We aimt to pass it as a file in a mounted filesytem.
-
-Create a folder, copy executable files in that folder and mount it using 9pfs support.
-The open the file in `main.c` annd load it.
-
-**Hint**: Check the filesystem work items in the ["Inside the config and build system" session](../a-look-inside/).
+Run it with the `app-elfloader`.
 
 ## Further Reading
 
