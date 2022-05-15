@@ -25,9 +25,10 @@ The hosts of the hackathon are:
 * Djob Mvondo, Assistant Professor at Rennes University
 
 The Unikraft community will be present on-site for the hackathon:
-* [Pierre Olivier](https://sites.google.com/view/pierreolivier) (UoM)
-* [Hugo Lefeuvre](https://www.research.manchester.ac.uk/portal/en/researchers/hugo-lefeuvre(6a7c2d5d-c88b-427d-9a6f-5a1fa3ceae8f).html) (UoM)
-* [Răzvan Deaconescu](https://github.com/razvand/) (UPB)
+* [Hugo Lefeuvre](https://www.research.manchester.ac.uk/portal/en/researchers/hugo-lefeuvre(6a7c2d5d-c88b-427d-9a6f-5a1fa3ceae8f).html) (UoM) (onsite)
+* [Gaulthier Gain](https://github.com/gaulthiergain) (ULiege) (onsite)
+* [Pierre Olivier](https://sites.google.com/view/pierreolivier) (UoM) (online)
+* [Răzvan Deaconescu](https://github.com/razvand/) (UPB) (online)
 
 Other members of the Unikraft community will provide online support on [Discord](https://bit.ly/UnikraftDiscord).
 
