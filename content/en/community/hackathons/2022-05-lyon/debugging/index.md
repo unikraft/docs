@@ -5,9 +5,9 @@ weight: 4
 summary: "We discuss about using GDB to debug Unikraft. Expected time: 75min."
 ---
 
-_The presentation of this session can be found [here](/community/hackathons/2022-05-lyon/debugging/slides.pdf)._
-
 ## Debugging in Unikraft
+
+_The slides for this session can be found [here](/community/hackathons/2022-05-lyon/debugging/slides.pdf)._
 
 Because unikernels aim to be a more efficient method of virtualization, this can sometimes cause problems.
 This session aims to familiarize you to solve any problem encountered during the development using **GDB**.
