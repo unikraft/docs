@@ -7,6 +7,8 @@ summary: "We will run full-fledged applications on top of Unikraft (nginx, redis
 
 ## Running Complex Applications
 
+_The slides for this session can be found [here](/community/hackathons/2022-05-lyon/complex-apps/slides.pdf)._
+
 In this session, we are going to run some real-world applications on top of Unikraft.
 
 ### Support Files
