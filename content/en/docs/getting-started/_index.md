@@ -88,9 +88,13 @@ Building an Application
 The simplest way to get the sources for, build and run an application is by running the following commands:
 
 ```bash
+kraft list update
 kraft list
 kraft up -p PLATFORM -m ARCHITECTURE APP
 ```
+
+You may need to run `kraft list update` using a GitHub token.
+More details on the [usage page](docs/usage/dependencies).
 
 You can also build and run an applications from the existing templates by using the `-t` option.
 For example, building and running the [helloworld app](https://github.com/unikraft/app-helloworld):
