@@ -12,6 +12,13 @@ image: /assets/imgs/2022-05-hack-lyon.png
 Unikraft and [École Normale Supérieure de Lyon (ENS de Lyon)](http://www.ens-lyon.fr/en/) come together to organize the first **Unikraft Lyon Hackathon** to be held Saturday and Sunday, May 14-15, 2022.
 The hackathon will take place face-to-face with the possibility to join virtually via [Unikraft's Discord server](https://bit.ly/UnikraftDiscord).
 
+### Hackathon Winners
+
+Congratulations to Team #3 for winning the Lyon Unikraft Hackathon contributor challenges:
+* [Raphaël Colin](https://github.com/Raphalex46), from University of Strasbourg
+* [Yves Kone](https://github.com/YvesKO), from ENS de Lyon
+* [Théophile Dubuc](https://github.com/Kr0kspluish), from ENS de Lyon
+
 ### Registration
 
 To take part in the hackathon, either on-site or online, please fill this [registration form](https://forms.gle/Auhr6n8zwWChStdWA).
