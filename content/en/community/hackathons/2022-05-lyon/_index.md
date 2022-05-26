@@ -17,6 +17,7 @@ The hackathon will take place face-to-face with the possibility to join virtuall
 Congratulations to Team #3 for winning the Lyon Unikraft Hackathon contributor challenges:
 * [Raphaël Colin](https://github.com/Raphalex46), from University of Strasbourg
 * [Yves Kone](https://github.com/YvesKO), from ENS de Lyon
+* [Brice Dufy Teguia Wakam](https://github.com/brisco007), from ENS de Lyon
 * [Théophile Dubuc](https://github.com/Kr0kspluish), from ENS de Lyon
 
 ### Registration
