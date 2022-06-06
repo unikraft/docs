@@ -1,9 +1,10 @@
 ---
-title: Lyon Hackathon
+title: Aachen 2022
 date: 2022-06-96T13:40:00+02:00
 draft: false
 collapsible: true
 description: Information on the Aachen Unikraft Hackathon, June 25-26, 2022
+image: /assets/imgs/2022-06-hack-aachen.png
 ---
 
 ## Aachen Unikraft Hackathon
