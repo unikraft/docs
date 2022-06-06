@@ -1,5 +1,5 @@
 ---
-title: Lyon Hackathon
+title: Lyon 2022
 date: 2022-03-31T03:40:00+02:00
 draft: false
 collapsible: true
