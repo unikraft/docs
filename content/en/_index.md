@@ -7,8 +7,8 @@ landing:
   quickStart: Quick Start
   notify:
     pill: What's New
-    text: Just released v0.8.0 (Enceladus)
-    link: /blog/2022-03-29-unikraft-releases-enceladus
+    text: Join us at the Aachen Hackathon!
+    link: /community/hackathons/2022-06-aachen/
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
