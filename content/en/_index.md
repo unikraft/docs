@@ -7,8 +7,8 @@ landing:
   quickStart: Quick Start
   notify:
     pill: What's New
-    text: Join us at the Aachen Hackathon!
-    link: /community/hackathons/2022-06-aachen/
+    text: Just released v0.9.0 (Hyperion)!
+    link: /blog/2022-06-13-unikraft-releases-hyperion
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
