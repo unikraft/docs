@@ -75,3 +75,20 @@ devenv:
 		--volume $(WORKDIR):/usr/src/docs \
 		--entrypoint bash \
 		$(IMAGE):devenv
+
+.PHONY: serve
+serve: HOST ?= localhost
+serve:
+	$(HUGO) \
+		serve \
+		--verbose \
+		--debug \
+		--bind 0.0.0.0 \
+		-p $(PORT) \
+		-b http://$(HOST):$(PORT) \
+		--templateMetrics \
+		--templateMetricsHints \
+		--printMemoryUsage \
+		--verbose \
+		--disableLiveReload \
+		--enableGitInfo
