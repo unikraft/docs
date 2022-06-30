@@ -31,7 +31,7 @@ FROM unikraft/kraft:staging AS devenv
 
 LABEL maintainer "Alexander Jung <a.jung@lancs.ac.uk>"
 
-ARG HUGO_VER=0.85.0
+ARG HUGO_VER=0.98.0
 ARG GO_VER=1.17.6
 ARG BUILD_REF=latest
 
