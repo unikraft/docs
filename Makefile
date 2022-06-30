@@ -58,10 +58,14 @@ all:
 
 .PHONY: container
 container: DOCKER_BUILD_EXTRA ?=
+container: HUGO_ARCH ?= 64bit
+container: GO_ARCH ?= amd64
 container: TAG ?= devenv
 container: TARGET ?= devenv
 container:
 	$(DOCKER) build \
+		--build-arg HUGO_ARCH=$(HUGO_ARCH) \
+		--build-arg GO_ARCH=$(GO_ARCH) \
 		--file $(WORKDIR)/Dockerfile \
 		--target $(TARGET) \
 		--tag $(IMAGE):$(TAG) \
