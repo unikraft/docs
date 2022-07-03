@@ -32,8 +32,15 @@ apt-get install -y --no-install-recommends \
   unzip \
   uuid-runtime \
   python3 \
-  python3-setuptools
+  python3-setuptools \
+  python3-pip
 ```
+
+## Installing `kraft` on Fedora and other dnf-based-systems
+Please run following commands to install `kraft` on Fedora and other dnf-based systems.
+```bash
+sudo dnf install @development-tools ncurses-devel libyaml flex git wget socat bison unzip libuuid python3 python3-setuptools
+```  
 
 To install kraft simply run:
 
