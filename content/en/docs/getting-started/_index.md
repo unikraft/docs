@@ -32,8 +32,11 @@ apt-get install -y --no-install-recommends \
   unzip \
   uuid-runtime \
   python3 \
-  python3-setuptools
+  python3-setuptools \
+  python3-pip
 ```
+
+
 
 To install kraft simply run:
 
