@@ -23,6 +23,29 @@ The avalaible applications that have been ported on top of Unikraft are located 
 An important role of the core Unikraft component is providing support for different platforms and architectures.
 A platform is the virtualization / runtime environment used to run the resulting unikernel image.
 
+## Unikraft directories structure
+
+By default, all components pulled by `kraft` are saved to `~/.unikraft/` directory, which is also the default value for the `UK_WORKDIR` environment variable used by `kraft`.
+This is the usual layout of the `~/.unikraft` directory:
+
+```text
+|-- apps - This is where you would normally place existing app builds
+|-- archs - Here we place our custom arch's files
+|-- libs - This is where the build system looks for external library pool sources
+|-- plats - The files for our custom plats are placed here
+`-- unikraft - The core source code of the Unikraft Unikernel
+```
+
+If you want to keep your unikraft components in a different location, you can do that and export the environment variable `UK_WORKDIR`.
+Apart from that, there are also environment variables available for the above subdirectories:
+
+| Environment Variable |                       Purpouse                       |         Default        |
+| -------------------- | ---------------------------------------------------- | ---------------------- |
+| `UK_ROOT`            | The directory for Unikraft's core source code        | `$UK_WORKDIR/unikraft` |
+| `UK_LIBS`            | The directory of all the external Unikraft libraries | `$UK_WORKDIR/libs`     |
+| `UK_APPS`            | The directory of all the template applications       | `$UK_WORKDIR/apps`     |
+
+
 ## `kraft list`
 
 You can find a list of all aplication, libraries and platforms by using:
