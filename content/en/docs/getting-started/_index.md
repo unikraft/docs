@@ -83,7 +83,7 @@ Help:
   https://github.com/unikraft/kraft
 ```
 
-Building an Application
+## Building an Application
 
 The simplest way to get the sources for, build and run an application is by running the following commands:
 
