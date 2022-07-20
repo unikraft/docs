@@ -1,9 +1,7 @@
 +++
 title = "Improving security and isolation of Unikraft with Intel SGX "
 date = "2022-06-13T00:00:00+01:00"
-authors = [
-  "Xiangyi Meng"
-]
+authors = "Xiangyi Meng"
 tags = ["Security", "Intel SGX"]
 +++
 
