@@ -22,7 +22,7 @@
       {{ $cur := .PageNumber }}
       {{ if in ($.Scratch.Get "show") $cur }}
         <li
-        {{ if eq . $pag }}class="active"{{ end }}><a href="{{ .Permalink }}">{{ .PageNumber }}</a></li>
+        {{ if eq . $pag }}class="active"{{ end }}><a href="{{ .URL }}">{{ .PageNumber }}</a></li>
       {{ else if in (slice 2 (sub $total 1)) $cur }}
         <li class="disabled"><a name="">&hellip;</a></li>
       {{ end }}
