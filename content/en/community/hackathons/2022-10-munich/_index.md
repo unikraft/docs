@@ -28,26 +28,26 @@ The host of the hackathon are:
 * [Jörg Ott](https://www.professoren.tum.de/en/ott-joerg)
 * [Sophia Adelmeier](https://dse.in.tum.de/contact/)
 
-As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) (UPB) and other community members will be present on-site for the hackathon.
+As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) (UPB), [Alexander Jung](https://github.com/nderjung) and other community members will be present on-site for the hackathon.
 
 ### Schedule
 
 **Saturday, October 22, 2022**
 
-| Time (CET)    | Session                                             |
-| ------------- | --------------------------------------------------- |
-| 10:00 - 10:15 | High-level presentation of unikernels and Unikraft |
-| 10:15 - 11:15 | Introduction to Unikraft. First steps in configuring, building |
-| 11:15 - 11:30 | Break |
-| 11:30 - 12:45 | Inside Unikraft: Building, configuring, using different libraries |
-| 12:45 - 14:00 | Lunch |
-| 14:00 - 15:00 | Debugging in Unikraft |
-| 15:00 - 16:00 | Running (Complex) Application in Unikraft |
-| 16:00 - 16:15 | Break |
-| 16:15 - 17:30 | Lightweight and extensible unikernels (Masanori Misono) <br />
- Unikernels for FPGAs (Atsushi Koshiba) <br />
- Nested acceleration with unikernels (Charalampos Mainas) <br />
- Lightweight virtualization (Peter Okelmann) |
+| Time (CET)    | Session                                                           | Presenter          |
+| ------------- | ----------------------------------------------------------------- | ------------------ |
+| 10:00 - 10:15 | High-level presentation of unikernels and Unikraft                | Răzvan Deaconescu  |
+| 10:15 - 11:15 | Introduction to Unikraft. First steps in configuring, building    | Alexander Jung     |
+| 11:15 - 11:30 | Break                                                             |                    |
+| 11:30 - 12:45 | Inside Unikraft: Building, configuring, using different libraries | Răzvan Deaconescu  |
+| 12:45 - 14:00 | Lunch                                                             |                    |
+| 14:00 - 15:00 | Debugging in Unikraft                                             | Răzvan Deaconescu  |
+| 15:00 - 16:00 | Running (Complex) Application in Unikraft                         | Alexander Jung     |
+| 16:00 - 16:15 | Break                                                             |                    |
+| 16:15 - 16:30 | Lightweight and extensible unikernels                             | Masanori Misono    |
+| 16:30 - 16:45 | Unikernels for FPGAs                                              | Atsushi Koshiba    |
+| 16:45 - 17:00 | Nested acceleration with unikernels                               | Charalampos Mainas |
+| 17:00 - 17:30 | Lightweight virtualization                                        | Peter Okelmann     |
 
 
 **Sunday, October 23, 2022**
