@@ -146,7 +146,7 @@ At the moment, the eventpoll API is included in `vfscore` and tightly based on h
 
 #### Future work
 
-In a future release of Unikraft we intend to break up `vfscore` such that the registration of file descriptors (fds) [into its own  library](https://github.com/unikraft/unikraft/issues/52) and so the eventpoll API will be moved to this new library and perhaps be in part redesigned to be more Unikraft-specific.
+In a future release of Unikraft we intend to break up `vfscore` such that the registration of file descriptors (fds) is facilitated by [its own library](https://github.com/unikraft/unikraft/issues/52) and so the eventpoll API will be moved to this new library and perhaps be, in part, redesigned to be more Unikraft-specific.
 
 The purpose breaking the up the registration of file descriptors and with the internal `vfscore` library which facilitates all POSIX operations on files (`open`, `close`, etc.), is that in some unique cases, unikernels may not necessarily need to deal with these operations specifically but wish to interact with a file descriptor nonetheless (for example, in the case of the newly introduced `posix-socket` library where no file may be used but a file descriptor is required to manage the socket itself).
 
@@ -181,7 +181,6 @@ Fully functional support will rely on adding SMP-aware scheduling.
  -->
  
 In v0.10.0, we also add the x86_64 implementation on top of [Unikraft's abstract the SMP API introduced in v0.9.0](https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion/#a-new-common-smp-api), which provides the means to initialize and execute code on secondary CPU cores.
-Initializing unikernel VMs now on x86 with more than one core will now delegate multi-threaded applications to these cores, which can increase overall performance of your unikernel application.
 
 #### Implementation
 
@@ -189,7 +188,6 @@ Processor discovery on x86 is done using the [Advanced Configuration and Power I
 In order to enable secondary cores and generate inter-processor interrupts, however, we [added support for the x2APIC]([#link-to-commit](https://github.com/unikraft/unikraft/pull/502/commits/142e84215d3043b259ecb728c4ff36b1511bbbc3)).
 In contrast to the xAPIC, the x2APIC extends the processor ID to 32-bits and is accessed solely via Model Specific Registers (MSRs).
 There is currently no support for the APIC and xAPIC, which are accessed via memory-mapped I/O.
-
 
 Currently, the legacy i8259 PICs are still used to process IRQs from timers and devices.
 Both the PICs and the processor-local APICs (LAPIC) are active at the same time, where the LAPICs only route SMP-related IRQs.
@@ -212,7 +210,7 @@ To make this work, we introduced per-processor instances of relevant data struct
 
 ```
 CPU ─────┐ per CPU
-        ▼
+         ▼
 ┌──────────────────┐
 │       GDT        │     ┌──────────────────┐
 ├──────────────────┤  ┌─►│       TSS        │
@@ -320,6 +318,7 @@ This initial introduction of SMP for x86 keeps both the PICs and the APIC active
 
 In a future release, we intend to transition the x86 platform to a modular design comparable to the GICv2 / GICv3 drivers used on ARM and transparently use PICs **OR** APIC.
 However, this will require more extensive changes also for pure APIC operation (e.g., 256 trap vectors, support for I/O APIC, etc.).
+Finally, we intend to map the use of SMP against the internal scheduling system such that multi-threaded applications can offload work onto secondary cores.
 
 ### Paging support on arm64 according to VMSAv8-64
 
