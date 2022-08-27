@@ -1,0 +1,26 @@
+void rsa_compute_root_test(void);
+void rsa_compute_root_test(void);
+void rsa_encrypt_test(void);
+void rsa_keygen_test(void);
+void rsa_pss_sign_tr_test(void);
+void rsa_sec_decrypt_test(void);
+void rsa_sign_tr_test(void);
+void rsa_test(void);
+void rsa2sexp_test(void);
+void sexp2rsa_test(void);
+void curve25519_dh_test(void);
+void curve448_dh_test(void);
+void dsa_keygen_test(void);
+void dsa_test(void);
+void ecdsa_keygen_test(void);
+void ecdsa_sign_test(void);
+void ecdsa_verify_test(void);
+void eddsa_compress_test(void);
+void eddsa_sign_test(void);
+void eddsa_verify_test(void);
+void gostdsa_keygen_test(void);
+void gostdsa_sign_test(void);
+void gostdsa_verify_test(void);
+void gostdsa_vko_test(void);
+int run_all_libhogweed_tests(int v);
+

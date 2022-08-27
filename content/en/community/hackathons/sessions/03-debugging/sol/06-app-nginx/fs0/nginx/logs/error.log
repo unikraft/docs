@@ -1,0 +1,5 @@
+2021/08/25 08:32:07 [notice] 1#0: using the "select" event method
+2021/08/25 08:32:07 [notice] 1#0: nginx/1.15.6
+2021/08/25 08:32:07 [notice] 1#0: built by gcc 6.3.0 20170516 (Debian 6.3.0-18+deb9u1) 
+2021/08/25 08:32:07 [notice] 1#0: OS: Unikraft 5-Tethys
+2021/08/25 08:32:07 [notice] 1#0: getrlimit(RLIMIT_NOFILE): 0:0

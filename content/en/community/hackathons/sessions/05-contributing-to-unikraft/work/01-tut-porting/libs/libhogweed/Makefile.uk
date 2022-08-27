@@ -1,0 +1,498 @@
+#  SPDX-License-Identifier: BSD-3-Clause
+#
+#  libhogweed Makefile.uk
+#
+#  Authors: Argint Dragos Iulian <dragosargint21@gmail.com>
+#
+#  Copyright (c) 2020, University Politehnica of Bucharest. All rights reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#  3. Neither the name of the copyright holder nor the names of its
+#     contributors may be used to endorse or promote products derived from
+#     this software without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+#  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+#  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+#  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+#  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+
+################################################################################
+# Library registration
+################################################################################
+# USOC_1
+$(eval $(call addlib_s,libhogweed,$(CONFIG_LIBHOGWEED)))
+#$(eval $(call addlib_s,libhogweedglue,$(CONFIG_LIBHOGWEED)))
+
+################################################################################
+# Original sources
+################################################################################
+# USOC_2
+LIBHOGWEED_VERSION=3.6
+LIBHOGWEED_URL=https://ftp.gnu.org/gnu/nettle/nettle-$(LIBHOGWEED_VERSION).tar.gz
+LIBHOGWEED_PATCHDIR=$(LIBHOGWEED_BASE)/patches
+
+LIBHOGWEED_SUBDIR=nettle-$(LIBHOGWEED_VERSION)
+$(eval $(call fetch,libhogweed,$(LIBHOGWEED_URL)))
+#$(eval $(call patch,libhogweed,$(LIBHOHWEED_PATCHDIR),$(LIBHOGWEED_SUBDIR)))
+
+################################################################################
+# Helpers
+################################################################################
+# USOC_3
+LIBHOGWEED_EXTRACTED = $(LIBHOGWEED_ORIGIN)/nettle-$(LIBHOGWEED_VERSION)
+
+################################################################################
+# Library includes
+################################################################################
+# USOC4
+LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_BASE)/include
+LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_EXTRACTED)
+LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_EXTRACTED)/testsuite
+CINCLUDES-$(CONFIG_LIBHOGWEED)   += $(LIBHOGWEED_COMMON_INCLUDES-y)
+CXXINCLUDES-$(CONFIG_LIBHOGWEED) += $(LIBHOGWEED_COMMON_INCLUDES-y)
+
+LIBHOGWEED_CINCLUDES   += -I$(LIBHOGWEED_EXTRACTED)
+LIBHOGWEED_CXXINCLUDES += -I$(LIBHOGWEED_EXTRACTED)
+
+################################################################################
+# Global flags
+################################################################################
+# USOC_5
+# Suppress flags
+LIBHOGWEED_SUPPRESS_FLAGS += -Wno-unused-parameter \
+        -Wno-unused-variable -Wno-unused-value -Wno-unused-function \
+        -Wno-missing-field-initializers -Wno-implicit-fallthrough \
+        -Wno-sign-compare
+LIBHOGWEED_CFLAGS-y   += $(LIBHOGWEED_SUPPRESS_FLAGS) \
+        -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
+LIBHOGWEED_CXXFLAGS-y += $(LIBHOGWEED_SUPPRESS_FLAGS)
+
+# Preprocessing symbols
+LIBHOGWEED_DEFINES    += -DHAVE_CONFIG_H
+LIBHOGWEED_CFLAGS-y   += $(LIBHOGWEED_DEFINES)
+LIBHOGWEED_CXXFLAGS-y += $(LIBHOGWEED_DEFINES)
+
+# USOC_6
+################################################################################
+# HOGWEED code -- bignum
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/bignum.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/bignum-random.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/bignum-random-prime.c
+
+################################################################################
+# HOGWEED code -- yarrow
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/yarrow256.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/yarrow_key_event.c
+
+################################################################################
+# HOGWEED code -- gmp
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/mini-gmp.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/gmp-glue.c
+
+################################################################################
+# HOGWEED code -- aes
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-encrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-decrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-encrypt-internal.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-encrypt-table.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-decrypt-internal.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-set-key-internal.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes256-set-encrypt-key.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes256-set-decrypt-key.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/aes-invert-internal.c
+
+################################################################################
+# HOGWEED code -- sha
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha1-meta.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha1-compress.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha256.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha256-meta.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha256-compress.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha512.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha512-meta.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha512-compress.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha3.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha3-permute.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha3-256.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha384-meta.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sha224-meta.c
+
+################################################################################
+# HOGWEED code -- md5
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/md5.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/md5-compress.c
+
+################################################################################
+# HOGWEED code -- write
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/write-be32.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/write-le32.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/write-le64.c
+
+################################################################################
+# HOGWEED code -- buffer
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/buffer.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/buffer-init.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/realloc.c
+
+################################################################################
+# HOGWEED code -- rsa
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-keygen.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-encrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-decrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-decrypt-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha1-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha1-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha1-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-md5-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-md5-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-md5-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pss-sha256-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pss-sha256-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pss-sha512-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pss-sha512-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pkcs1-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pkcs1-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-pkcs1-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha256-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha256-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha256-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha512-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha512-sign-tr.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sha512-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sec-decrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-sec-compute-root.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa2sexp.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa-blind.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/rsa2openpgp.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pgp-encode.c
+
+################################################################################
+# HOGWEED code -- pss
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pss.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pss-mgf1.c
+
+################################################################################
+# HOGWEED code -- pkcs
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-encrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-decrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-sec-decrypt.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-rsa-sha1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-rsa-sha256.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-rsa-sha512.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-rsa-digest.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/pkcs1-rsa-md5.c
+
+################################################################################
+# HOGWEED code -- dsa
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-hash.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-keygen.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-compat.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-compat-keygen.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-gen-params.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-sha1-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-sha1-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-sha256-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa-sha256-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/dsa2sexp.c
+
+################################################################################
+# HOGWEED code -- ecdsa
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecdsa-keygen.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecdsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecdsa-verify.c
+
+################################################################################
+# HOGWEED code -- ecc
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-a-to-j.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-eh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-ehh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-jja.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-jjj.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-th.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-add-thh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-curve25519-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-curve25519.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-curve448-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-curve448.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-dup-eh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-dup-jj.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-dup-th.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-ecdsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-ecdsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-eh-to-a.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-gost-gc256b.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-gost-gc512a.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-gostdsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-gostdsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-hash.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-j-to-a.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mod-arith.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mod-inv.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mod.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mul-a-eh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mul-a.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mul-g-eh.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mul-g.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-mul-m.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-point.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-random.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-scalar.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp192r1-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp192r1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp224r1-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp224r1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp256r1-redc.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp256r1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp384r1-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp384r1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp521r1-modp.s
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-secp521r1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ecc-size.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sec-add-1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sec-tabselect.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/cnd-copy.c
+
+################################################################################
+# HOGWEED code -- curve
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve25519-mul.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve25519-mul-g.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve25519-eh-to-x.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve448-mul.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve448-mul-g.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/curve448-eh-to-x.c
+
+################################################################################
+# HOGWEED code -- gostdsa
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/gostdsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/gostdsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/gostdsa-vko.c
+
+################################################################################
+# HOGWEED code -- eddsa
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-compress.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-decompress.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-sign.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-verify.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-expand.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-hash.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/eddsa-pubkey.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ed25519-sha512.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/ed448-shake256.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/shake256.c
+
+################################################################################
+# HOGWEED code -- sexp
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sexp.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sexp2rsa.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sexp-format.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sexp2bignum.c
+#LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/sexp-transport-format.c
+
+################################################################################
+# HOGWEED code -- hex encoding
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/base16-encode.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/base16-decode.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/base64-encode.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/base64-decode.c
+
+################################################################################
+# HOGWEED code -- miscellaneous
+################################################################################
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/knuth-lfib.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/hmac.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/hmac-sha1.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/memxor.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/memxor3.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/cnd-memcpy.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/memeql-sec.c
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/cbc.c
+
+# USOC_7
+################################################################################
+# HOGWEED code -- tests
+################################################################################
+LIBHOGWEED_SRCS-$(CONFIG_TESTSUITE) += $(LIBHOGWEED_BASE)/testutils_glue.c
+ifeq ($(CONFIG_RSA_COMPUTE_ROOT_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-compute-root-test.c
+LIBHOGWEED_RSA-COMPUTE-ROOT-TEST_FLAGS-y += -Dtest_main=rsa_compute_root_test
+endif
+ifeq ($(CONFIG_RSA_ENCRYPT_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-encrypt-test.c
+LIBHOGWEED_RSA-ENCRYPT-TEST_FLAGS-y += -Dtest_main=rsa_encrypt_test
+endif
+ifeq ($(CONFIG_RSA_KEYGEN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-keygen-test.c
+LIBHOGWEED_RSA-KEYGEN-TEST_FLAGS-y += -Dtest_main=rsa_keygen_test
+endif
+ifeq ($(CONFIG_RSA_PSS_SIGN_TR_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-pss-sign-tr-test.c
+LIBHOGWEED_RSA-PSS-SIGN-TR-TEST_FLAGS-y += -Dtest_main=rsa_pss_sign_tr_test
+endif
+ifeq ($(CONFIG_RSA_SEC_DECRYPT_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-sec-decrypt-test.c
+LIBHOGWEED_RSA-SEC-DECRYPT-TEST_FLAGS-y += -Dtest_main=rsa_sec_decrypt_test
+endif
+ifeq ($(CONFIG_RSA_SIGN_TR_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-sign-tr-test.c
+LIBHOGWEED_RSA-SIGN-TR-TEST_FLAGS-y += -Dtest_main=rsa_sign_tr_test
+endif
+ifeq ($(CONFIG_RSA_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-test.c
+LIBHOGWEED_RSA-TEST_FLAGS-y += -Dtest_main=rsa_test
+endif
+ifeq ($(CONFIG_RSA2SEXP_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa2sexp-test.c
+LIBHOGWEED_RSA2SEXP-TEST_FLAGS-y += -Dtest_main=rsa2sexp_test
+endif
+ifeq ($(CONFIG_SEXP2RSA_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/sexp2rsa-test.c
+LIBHOGWEED_SEXP2RSA-TEST_FLAGS-y += -Dtest_main=sexp2rsa_test
+endif
+ifeq ($(CONFIG_CURVE25519_DH_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/curve25519-dh-test.c
+LIBHOGWEED_CURVE25519-DH-TEST_FLAGS-y += -Dtest_main=curve25519_dh_test
+endif
+ifeq ($(CONFIG_CURVE448_DH_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/curve448-dh-test.c
+LIBHOGWEED_CURVE448-DH-TEST_FLAGS-y += -Dtest_main=curve448_dh_test
+endif
+ifeq ($(CONFIG_DSA_KEYGEN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/dsa-keygen-test.c
+LIBHOGWEED_DSA-KEYGEN-TEST_FLAGS-y += -Dtest_main=dsa_keygen_test
+endif
+ifeq ($(CONFIG_DSA_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/dsa-test.c
+LIBHOGWEED_DSA-TEST_FLAGS-y += -Dtest_main=dsa_test
+endif
+ifeq ($(CONFIG_ECDSA_KEYGEN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/ecdsa-keygen-test.c
+LIBHOGWEED_ECDSA-KEYGEN-TEST_FLAGS-y += -Dtest_main=ecdsa_keygen_test
+endif
+ifeq ($(CONFIG_ECDSA_SIGN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/ecdsa-sign-test.c
+LIBHOGWEED_ECDSA-SIGN-TEST_FLAGS-y += -Dtest_main=ecdsa_sign_test
+endif
+ifeq ($(CONFIG_ECDSA_VERIFY_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/ecdsa-verify-test.c
+LIBHOGWEED_ECDSA-VERIFY-TEST_FLAGS-y += -Dtest_main=ecdsa_verify_test
+endif
+ifeq ($(CONFIG_EDDSA_COMPRESS_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/eddsa-compress-test.c
+LIBHOGWEED_EDDSA-COMPRESS-TEST_FLAGS-y += -Dtest_main=eddsa_compress_test
+endif
+ifeq ($(CONFIG_EDDSA_SIGN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/eddsa-sign-test.c
+LIBHOGWEED_EDDSA-SIGN-TEST_FLAGS-y += -Dtest_main=eddsa_sign_test
+endif
+ifeq ($(CONFIG_EDDSA_VERIFY_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/eddsa-verify-test.c
+LIBHOGWEED_EDDSA-VERIFY-TEST_FLAGS-y += -Dtest_main=eddsa_verify_test
+endif
+ifeq ($(CONFIG_GOSTDSA_KEYGEN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/gostdsa-keygen-test.c
+LIBHOGWEED_GOSTDSA-KEYGEN-TEST_FLAGS-y += -Dtest_main=gostdsa_keygen_test
+endif
+ifeq ($(CONFIG_GOSTDSA_SIGN_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/gostdsa-sign-test.c
+LIBHOGWEED_GOSTDSA-SIGN-TEST_FLAGS-y += -Dtest_main=gostdsa_sign_test
+endif
+ifeq ($(CONFIG_GOSTDSA_VERIFY_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/gostdsa-verify-test.c
+LIBHOGWEED_GOSTDSA-VERIFY-TEST_FLAGS-y += -Dtest_main=gostdsa_verify_test
+endif
+ifeq ($(CONFIG_GOSTDSA_VKO_TEST),y)
+LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/gostdsa-vko-test.c
+LIBHOGWEED_GOSTDSA-VKO-TEST_FLAGS-y += -Dtest_main=gostdsa_vko_test
+endif
+
+
+# USOC_8
+################################################################################
+# HOGWEED prepare
+################################################################################
+# Run ./configure
+$(LIBHOGWEED_EXTRACTED)/config.h: $(LIBHOGWEED_BUILD)/.origin
+	$(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
+        cd $(LIBHOGWEED_EXTRACTED) && ./configure --enable-mini-gmp \
+    )
+
+# Generate auxiliar files using the original building system
+$(LIBHOGWEED_EXTRACTED)/make_auxiliar: $(LIBHOGWEED_BUILD)/.origin
+	$(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
+        cd $(LIBHOGWEED_EXTRACTED) && \
+        make ecc-secp192r1.h && \
+        make ecc-secp224r1.h && \
+        make ecc-secp256r1.h && \
+       	make ecc-secp384r1.h && \
+        make ecc-secp521r1.h && \
+        make ecc-curve25519.h && \
+        make ecc-curve448.h && \
+        make ecc-gost-gc256b.h && \
+        make ecc-gost-gc512a.h && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-curve25519-modp.asm \
+        	> ecc-curve25519-modp.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-curve448-modp.asm \
+        	> ecc-curve448-modp.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-secp192r1-modp.asm \
+        	> ecc-secp192r1-modp.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-secp224r1-modp.asm \
+            > ecc-secp224r1-modp.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-secp256r1-redc.asm \
+        	> ecc-secp256r1-redc.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-secp384r1-modp.asm \
+        	> ecc-secp384r1-modp.s && \
+        /usr/bin/m4 ./asm.m4 machine.m4 config.m4 ecc-secp521r1-modp.asm \
+        	> ecc-secp521r1-modp.s && \
+        echo "done" > make_auxiliar \
+    )
+
+LIBHOGWEED_PREPARED_DEPS = $(LIBHOGWEED_EXTRACTED)/config.h \
+							$(LIBHOGWEED_EXTRACTED)/make_auxiliar
+
+$(LIBHOGWEED_BUILD)/.prepared: $(LIBHOGWEED_PREPARED_DEPS)
+
+UK_PREPARE += $(LIBHOGWEED_BUILD)/.prepared

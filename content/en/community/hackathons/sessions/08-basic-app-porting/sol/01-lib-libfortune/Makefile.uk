@@ -1,0 +1,14 @@
+$(eval $(call addlib_s,libfortune,$(CONFIG_LIBFORTUNE)))
+
+LIBFORTUNE_VERSION = 0.1.0
+LIBFORTUNE_BASENAME = libfortune-$(LIBFORTUNE_VERSION)
+LIBFORTUNE_URL = https://github.com/nderjung/libfortune/archive/refs/tags/v$(LIBFORTUNE_VERSION).tar.gz
+LIBFORTUNE_PATCHDIR = $(LIBFORTUNE_BASE)/patches
+$(eval $(call fetch,libfortune,$(LIBFORTUNE_URL)))
+$(eval $(call patch,libfortune,$(LIBFORTUNE_PATCHDIR),fortune-$(LIBFORTUNE_VERSION)))
+
+LIBFORTUNE_SRC = $(LIBFORTUNE_ORIGIN)/$(LIBFORTUNE_BASENAME)/src
+
+LIBNGINX_CINCLUDES-$(CONFIG_LIBFORTUNE) += -I$(LIBFORTUNE_ORIGIN)/$(LIBFORTUNE_BASENAME)/include
+
+LIBFORTUNE_SRCS-y += $(LIBFORTUNE_SRC)/libfortune.c

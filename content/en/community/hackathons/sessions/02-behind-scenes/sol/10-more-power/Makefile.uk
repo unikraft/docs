@@ -1,0 +1,6 @@
+$(eval $(call addlib,apphelloworld))
+
+APPHELLOWORLD_SRCS-y += $(APPHELLOWORLD_BASE)/main.c
+ifeq ($(CONFIG_APPHELLOWORLD_SORT),y)
+APPHELLOWORLD_SRCS-y += $(APPHELLOWORLD_BASE)/mysort.c
+endif

@@ -1,0 +1,23 @@
+specification: '0.5'
+name: httpreply
+unikraft:
+  version: '0.5'
+  kconfig:
+    - CONFIG_LIBNOLIBC=y
+    - CONFIG_LIBUKSCHED=y
+    - CONFIG_LIBUKSCHEDCOOP=y
+targets:
+  - architecture: x86_64
+    platform: kvm
+libraries:
+  lwip:
+    version: '0.5'
+    kconfig:
+      - CONFIG_LWIP_UKNETDEV=y
+      - CONFIG_LWIP_TCP=y
+      - CONFIG_LWIP_THREADS=y
+      - CONFIG_LWIP_SOCKET=y
+      - CONFIG_LWIP_AUTOIFACE=y
+      - CONFIG_LWIP_IPV4=y
+      - CONFIG_LWIP_DHCP=y
+      - CONFIG_LWIP_SOCKET_PPOLL=n

@@ -1,0 +1,104 @@
+#  SPDX-License-Identifier: BSD-3-Clause
+#
+#  libkdtree Makefile.uk
+#
+#  Authors: Laurentiu Barbulescu <lrbarbulescu@gmail.com>
+#
+#  Copyright (c) 2021, University Politehnica of Bucharest. All rights reserved.
+#
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions
+#  are met:
+#
+#  1. Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+#  2. Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#  3. Neither the name of the copyright holder nor the names of its
+#     contributors may be used to endorse or promote products derived from
+#     this software without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+#  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+#  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+#  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+#  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+#  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+#  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+#  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+
+################################################################################
+# Library registration
+################################################################################
+$(eval $(call addlib_s,libkdtree,$(CONFIG_LIBKDTREE)))
+
+################################################################################
+# Original sources
+################################################################################
+LIBKDTREE_VERSION = 0.5.7
+LIBKDTREE_URL = http://nuclear.mutantstargoat.com/sw/kdtree/files/kdtree-$(LIBKDTREE_VERSION).tar.gz
+$(eval $(call fetch,libkdtree,$(LIBKDTREE_URL)))
+
+################################################################################
+# Helpers
+################################################################################
+LIBKDTREE_EXTRACTED = $(LIBKDTREE_ORIGIN)/kdtree-$(LIBKDTREE_VERSION)
+
+################################################################################
+# Library includes
+################################################################################
+LIBKDTREE_COMMON_INCLUDES-y     += -I$(LIBKDTREE_EXTRACTED)/
+LIBKDTREE_COMMON_INCLUDES-y     += -I$(LIBKDTREE_BASE)/include
+
+CINCLUDES-$(CONFIG_LIBKDTREE)   += $(LIBKDTREE_COMMON_INCLUDES-y)
+CXXINCLUDES-$(CONFIG_LIBKDTREE) += $(LIBKDTREE_COMMON_INCLUDES-y)
+
+LIBKDTREE_CINCLUDES   += -I$(LIBKDTREE_EXTRACTED)
+LIBKDTREE_CXXINCLUDES += -I$(LIBKDTREE_EXTRACTED)
+
+################################################################################
+# Global flags
+################################################################################
+# Suppress flags
+LIBKDTREE_SUPPRESS_FLAGS +=
+LIBKDTREE_CFLAGS-y   += $(LIBKDTREE_SUPPRESS_FLAGS)
+LIBKDTREE_CXXFLAGS-y += $(LIBKDTREE_SUPPRESS_FLAGS)
+
+# Preprocessing symbols
+LIBKDTREE_DEFINES    +=
+LIBKDTREE_CFLAGS-y   += $(LIBKDTREE_DEFINES)
+LIBKDTREE_CXXFLAGS-y += $(LIBKDTREE_DEFINES)
+
+################################################################################
+# LIBKDTREE code
+################################################################################
+LIBKDTREE_SRCS-y += $(LIBKDTREE_EXTRACTED)/kdtree.c
+
+################################################################################
+# LIBKDTREE tests
+################################################################################
+LIBKDTREE_SRCS-$(CONFIG_TEST_1) += $(LIBKDTREE_EXTRACTED)/examples/test.c
+LIBKDTREE_TEST_FLAGS-$(CONFIG_TEST_1) += -Dmain=test_1_main
+
+LIBKDTREE_SRCS-$(CONFIG_TEST_2) += $(LIBKDTREE_EXTRACTED)/examples/test2.c
+LIBKDTREE_TEST2_FLAGS-$(CONFIG_TEST_1) += -Dmain=test_2_main
+
+LIBKDTREE_SRCS-$(CONFIG_BUILD_TESTS) += $(LIBKDTREE_BASE)/test_suite_glue.c
+################################################################################
+# LIBKDTREE prepare
+################################################################################
+# Run ./configure
+$(LIBKDTREE_EXTRACTED)/config.status: $(LIBKDTREE_BUILD)/.origin
+	$(call verbose_cmd,CONFIG,libkdtree: $(notdir $@), \
+		cd $(LIBKDTREE_EXTRACTED) && ./configure)
+
+LIBKDTREE_PREPARED_DEPS = $(LIBKDTREE_EXTRACTED)/config.status
+
+$(LIBKDTREE_BUILD)/.prepared: $(LIBKDTREE_PREPARED_DEPS)
+
+UK_PREPARE += $(LIBKDTREE_BUILD)/.prepared

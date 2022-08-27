@@ -1,0 +1,5 @@
+specification: '0.5'
+unikraft: staging
+targets:
+ - platform: kvm
+   architecture: x86_64

@@ -1,0 +1,10 @@
+### Invisible option for dependencies
+config APPHOGWEED_DEPENDENCIES
+	bool
+	default y
+	select LIBNEWLIBC
+	select LIBHOGWEED
+	select ARCH_X86_64
+	select PLAT_KVM
+	select PLAT_LINUXU
+	select TESTSUITE

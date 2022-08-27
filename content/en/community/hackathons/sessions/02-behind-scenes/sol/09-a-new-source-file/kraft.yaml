@@ -1,0 +1,15 @@
+---
+specification: '0.5'
+name: app-helloworld
+unikraft:
+  version: 825b115
+targets:
+  - architecture: x86_64
+    platform: kvm
+libraries:
+  newlib:
+    version: 78263bd
+    kconfig:
+      - CONFIG_LIBNEWLIBC=y
+volumes: {}
+networks: {}

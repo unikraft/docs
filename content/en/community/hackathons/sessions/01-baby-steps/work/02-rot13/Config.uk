@@ -1,0 +1,6 @@
+### Invisible option for dependencies
+config ECHOBACK_DEPENDENCIES
+	bool
+	default y
+	select LIBNOLIBC if !HAVE_LIBC
+
