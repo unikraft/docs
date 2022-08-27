@@ -1,10 +1,10 @@
-config LIBKDTREE
+menuconfig LIBKDTREE
 	bool "kdtree - simplify the use of kd-trees"
 	default n
 	select LIBNEWLIBC
 
 if LIBKDTREE
-	menuconfig BUILD_TESTS
+	config BUILD_TESTS
 		bool "Build test suite"
 		default n
 		

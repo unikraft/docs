@@ -60,7 +60,7 @@ LIBHOGWEED_EXTRACTED = $(LIBHOGWEED_ORIGIN)/nettle-$(LIBHOGWEED_VERSION)
 ################################################################################
 # Library includes
 ################################################################################
-# USOC4
+# USOC_4
 LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_BASE)/include
 LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_EXTRACTED)
 LIBHOGWEED_COMMON_INCLUDES-y     += -I$(LIBHOGWEED_EXTRACTED)/testsuite
@@ -371,10 +371,6 @@ endif
 ifeq ($(CONFIG_RSA_PSS_SIGN_TR_TEST),y)
 LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-pss-sign-tr-test.c
 LIBHOGWEED_RSA-PSS-SIGN-TR-TEST_FLAGS-y += -Dtest_main=rsa_pss_sign_tr_test
-endif
-ifeq ($(CONFIG_RSA_SEC_DECRYPT_TEST),y)
-LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-sec-decrypt-test.c
-LIBHOGWEED_RSA-SEC-DECRYPT-TEST_FLAGS-y += -Dtest_main=rsa_sec_decrypt_test
 endif
 ifeq ($(CONFIG_RSA_SIGN_TR_TEST),y)
 LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-sign-tr-test.c

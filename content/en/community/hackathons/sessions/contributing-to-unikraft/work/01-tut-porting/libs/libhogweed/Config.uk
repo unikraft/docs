@@ -1,5 +1,5 @@
 # USOC_1
-config LIBHOGWEED
+menuconfig LIBHOGWEED
 	bool "libhogweed - Public-key algorithms"
 	default n
 	# USOC_2
@@ -7,7 +7,7 @@ config LIBHOGWEED
 
 if LIBHOGWEED
 	# USOC_3
-	menuconfig TESTSUITE
+	config TESTSUITE
 		bool "testsuite - tests for libhogweed"
 		default n
 		if TESTSUITE
@@ -22,9 +22,6 @@ if LIBHOGWEED
 				default y
 			config RSA_PSS_SIGN_TR_TEST
 				bool "rsa-pss-sign-tr-test"
-				default y
-			config RSA_SEC_DECRYPT_TEST
-				bool "rsa-sec-decrypt-test"
 				default y
 			config RSA_SIGN_TR_TEST
 				bool "rsa-sign-tr-test"

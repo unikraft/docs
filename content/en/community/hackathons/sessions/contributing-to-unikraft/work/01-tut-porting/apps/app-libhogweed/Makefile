@@ -1,7 +1,7 @@
 UK_ROOT ?= $(PWD)/../../unikraft
 UK_LIBS ?= $(PWD)/../../libs
 # TODO
-LIBS := $(UK_LIBS)/newlib
+LIBS :=
 
 all:
 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS)
