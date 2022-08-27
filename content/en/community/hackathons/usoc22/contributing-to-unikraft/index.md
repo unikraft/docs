@@ -96,9 +96,15 @@ weigth: 50
 
 {{< readfile file="/community/hackathons/sessions/contributing-to-unikraft/content/Practical-Work_13.-Final-Verification.md" markdown="true" >}}
 
-### 14. Give Us Feedback
+## Quiz
 
-{{< readfile file="/community/hackathons/sessions/contributing-to-unikraft/content/Practical-Work_14.-Give-Us-Feedback.md" markdown="true" >}}
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/fo4uwaqspJMes3Th9) to assess your current understanding of the session.
+
+## Give Us Feedback
+
+We want to know how to make the next sessions better.
+For this we need your [feedback](https://forms.gle/LyiK2UrnuQu3U6j79).
+Thank you!
 
 ## Further Reading
 

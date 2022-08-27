@@ -11,10 +11,9 @@ The goal, in this case, is to wrap all the test modules into one single function
 In this way, we can check the library integrity if we want so by just a single function call.
 Moreover, we can create a test framework which can periodically check all of the ported libraries, useful especially for detecting if a new library will interfere with an already ported one.
 
-Moving back to `libhogweed`, a practical example of the second case is the `run_all_libhogweed_tests(int v)` function from `libhogweed/testutils_glue.c`, line `#674`, which calls every selected (we will see later how we can make selectable config variables) test module and exits with `EXIT_SUCCESS` only if it passes over all the tests.
+Moving back to `libhogweed`, a practical example of the second case is the `run_all_libhogweed_tests(int v)` function from [`libhogweed/testutils_glue.c #674`](https://github.com/unikraft/lib-libhogweed/blob/staging/testutils_glue.c#L674), which calls every selected test module (we will see later how we can make selectable config variables) and returns `EXIT_SUCCESS` only if it passes over all the tests.
 For exposing this API, we should also make a header file with all of the test modules, as well as our wrapper function.
-
-**Note**: Check `libhogweed/include/testutils_glue.h`.
+The header can be found at [`libhogweed/include/testutils_glue.h`](https://github.com/unikraft/lib-libhogweed/blob/staging/include/testutils_glue.h).
 
 #### Config.uk
 
@@ -25,22 +24,22 @@ Moving to the source code, `libhogweed/Config.uk`, we have:
 
 1. The main variable of the library which acts as an identifier for it:
 
-   ```
-   config LIBHOGWEED
+   ```config
+   menuconfig LIBHOGWEED
    	bool "libhogweed - Public-key algorithms"
    	default n
    ```
 
 1. We can also set another library's main variable, in this case `newlib`, which involves including it in the build process:
 
-   ```
+   ```config
    select LIBNEWLIBC
    ```
 
 1. Creating an auxiliary menu, containing all the test cases:
 
-   ```
-   menuconfig TESTSUITE
+   ```config
+   config TESTSUITE
    		bool "testsuite - tests for libhogweed"
    		default n
    		if TESTSUITE
@@ -50,7 +49,7 @@ Moving to the source code, `libhogweed/Config.uk`, we have:
    		endif
    ```
 
-   Each test case has its own variable in order to allow testing just some tests from the whole suite.
+   Each test case has its own variable in order to allow testing just some functions from the whole suite.
 
 #### Makefile.uk
 
@@ -58,7 +57,7 @@ The `libhogweed/Makefile.uk` file is used to:
 
 1. Register the library to Unikraft's build system:
 
-   ```
+   ```make
    $(eval $(call addlib_s,libhogweed,$(CONFIG_LIBHOGWEED)))
    ```
 
@@ -66,14 +65,14 @@ The `libhogweed/Makefile.uk` file is used to:
 
 1. Set the URL from where the library will be automatically downloaded at build time:
 
-   ```
+   ```make
    LIBHOGWEED_VERSION=3.6
    LIBHOGWEED_URL=https://ftp.gnu.org/gnu/nettle/nettle-$(LIBHOGWEED_VERSION).tar.gz
    ```
 
 1. Declare helper variables for the most used paths:
 
-   ```
+   ```make
    LIBHOGWEED_EXTRACTED = $(LIBHOGWEED_ORIGIN)/nettle-$(LIBHOGWEED_VERSION)
    ```
 
@@ -82,20 +81,18 @@ The `libhogweed/Makefile.uk` file is used to:
    * `$LIBNAME_ORIGIN`: represents the path where the original library is downloaded and extracted during the build process;
    * `$LIBNAME_BASE`: represents the path of the ported library sources(the path appended to the `$LIBS` variable).
 
-   You can check all reserved variables in [the main documentation](http://docs.unikraft.org/developers-app.html#makefile-uk).
-
 1. Set the locations where the headers are searched:
 
-   ```
+   ```make
    // including the path of the glue header added by us
    LIBHOGWEED_COMMON_INCLUDES-y += -I$(LIBHOGWEED_BASE)/include
    ```
 
    You should include the directories with the default library's headers as well as the directories with the glue headers created by you, if it's the case.
 
-1. Add compile flags, used in general for suppressing some compile warnings and making the build process neater:
+1. Add compile flags, used, generally, for suppressing some compile warnings and making the build process neater:
 
-   ```
+   ```make
    LIBHOGWEED_SUPPRESS_FLAGS += -Wno-unused-parameter \
            -Wno-unused-variable -Wno-unused-value -Wno-unused-function \
            -Wno-missing-field-initializers -Wno-implicit-fallthrough \
@@ -108,23 +105,21 @@ The `libhogweed/Makefile.uk` file is used to:
 
 1. Register the library's sources:
 
-   ```
+   ```make
    LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/bignum.c
    ```
 
 1. Register the library's tests:
 
-   ```
+   ```make
    ifeq ($(CONFIG_RSA_COMPUTE_ROOT_TEST),y)
    LIBHOGWEED_SRCS-y += $(LIBHOGWEED_EXTRACTED)/testsuite/rsa-compute-root-test.c
    LIBHOGWEED_RSA-COMPUTE-ROOT-TEST_FLAGS-y += -Dtest_main=rsa_compute_root_test
    endif
    ```
 
-   There are situations when the test cases have each a `main()` function.
+   There are situations when the test cases each have their own `main()` function.
    In order to wrap all the tests into one single main function, we have to modify their main function name by using preprocessing symbols.
-
-   You can read more about compile flags in [the main documentation](http://docs.unikraft.org/developers-app.html#makefile-uk).
 
    **Note**: A good practice is to include a test only if the config variable corresponding to that test is set.
 
@@ -132,7 +127,7 @@ The `libhogweed/Makefile.uk` file is used to:
 
    In most cases, and in this case too, the libraries build their own config file through a provided executable, usually named `configure`:
 
-   ```
+   ```make
    $(LIBHOGWEED_EXTRACTED)/config.h: $(LIBHOGWEED_BUILD)/.origin
    	$(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
            cd $(LIBHOGWEED_EXTRACTED) && ./configure --enable-mini-gmp \

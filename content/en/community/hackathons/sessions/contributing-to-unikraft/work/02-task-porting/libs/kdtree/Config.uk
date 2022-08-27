@@ -1,12 +1,12 @@
 # TODO_1
-config LIBNAME
+menuconfig LIBNAME
 	bool "kdtree - simplify the use of kd-trees"
 	default n
 	# TODO_7
 
 # TODO_1
 # if LIBNAME
-#	menuconfig BUILD_TESTS
+#	config BUILD_TESTS
 #		bool "Build test suite"
 #		default n
 #		

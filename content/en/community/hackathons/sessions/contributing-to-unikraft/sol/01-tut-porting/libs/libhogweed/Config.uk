@@ -1,5 +1,5 @@
 # USOC_1
-config LIBHOGWEED
+menuconfig LIBHOGWEED
 	bool "libhogweed - Public-key algorithms"
 	default n
 	# USOC_2
@@ -7,7 +7,7 @@ config LIBHOGWEED
 
 if LIBHOGWEED
 	# USOC_3
-	menuconfig TESTSUITE
+	config TESTSUITE
 		bool "testsuite - tests for libhogweed"
 		default n
 		if TESTSUITE
