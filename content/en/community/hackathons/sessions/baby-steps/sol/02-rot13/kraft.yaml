@@ -1,0 +1,20 @@
+---
+specification: '0.5'
+name: 01-echo-back
+unikraft:
+  version: stable
+targets:
+  - architecture: x86_64
+    platform: kvm
+libraries:
+  lwip:
+    version: stable
+    kconfig:
+      - CONFIG_LWIP_UKNETDEV=y
+      - CONFIG_LWIP_TCP=y
+      - CONFIG_LWIP_THREADS=y
+      - CONFIG_LWIP_SOCKET=y
+      - CONFIG_LWIP_AUTOIFACE=y
+      - CONFIG_LWIP_IPV4=y
+      - CONFIG_LWIP_DHCP=y
+      - CONFIG_LWIP_SOCKET_PPOLL=n

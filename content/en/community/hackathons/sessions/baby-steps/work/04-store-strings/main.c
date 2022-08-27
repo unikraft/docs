@@ -9,7 +9,7 @@
 #define BUFLEN 100
 #define LISTEN_PORT 1234
 
-int receive_and_send(int filefd, int client_recvfd, int client_sendfd)
+int receive_and_send(int file_fd, int client_recvfd, int client_sendfd)
 {
 	char buf[BUFLEN];
 	int bytes_send;
@@ -22,9 +22,9 @@ int receive_and_send(int filefd, int client_recvfd, int client_sendfd)
 		exit(1);
 	}
 
-        // write to file before echoing back
+    // TODO: write to file before echoing back
 
-        // rot13
+    // TODO: apply rot13
 
 	bytes_send = send(client_sendfd, buf, BUFLEN, 0);
 	if (bytes_send < 0) {
@@ -37,25 +37,27 @@ int receive_and_send(int filefd, int client_recvfd, int client_sendfd)
 
 int main(int argc, char* argv[])
 {
-	int listenfd = -1;
+	int listen_fd = -1;
 	struct sockaddr_in serv_addr;
 
-	int filefd = // open() the file you want to store the strings in;
-	if (filefd < 0) {
+	// TODO: open() the file you want to store the strings in;
+	int file_fd =
+
+	if (file_fd < 0) {
 		perror("socket");
 		exit(1);
 	}
 
-	lseek(filefd, 0, SEEK_SET);
+	lseek(file_fd, 0, SEEK_SET);
 
-	listenfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (listenfd < 0) {
+	listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_fd < 0) {
 		perror("socket");
 		exit(1);
 	}
 
 	int enable = 1;
-	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) == -1) {
+	if (setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) == -1) {
 		perror("setsocketopt");
 		exit(1);
 	}
@@ -64,7 +66,7 @@ int main(int argc, char* argv[])
 	serv_addr.sin_port = htons(LISTEN_PORT);
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 
-	int err = bind(listenfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+	int err = bind(listen_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 	if (err < 0) {
 		perror("bind");
 		exit(1);
@@ -73,25 +75,25 @@ int main(int argc, char* argv[])
 	struct sockaddr_in client_addr;
 
 	int bytes_received;
-	int connfd = -1;
+	int conn_fd = -1;
 	socklen_t socket_len = sizeof(struct sockaddr_in);
 
-	listen(listenfd, 1);
+	listen(listen_fd, 1);
 
-	connfd = accept(listenfd, (struct sockaddr*)&client_addr, &socket_len);
-	if (connfd < 0) {
-		perror("connfd accept");
+	conn_fd = accept(listen_fd, (struct sockaddr*)&client_addr, &socket_len);
+	if (conn_fd < 0) {
+		perror("conn_fd accept");
 	}
 
 	do {
-		bytes_received = receive_and_send(filefd, connfd, connfd);
+		bytes_received = receive_and_send(file_fd, conn_fd, conn_fd);
 	} while (bytes_received > 0);
 
-	close(connfd);
+	close(conn_fd);
 
-	close(listenfd);
+	close(listen_fd);
 
-        // close() filefd
+    // TODO: close() file_fd
 
 	return 0;
 }

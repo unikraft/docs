@@ -4,6 +4,8 @@ linkTitle: "01. Baby Steps"
 weigth: 10
 ---
 
+## Introduction
+
 {{< readfile file="/community/hackathons/sessions/baby-steps/content/intro.md" markdown="true" >}}
 
 ## Demos
@@ -41,6 +43,10 @@ weigth: 10
 ### 04. Store Strings
 
 {{< readfile file="/community/hackathons/sessions/baby-steps/content/Practical-Work_04.-Store-Strings.md" markdown="true" >}}
+
+### 05. Give Us Feedback
+Please help us improve future sessions by providing us your [feedback](https://forms.gle/LyiK2UrnuQu3U6j79).
+Thank you!
 
 ## Further Reading
 
