@@ -1,61 +1,61 @@
 Let's start with installing kraft (and validating the installation).
 
 First of all, make sure you have all the dependencies installed:
-```
+```bash
 $ sudo apt-get install -y --no-install-recommends build-essential \
         libncurses-dev libyaml-dev flex git wget socat bison \
-        unzip uuid-runtime
+        unzip uuid-runtime python3-pip
 ```
 
-We begin by cloning the kraft repository on our machine:
-```
-git clone https://github.com/unikraft/kraft.git
+You'll also need QEMU for launching virtual/emulated machines which will run unikernels targeting the KVM platform:
+```bash
+$ sudo apt-get -y install qemu-kvm qemu-system-x86
 ```
 
-Now, all we have to do is enter this directory and run the setup installer:
+To install the latest version of kraft, simply run:
+```bash
+$ pip3 install git+https://github.com/unikraft/kraft.git@staging
 ```
-$ cd kraft
-$ pip install --user -e .
-```
-This will install kraft for the local user.
 
 After installing or updating kraft, the first step is to download / update the software components available for building unikernel images.
 For this, run:
-```
+```bash
 $ kraft list update
 ```
 
 It's very likely that running the command above will result in the following error:
-```
+```bash
 GitHub rate limit exceeded.  You can tell kraft to use a personal access token by setting the UK_KRAFT_GITHUB_TOKEN environmental variable.
 ```
 
-If this is the case, first create a GitHub personal access token by following [these instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+If this is the case, first create a GitHub personal access token with `repo:public-repo` permissions by following [these instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 Then, use the following command:
-```
+```bash
 $ UK_KRAFT_GITHUB_TOKEN=<your_GitHub_token_here> kraft list update
 ```
 
 After this is done, you can get a list of all components that are available for use with kraft:
-```
+```bash
 $ kraft list
-UNIKRAFT        	VERSION 	RELEASED    	LAST CHECKED
-unikraft        	0.5     	17 hours ago	18 Aug 21
+UNIKRAFT                VERSION         RELEASED        LAST CHECKED
+unikraft                0.10.0          20 hours ago    14 hours ago
 
-PLATFORMS       	VERSION 	RELEASED    	LAST CHECKED
-solo5           	0.5     	13 Jul 21   	18 Aug 21
+PLATFORMS               VERSION         RELEASED        LAST CHECKED
+solo5                   0.10.0          5 days ago      14 hours ago
 [...]
 
-LIBRARIES       	VERSION 	RELEASED    	LAST CHECKED
-newlib          	0.5     	5 days ago  	18 Aug 21
-pthreadpool     	0.5     	7 days ago  	18 Aug 21
-lwip            	0.5     	6 days ago  	18 Aug 21
+LIBRARIES               VERSION         RELEASED        LAST CHECKED
+newlib                  0.10.0          2 days ago      26 Aug 22
+pthread-embedded        0.10.0          5 days ago      26 Aug 22
+lwip                    0.10.0          3 days ago      26 Aug 22
+http-parser             0.10.0          5 days ago      26 Aug 22
 [...]
 
-APPLICATIONS    	VERSION 	RELEASED    	LAST CHECKED
-python3         	0.4     	29 Mar 21   	18 Aug 21
-helloworld      	0.5     	29 Mar 21   	18 Aug 21
-httpreply       	0.5     	13 Jul 21   	18 Aug 21
+APPLICATIONS            VERSION         RELEASED        LAST CHECKED
+helloworld              0.10.0          5 days ago      26 Aug 22
+httpreply               0.10.0          5 days ago      26 Aug 22
+python3                 0.10.0          5 days ago      26 Aug 22
+redis                   0.10.0          5 days ago      26 Aug 22
 [...]
 ```
 

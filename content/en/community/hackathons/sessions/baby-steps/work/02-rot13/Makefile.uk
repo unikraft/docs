@@ -1,3 +1,3 @@
-$(eval $(call addlib,echoback))
+$(eval $(call addlib,rot13))
 
-ECHOBACK_SRCS-y += $(ECHOBACK_BASE)/main.c
+ROT13_SRCS-y += $(ROT13_BASE)/main.c

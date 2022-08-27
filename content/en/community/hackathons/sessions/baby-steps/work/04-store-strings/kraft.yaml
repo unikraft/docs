@@ -1,12 +1,7 @@
-specification: '0.4'
-
-unikraft: '0.5'
-
-architectures:
-  x86_64: true
-  arm64: true
-      
-platforms:
-  linuxu: true
-  kvm: true
-  xen: true
+specification: '0.5'
+name: storestrings
+unikraft:
+  version: stable
+targets:
+  - architecture: x86_64
+    platform: kvm
