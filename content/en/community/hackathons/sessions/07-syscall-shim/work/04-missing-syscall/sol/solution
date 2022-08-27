@@ -1,0 +1,17 @@
+Add to brk.c:
+
+UK_SYSCALL_R_DEFINE(int, getcpu, void *, one, void *, two)
+{
+	uk_pr_debug("Debug message");
+
+	return 100;
+}
+
+Add to Makefile.uk:
+UK_PROVIDED_SYSCALLS-$(CONFIG_APPELFLOADER_BRK) += getcpu-2
+
+Add to exportsyms.uk:
+getcpu
+uk_syscall_e_getcpu
+uk_syscall_r_getcpu
+

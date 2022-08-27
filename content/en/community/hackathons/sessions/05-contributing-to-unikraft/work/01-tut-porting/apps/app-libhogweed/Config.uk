@@ -1,0 +1,5 @@
+### Invisible option for dependencies
+config APPHOGWEED_DEPENDENCIES
+	bool
+	default y
+	select LIBNEWLIBC

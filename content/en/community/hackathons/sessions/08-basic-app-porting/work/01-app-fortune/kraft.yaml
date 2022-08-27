@@ -1,0 +1,10 @@
+specification: '0.5'
+name: fortune
+unikraft:
+  version: staging
+targets:
+  - architecture: x86_64
+    platform: kvm
+libraries:
+  libfortune: staging
+  newlib: staging

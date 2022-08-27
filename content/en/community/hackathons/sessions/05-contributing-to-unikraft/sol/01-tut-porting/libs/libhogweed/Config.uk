@@ -1,0 +1,86 @@
+# USOC_1
+config LIBHOGWEED
+	bool "libhogweed - Public-key algorithms"
+	default n
+	# USOC_2
+	select LIBNEWLIBC
+
+if LIBHOGWEED
+	# USOC_3
+	menuconfig TESTSUITE
+		bool "testsuite - tests for libhogweed"
+		default n
+		if TESTSUITE
+			config RSA_COMPUTE_ROOT_TEST
+				bool "rsa-compute-root-test"
+				default y
+			config RSA_ENCRYPT_TEST
+				bool "rsa-encrypt-test"
+				default y
+			config RSA_KEYGEN_TEST
+				bool "rsa-keygen-test"
+				default y
+			config RSA_PSS_SIGN_TR_TEST
+				bool "rsa-pss-sign-tr-test"
+				default y
+			config RSA_SEC_DECRYPT_TEST
+				bool "rsa-sec-decrypt-test"
+				default y
+			config RSA_SIGN_TR_TEST
+				bool "rsa-sign-tr-test"
+				default y
+			config RSA_TEST
+				bool "rsa-test"
+				default y
+			config RSA2SEXP_TEST
+				bool "rsa2sexp-test"
+				default y
+			config SEXP2RSA_TEST
+				bool "sexp2rsa-test"
+				default y
+			config CURVE25519_DH_TEST
+				bool "curve25519-dh-test"
+				default y
+			config CURVE448_DH_TEST
+				bool "curve448-dh-test"
+				default y
+			config DSA_KEYGEN_TEST
+				bool "dsa-keygen-test"
+				default y
+			config DSA_TEST
+				bool "dsa-test"
+				default y
+			config ECDSA_KEYGEN_TEST
+				bool "ecdsa-keygen-test"
+				default y
+			config ECDSA_SIGN_TEST
+				bool "ecdsa-sign-test"
+				default y
+			config ECDSA_VERIFY_TEST
+				bool "ecdsa-verify-test"
+				default y
+			config EDDSA_COMPRESS_TEST
+				bool "eddsa-compress-test"
+				default y
+			config EDDSA_SIGN_TEST
+				bool "eddsa-sign-test"
+				default y
+			config EDDSA_VERIFY_TEST
+				bool "eddsa-verify-test"
+				default y
+			config GOSTDSA_KEYGEN_TEST
+				bool "gostdsa-keygen-test"
+				default y
+			config GOSTDSA_SIGN_TEST
+				bool "gostdsa-sign-test"
+				default y
+			config GOSTDSA_VERIFY_TEST
+				bool "gostdsa-verify-test"
+				default y
+			config GOSTDSA_VKO_TEST
+				bool "gostdsa-vko-test"
+				default y
+	endif
+endif
+
+

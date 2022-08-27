@@ -1,0 +1,6 @@
+$(eval $(call addlib_s,libmyramfs,$(CONFIG_LIBMYRAMFS)))
+
+LIBMYRAMFS_CFLAGS-$(call gcc_version_ge,8,0) += -Wno-cast-function-type
+
+LIBMYRAMFS_SRCS-y += $(LIBMYRAMFS_BASE)/myramfs_vfsops.c
+LIBMYRAMFS_SRCS-y += $(LIBMYRAMFS_BASE)/myramfs_vnops.c

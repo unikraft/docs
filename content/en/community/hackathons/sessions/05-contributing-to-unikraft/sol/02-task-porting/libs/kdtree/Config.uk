@@ -1,0 +1,19 @@
+config LIBKDTREE
+	bool "kdtree - simplify the use of kd-trees"
+	default n
+	select LIBNEWLIBC
+
+if LIBKDTREE
+	menuconfig BUILD_TESTS
+		bool "Build test suite"
+		default n
+		
+	if BUILD_TESTS
+		config TEST_1
+			bool "Test 1"
+			default y
+		config TEST_2
+			bool "Test 2"
+			default y
+	endif
+endif

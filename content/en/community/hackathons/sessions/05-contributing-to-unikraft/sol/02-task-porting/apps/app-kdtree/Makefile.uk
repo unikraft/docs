@@ -1,0 +1,3 @@
+$(eval $(call addlib,appkdtree))
+
+APPKDTREE_SRCS-y += $(APPKDTREE_BASE)/main.c

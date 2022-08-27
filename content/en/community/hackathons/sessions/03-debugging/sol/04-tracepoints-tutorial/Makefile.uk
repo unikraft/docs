@@ -1,0 +1,3 @@
+$(eval $(call addlib,apphelloworldtracepoints))
+
+APPHELLOWORLDTRACEPOINTS_SRCS-y += $(APPHELLOWORLDTRACEPOINTS_BASE)/main.c

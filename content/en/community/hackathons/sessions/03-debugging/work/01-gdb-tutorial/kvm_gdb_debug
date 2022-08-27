@@ -1,0 +1,23 @@
+#!/bin/bash
+
+path_to_kernel=$1
+
+# Start Application
+qemu-system-x86_64 -s \
+                   -S \
+                   -cpu host \
+                   -enable-kvm -m 128 \
+                   -nodefaults \
+                   -no-acpi \
+                   -display none \
+                   -serial stdio \
+                   -device isa-debug-exit \
+                   -kernel $path_to_kernel \
+                   -append verbose &
+
+
+# Start GDB
+gdb --eval-command="target remote :1234" $path_to_kernel \
+    -ex "disconnect" \
+    -ex "set arch i386:x86-64:intel" \
+    -ex "tar remote localhost:1234"

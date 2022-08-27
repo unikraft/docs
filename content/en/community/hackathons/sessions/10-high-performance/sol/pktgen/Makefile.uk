@@ -1,0 +1,6 @@
+$(eval $(call addlib,apppktgen))
+
+APPPKTGEN_SRCS-y += $(APPPKTGEN_BASE)/main.c
+APPPKTGEN_SRCS-y += $(APPPKTGEN_BASE)/genpkt.c
+APPPKTGEN_SRCS-y += $(APPPKTGEN_BASE)/netspeed.c
+APPPKTGEN_SRCS-y += $(APPPKTGEN_BASE)/netbuf.c
