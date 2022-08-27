@@ -16,6 +16,8 @@ googleAnalytics = ""
 
 disableKinds = ["taxonomyTerm"]
 
+ignoreFiles = ["community/hackathons/sessions/01-baby-steps/content/.*\\.md"]
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
