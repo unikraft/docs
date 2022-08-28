@@ -1,7 +1,7 @@
 Tracepoints are provided by `lib/ukdebug`.
 To enable Unikraft to collect trace data, enable the option `CONFIG_LIBUKDEBUG_TRACEPOINTS` in your configuration (via `make menuconfig` under `Library Configuration -> ukdebug -> Enable tracepoints`).
 
-![enable tracepoints](./images/enable_tracepoints.png)
+![enable tracepoints](/community/hackathons/sessions/debugging/images/enable_tracepoints.png)
 
 
 The configuration option `CONFIG_LIBUKDEBUG_ALL_TRACEPOINTS` activates **all** existing tracepoints.
@@ -9,7 +9,7 @@ Because tracepoints may noticeably affect performance, you can alternatively ena
 
 This can be done with the `Makefile.uk` of each library.
 
-```
+```make
 # Enable tracepoints for a whole library
 LIBNAME_CFLAGS-y += -DUK_DEBUG_TRACE
 LIBNAME_CXXFLAGS-y += -DUK_DEBUG_TRACE
@@ -22,7 +22,7 @@ LIBNAME_FILENAME2_FLAGS-y += -DUK_DEBUG_TRACE
 This can also be done by defining `UK_DEBUG_TRACE` in the head of your source files.
 Please make sure that `UK_DEBUG_TRACE` is defined before `<uk/trace.h>` is included:
 
-```
+```c
 #ifndef UK_DEBUG_TRACE
 #define UK_DEBUG_TRACE
 #endif

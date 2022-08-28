@@ -42,6 +42,10 @@ weigth: 30
 
 {{< readfile file="/community/hackathons/sessions/debugging/content/Tracepoints_Reading-Trace-Data.md" markdown="true" >}}
 
+### Quizz ###
+
+{{< readfile file="/community/hackathons/sessions/debugging/content/Quizz.md" markdown="true" >}}
+
 ## Practical Work
 
 ### Support Files
@@ -78,7 +82,9 @@ weigth: 30
 
 ### 08. Give Us Feedback
 
-{{< readfile file="/community/hackathons/sessions/debugging/content/Practical-Work_08.-Give-Us-Feedback.md" markdown="true" >}}
+We want to know how to make the next sessions better.
+For this, we need your [feedback](https://docs.google.com/forms/d/e/1FAIpQLSdpyEpCW0yxJBSDa7Iq95JUCe5YNnRpxOD31ol4ezpKWnqrhA/viewform).
+Thank you!
 
 ## Further Reading
 
