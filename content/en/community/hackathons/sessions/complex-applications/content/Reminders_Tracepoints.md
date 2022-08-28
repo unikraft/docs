@@ -3,10 +3,10 @@ To enable Unikraft to collect trace data, enable the option `CONFIG_LIBUKDEBUG_T
 
 #### Instrumenting
 
-Instrumenting your code with tracepoints is done by two steps:
+Instrumenting your code with tracepoints is done in two steps:
 
 * Define and register a tracepoint handler with the `UK_TRACEPOINT()` macro.
-* Place calls to the generated handler at those places in your code where your want to trace an event.
+* Place calls to the generated handler at the places in your code where your want to trace an event.
 
 #### Reading traces
 
@@ -22,7 +22,7 @@ Commands available in GDB:
 
 Any saved trace file can be later processed with the  `trace.py`  .
 
-```
+```bash
 $ support/s/uk_trace/trace.py list <file>
 ```
 

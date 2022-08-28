@@ -1,6 +1,6 @@
 This print system in implemented in `lib/ukdebug` and can be activated using `make menuconfig` (`Library Configuration -> ukdebug: Debugging and Tracing`).
 
-We have two types of messages:
+There are two types of messages:
 
 * **Kernel messages**
   * **Information**(`uk_pr_info`)
