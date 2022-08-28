@@ -62,6 +62,12 @@ weigth: 40
 
 {{< readfile file="/community/hackathons/sessions/complex-applications/content/Work-Items_07.-Nginx-Benchmarking-(Tutorial).md" markdown="true" >}}
 
-### 08. Give Us Feedback
+### 08. Quiz
 
-{{< readfile file="/community/hackathons/sessions/complex-applications/content/Work-Items_08.-Give-Us-Feedback.md" markdown="true" >}}
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/wL43qebXXbhMYRyi8) to assess your current understanding of the session.
+
+### 09. Give Us Feedback
+
+We want to know how to make the next sessions better.
+For this, we need your [feedback](https://forms.gle/LyiK2UrnuQu3U6j79).
+Thank you!

@@ -7,9 +7,9 @@ Beware that the assigned IP address must differ from the one assigned on the bri
 You can use `redis-cli`, found in the suport folder to test your changes.
 If everything runs as expected you should see the following output:
 
-```
-$ ./redis-cli -h 172.88.0.76 -p 6379
+```bash
+$ ./redis-cli -h 172.88.0.2 -p 6379
 172.88.0.2:6379> PING
 PONG
-172.88.0.2:6379>
+172.88.0.2:6379> 
 ```

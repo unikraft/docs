@@ -5,6 +5,6 @@ To see the options for this wrapper you can use `qemu-guest -h`.
 It is possible to run a lot of complex applications on Unikraft.
 In this session we analyze 3 of them:
 
-* Sqlite
+* SQLite
 * Redis
 * Nginx

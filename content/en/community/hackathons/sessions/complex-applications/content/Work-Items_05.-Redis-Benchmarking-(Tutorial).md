@@ -1,17 +1,17 @@
-We aim to do benchmarking for the Redis app running on top of Unikraft and for the Redis running on top of Linux.
+We aim to benchmark the Redis app running on top of Unikraft and Redis running on top of Linux.
 Find the support files in the `work/05-benchmark-redis/` folder of the session directory.
-There are three binaries: `redis-cli`, `redis-benchmark`, and `redis`.
+There are three binaries: `redis-cli`, `redis-benchmark`, and `redis-server`.
 
-First, we will start by benchmarking `redis app`, running on Unikraft.
-Start the Redis on the top of Unikraft as we have already done at above and in another terminal run the following command:
+First, we will start by benchmarking `app-redis` on Unikraft.
+Start Redis on top of Unikraft as we did before and in another terminal run the following command:
 
+```bash
+$ ./redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 172.88.0.2 -p 6379 -P 8 -t set,get
 ```
-$ ./redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 172.44.0.76 -p 6379 -P 8 -t set,get
-```
 
-The description of the used option can be seen here:
+The description of the used options can be seen here:
 
-```
+```bash
 Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-k <boolean>]
 
  -h <hostname>      Server hostname (default 127.0.0.1)
@@ -27,22 +27,22 @@ Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-
 
 If everything runs as expected, you'll see the following output:
 
-```
-"SET","147058.81"
-"GET","153846.16"
+```bash
+"SET","265252.00"
+"GET","276701.72"
 ```
 
-The printed values represent `requests/second` for the operation `set` and `get`.
+The printed values represent `requests/second` for the `set` and `get` operations.
 
 Further, we will run the executable `redis-server` (`./redis-server`), which can be found in the support folder, and the following command (only the IP address of the redis server was changed):
 
-```
+```bash
 $ ./redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 127.0.0.1 -p 6379 -P 8 -t set,get
 ```
 
-After that you'll get something like this:
+The output should be similar to this:
 
-```
-"SET","285714.28"
-"GET","294117.62"
+```bash
+"SET","495785.84"
+"GET","514138.81"
 ```
