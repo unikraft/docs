@@ -2,7 +2,7 @@ Instrumenting your code with tracepoints is done by two steps.
 First, you define and register a tracepoint handler with the `UK_TRACEPOINT()` macro.
 Second, you place calls to the generated handler at those places in your code where your want to trace an event:
 
-```
+```c
 #include <uk/trace.h>
 
 UK_TRACEPOINT(trace_vfs_open, "\"%s\" 0x%x 0%0o", const char*, int, mode_t);

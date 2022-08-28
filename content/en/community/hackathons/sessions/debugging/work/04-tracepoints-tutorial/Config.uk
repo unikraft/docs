@@ -1,0 +1,19 @@
+### Invisible option for dependencies
+config APPHELLOWORLDTRACEPOINTS_DEPENDENCIES
+	bool
+	default y
+	select LIBNOLIBC if !HAVE_LIBC
+
+### App configuration
+config APPHELLOWORLDTRACEPOINTS_PRINTARGS
+	bool "Print arguments"
+	default y
+	help
+	  Prints argument list (argv) to stdout
+
+config APPHELLOWORLDTRACEPOINTS_SPINNER
+	bool "Stay alive"
+	select LIBUKTIME
+	default n
+	help
+	  Shows an animation instead of shutting down

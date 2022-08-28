@@ -1,5 +1,5 @@
 At this stage, you should be familiar with the steps of configuring, building and running any application within Unikraft and know the main parts of the architecture.
-Below you can see a list of the commands you have used so far.
+Below, you can see a list of the commands you have used so far.
 
 | Command                                                | Description                                                             |
 |--------------------------------------------------------|-------------------------------------------------------------------------|
