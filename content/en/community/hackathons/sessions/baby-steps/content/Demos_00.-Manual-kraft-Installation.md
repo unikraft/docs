@@ -9,7 +9,12 @@ $ sudo apt-get install -y --no-install-recommends build-essential \
 
 You'll also need QEMU for launching virtual/emulated machines which will run unikernels targeting the KVM platform:
 ```bash
-$ sudo apt-get -y install qemu-kvm qemu-system-x86
+$ sudo apt-get -y install qemu-kvm qemu-system-x86 sgabios
+```
+
+And the `bridge-utils` package for creating network bridges between the VM and the host system:
+```bash
+$ sudo apt-get -y install bridge-utils
 ```
 
 You might need to add `~/.local/bin` to your PATH:
