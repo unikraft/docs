@@ -28,6 +28,11 @@ weigth: 10
 
 ## Practical Work
 
+### Support Files
+
+{{< readfile file="/community/hackathons/sessions/baby-steps/content/Work-Items_Support-Files.md" markdown="true" >}}
+
+
 ### 01. Echo-back Server
 
 {{< readfile file="/community/hackathons/sessions/baby-steps/content/Practical-Work_01.-Echo-back-Server.md" markdown="true" >}}
