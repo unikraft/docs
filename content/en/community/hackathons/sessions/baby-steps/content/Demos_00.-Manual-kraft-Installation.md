@@ -12,6 +12,11 @@ You'll also need QEMU for launching virtual/emulated machines which will run uni
 $ sudo apt-get -y install qemu-kvm qemu-system-x86
 ```
 
+You might need to add `~/.local/bin` to your PATH:
+```bash
+$ export PATH=$PATH:~/.local/bin
+```
+
 To install the latest version of kraft, simply run:
 ```bash
 $ pip3 install git+https://github.com/unikraft/kraft.git@staging

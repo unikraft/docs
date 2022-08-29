@@ -13,6 +13,7 @@ Things to consider:
 * If you want to run the application without `kraft`, the KVM launch script and network setup are already included inside `work/01-echo-back/launch.sh`.
 * If working with `kraft`, you must modify the `kraft.yaml` configuration file to include this app's dependency on the `lwip` library (just as `httpreply` depends on `lwip` as well).
 * Same goes with the manual approach: you must modify the `Makefile` to include the `lwip` library dependency.
+* If you have any issues in building the app, make sure that you're building with the latest version of unikraft. You can do a `kraft list pull unikraft` to fetch the latest stable version.
 
 To test if your application works you can try sending it messages like so:
 ```bash
