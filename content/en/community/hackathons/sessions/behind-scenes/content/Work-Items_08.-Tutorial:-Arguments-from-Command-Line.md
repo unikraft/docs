@@ -1,6 +1,6 @@
-We want to configure the helloworld app to receive command line arguments and then print them.
+We want to configure the `helloworld` app to receive command line arguments and then print them.
 
-For this, the Helloworld application already has a configuration option.
+For this, the `helloworld` application already has a configuration option.
 Configure the application by running
 
 ```
@@ -9,7 +9,7 @@ $ make menuconfig
 
 In the configuration menu, go to `Application Options` and enable `Print arguments`.
 If we build and run the image now, using `qemu-guest`, we will see that two arguments are passed to Unikraft: the kernel argument, and a console.
-We want to pass it an aditional argument, `"foo=bar"`.
+We want to pass it an additional argument, `"foo=bar"`.
 
 Before this, make sure to reset your configuration, so Unikraft won't use 9pfs for this task:
 
@@ -17,7 +17,7 @@ Before this, make sure to reset your configuration, so Unikraft won't use 9pfs f
 $ make clean
 ```
 
-#### Raw qemu command
+#### Raw qemu-system command
 
 To send an argument with qemu-system, we use the `-append` option, like this:
 

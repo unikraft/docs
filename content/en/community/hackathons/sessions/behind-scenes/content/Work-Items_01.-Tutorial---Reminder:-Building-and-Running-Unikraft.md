@@ -1,24 +1,48 @@
-We want to build the Helloworld application, using the Kconfig-based system, for the **linuxu** and **KVM** platforms, for the **ARM** and **x86** architectures, and then run them.
+We want to build the [`helloworld` application](https://github.com/unikraft/app-helloworld), using the Kconfig-based system, for the **linuxu** and **KVM** platforms, for the **ARM** and **x86** architectures, and then run them.
 
-If you don't have the `unikraft` and `app-helloworld` repositories cloned already, do so, by running the following commands:
+It is recommended that for building and developing applications and Unikraft, you create a conventional folder structure:
 
 ```
+.
+|-- apps/
+|-- libs/
+`-- unikraft/
+```
+
+That is a hierarchy with:
+
+* `unikraft/` as the clone of the [`unikraft` repository](https://github.com/unikraft/unikraft)
+* `apps/` storing folders for applications
+* `libs/` storing folders for libraries
+
+You would usually only have a single such hierarchy and add applications and / or libraries in their respective folders and use a single clone of the [`unikraft` repository].
+We create this hierarchy, if not having it created already, by using the commands:
+
+```
+$ mkdir workdir
+
+$ cd workdir/
+
+$ mkdir apps libs
+
 $ git clone https://github.com/unikraft/unikraft
+[...]
+
+$ tree --charset=ascii -L 1
+.
+|-- apps
+|-- libs
+`-- unikraft
+```
+
+We want to work on the [`helloworld` application](https://github.com/unikraft/app-helloworld) so we clone in in the `apps/` subfolder.
+
+```
 $ cd apps
-$ git clone https://github.com/unikraft/app-helloworld helloworld/
+$ git clone https://github.com/unikraft/app-helloworld helloworld
 ```
 
-As you can see from the commands above, it is recommended to have the following file structure in your working directory:
-
-```
-workdir
-|_______apps
-|	|_______helloworld
-|_______libs
-|_______unikraft
-```
-
-Make sure that `UK_ROOT` and `UK_LIBS` are set correctly in the `Makefile` file, in the `helloworld` folder.
+In the `apps/helloworld/` folder, make sure that `UK_ROOT` and `UK_LIBS` are set correctly in the `Makefile` file, i.e. to point to the location of the [`unikraft` repository](https://github.com/unikraft/unikraft) clone and to the folder storing library repositories.
 If you are not sure if they are set correctly, set them like this:
 
 ```
@@ -79,14 +103,14 @@ We follow the steps:
    $ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -serial stdio
    ```
 
-Besides `-serial stdio`, no other option is needed to run the Helloworld application.
-Other, more complex applications, will require more options given to qemu.
+Besides `-serial stdio`, no other option is needed to run the `app-helloworld` application.
+Other, more complex applications, will require more options given to the `qemu-system-x86_64` command.
 
 We have run Unikraft in the emulation mode, with the command from above.
 We can also run it in the virtualization mode, by adding the `-enable-kvm` option.
 You may receive a warning, `host doesn't support requested feature:`.
-This is because kvm uses a generic CPU model.
-You can instruct kvm to use your local CPU model, by adding `-cpu host` to the command.
+This is because KVM uses a generic CPU model.
+You can instruct KVM to use your local CPU model, by adding `-cpu host` to the command.
 
 The final command will look like this:
 

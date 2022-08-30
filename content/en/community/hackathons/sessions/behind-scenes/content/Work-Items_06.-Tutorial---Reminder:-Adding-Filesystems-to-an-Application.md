@@ -29,6 +29,19 @@ The program (`main.c`) reads the contents of the `/grass` file and prints it to 
 Similarly, `qemu-guest` is a wrapper script [used internally by `kraft`](https://github.com/unikraft/kraft/blob/staging/scripts/qemu-guest).
 We'll use it as well to run the application.
 
+**Important**: This setup belongs as an application folder in the `apps/` folder in your working directory as discussed in [the 1st tutorial of this session](#01-tutorial--reminder-building-and-running-unikraft).
+Your best approach would be to copy this folder (`work/06-adding-filesystems/`) to the `apps/` folder in your working directory.
+You will then get a hierarchy such as:
+
+```
+.
+|-- apps/
+|   |-- 06-adding-filesystems/
+|   `-- helloworld/
+|-- libs/
+`-- unikraft/
+```
+
 **If, at any point of this tutorial, something doesn't work, or you want a quick check, see the reference solution in `sol/06-adding-filesystems/` folder in the session directory.**
 
 #### Using the Manual Approach
@@ -71,7 +84,7 @@ We need to select the following options, from the `Library Configuration` menu:
 These configurations will also mark as required **9pfs** and **uk9p** in the menu.
 
 We want to run Unikraft with QEMU / KVM, so we must select **KVM guest** in the `Platform Configuration` menu.
-For 9PFS we also need to enable, in the **KVM guest** options menu, `Virtio` -> `Virtio PCI device support`.
+For 9pfs we also need to enable, in the **KVM guest** options menu, `Virtio` -> `Virtio PCI device support`.
 
 Save the configuration and exit.
 
@@ -200,7 +213,7 @@ In the end, the resulting `kraft.yaml` file will look like this:
 
 ```yaml
 ---
-specification: '0.10'
+specification: '0.5'
 name: 06-adding-filesystems
 unikraft:
   version: 'staging'
