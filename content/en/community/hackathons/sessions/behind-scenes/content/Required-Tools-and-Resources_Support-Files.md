@@ -1,4 +1,4 @@
-Session support files are available [in the repository](https://github.com/unikraft/summer-of-code-2021).
+Session support files are available [in the repository](https://github.com/unikraft/docs.git).
 If you already cloned the repository, update it and enter the session directory:
 
 ```
@@ -6,19 +6,19 @@ $ cd path/to/repository/clone
 
 $ git pull --rebase
 
-$ cd content/en/docs/sessions/02-behind-scenes/
+$ cd content/en/community/hackathons/usoc22/behind-scenes/
 
 $ ls
-demo/  images/  index.md  sol/
+demo  images  index.md  sol  work
 ```
 
 If you haven't cloned the repository yet, clone it and enter the session directory:
 
 ```
-$ git clone https://github.com/unikraft/summer-of-code-2021
+$ git clone https://github.com/unikraft/docs.git
 
-$ cd summer-of-code-2021/content/en/docs/sessions/02-behind-scenes/
+$ cd content/en/community/hackathons/usoc22/behind-scenes/
 
 $ ls
-demo/  images/  index.md  sol/
+demo  images  index.md  sol  work
 ```

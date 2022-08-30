@@ -6,7 +6,7 @@ The Unikraft core is comprised of several components:
 * [the platform code](https://github.com/unikraft/unikraft/tree/staging/plat):
   This defines interaction with the underlying hardware, depending on whether a hypervisor is present or not, and which hypervisor is present.
   For example, if the KVM hypervisor is present, Unikraft will behave almost as if it runs bare-metal, needing to initialize the hardware components according to the manufacturer specifications.
-  The difference from bare-metal is made only at the entry, where some information, like the memory layout, the available console, are supplied by the bootloader (Multiboot) and there's no need to interact with the BIOS or UEFI.
+  The difference from bare-metal is made only at the entry, where some information, like the memory layout, the available console, are supplied by the bootloader (Multiboot), and there's no need to interact with the BIOS or UEFI.
   In the case of Xen, many of the hardware-related operations must be done through hypercalls, thus reducing the direct interaction of Unikraft with the hardware.
  * [internal libraries](https://github.com/unikraft/unikraft/tree/staging/lib):
   These define behaviour independent of the hardware, like scheduling, networking, memory allocation, basic file systems.

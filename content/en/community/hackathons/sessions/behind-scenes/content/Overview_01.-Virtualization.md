@@ -5,7 +5,7 @@ Unikernels come somewhere between those 2.
 
 #### Virtual Machines
 
-Virtual machines represent an abstraction of the hardware, over which an operating system can run, thinking that it is alone on the system and that it controls the hardware below it.
+Virtual machines represent an abstraction of the hardware over which an operating system can run, thinking that it is alone on the system and that it controls the hardware below it.
 Virtual machines rely on hypervisors to run properly.
 Those hypervisors can be classified in 2 categories: Type 1 and Type 2.
 We won't go in depth into them, but it is good to know how they are different:
@@ -15,7 +15,7 @@ We won't go in depth into them, but it is good to know how they are different:
 * The **Type 2 hypervisor**, also known as **hosted hypervisor**, has to go through the host operating system to reach the hardware.
   An example of Type 2 hypervisor is VirtualBox.
 
-| ![type 1 hypervisor os](/docs/sessions/02-behind-scenes/images/vm1.svg) | ![type 2 hypervisor os](/docs/sessions/02-behind-scenes/images/vm2.svg) |
+| ![type 1 hypervisor os](/community/hackathons/sessions/behind-scenes/images/vm1.svg) | ![type 2 hypervisor os](/community/hackathons/sessions/behind-scenes/images/vm2.svg) |
 | :--:									  | :--:								    |
 | Operating systems over type 1 hypervisor				  | Operating systems over type 2 hypervisor 				    |
 
@@ -25,7 +25,7 @@ Containers are environments designed to contain and run only one application and
 This leads to very small sizes.
 The containers are managed by a Container Management Engine, like Docker, and are dependent on the host OS, as they cannot run without it.
 
-| ![containers](/docs/sessions/02-behind-scenes/images/container.svg)	|
+| ![containers](/community/hackathons/sessions/behind-scenes/images/container.svg)	|
 | :--: 									|
 | Containers								|
 
@@ -35,7 +35,7 @@ Unikraft has a size comparable with that of a container, while it retains the po
 This gives it an advantage over classical Operating Systems.
 Being a special type of operating system, Unikraft can run bare-metal or over a hypervisor.
 
-| ![type 1 hypervisor uk](/docs/sessions/02-behind-scenes/images/unikraft1.svg) | ![type 2 hypervisor uk](/docs/sessions/02-behind-scenes/images/unikraft2.svg) |
+| ![type 1 hypervisor uk](/community/hackathons/sessions/behind-scenes/images/unikraft1.svg) | ![type 2 hypervisor uk](/community/hackathons/sessions/behind-scenes/images/unikraft2.svg) |
 | :--: | :--: |
 | Unikraft over Type 1 hypervisor                                                  | Unikraft over Type 2 hypervisor                           		|
 

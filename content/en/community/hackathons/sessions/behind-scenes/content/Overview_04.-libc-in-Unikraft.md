@@ -11,4 +11,4 @@ Unikraft has multiple variants of a libc-like component:
 * [musl](https://github.com/unikraft/lib-musl) is, theoretically, the best libc that will be used by Unikraft, but it's currently in testing.
 
 Nolibc and isrlib are part of the Unikraft core.
-Newlibc and musl are external libraries, from the point of view of Unikraft, and they must be included to the build, as shown in [Session 01: Baby Steps](/docs/sessions/01-baby-steps).
+Newlibc and musl are external libraries, from the point of view of Unikraft, and they must be included to the build, as shown in [Session 01: Baby Steps](community/hackathons/sessions/baby-steps).
