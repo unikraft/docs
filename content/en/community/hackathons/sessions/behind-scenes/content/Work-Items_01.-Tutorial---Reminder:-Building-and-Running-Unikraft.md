@@ -28,7 +28,7 @@ UK_LIBS ?= $(PWD)/../../libs
 
 #### Linuxu, x86_64
 
-First, we will the image for the **linuxu** platform.
+First, we will build the image for the **linuxu** platform.
 As the resulting image will be an ELF, we can only run the **x86** Unikraft image.
 We follow the steps:
 
@@ -46,7 +46,7 @@ We follow the steps:
    $ make
    ```
 
-1. The resulting image, `app-helloworld_linuxu-x86_64` will be present in the `build/` folder.
+1. The resulting image, `app-helloworld_linuxu-x86_64`, will be present in the `build/` folder.
    Run it.
 
    ```
@@ -56,7 +56,7 @@ We follow the steps:
 #### KVM, x86_64
 
 Next, we will build the image for the **kvm** platform.
-Before starting the process, make sure that you have the necessary tools, listed in the [Required Tools](/docs/sessions/02-behind-scenes/#required-tools) section.
+Before starting the process, make sure that you have the necessary tools, listed in the [Required Tools](/community/hackathons/sessions/behind-scenes/#required-tools) section.
 We follow the steps:
 
 1. Run

@@ -1,7 +1,7 @@
-For this tutorial, the aim is to create a simple QEMU/KVM application that reads from a file and displays the contents to standard output.
-A local directory is to be mounted as the root directory (`/`) inside the QEMU/KVM virtual machine.
+For this tutorial, the aim is to create a simple QEMU / KVM application that reads from a file and displays the contents to standard output.
+A local directory is to be mounted as the root directory (`/`) inside the QEMU / KVM virtual machine.
 
-Some parts of this tutorial were already discussed in [Session 01: Baby Steps](content/en/docs/sessions/01-baby-steps/index.md).
+Some parts of this tutorial were already discussed in [Session 01: Baby Steps](community/hackathons/sessions/baby-steps).
 
 We will use both the manual approach (`make` and `qemu-system-x86_64` / `qemu-guest`) and `kraft` to configure, build and run the application.
 
@@ -17,7 +17,7 @@ $ ls -F
 guest_fs/  kraft.yaml  launch.sh*  main.c  Makefile  Makefile.uk  qemu-guest*
 ```
 
-The `guest_fs/` local directory is to be mounted as the root directory (`/`) inside the QEMU/KVM virtual machine.
+The `guest_fs/` local directory is to be mounted as the root directory (`/`) inside the QEMU / KVM virtual machine.
 It contains the `grass` file.
 The program (`main.c`) reads the contents of the `/grass` file and prints it to standard output.
 `Makefile.uk` lists the `main.c` file as the application source file to be compiled and linked with Unikraft.
@@ -35,7 +35,7 @@ We'll use it as well to run the application.
 
 Firstly, we will use the manual approach to configure, build and run the application.
 
-##### Configure
+**Configure**
 
 For filesystem functionalities (opening, reading, writing files) we require a more powerful libc.
 [newlib](https://github.com/unikraft/lib-newlib) is already ported in Unikraft and will do nicely.
@@ -70,7 +70,7 @@ We need to select the following options, from the `Library Configuration` menu:
 
 These configurations will also mark as required **9pfs** and **uk9p** in the menu.
 
-We want to run Unikraft with QEMU/KVM, so we must select **KVM guest** in the `Platform Configuration` menu.
+We want to run Unikraft with QEMU / KVM, so we must select **KVM guest** in the `Platform Configuration` menu.
 For 9PFS we also need to enable, in the **KVM guest** options menu, `Virtio` -> `Virtio PCI device support`.
 
 Save the configuration and exit.
@@ -83,7 +83,7 @@ $ diff -u .config ../../sol/06-adding-filesytstems/config.sol
 
 Differences should be minimal, such as the application identifier.
 
-##### Build
+**Build**
 
 Build the Unikraft image:
 
@@ -94,9 +94,9 @@ make
 Building the Unikraft image will take a while.
 It has to pull newlib source code, patch it and then build it, together with the Unikraft source code.
 
-##### Run with qemu-system-x86_64
+**Run with qemu-system-x86_64**
 
-To run the Unikraft image with QEMU/KVM, we use the wrapper `launch.sh` script, that calls `qemu-system-x86_64` command with the proper arguments:
+To run the Unikraft image with QEMU / KVM, we use the wrapper `launch.sh` script, that calls `qemu-system-x86_64` command with the proper arguments:
 
 ```
 $ ./launch.sh ./build/unikraft-kraft-9pfs-issue_kvm-x86_64
@@ -138,12 +138,12 @@ Lets break it down:
   if this parameter is omitted, QEMU will think it runs a raw file
 * `-nographic` - prints the output of QEMU to the standard output, it doesn't open a graphical window
 
-#### Run with qemu-guest
+**Run with qemu-guest**
 
-[qemu-guest](https://github.com/unikraft/kraft/blob/staging/scripts/qemu-guest) is the script used by kraft to run its QEMU/KVM images.
+[qemu-guest](https://github.com/unikraft/kraft/blob/staging/scripts/qemu-guest) is the script used by kraft to run its QEMU / KVM images.
 Before looking at the command, take some time to look through the script, and maybe figure out the arguments needed for our task.
 
-To run a QEMU/KVM application using `qemu-guest`, we use:
+To run a QEMU / KVM application using `qemu-guest`, we use:
 
 ```
 $ ./qemu-guest -e guest_fs/ -k build/06-adding-filesystems_kvm-x86_64
@@ -200,7 +200,7 @@ In the end, the resulting `kraft.yaml` file will look like this:
 
 ```yaml
 ---
-specification: '0.5'
+specification: '0.10'
 name: 06-adding-filesystems
 unikraft:
   version: 'staging'
@@ -227,7 +227,7 @@ Next, we will make kraft reconfigure our application, using `kraft configure`.
 In our case, nothing should be modified in `.config`, as we had the same configuration before.
 If you get an error like "missing component: newlib", you need to run `kraft list update`.
 
-##### Build
+**Build**
 
 We can now build the application using:
 
@@ -235,7 +235,7 @@ We can now build the application using:
 $ kraft build
 ```
 
-##### Run
+**Run**
 
 Run the application using:
 

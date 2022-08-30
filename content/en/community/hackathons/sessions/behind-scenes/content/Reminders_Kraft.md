@@ -1,5 +1,5 @@
 [Kraft](https://github.com/unikraft/kraft) is the tool developed by the Unikraft team, to make application deployment easier.
-To automatically download, configure, build and run an application, for example Helloworld, run
+To automatically download, configure, build and run an application (e.g. helloworld), run
 
 ```
 $ kraft list update

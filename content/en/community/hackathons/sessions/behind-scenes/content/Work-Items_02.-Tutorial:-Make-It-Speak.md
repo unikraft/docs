@@ -11,7 +11,7 @@ But, for this exercise, besides enabling a component, we must modify it.
 Enter the `ukdebug` configuration menu.
 We need to have `Enable kernel messages (uk_printk)` checked.
 Also, we need to change the option below it, `Kernel message level`, from `Show critical and error messages (default)` to `Show all types of messages`.
-To make thing prettier, also enable the `Colored output` option.
+To make things prettier, also enable the `Colored output` option.
 Save and exit the configuration, then build and run the image.
 
 We have a bunch of initializations happening, before seeing the "Hello world!" message.
@@ -19,7 +19,7 @@ Let's break them down. We start with the platform internal library, `libkvmplat`
 Here, the hardware components are initialized, like the Serial module, `PL001 UART`, and the `GIC`, which is the interrupt controller.
 After that, the memory address space is defined, and the booting process starts, by replacing the current stack with a larger one, that is part of the defined address space.
 Lastly, before calling the main function of the application, the software components of Unikraft are initialized, like timers, interrupts, and bus handlers.
-The execution ends in in the platform library, with the shutdown command.
+The execution ends in the platform library, with the shutdown command.
 
 #### x86_64
 
@@ -36,11 +36,11 @@ Build Unikraft:
 $ make
 ```
 
-And run in under QEMU/KVM.
+Now run under QEMU / KVM.
 The output differs.
 We can see that, in the case of x86, the platform library initializes less components, or it is less verbose than the ARM one.
 But the timer and bus initialization is more verbose.
 We see what timer is used, the i8254 one.
 Also, we see that the PCI bus is used.
 
-If you are wondering what the Constructors are, they will be covered in [Session 06: Testing Unikraft](/docs/sessions/06-testing-unikraft/)
+If you are wondering what the Constructors are, they will be covered in [Session 06: Testing Unikraft](community/hackathons/sessions/testing-unikraft)
