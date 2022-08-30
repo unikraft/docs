@@ -1,4 +1,4 @@
-We begin by adding a new file for the tests called `test_stat.c` in a newly created folder `tests` in the `vfscore` internal library:
+We begin by adding a new file for the tests called `test_stat.c` in a newly created folder `tests` in the [`vfscore`](https://github.com/unikraft/unikraft/tree/staging/lib/vfscore) internal library:
 
 ```Makefile
 LIBVFSCORE_SRCS-$(CONFIG_LIBVFSCORE_TEST_STAT) += \
@@ -8,7 +8,7 @@ LIBVFSCORE_SRCS-$(CONFIG_LIBVFSCORE_TEST_STAT) += \
 We then add the menuconfig option in the `if LIBVFSCORE` block:
 
 ```KConfig
-menuconfig LIBVFSCORE_TEST
+config LIBVFSCORE_TEST
     bool "Test vfscore"
     select LIBVFSCORE_TEST_STAT if LIBUKTEST_ALL
     default n

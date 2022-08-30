@@ -1,5 +1,6 @@
 For this tutorial, we will use Google Test under Unikraft.
 Aside from `lib-googletest`, we'll also need to have `libcxx`, `libcxxabi`, `libunwind`, `compiler-rt` and `newlib` because we're testing C++ code.
+In the `work` directory, you will find a script named `prepare.sh` that downloads all libraries for you.
 
 The second step is to enable the Google Test library and its config option `Build google test with main`.
 
