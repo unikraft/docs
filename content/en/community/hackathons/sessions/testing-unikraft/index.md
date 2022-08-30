@@ -84,6 +84,16 @@ weigth: 60
 
 {{< readfile file="/community/hackathons/sessions/testing-unikraft/content/Work-Items_06.-Tutorial-(Bonus):-Using-KLEE-for-Symbolic-Execution.md" markdown="true" >}}
 
+## Quiz
+
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/TSGHEzQ6XMenQSk47) to assess your current understanding of the session.
+
+## Give Us Feedback
+
+We want to know how to make the next sessions better.
+For this we need your [feedback](https://forms.gle/LyiK2UrnuQu3U6j79).
+Thank you!
+
 ## Further Reading
 
 {{< readfile file="/community/hackathons/sessions/testing-unikraft/content/Further-Reading.md" markdown="true" >}}

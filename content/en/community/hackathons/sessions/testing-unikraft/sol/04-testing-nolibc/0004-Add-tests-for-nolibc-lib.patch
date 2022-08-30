@@ -1,0 +1,80 @@
+From c2a569e1564e04066c5a6922accd77a1e1560297 Mon Sep 17 00:00:00 2001
+From: Florin Postolache <florin.postolache80@gmail.com>
+Date: Fri, 2 Sep 2022 18:10:44 +0300
+Subject: [PATCH] Add tests for nolibc lib
+
+---
+ lib/nolibc/Config.uk          | 12 ++++++++++++
+ lib/nolibc/Makefile.uk        |  3 +++
+ lib/nolibc/tests/test_basic.c | 21 +++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
+ create mode 100644 lib/nolibc/tests/test_basic.c
+
+diff --git a/lib/nolibc/Config.uk b/lib/nolibc/Config.uk
+index 0b7e802..cf7b687 100644
+--- a/lib/nolibc/Config.uk
++++ b/lib/nolibc/Config.uk
+@@ -5,6 +5,18 @@ menuconfig LIBNOLIBC
+ 	imply LIBUKTIME
+ 
+ if LIBNOLIBC
++	config LIBNOLIBC_TEST
++    	bool "Test nolibc"
++    	select LIBNOLIBC_TEST_BASIC if LIBUKTEST_ALL
++    	default n
++
++	if LIBNOLIBC_TEST
++
++	config LIBNOLIBC_TEST_BASIC
++    	bool "test"
++    	default n
++
++	endif
+ 	config LIBNOLIBC_UKDEBUG_ASSERT
+ 		bool "Implement assertions with libukdebug"
+ 		default y if LIBUKDEBUG
+diff --git a/lib/nolibc/Makefile.uk b/lib/nolibc/Makefile.uk
+index 4a85604..3238c1a 100644
+--- a/lib/nolibc/Makefile.uk
++++ b/lib/nolibc/Makefile.uk
+@@ -35,6 +35,9 @@ LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/musl-imported/src/signal/psignal.c
+ LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/getopt.c
+ LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/sscanf.c
+ LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/asprintf.c
++ifneq ($(filter y,$(CONFIG_LIBNOLIBC_TEST) $(CONFIG_LIBUKTEST_ALL)),)
++    LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/tests/test_basic.c
++endif
+ 
+ 
+ LIBNOLIBC_SRCS-y += $(LIBNOLIBC_BASE)/qsort.c
+diff --git a/lib/nolibc/tests/test_basic.c b/lib/nolibc/tests/test_basic.c
+new file mode 100644
+index 0000000..92a6294
+--- /dev/null
++++ b/lib/nolibc/tests/test_basic.c
+@@ -0,0 +1,21 @@
++#include <uk/test.h>
++#include <string.h>
++
++
++UK_TESTCASE(nolibc_testsuite, printf_test){
++    UK_TEST_EXPECT_SNUM_EQ(printf("First test.\n"), 12);
++}
++
++UK_TESTCASE(nolibc_testsuite, strchr_test){
++    UK_TEST_EXPECT_NOT_NULL(strchr("Try to find me.", 'f'));
++}
++
++UK_TESTCASE(nolibc_testsuite, strncmp_test){
++    UK_TEST_EXPECT_ZERO(strncmp("This is a string", "This is a string", 17));
++}
++
++UK_TESTCASE(nolibc_testsuite, strlen_test){
++    UK_TEST_EXPECT_SNUM_EQ(strlen("THIS IS ANOTHER STRING."), 23);
++}
++
++uk_testsuite_register(nolibc_testsuite, NULL);
+\ No newline at end of file
+-- 
+2.25.1
+

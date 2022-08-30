@@ -27,7 +27,8 @@ UK_TESTCASE(factorial_testsuite, factorial_test_positive)
 uk_testsuite_register(factorial_testsuite, NULL);
 ```
 
-When we run this application, we should see the following output.
+Before we run the application, we need to enable the `uktest` library, by using `make menuconfig` and selecting `Library Configuration --> uktest`.
+When we run the application, we should see the following output.
 
 ```
 test: factorial_testsuite->factorial_test_positive

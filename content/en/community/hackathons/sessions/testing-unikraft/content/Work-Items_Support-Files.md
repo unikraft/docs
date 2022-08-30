@@ -1,3 +1,2 @@
-Session support files are available [on Google Drive](https://drive.google.com/drive/folders/1PEDtvR5W-eMGQgbJusMcDPc6hS6ghYAl?usp=sharing).
-You can use your own setup or the per cloned repos in `work.zip`.
-Take a peek at the solutions in `sol.zip`.
+The `app-googletest` application can be made starting from the `app-helloworld` application or you can use the already made one from the `work` folder.
+Take a peek at the solutions in the `sol` folder if you need to.
