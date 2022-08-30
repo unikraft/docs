@@ -1,5 +1,5 @@
 Unikraft is a configurable operating system, where each component can be modified / configured, according to the user’s needs.
-This configuration is done using a version of Kconfig, through the **Config.uk** files.
+This configuration is done using a version of [Kconfig](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) (used in the Linux kernel), through the **Config.uk** files.
 In these files, options are added to enable libraries, applications and different components of the Unikraft core.
 The user can then apply those configuration options, using `make menuconfig`, which generates an internal configuration file, **.config**, that can be understood by the build system.
 Once configured, the Unikraft image can be built, using `make`, and run, using the appropriate method (Linux ELF loader, qemu-kvm, xen, others).
