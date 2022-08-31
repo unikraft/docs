@@ -50,7 +50,7 @@ hbreak [location]
 continue
 ```
 
-We’ll now need to set the right CPU architecture:
+We'll now need to set the right CPU architecture:
 
 ```bash
 disconnect
