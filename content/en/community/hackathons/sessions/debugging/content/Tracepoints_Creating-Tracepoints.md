@@ -22,4 +22,3 @@ It will accept up to 7 parameters of type `type1`, `type2`, etc.
 The given format string `fmt` is a printf-style format which will be used to create meaningful messages based on the collected trace parameters.
 This format string is only kept in the debug image and is used by the tools to read and parse the trace data.
 Unikraft's trace buffer stores for each sample a timestamp, the name of the tracepoint, and the given parameters.
-

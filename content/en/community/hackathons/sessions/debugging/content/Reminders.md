@@ -12,4 +12,3 @@ Below, you can see a list of the commands you have used so far.
 | `kraft build`                                          | Build the application                                                   |
 | `kraft clean`                                          | Clean the application                                                   |
 | `make menuconfig`                                      | Configure application through the main menu                             |
-

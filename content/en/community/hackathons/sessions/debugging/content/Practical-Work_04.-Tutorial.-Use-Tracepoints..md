@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
 ```
 
 We also added two simple functions for a better view of tracepoints in GDB.
@@ -76,7 +75,7 @@ Now we can put a break to first function, `start_status()`, to check if the firs
 To show all the tracepoints, we can use `uk trace`.
 
 * Do **NOT** forget to run `source /path/to/your/build/uk-gdb.py` in GDB.
-Otherwise, you won't be able to use `uk trace`.  
+Otherwise, you won't be able to use `uk trace`.
 
 
 ```bash

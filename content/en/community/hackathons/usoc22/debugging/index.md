@@ -42,9 +42,9 @@ weigth: 30
 
 {{< readfile file="/community/hackathons/sessions/debugging/content/Tracepoints_Reading-Trace-Data.md" markdown="true" >}}
 
-### Quizz ###
+### Quiz
 
-{{< readfile file="/community/hackathons/sessions/debugging/content/Quizz.md" markdown="true" >}}
+{{< readfile file="/community/hackathons/sessions/debugging/content/Quiz.md" markdown="true" >}}
 
 ## Practical Work
 
