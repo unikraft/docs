@@ -5,4 +5,3 @@ There is a well-known kernel quote, which should be introduced to this library a
   -- Anil Madhavapeddy
 
 Please add this quote to `libfortune` as a patch so it is only available when used with unikernels.
-

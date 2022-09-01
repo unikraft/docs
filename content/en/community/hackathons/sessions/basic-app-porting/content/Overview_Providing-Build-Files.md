@@ -2,7 +2,7 @@ Now we have everything set up.
 We can start an iterative process of building the target unikernel with the application.
 This process is usually very iterative because it requires building the unikernel step-by-step, including new files to the build, making adjustments, and re-building, etc.
 
-1. The first thing we must do before we start is to check that `fetch`ing the remote code for `iperf3` is possible.
+1. The first thing we must do before we start is to check that fetching the remote code for `iperf3` is possible.
    Let's try and do this by running in our application workspace:
 
    ```bash
@@ -10,7 +10,7 @@ This process is usually very iterative because it requires building the unikerne
    $ kraft fetch
    ```
 
-   If this is successful, we should see it download the remote zip file and we should see it saved within our Unikraft application's `build/`.
+   If this is successful, we should see it download the remote `zip` file and we should see it saved within our Unikraft application's `build/`.
    The directory with the extracted contents should be located at:
 
    ```bash
@@ -39,7 +39,7 @@ This process is usually very iterative because it requires building the unikerne
    ```
 
    If this has not worked, you must fiddle with the preamble at the top of the library's `Makefile.uk` to ensure that correct paths are being set.
-   Remove the `build/` directory and try `fetch`ing again.
+   Remove the `build/` directory and try `fetching` again.
 
 1. Now that we can fetch the remote sources, `cd` into this directory and perform the `./configure` step as above.
    This will do two things for us.
@@ -55,9 +55,7 @@ This process is usually very iterative because it requires building the unikerne
    $ cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
    ```
 
-   Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that
-   this directory exists:
-
+   Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that this directory exists:
    ```Makefile
    LIBIPERF3_CINCLUDES-y += -I$(LIBIPERF3_BASE)/include
    ```
@@ -72,8 +70,8 @@ This process is usually very iterative because it requires building the unikerne
    $ make -n
    ```
 
-   This flag, `-n`, has just shown us what `make` will run; the full commands for `gcc` including flags.
-   What's interesting here is any line which start with:
+   This flag, `-n`, has just shown us what `make` will run, the full commands for `gcc` including flags.
+   What's interesting here is any line which starts with:
 
    ```
    $ echo "  CC      "
@@ -107,12 +105,12 @@ This process is usually very iterative because it requires building the unikerne
 
    **Note:** The path in the variable `LIBIPERF3_SRC` may need to be adjusted from the boilerplate code to match the layout of the application you are porting.
 
-   **Tip:** It's best to add these files iteratively, i.e. one-by-one, and attempt the compilation process (step 5) in between adding all files.
+   **Tip:** It's best to add these files iteratively, i.e. one by one, and attempt the compilation process (step 5) in between adding all files.
    This will show you errors about what's missing and you can accurately determine which files are truly necessary for the build.
    In addition to this, we can also find intermittent errors which will be the result of incompatibilities between Unikraft and the application in question (covered in the next section on making patches).
 
-1. Now that we have added all the source files, let's try and build the application!  This step, again, usually occurs iteratively along with the previous step of adding a new file one-by-one.
-   Because the application has been `configure`d and we have `fetch`ed the contents, we can simply try running the build in the Unikraft application directory:
+1. Now that we have added all the source files, let's try and build the application!  This step, again, usually occurs iteratively along with the previous step of adding a new file one by one.
+   Because the application has been configured and we have fetched the contents, we can simply try running the build in the Unikraft application directory:
 
    ```bash
    $ cd ~/workspace/apps/iperf3
@@ -120,14 +118,14 @@ This process is usually very iterative because it requires building the unikerne
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.
-   Remember in [the Unikraft build lifecycle](#the-unikraft-build-lifecycle) that there is a step which occurs between fetching the remote origin code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
+   Remember in [the Unikraft build lifecycle](community/hackathons/usoc22/basic-app-porting/#the-unikraft-build-lifecycle) that there is a step which occurs between fetching the remote original code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
    This may be useful for applications which have complex build systems or auxiliary files which need to be created or modified before they are built.
-   Examples for `prepare`ing include:
+   Examples for preparing include:
 
-   * Running scripts which generate new source files from templates;
-   * Compiling files preemptively before Unikraft starts `build`ing source files;
-   * Checking for additional tools or building additional tools which are required to build the library; and,
-   * Advanced patching techniques to the source files of the library which make changes to it in a non-standard way.
+   * Running scripts which generate new source files from templates
+   * Compiling files preemptively before Unikraft starts building source files
+   * Checking for additional tools or building additional tools which are required to build the library
+   * Advanced patching techniques to the source files of the library which make changes to it in a non-standard way
 
    Preparation is done by adding Make targets to the `UK_PREPARE` variable:
 
@@ -135,7 +133,7 @@ This process is usually very iterative because it requires building the unikerne
    UK_PREPARE += mytarget
    ```
 
-   Checking whether the library has been `prepare`d or adding a target which requires preparation before it can be executed is as simple as checking whether the following target exists:
+   Checking whether the library has been prepared or adding a target which requires preparation before it can be executed is as simple as checking whether the following target exists:
 
    ```Makefile
    $(LIBIPERF3_BUILD)/.patched
@@ -149,17 +147,16 @@ This process is usually very iterative because it requires building the unikerne
    ```
 
 The steps outlined above helped us begin the process of porting a simple application to Unikraft.
-It covers the major steps involved in the process of porting "from first principles," including addressing all the steps in the construction lifecycle of Unikraft unikernels.
+It covers the major steps involved in the process of porting `from first principles`, including addressing all the steps in the construction lifecycle of Unikraft unikernels.
 
 There are occasional caveats to this process, however.
-This is to do with context of the "unikernel model," that is, single-purpose OSes with a single address space, acting in a single process without context switches or costly syscalls.
+This is to do with the context of the `unikernel model`, that is single-purpose OSes with a single address space, acting in a single process without context switches or costly syscalls.
 Applications developed for Linux user space make a number of assumptions about its runtime, for example:
 
-* That all syscalls are available (which is not the case for Unikraft, although there is significant work being done to bring more syscalls to Unikraft);
-* That the filesystem is complete;
-* That P in POSIX is _not_ silent: Unfortunately it is and Unix-type systems do not always adhere to standards and make their own assumptions.
-  For example, oftentimes there are differences between Linux and BSD-type OSes which need to be accounted for; and,
-* That all features are necessary.
+* That all syscalls are available (which is not the case for Unikraft, although there is significant work being done to bring more syscalls to Unikraft)
+* That the filesystem is complete
+* That P in POSIX is _not_ silent: Unfortunately it is and Unix-type systems do not always adhere to standards and make their own assumptions
+  For example, oftentimes there are differences between Linux and BSD-type OSes which need to be accounted for
+* That all features are necessary
 
 In the next section we address how we can make changes to the application before it is compiled by the Unikraft build system in order to address the points above.
-

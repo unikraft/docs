@@ -1,6 +1,6 @@
 To get started, we must create a new library for our application.
-The premise here is that we are going to "wrap" or "decorate" the source code of `iperf3` with the _lingua franca_ of Unikraft's build system.
-That is, when we eventually build the application, the Unikraft build system will understand where to get the source code files, which ones to compile and how, with respect to the rest of Unikraft's internals and other dependencies.
+The premise here is that we are going to wrap or decorate the source code of `iperf3` with the _lingua franca_ of Unikraft's build system.
+That is, when we eventually build the application, the Unikraft build system will understand where to get the source code files from, which ones to compile and how, with respect to the rest of Unikraft's internals and other dependencies.
 
 Let's first start by initializing a working environment for ourselves:
 
@@ -19,7 +19,8 @@ Let's first start by initializing a working environment for ourselves:
    ```bash
    tree -L 1
    ```
-   ```
+
+   ```markdown
    .
    ├── apps
    ├── archs
@@ -34,9 +35,9 @@ Let's first start by initializing a working environment for ourselves:
    We can use `kraft` to initialize some boilerplate for us too.
    To do this, we must first retrieve some information about the program itself.
    First, we need to identify the latest version number of `iperf3`.
-   GitHub tells us (as of the time of writing this tutorial) that this is `3.10.1`.
+   GitHub tells us (as of the time of writing this tutorial) that this is `3.11`.
 
-   Unikraft relies on the ability to download the source code of the "origin" code which is about to be compiled.
+   Unikraft relies on the ability to download the source code of the `origin` code which is about to be compiled.
    Usually these are tarballs or zips.
    Ideally, we want to have a version number in the URL so we can safely know the version being downloaded.
    However, if the source code is on GitHub, which it is in the case of `iperf3`, then `kraft` can figure this out for us.
@@ -49,7 +50,7 @@ Let's first start by initializing a working environment for ourselves:
       --no-prompt \
       --author-name "Your Name" \
       --author-email "your@email.com" \
-      --version 3.10.1 \
+      --version 3.11 \
       --origin https://github.com/esnet/iperf \
       iperf3
    ```
@@ -62,7 +63,8 @@ Let's first start by initializing a working environment for ourselves:
    The last argument of `kraft lib init` will simply prepend `lib` to whatever string name you give it.
    If you are porting a library which is called `libsomething`, still pass the full name to `kraft`, it will replace instances of `liblibsomething` with `libsomething` during the initialization of the project where appropriate.
 
-3. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain. To do this, simply add the path of the newly initialized library like so:
+1. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain.
+   To do this, simply add the path of the newly initialized library like so:
 
    ```bash
    $ kraft list add ~/workspace/libs/iperf3
@@ -75,7 +77,7 @@ Let's first start by initializing a working environment for ourselves:
    $ kraft list update
    ```
 
-4. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
+1. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
    To view basic information about the library and to confirm everything has worked, you can run:
 
    ```bash
