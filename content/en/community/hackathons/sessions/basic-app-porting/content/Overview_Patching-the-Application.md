@@ -1,11 +1,11 @@
 Patching the application occasionally must occur to address incompatibilities with the context of a Linux user space application and that of the unikernel model.
-It can also be used to introduce new features to the application, although this is more rare (although, [here is an example](https://github.com/unikraft/lib-newlib/blob/staging/patches/0010-enable-per-library-allocator-statistics.patch)).
+It can also be used to introduce new features to the application, although this is  rare (although, [here is an example](https://github.com/unikraft/lib-newlib/blob/staging/patches/0010-enable-per-library-allocator-statistics.patch)).
 
 
 #### Identifying a Change to the Application
 
 Identifying a change to the application which requires a patch is sometimes quite subtle.
-The process usually occurs during [steps 5 and 6 of providing build files](#providing-build-files) of the application or library in question.
+The process usually occurs during [steps 5 and 6 of providing build files](/community/hackathons/usoc22/basic-app-porting/#providing-build-files) of the application or library in question.
 During this process, we are expected to see compile-time and link-time errors from `gcc` as we add new files to the build and make fixes.
 
 The `iperf3` application port to Unikraft has four patches in order to make it work.
@@ -28,8 +28,8 @@ The next section discusses how to create one of these patches.
    The patch solves this by setting the temporary (ramfs) path to `/`.
    An alternative solution is to make this path at boot.
 
-1. Finally, [the fourth patch](https://github.com/lancs-net/lib-iperf3/blob/staging/patches/0004-Disable-use-of-mmap-and-replace-with-mmalloc-and-fr.patch) is once again to do with missing functionality from Unikraft.
-   In this case, the syscalls [`mmap`](https://linux.die.net/man/2/mmap) and [`munmap`](https://linux.die.net/man/2/munmap) are missing.
+1. [The fourth patch](https://github.com/lancs-net/lib-iperf3/blob/staging/patches/0004-Disable-use-of-mmap-and-replace-with-mmalloc-and-fr.patch)(Optional) is optional.
+   In this case, the syscalls [`mmap`](https://linux.die.net/man/2/mmap) and [`munmap`](https://linux.die.net/man/2/munmap) were missing.
    In this case, `iperf3`, used `mmap` simply to statically allocate a region of memory.
    The trick used here is to simply replace instances of `mmap` with `malloc` and instances of `munmap` with `free`.
 
@@ -38,8 +38,7 @@ The next section discusses how to create one of these patches.
 The above patches represent example use cases where patches may be necessary to fix the application when bringing it to Unikraft.
 The possibilities presented in this tutorial are non-exhaustive, so take care.
 
-The next section discusses in detail how to create a patch for the target
-application or library.
+The next section discusses in detail how to create a patch for the target application or library.
 
 
 #### Preparing a Patch for the Application
@@ -96,5 +95,4 @@ To make a patch:
    LIBIPERF3_PATCHDIR = $(LIBIPERF3_BASE)/patches
    ```
 
-This concludes the necessary steps to port an application to Unikraft "from first principles".
-
+This concludes the necessary steps to port an application to Unikraft `from first principles`.

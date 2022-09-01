@@ -4,7 +4,7 @@ linkTitle: "08. Basic App Porting"
 weigth: 80
 ---
 
-## Reminders
+## Requirements and Reminders
 
 ### Configuring, Building and Running Unikraft
 
@@ -75,3 +75,7 @@ weigth: 80
 ### 04. Give Us Feedback
 
 {{< readfile file="/community/hackathons/sessions/basic-app-porting/content/Work-Items_04.-Give-Us-Feedback.md" markdown="true" >}}
+
+## Quiz
+
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/BWb8XzEuY3FCQpay9) to assess your current understanding of the session.
