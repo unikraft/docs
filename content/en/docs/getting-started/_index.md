@@ -8,23 +8,21 @@ enableToc: true
 
 ## Getting started with Unikraft
 
-The easiest way to get started with Unikraft is to use the command-line utility
-`kraft`, which is a companion tool used for defining, configuring, building, and
-running Unikraft applications.  With `kraft` you can seamlessly create a build
-environment for your unikernel and painlessly manage dependencies for its build.
+The easiest way to get started with Unikraft is to use the command-line utility `kraft`, which is a companion tool used for defining, configuring, building, and running Unikraft applications.
+With `kraft` you can seamlessly create a build environment for your unikernel and painlessly manage dependencies for its build.
 
 As an alternative to `kraft` it is also possible to build Unikraft using a regular [`Makefile`](docs/getting-started/#building-unikraft-via-makefile).
 
 ## Installing the CLI companion tool `kraft`
 
-The kraft tool and Unikraft build tool have a number of package requirements.
+In order to build and run Unikraft and to use its companion tool [`kraft`](https://github.com/unikraft/kraft), several tools and libraries being must be part of your system.
 Follow the steps below according to your Linux distribution.
 
-### Ubuntu, Debian and other APT-based distributions
+### Ubuntu, Debian and Other APT-based Distributions
 
-Please run the following command to install the requirements:
+Run the following command to install the requirements:
 
-```shell-script
+```console
 $ apt-get install -y --no-install-recommends \
   build-essential \
   libncurses-dev \
@@ -37,16 +35,68 @@ $ apt-get install -y --no-install-recommends \
   unzip \
   uuid-runtime \
   python3 \
-  python3-setuptools
+  python3-setuptools \
+  python3-pip \
+  qemu-kvm \
+  qemu-system-x86 \
+  sgabios
 ```
 
-To install kraft simply run:
+### Arch Linux, Manjaro and Other Pacman-based Distributions
+
+Run the following command to install the requirements:
+
+```console
+$ pacman -Sy base-devel \
+  ncurses \
+  libyaml \
+  flex \
+  git \
+  wget \
+  socat \
+  bison \
+  unzip \
+  python \
+  python-setuptools \
+  python-pip \
+  qemu-system-x86
+```
+
+### Fedora and Other dnf-based Distributions
+
+Run the following command to install the requirements:
+
+```console
+$ dnf install -y \
+  @development-tools \
+  ncurses-devel \
+  libyaml \
+  flex \
+  git \
+  wget \
+  socat \
+  bison \
+  unzip \
+  libuuid \
+  python3 \
+  python3-setuptools \
+  python3-pip \
+  qemu-kvm \
+  qemu-system-x86 \
+  sgabios
+```
+
+**Note: Since on Fedora the default `yacc` is [`Berkeley Yacc`](https://en.wikipedia.org/wiki/Berkeley_Yacc), not [`GNU Bison`](https://www.gnu.org/software/bison/), you will need to manually set the `YACC` env variable `export YACC=/usr/bin/bison`.**
+
+### Install `kraft` Using `pip3`
+
+To then install `kraft` run:
 
 ```console
 $ pip3 install git+https://github.com/unikraft/kraft.git
 ```
 
-You can then type kraft to see its help menu:
+You can then type `kraft` to see its help menu:
 
 ```text
 Usage: kraft [OPTIONS] COMMAND [ARGS]...
@@ -110,8 +160,8 @@ $ kraft up -p kvm -m x86_64 -t helloworld helloworld
 ```
 
 For more information about all the steps behind `kraft up`, check [Creating an App](docs/usage/init).
-For more information about the `up` command type kraft up -h.
-For more information about kraft type kraft -h or read the documentation at Unikraft’s website.
+For more information about the `up` command type `kraft up -h`.
+For more information about `kraft` type `kraft -h` or read the documentation at Unikraft's website.
 If you find any problems please fill out an issue.
 Thank you!
 
@@ -120,11 +170,11 @@ Thank you!
 To manually set up the build environment for the [helloworld app](https://github.com/unikraft/app-helloworld), we first have to create a specific directory structure:
 
 ```text
- my-unikernel
-      ├────apps
-      │      └─app-helloworld     <- helloworld application
-      ├─── libs                   <- additional libraries go here
-      └─── unikraft               <- Unikraft core
+my-unikernel
+	|-- apps
+	|   `-- app-helloworld
+	|-- libs
+	`-- unikraft
 ```
 
 We can do this by executing the following sequence of commands:
@@ -140,7 +190,7 @@ $ git clone https://github.com/unikraft/app-helloworld
 $ cd app-helloworld
 ```
 
-All following configuration and build operations are done from within the helloworld application folder.
+All following configuration and build operations are done from within the `helloworld` application folder.
 Notice that it already contains a `Makefile` that looks like this:
 
 ```Makefile
