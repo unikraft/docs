@@ -28,6 +28,15 @@ other = "Unikraft Blog"
 [unikraft-releases]
 other = "Unikraft Releases"
 
+[unikraft-faq]
+other = "Unikraft Frequently Asked Questions"
+
+[view-issues-on-github]
+other = "View issues on GitHub"
+
+[join-discord-to-ask-questions]
+other = "Join Discord to ask questions"
+
 [search-docs]
 other = "Search docs..."
 
