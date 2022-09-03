@@ -1,11 +1,11 @@
 ---
 title: FAQ
-date: 2020-01-11T14:09:21+09:00
-draft: false
-weight: 1000
+draft: true
 ---
 
 ## Frequently Asked Questions
+
+{{< readfile file="/docs/common-issues/content/Frequently-Asked-Questions.md" markdown="true" >}}
 
 ### Why Unikraft and not a container?
 
