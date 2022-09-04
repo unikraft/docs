@@ -1,11 +1,6 @@
-name: Linter
+name: Markdown Linter
 
-on:
-  push:
-    branches-ignore: [master, main]
-  pull_request:
-    branches: [main]
-    types: opened, edited
+on: [push, pull_request]
 
 jobs:
   superlinter:
