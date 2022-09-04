@@ -48,7 +48,8 @@ All the above functions are generated, so the only thing that we have to do when
 
 There are four definition macros that we can use in order to add a system call to the system call shim layer:
 
-* `UK_SYSCALL_DEFINE` - to implement the libc style system calls. That returns `-1` and sets the `errno` accordingly.
+* `UK_SYSCALL_DEFINE` - to implement the libc style system calls.
+  That returns `-1` and sets the `errno` accordingly.
 * `UK_SYSCALL_R_DEFINE` - to implement the raw variant which returns a negative error value in case of errors. `errno` is not used at all.
 
 The above two macros will generate the following functions:
@@ -64,6 +65,7 @@ long uk_syscall_r_<syscall_name>(long <arg1_name>, long <arg2_name>, ...);
 <return_type> <syscall_name>(<arg1_type> <arg1_name>,
                               <arg2_type> <arg2_name>, ...);
 ```
+
 For the case that the libc-style wrapper does not match the signature and return type of the underlying system call, a so called low-level variant of these two macros are available: ``UK_LLSYSCALL_DEFINE``, ``UK_LLSYSCALL_R_DEFINE``.
 These macros only generate the ``uk_syscall_e_<syscall_name>`` and ``uk_syscall_r_<syscall_name>`` symbols. You can then provide the custom libc-style wrapper on top.
 
@@ -106,25 +108,29 @@ UK_SYSCALL_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
 And the raw variant:
 
 ```C
-    #include <uk/syscall.h>
+#include <uk/syscall.h>
 
-    UK_SYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
-    {
-        ssize_t ret;
+UK_SYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
+{
+    ssize_t ret;
 
-        ret = vfs_do_write(fd, buf, count);
-        if (ret < 0) {
-            return -EFAULT;
-        }
-        return ret;
+    ret = vfs_do_write(fd, buf, count);
+    if (ret < 0) {
+        return -EFAULT;
     }
+    return ret;
+}
 ```
 
 The last step is to add the system call to `UK_PROVIDED_SYSCALLS-y` in the `Makefile.uk` file.
 The format is:
 
-`UK_PROVIDED_SYSCALLS-$(CONFIG_<YOURLIB>) += <syscall_name>-<number_of_arguments>`
+```
+UK_PROVIDED_SYSCALLS-$(CONFIG_<YOURLIB>) += <syscall_name>-<number_of_arguments>
+```
 
-So, in our case:
+So, in our case, we need to add:
 
-`UK_PROVIDED_SYSCALLS-$(CONFIG_LIBWRITESYS) += write-3`
+```
+UK_PROVIDED_SYSCALLS-$(CONFIG_LIBWRITESYS) += write-3
+```
