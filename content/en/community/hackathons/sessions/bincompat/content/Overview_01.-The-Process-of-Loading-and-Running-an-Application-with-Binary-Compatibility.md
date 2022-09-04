@@ -1,7 +1,7 @@
 For Unikraft to achieve binary compatibility there are two main objectives that need to be met:
 
-1. The ability to pass the binary to Unikraft.
-1. The ability to load the binary into memory and jump to its entry point.
+1. The ability to pass the ELF binary to Unikraft at boot time.
+1. The ability to load the passed ELF binary into memory and jump to its entry point.
 
 For the first point we decided to use the initial ramdisk in order to pass the binary to the unikernel.
 With `qemu-guest`, in order to pass an initial ramdisk to a virtual machine you have to use the `-initrd` option.
@@ -11,7 +11,7 @@ As an example, if we have a `helloworld` binary, we can pass it to the unikernel
 sudo qemu-guest -kernel build/unikernel_image -initrd helloworld_binary
 ```
 
-After the unikernel gets the binary the next step is to load it into memory.
+After the unikernel reads the binary the next step is to load it into memory.
 The dominant format for executables is the *Executable and Linkable File* format (ELF), so, in order to run executables we need an ELF loader.
 The job of the ELF Loader is to load the executable into the main memory.
 It does so by reading the program headers located in the ELF formatted executable and acting accordingly.
@@ -56,10 +56,13 @@ Program Headers:
    07     .tdata .init_array .fini_array .data.rel.ro .dynamic .got
 ```
 
-As an overview of the whole process, when we want to run an application on Unikraft using binary compatibility, the first step is to pass the application to the unikernel as an initial ram disk.
-Once the unikernel gets the application, the loader reads the executable segments and loads them accordingly.
+As an overview of the whole process, when we want to run an application on Unikraft using binary compatibility, the first step is to pass the executable file to the unikernel as an initial ram disk.
+Once the unikernel gets the executable, it reads the executable segments and loads them accordingly.
 After the program is loaded, the last step is to jump to its entry point and start executing.
 
-The loader that we currently have implemented in Unikraft only supports executables that are static (so all the libraries are part of the executables) and also position-independent.
-A position independent binary is a binary that can run correctly independent of the address at which it was loaded.
-So we need executables that are built using the `-static-pie` compiler / linker option, available in GCC since version 8.
+The unikernel image is the [`app-elfloader` application](https://github.com/unikraft/app-elfloader).
+This application parses the ELF file and then loads it accordingly.
+
+The `app-elfloader` currently only supports executables that are `static-pie`: all the libraries are part of the executables and the code is position-independent (PIE: _Position Independent Executable_).
+A position independent executable is a binary that can run correctly independent of the address at which it was loaded.
+So, for building executables, we currently need to use `-static-pie` compiler / linker option, available in GCC since version 8.
