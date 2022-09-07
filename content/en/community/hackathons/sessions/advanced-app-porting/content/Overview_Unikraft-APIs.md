@@ -1,10 +1,16 @@
-One important thing to point out regarding Unikraft internal libraries is that for each "category" of library (e.g., memory allocators, schedulers, filesystems, network drivers, etc.)
+Some apps may require direct interaction with the system API. One such example is `LWIP` which uses the network
+device to receive and send packets. [Here](https://github.com/unikraft/lib-lwip/blob/staging/uknetdev.c#L215)
+you can see how `LWIP` calls the function `uk_netdev_rx_one` from the internal library `uknetdev` to receive a packet.
+One important thing to point out regarding Unikraft internal libraries is that for each "category" of library (e.g., memory allocators, schedulers, filesystems, network drivers, etc.),
 Unikraft defines (or will define) an API that each library under that category must comply with.
 This is so that it's possible to easily plug and play different libraries of a certain type (e.g., using a co-operative scheduler or a pre-emptive one).
+We will now discuss present several examples of using the Unikraft API.
 
 #### VFScore
 
-Take for example the virtual filesystem (i.e. `vfscore`).
+In the first scenario, let us say you have have a library that is more like a filesystem, and we would like to
+hook it in the system such that an application that calls `open` will use your filesystem library.
+To do this we will work with the Virtual Fiesystem API. (`vfscore` internal library)
 This library provides the implementation of system calls related to filesystem management.
 We saw in previous sessions that there are two types of filesystems available in Unikraft `ramfs` and` 9pfs`.
 Obviously, these two have different implementations of generic file operations, such as reading, writing, etc.
@@ -14,7 +20,7 @@ This is done by using function pointers that redirect the program's flow to the 
 
 In this regard, the `vfscore` library provides 2 structures to define operations on the filesystem:
 
-```
+```C
 struct vfsops {
         int (*vfs_mount)        (struct mount *, const char *, int, const void *);
         ...
@@ -22,7 +28,7 @@ struct vfsops {
 };
 ```
 
-```
+```C
 struct vnops {
         vnop_open_t             vop_open;
         vnop_close_t            vop_close;
@@ -41,7 +47,7 @@ More about this structure [here](https://tldp.org/LDP/lkmpg/2.4/html/c577.htm).
 The filesystem library will define two such structures through which it will provide the specified operations.
 To understand how these operations end up being used let's examine the open system call:
 
-```
+```C
 int
 sys_open(char *path, int flags, mode_t mode, struct vfscore_file **fpp)
 {
@@ -54,28 +60,26 @@ sys_open(char *path, int flags, mode_t mode, struct vfscore_file **fpp)
 
 `VOP_OPEN()` is a macro that is defined as follows:
 
-```
+```C
 #define VOP_OPEN(VP, FP)           ((VP)->v_op->vop_open)(FP)
 ```
 
 So the system call will eventually call the registered operation.
 
-{{% alert title="Note" %}}
 In order to find the source that contains the definition of a structure, function or other component in the `unikraft` directory you can use the following command:
 
-```
+```Bash
 $ grep -r <what_you_want_to_search_for>
 ```
 
 For example:
 
-![grep_r_usage](./images/grep_r_usage.png)
-{{% /alert %}}
+![grep_r_usage](/community/hackathons/sessions/advanced-app-porting/images/grep_r_usage.png)
 
 Let's see now how to link the "file operations" of a filesystem to the `vfscore` library.
 For this, the library exposes a specific structure named `vfscore_fs_type`:
 
-```
+```C
 struct vfscore_fs_type {
         const char      *vs_name;       /* name of file system */
         int             (*vs_init)(void); /* initialize routine */
@@ -89,7 +93,7 @@ You can inspect the `extra.ld` file, in the `vfscore` directory to see it.
 As we mentioned before, these sections come with help macros, so this time is no exception either.
 The macro that registers a filesystem is:
 
-```
+```C
  UK_FS_REGISTER(fssw)
 ```
 
@@ -99,7 +103,7 @@ There are three other important structures that we should discuss.
 First of all, the `vnode` structure.
 This is the abstraction that `vfscore` provides for a file (no matter its nature, regular, directory, etc), and it can be seen as the equivalent of an inode in Linux-based systems.
 
-```
+```C
 struct vnode {
         uint64_t        v_ino;          /* inode number */
         struct mount    *v_mount;       /* mounted vfs pointer */
@@ -118,7 +122,7 @@ This field is used by the two available filesystems and we will use it today in 
 The `dentry` structure is the second relevant structure. It offers the possibility to create links (although currently neither `ramfs` or `9pfs` does not support hard links).
 A dentry can be seen as the equivalent of a path in the filesystem, and it has a pointer to the inode.
 
-```
+```C
 struct dentry {
         char            *d_path;        /* pointer to path in fs */
         struct vnode    *d_vnode;       /* pointer to inode */
@@ -132,7 +136,7 @@ Last but not least is the `mount` structure.
 Mounting filesystems is the process by which the user makes the contents of a filesystem accessible.
 From this point of view, the filesystem, for example, `ramfs`, is seen as a device on Linux to which we have to associate a directory (technically speaking a dentry).
 
-```
+```C
 struct mount {
         struct vfsops   *m_op;          /* pointer to vfs operation */
         int             m_flags;        /* mount flag */
@@ -156,7 +160,7 @@ Then we prefer a little overhead than trying to patch the code.
 
 Let's see how the ramfs system is registered into `vfscore`. We inspect the code from the `ramfs_vfsops.c` file from `ramfs` directory:
 
-```
+```C
 static struct vfscore_fs_type fs_ramfs = {
         .vs_name = "ramfs",
         .vs_init = NULL,
@@ -170,7 +174,7 @@ It defines the `vfscore_fs_type` structure and uses the registration macro for t
 
 Next, let's look at the specific structure, which is essentially the "file":
 
-```
+```C
 struct ramfs_node {
         struct ramfs_node *rn_next;   /* next node in the same directory */
         struct ramfs_node *rn_child;  /* first child node */
@@ -188,13 +192,13 @@ Unfortunately, the fact that the name field is here and is used in the code does
 
 We notice that the filesystem has the following tree-like structure:
 
-![ramfs_strucutre](./images/ramfs_structure.png)
+![ramfs_strucutre](/community/hackathons/sessions/advanced-app-porting/images/ramfs_structure.png)
 
 Let's look at how the filesystem is mounted.
 In the boot process, the mount syscall from `vfscore` is called.
 This is redirected to the `ramfs_mount` function as follows:
 
-```
+```C
 UK_SYSCALL_R_DEFINE(int, mount, const char*, dev, const char*, dir,
                 const char*, fsname, unsigned long, flags, const void*, data)
 {
@@ -210,7 +214,7 @@ UK_SYSCALL_R_DEFINE(int, mount, const char*, dev, const char*, dir,
 
 Now let's examine this specific routine:
 
-```
+```C
 /*
  * Mount a file system.
  */
@@ -235,7 +239,7 @@ The reason why it is important to do the `vnode` - `ramfs_node` association is t
 Thus, in the first phases of a defined operation, references to the `ramfs_node` field are usually found.
 For example:
 
-```
+```C
 static int
 ramfs_read(struct vnode *vp, struct vfscore_file *fp __unused,
            struct uio *uio, int ioflag __unused)
@@ -252,7 +256,7 @@ To use this API, one must include the `uk/list.h` header.
 This type of structure is important because it is a unified way of using linked lists, which is why it is useful to know it, especially if we are working in the Unikraft core.
 The `uk_list_head` structure looks as follows:
 
-```
+```C
 struct uk_list_head {
         struct uk_list_head *next;
         struct uk_list_head *prev;
@@ -263,7 +267,7 @@ The way these lists are built exploits the way of defining structures in C.
 A field in a structure is actually just an offset in memory.
 To define a list, for example, we just need to include the `uk_list_head` structure in our container structure:
 
-```
+```C
 struct car {
         char name[50];
         struct uk_list_head list;
@@ -287,13 +291,13 @@ Run `make menuconfig` and select the KVM platform.
 After that run `make`.
 You can start the program using the following command:
 
-```
+```Bash
 $ qemu-guest -k build/02-linked-list-app_kvm-x86_64
 ```
 
 Let's look at the following part of the code:
 
-```
+```C
         printf("\nThe structure address for c1 is: %p\n", c1);
         zero = (struct car *) 0;
         printf("The offset of list field inside car strucure is: %p\n",

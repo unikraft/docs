@@ -8,7 +8,7 @@ The way we can add such a section in our application/library is the following:
 
 1. Create a file with the `.ld` extension (e.g. extra.ld) with the following content:
 
-   ```
+   ```C
    SECTIONS
    {
    	.my_section : {
@@ -22,7 +22,7 @@ The way we can add such a section in our application/library is the following:
 
 1. Add the following line to `Makefile.uk`:
 
-   ```
+   ```Makefile
    LIBYOURAPPNAME_SRCS-$(CONFIG_LIBYOURAPPNAME) += $(LIBYOURAPPNAME_BASE)/extra.ld
    ```
 
@@ -34,7 +34,7 @@ In the `/demo/01-extrald-app` directory there is an application that defines a n
 Copy this directory to your app's directory.
 Your working directory should look like this:
 
-```
+```Bash
 workdir
 |_______apps
 |       |_______01-extrald-app
@@ -48,13 +48,14 @@ We want to register the `my-structure` structure in the newly added section.
 In Unikraft core libraries this is usually done using macros.
 So we will do the same.
 
-```
+```C
 #define MY_REGISTER(s, f) static const struct my_structure      \
         __section(".my_section_entry")                          \
         __my_section_var __used =                               \
                 {.name = (s),                                   \
                 .func = (f)};
 ```
+Note that it may be necessary to add the attribute `__align8` to specify the allignment of the section.
 
 This macro receives the fields of the structure and defines a variable called `__my_section_var` in the newly added section.
 This is done via `__section()`.
@@ -66,14 +67,14 @@ Next, let's analyze the method by which we can go through this section to find t
 We must first import the endpoints of the section.
 It can be done as follows:
 
-```
+```C
 extern const struct my_structure my_section_start;
 extern const struct my_structure my_section_end;
 ```
 
 Using the endpoints we can write the macro for iterating through the section:
 
-```
+```C
 #define for_each_entry(iter)                                    \
         for (iter = &my_section_start;                          \
                 iter < &my_section_end;                         \
@@ -81,40 +82,38 @@ Using the endpoints we can write the macro for iterating through the section:
 
 ```
 
-{{% alert title="Note" %}}
 If you're not familiar with macros, you may check what they expand to with the GCC's preprocessor.
 Remove all the included headers and run `gcc -E main.c`.
-{{% /alert %}}
 
 Let's configure the program.
 Use the `make menuconfig` command to set the KVM platform as in the following image.
 
-![platform_configuration](./images/platform_configuration.png)
+![platform_configuration](/community/hackathons/sessions/advanced-app-porting/images/platform_configuration.png)
 
 Save the configuration, exit the menuconfig tab and run `make`.
 Now, let's run it.
 You can use the following command:
 
-```
+```Bash
 $ qemu-guest -k build/01-extrald-app_kvm-x86_64
 ```
 
 The program's output should be the following:
 
-![01-extrald-app-output](./images/01-extrald-app-output.png)
+![01-extrald-app-output](/community/hackathons/sessions/advanced-app-porting/images/01-extrald-app-output.png)
 
 To see that the information about the section size and its start address is correct we will examine the binary using the readelf utility.
 The readelf utility is used to display information about ELF files, like sections or segments.
 More about it [here](https://man7.org/linux/man-pages/man1/readelf.1.html)
 Use the following command to display information about the ELF sections:
 
-```
+```Bash
 $ readelf -S build/01-extrald-app_kvm-x86_64
 ```
 
 The output should look like this:
 
-![readelf_output](./images/readelf_output.png)
+![readelf_output](/community/hackathons/sessions/advanced-app-porting/images/readelf_output.png)
 
 We can see that `my_section` is indeed among the sections of the ELF.
 Looking at its size we see that it is 0x10 bytes (the equivalent of 16 in decimal).

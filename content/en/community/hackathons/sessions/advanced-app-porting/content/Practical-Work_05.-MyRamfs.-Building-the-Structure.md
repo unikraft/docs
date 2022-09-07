@@ -9,4 +9,4 @@ But first we recommend you to look at the `struct myramfs_node` which is in the 
 To test this task go back to the `ramfs-app` and build it again (make sure to properclean).
 If you solved everything correctly the output should look like this:
 
-![05_output](./images/05_output.png)
+![05_output](/community/hackathons/sessions/advanced-app-porting/images/05_output.png)

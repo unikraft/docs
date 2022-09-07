@@ -5,7 +5,7 @@ Navigate to the `04-05-06-myramfs` directory.
 Copy `myramfs` directory to the `lib` directory in `unikraft` and the application in the `apps` directory.
 Your working directory should look like this:
 
-```
+```Bash
 workdir
 |_______apps
 |       |_______ramfs-app
@@ -19,7 +19,7 @@ workdir
 
 Edit the `Makefile.uk` from the `lib` directory and add the following:
 
-```
+```Makefile
 $(eval $(call _import_lib,$(CONFIG_UK_BASE)/lib/myramfs))
 ```
 
@@ -27,8 +27,7 @@ Now we need to make our library configurable from `vfscore`, for this we will ne
 
 First we will add the configuration menu:
 
-{{< highlight go "hl_lines=10-12">}}
-...
+```Makefile
 if LIBVFSCORE_AUTOMOUNT_ROOTFS
         choice LIBVFSCORE_ROOTFS
         prompt "Default root filesystem"
@@ -40,15 +39,14 @@ if LIBVFSCORE_AUTOMOUNT_ROOTFS
                 config LIBVFSCORE_ROOTFS_MYRAMFS
                 bool "My-ramfs"
                 select LIBMYRAMFS
-...
-{{< / highlight >}}
+```
 
 If we run now `make menuconfig` in the application `ramfs-app` we should see our library under the `vfscore configuration`:
 
-![vfscore_config_myramfs](./images/vfscore_config_myramfs.png)
+![vfscore_config_myramfs](/community/hackathons/sessions/advanced-app-porting/images/vfscore_config_myramfs.png)
 
 The second fundamental step is to add the following line to the same `Config.uk` file:
-{{< highlight go "hl_lines=6">}}
+```Makefile
  # Hidden configuration option that gets automatically filled
         # with the selected filesystem name
         config LIBVFSCORE_ROOTFS
@@ -58,7 +56,7 @@ The second fundamental step is to add the following line to the same `Config.uk`
         default "9pfs" if LIBVFSCORE_ROOTFS_9PFS
         default "initrd" if LIBVFSCORE_ROOTFS_INITRD
         default LIBVFSCORE_ROOTFS_CUSTOM_ARG if LIBVFSCORE_ROOTFS_CUSTOM
-{{< / highlight >}}
+```
 
 This will fill the `CONFIG_LIBVFSCORE_ROOTFS` with the string `myramfs`.
 
@@ -67,8 +65,6 @@ Follow TODOs 1-4 in myramfs_vnops.c and myramfs_vfsops.c.
 Now, when you run `make menuconfig` in the app be sure you use the `myramfs`library and also check the debug library.
 If everything is fine you should get a similar output:
 
-![04_output](./images/04_output.png)
+![04_output](/community/hackathons/sessions/advanced-app-porting/images/04_output.png)
 
-{{% alert title="Note" %}}
 Try to rename the filesystem in the `vfscore_fs_type` structure. What happens? Look for the `fs_getfs` function.
-{{% /alert %}}

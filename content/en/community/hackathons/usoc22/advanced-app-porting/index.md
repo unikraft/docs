@@ -52,6 +52,9 @@ weigth: 90
 
 {{< readfile file="/community/hackathons/sessions/advanced-app-porting/content/Practical-Work_06.-MyRamfs.-Reading-and-Writing.md" markdown="true" >}}
 
-### 07. Give Us Feedback
+### 07. Quiz
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/DkqbafkcjGndBWuAA) to assess your current understanding of the session.
+
+### 08. Give Us Feedback
 
 {{< readfile file="/community/hackathons/sessions/advanced-app-porting/content/Practical-Work_07.-Give-Us-Feedback.md" markdown="true" >}}

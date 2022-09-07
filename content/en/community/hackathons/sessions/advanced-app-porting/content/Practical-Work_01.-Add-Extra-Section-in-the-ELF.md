@@ -4,7 +4,7 @@ Navigate to the `01-extrald` directory.
 Copy `mycorelibrary` to the `lib` directory in `unikraft` and the two applications in the `apps` directory.
 Your working directory should look like this:
 
-```
+```Bash
 workdir
 |_______apps
 |       |_______01-app
@@ -18,7 +18,7 @@ workdir
 
 Edit the `Makefile.uk` from the `lib` directory and add the following:
 
-```
+```Makefile
 $(eval $(call _import_lib,$(CONFIG_UK_BASE)/lib/mycorelib))
 ```
 
