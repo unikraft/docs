@@ -1,12 +1,12 @@
-Session support files are available [in the repository](https://github.com/unikraft/summer-of-code-2021).
+Session support files are available [in the repository](https://github.com/unikraft/docs).
 If you already cloned the repository, update it and enter the session directory:
 
-```
+```Bash
 $ cd path/to/repository/clone
 
 $ git pull --rebase
 
-$ cd content/en/docs/sessions/09-advanced-app-porting/
+$ cd content/en/community/hackathons/sessions/09-advanced-app-porting/
 
 $ ls
 demo/  images/  index.md/  sol/  work/
@@ -14,10 +14,10 @@ demo/  images/  index.md/  sol/  work/
 
 If you haven't cloned the repository yet, clone it and enter the session directory:
 
-```
-$ git clone https://github.com/unikraft/summer-of-code-2021
+```Bash
+$ git clone https://github.com/unikraft/docs
 
-$ cd summer-of-code-2021/content/en/docs/sessions/09-advanced-app-porting/
+$ cd content/en/community/hackathons/sessions/09-advanced-app-porting/
 
 $ ls
 demo/  images/  index.md/  sol/  work/
