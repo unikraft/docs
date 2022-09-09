@@ -50,6 +50,9 @@ weigth: 100
 
 {{< readfile file="/community/hackathons/sessions/high-performance/content/Practical-Work_07.-Gimme,-gimme,-gimme!.md" markdown="true" >}}
 
-### 08. Give Us Feedback
+### 08. Quiz
+If you reached this far, please do a 5 minutes tour through [this quiz](https://forms.gle/BUjtyBw7zfmHjP3G7) to assess your current understanding of the session.
+
+### 09. Give Us Feedback
 
 {{< readfile file="/community/hackathons/sessions/high-performance/content/Practical-Work_08.-Give-Us-Feedback.md" markdown="true" >}}

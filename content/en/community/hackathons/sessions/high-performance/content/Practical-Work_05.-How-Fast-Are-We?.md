@@ -1,5 +1,5 @@
 It is now interesting to understand at which speed we are generating.
-For this purpose we prepared a little function in [`"netspeed.h"`](https://github.com/unikraft/summer-of-code-2021/blob/main/content/en/docs/sessions/10-high-performance/sol/pktgen/netspeed.h) that computes the packet rate (packets/sec) and current bandwidth (MBit/s): [`print_netspeed()`](https://github.com/unikraft/summer-of-code-2021/blob/main/content/en/docs/sessions/10-high-performance/sol/pktgen/netspeed.h#L93-L112).
+For this purpose we prepared a little function in [`"netspeed.h"`](https://github.com/unikraft/docs/blob/main/content/en/community/hackathons/sessions/high-performance/sol/pktgen/netspeed.h) that computes the packet rate (packets/sec) and current bandwidth (MBit/s): [`print_netspeed()`](https://github.com/unikraft/docs/blob/main/content/en/community/hackathons/sessions/high-performance/sol/pktgen/netspeed.h#L102).
 
 Declare before your loop the following two variables:
 

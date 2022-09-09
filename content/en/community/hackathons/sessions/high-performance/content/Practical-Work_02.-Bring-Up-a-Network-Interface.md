@@ -10,15 +10,18 @@ $ ls [PATH-TO-UNIKRAFT]/lib/uknetdev/include/uk/
 
 As described in `<uk/netdev.h>`, bringing up a network interface means transition it through configuration states before we can use the interface for sending packets:
 
+**Note**: Keep a tab open with [`netdev.h`](https://github.com/unikraft/unikraft/blob/staging/lib/uknetdev/include/uk/netdev.h).
+You'll find the documentation for the netdev API there.
+
 1. Check that the platform detected network interfaces.
    `uk_netdev_count()` should tell us how many interfaces are available.
    Please note that you should also check that the network driver is enabled in the platform configuration.
    For this session we are interested in `virtio-net` within `KVM guest`.
 
-2. Retrieve `struct uk_netdev *` for further API interaction from a netdev number (they are just incrementally going upwards).
+1. Retrieve `struct uk_netdev *` for further API interaction from a netdev number (they are just incrementally going upwards).
    We take the first interface, so our device number should be `0`.
 
-3. Configure the device, which essentially indicate how many receive and transmit queues the device should provide.
+1. Configure the device, which essentially indicate how many receive and transmit queues the device should provide.
    In SMP scenarios, you typically configure as many queues as CPU-cores or handler threads you have been allocated.
 
    **Note:**  Not every driver or network card can support multiple queues.
@@ -31,12 +34,12 @@ As described in `<uk/netdev.h>`, bringing up a network interface means transitio
    ```c
    /* Device configuration */
    struct uk_netdev_conf ifconf = {
-	   .nb_rx_queues = 1,
-	   .nb_tx_queues = 1
+   	   .nb_rx_queues = 1,
+   	   .nb_tx_queues = 1
    };
    ```
 
-4. Configure the transmit queue `0` and the receive queue `0`.
+1. Configure the transmit queue `0` and the receive queue `0`.
    This step allows us to specify the size for each queue and which allocators should be used for internal queue descriptors and receive buffers.
    We will take the default allocator for those items.
    You can define a dummy allocation function for the receive buffers, because we are not interested in receiving for now.
@@ -53,24 +56,35 @@ As described in `<uk/netdev.h>`, bringing up a network interface means transitio
    }
 
    /* Receive queue configuration */
-   struct uk_netdev_rxqueue_conf rxqconf = {
-      	.a = uk_alloc_get_default(),
-      	.alloc_rxpkts = dummy_alloc_rxpkts
-   };
+   struct uk_netdev_rxqueue_conf rxqconf;
+
+   rxqconf.a = uk_alloc_get_default();
+   rxqconf.alloc_rxpkts = dummy_alloc_rxpkts;
 
    /* Transmit queue configuration */
-   struct uk_netdev_txqueue_conf txqconf = {
-      	.a = uk_alloc_get_default()
-   };
+   struct uk_netdev_txqueue_conf txqconf;
+
+   rxqconf.a = uk_alloc_get_default();
    ```
 
-5. Start the network interface.
+1. Probe the device. `uk_netdev_probe` probes an unprobed Unikraft network device and turns it into unconfigured state.
+   After successful probing, the driver collected information about the backend device.
+
+   ```C
+   int uk_netdev_probe(struct uk_netdev *dev);
+   ```
+
+1. Start the network interface.
    If successful, the device is now ready to process network traffic.
    You will now have the ability to also enable interrupt mode for each queue individually and change the promiscuous setting for the interface.
    Because we will operate in _polling mode_ to achieve the highest possible performance, we should not change any interrupt settings.
    We also do not need promiscuous mode because we will put the device's hardware address as sender address into our generated traffic.
    It is probably a good moment to print on the console this mac address and store it for later.
    We will need it to craft our first network packet.
+
+   ```C
+   int uk_netdev_start(struct uk_netdev *dev);
+   ```
 
 For easier development of this state transition, we recommend to enable all kernel message types and optionally debug message (go to `Library Configuration` -> `ukbedug`).
 Many of these steps should produce some kernel output so that you can quicker see if something got misconfigured.
