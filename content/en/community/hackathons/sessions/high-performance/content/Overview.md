@@ -33,6 +33,7 @@ This requires the following library stack being available within Unikraft for th
 ```
 
 Especially the Virtual File System (VFS) layer (provided by [`libvfscore`](https://github.com/unikraft/unikraft/tree/staging/lib/vfscore)) and the TCP/IP network stack (provided by [`liblwip`](github.com/unikraft/lib-lwip/)) are complex subsystems which are potentially introduce additional overheard.
+You can find some measurements in the [Unikraft paper](https://arxiv.org/pdf/2104.12721.pdf) that showcase this overhead (Figure 22, Table 4 check the unikraft rows with lwip vs uknetdev).
 
 For high-performance Network Functions (NFs), it is often more efficient to bypass any OS component and interact with the driver or hardware as directly; cutting out any indirection.
 A known framework in the NFV arena is [Intel DPDK](https://www.dpdk.org/) which operates network card drivers in Linux user space.
@@ -63,3 +64,4 @@ In this scenario, our library stack does look like the following:
 
 In the following tutorial, you will develop a simple, high performance network packet generator.
 This tutorial will guide you through various options and possibilities which can help you during the development of more complex NFs with Unikraft.
+

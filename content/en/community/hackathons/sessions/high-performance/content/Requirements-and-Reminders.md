@@ -9,6 +9,6 @@ For this session, you need Unikraft companion command-line tool [`kraft`](https:
 
 To install on Debian/Ubuntu use the following command:
 
-```
+```sh
 $ sudo apt-get -y install qemu-kvm qemu-system-x86 sgabios socat bridge-utils ifupdown tshark tcpdump
 ```
