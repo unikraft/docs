@@ -13,7 +13,7 @@ module.exports = {
 		let outside = true;
 		let count = 0;
 		Array.from(line).forEach((char) => {
-			if ((char == "." || char == "?" || char == "!" || char == ";" || char == ":") && outside) {
+			if ((char == "." || char == "?" || char == "!") && outside) {
 				count++;
 			}
 			if (char == "`") outside = !outside;
