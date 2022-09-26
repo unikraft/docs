@@ -19,14 +19,14 @@ Of course, you can work with code that is not open-source, but again, you need a
 
 For the sake of simplicity, this tutorial will only be targeting C/C++ applications.
 Unikraft supports other compile-time languages, such as Golang, Rust, and WASM.
-Many of the principles in this tutorial, however, can be applied in the same way for the mentioned  languages, with a bit of context-specific work.
+Many of the principles in this tutorial, however, can be applied in the same way for the mentioned languages, with a bit of context-specific work.
 Namely, this may include additional build rules for target files, using specific compilers and linkers, etc.
 
 It is worth noting that we are only targeting compile-time applications in this tutorial.
 Applications written in a runtime language, such as Python or Lua, require an interpreter which must be brought to Unikraft first.
 There are already lots of these high-level languages supported by Unikraft.
 If you wish to run an application written in such a language, please check out the list of available applications.
-However, if the language you wish to run is interpreted and not yet available on Unikraft, porting the interpreter would be in the scope of this tutorial, as the steps here would cover the ones needed to bring the interpreter, which is a program after all, as a Unikraft unikernel application.
+However, if the language you wish to run is interpreted and not yet available on Unikraft, porting the interpreter would be in the scope of this tutorial, as the steps here would cover the ones needed to bring the interpreter, which is a program after all, as an Unikraft unikernel application.
 
 {{< alert theme="info" >}}
 In the case of higher-level languages which are interpreted, you do not need to follow this tutorial.
@@ -39,7 +39,7 @@ Please review [Session 04: Complex Applications](/docs/sessions/04-complex-appli
 
 For this tutorial, we will be targeting the network utility program [`iperf3`](https://github.com/esnet/iperf) as our application example we wish to bring to Unikraft.
 `iperf3` is a benchmarking tool, and is used to determine the bandwidth between a client and server.
-It is an excellent application to be run as a Unikernel for several reasons:
+It is an excellent application to be run as an Unikernel for several reasons:
 
 1. It can run as a "server-type" application, receiving and processing requests for clients;
 1. It is a standalone tool which does one thing;
@@ -64,36 +64,36 @@ Let's walk through the build process of `iperf3` from its `README`:
 1. First we obtain the source code of the application:
 
    ```console
-   git clone https://github.com/esnet/iperf.git
+   $ git clone https://github.com/esnet/iperf.git
    ```
 
 1. Then, we are asked to configure and build the application:
 
    ```console
-   cd ./iperf
-   ./configure;
-   make
+   $ cd ./iperf
+   $ ./configure
+   $ make
    ```
 
 If this has worked for you, your terminal will be greeted with several pieces of useful information:
 
-1. The first thing we did was run `./configure`: an auto-generated utility program part of the [`automake`](https://www.gnu.org/software/automake/) build tool.
-   Essentially, it checks the compatibility of your system and the program in question.
-   If everything went well, it will tell us information about what it checked and what was available.
-   Usually this "`./configure`"-type program will raise any issues when it finds something missing.
-   One of the things it is checking is whether you have relevant shared libraries (e.g. `.so` files) installed on your system which are necessary for the application to run.
-   The application will be dynamically linked to these shared libraries and they will be referenced at runtime in a traditional Linux user space manner.
-   If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as `apt-get`.
+The first thing we did was run `./configure`: an auto-generated utility program part of the [`automake`](https://www.gnu.org/software/automake/) build tool.
+Essentially, it checks the compatibility of your system and the program in question.
+If everything went well, it will tell us information about what it checked and what was available.
+Usually this "`./configure`"-type program will raise any issues when it finds something missing.
+One of the things it is checking is whether you have relevant shared libraries (e.g. `.so` files) installed on your system which are necessary for the application to run.
+The application will be dynamically linked to these shared libraries and they will be referenced at runtime in a traditional Linux user space manner.
+If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as `apt-get`.
 
-   The `./configure` program also comes with a useful `--help` page where we can learn about which features we would like to turn on and off before the build.
-   It's useful to study this page and see what is available, as these can later become build options for the application when it is brought to the Unikraft ecosystem.
-   The only thing to notice for the case of `iperf3` is that it uses [OpenSSL](https://www.openssl.org).
-   Unikraft already has a [port of OpenSSL](https://github.com/unikraft/lib-openssl), which means we do not have to port this before starting.
-   **If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.**
-   This tutorial also applies to porting libraries to Unikraft.
+The `./configure` program also comes with a useful `--help` page where we can learn about which features we would like to turn on and off before the build.
+It's useful to study this page and see what is available, as these can later become build options for the application when it is brought to the Unikraft ecosystem.
+The only thing to notice in the case of `iperf3` is that it uses [OpenSSL](https://www.openssl.org).
+Unikraft already has a [port of OpenSSL](https://github.com/unikraft/lib-openssl), which means we do not have to port this before starting.
+**If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.**
+This tutorial also applies to porting libraries to Unikraft.
 
-1. When we next run `make` in the sequence above, we can see the intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application.
-   It can be useful to note these files down, as we will be compiling these files with respect to Unikraft's build tools.
+When we next run `make` in the sequence above, we can see the intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application.
+It can be useful to note these files down, as we will be compiling these files with respect to Unikraft's build tools.
 
 You have now built `iperf3` for Linux user space and we have walked through the build process for the application itself.
 In the next section, we prepare ourselves to bring this application to Unikraft.
@@ -116,10 +116,10 @@ Let's first start by initializing a working environment for ourselves:
 1. Let's create a workspace with a typical Unikraft structure using `kraft`:
 
    ```console
-   cd ~/workspace
-   export UK_WORKDIR=$(pwd)
-   kraft list update
-   kraft list pull unikraft@staging
+   $ cd ~/workspace
+   $ export UK_WORKDIR=$(pwd)
+   $ kraft list update
+   $ kraft list pull unikraft@staging
    ```
 
    This will generate the necessary directory structure to build a new Unikraft application, and will also download the latest `staging` branch of Unikraft's core.
@@ -128,11 +128,11 @@ Let's first start by initializing a working environment for ourselves:
    ```console
    $ tree -L 1
    .
-   ├── apps
-   ├── archs
-   ├── libs
-   ├── plats
-   └── unikraft
+   |-- apps
+   |-- archs
+   |-- libs
+   |-- plats
+   `-- unikraft
 
    5 directories, 0 files
    ```
@@ -151,8 +151,8 @@ Let's first start by initializing a working environment for ourselves:
    We can now use `kraft` to initialize a template library for us:
 
    ```console
-   cd ~/workspace/libs
-   kraft lib init \
+   $ cd ~/workspace/libs
+   $ kraft lib init \
       --no-prompt \
       --author-name "Your Name" \
       --author-email "your@email.com" \
@@ -174,21 +174,21 @@ Let's first start by initializing a working environment for ourselves:
 1. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain. To do this, simply add the path of the newly initialized library like so:
 
    ```console
-   kraft list add ~/workspace/libs/iperf3
+   $ kraft list add ~/workspace/libs/iperf3
    ```
 
    This will modify your `.kraftrc` file with a new local library.
    When you have added this library directory, run the update command so that `kraft` can realize it:
 
    ```console
-   kraft list update
+   $ kraft list update
    ```
 
 1. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
    To view basic information about the library and to confirm everything has worked, you can run:
 
    ```console
-   kraft list show iperf3
+   $ kraft list show iperf3
    ```
 
 ### Using Your Library in a Unikraft Unikernel Application
@@ -200,15 +200,15 @@ To do this, we create a parallel application which uses both the library we are 
 1. First start by creating a new application structure, which we can do by initializing a blank project:
 
    ```console
-   cd ~/workspace/apps
-   kraft init iperf3
+   $ cd ~/workspace/apps
+   $ kraft init iperf3
    ```
 
 1. We will now have an "empty" initialized project; you'll find boilerplate in this directory, including a `kraft.yaml` file which will look something like this:
 
    ```console
-   cd ~/workspace/apps/iperf3
-   cat kraft.yaml
+   $ cd ~/workspace/apps/iperf3
+   $ cat kraft.yaml
    ```
 
    ```yaml
@@ -222,7 +222,7 @@ To do this, we create a parallel application which uses both the library we are 
 1. After setting up your application project, we should add the new library we are working on to the application. This is done via:
 
    ```console
-   kraft lib add iperf3@staging
+   $ kraft lib add iperf3@staging
    ```
 
    {{< alert theme="info" >}}
@@ -250,14 +250,14 @@ To do this, we create a parallel application which uses both the library we are 
    It should be possible to now see the boilerplate `iperf3` library within the [`menuconfig`](https://en.wikipedia.org/wiki/Menuconfig) system by running:
 
    ```console
-   kraft menuconfig
+   $ kraft menuconfig
    ```
 
    within the application folder.
    However, it will also be selected automatically since it is in the `kraft.yaml` file now if you run the configure step:
 
    ```console
-   kraft configure
+   $ kraft configure
    ```
 
    By default, the application targets `kvm` on `x86_64`.
@@ -275,8 +275,8 @@ This process is usually very iterative because it requires building the unikerne
    Let's try and do this by running in our application workspace:
 
    ```console
-   cd ~/workspace/apps/iperf3
-   kraft fetch
+   $ cd ~/workspace/apps/iperf3
+   $ kraft fetch
    ```
 
    If this is successful, we should see it download the remote zip file and we should see it saved within our Unikraft application's `build/`.
@@ -318,8 +318,8 @@ This process is usually very iterative because it requires building the unikerne
    Make an `include/` directory in the library's repository and copy the file:
 
    ```console
-   mkdir ~/workspace/libs/iperf3/include
-   cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
+   $ mkdir ~/workspace/libs/iperf3/include
+   $ cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
    ```
 
    Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that
@@ -335,15 +335,15 @@ This process is usually very iterative because it requires building the unikerne
 1. Next, let's run `make` with a special flag:
 
    ```console
-   cd build/libiperf3/origin/iperf-3.10.1/
-   make -n
+   $ cd build/libiperf3/origin/iperf-3.10.1/
+   $ make -n
    ```
 
    This flag, `-n`, has just shown us what `make` will run; the full commands for `gcc` including flags.
    What's interesting here is any line which start with:
 
    ```console
-   echo "  CC      "
+   $ echo "  CC      "
    ```
 
    These are lines which invoke `gcc`.
@@ -387,8 +387,8 @@ This process is usually very iterative because it requires building the unikerne
    Because the application has been `configure`d and we have `fetch`ed the contents, we can simply try running the build in the Unikraft application directory:
 
    ```console
-   cd ~/workspace/apps/iperf3
-   kraft build
+   $ cd ~/workspace/apps/iperf3
+   $ kraft build
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.
@@ -418,7 +418,7 @@ This process is usually very iterative because it requires building the unikerne
    However, it can be called separately from `kraft` via:
 
    ```console
-   kraft prepare
+   $ kraft prepare
    ```
 
 The steps outlined above helped us begin the process of porting a simple application to Unikraft.
@@ -592,17 +592,17 @@ To make a patch:
 1. First, ensure that the remote origin code has been downloaded to the application's `build/` folder:
 
    ```console
-   cd ~/workspace/apps/iperf3
-   kraft fetch
+   $ cd ~/workspace/apps/iperf3
+   $ kraft fetch
    ```
 
 1. Once the source files have been downloaded, turn it into a Git repository and save everything to an initial commit, in the case of `iperf3`:
 
    ```console
-   cd build/libiperf3/origin/iperf-3.10.1
-   git init
-   git add .
-   git commit -m "Initial commit"
+   $ cd build/libiperf3/origin/iperf-3.10.1
+   $ git init
+   $ git add .
+   $ git commit -m "Initial commit"
    ```
 
    This will allow us to make changes to the source files and save those differences.
@@ -614,7 +614,7 @@ To make a patch:
    For example, if you have made one (`1`) patch only, export it like so:
 
    ```console
-   git format-patch HEAD~1
+   $ git format-patch HEAD~1
    ```
 
    This will save a new `.patch` file in the current directory; which should be the origin source files of `iperf3`.
@@ -622,11 +622,11 @@ To make a patch:
 1. The next step is to create a `patches/` folder within the Unikraft port of the library and to move the new `.patch` file into this folder:
 
    ```console
-   mkdir ~/workspace/libs/iperf3/patches
-   mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
+   $ mkdir ~/workspace/libs/iperf3/patches
+   $ mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
    ```
 
-1. To register patches against Unikraft's build tool such that they are applied before the compilation of all source files, simply indicate it in the library's `Makefile.uk`:
+1. To register patches against Unikraft's build system such that they are applied before the compilation of all source files, simply indicate it in the library's `Makefile.uk`:
 
    ```Makefile
    # Add or edit ~/workspace/libs/iperf3/Makefile.uk
@@ -634,3 +634,319 @@ To make a patch:
    ```
 
 This concludes the necessary steps to port an application to Unikraft "from first principles".
+
+### Internals of the Unikraft Build System
+
+As we saw above, Unikraft uses a set of files as part of the configuration and build steps.
+When porting an application, you want to be aware of these files and tune them to your needs.
+This section delves into the internals of the Unikraft build system and how they are useful for porting an application.
+
+In order for an application or library to work with the [Unikraft `Make`-based build system](/docs/usage/make_build), you need to provide some specific files:
+
+1. **Makefile**:
+   Used to specify where the main Unikraft repository is with respect to the application's repository, as well as repositories for any external libraries the application needs to use.
+   The `Makefile` is not required when porting an external library.
+
+1. **Makefile.uk**:
+   Used to specify which sources to build (and optionally where to fetch them from), include paths, flags and any application-specific targets.
+
+1. **Config.uk**:
+   A [Kconfig-like](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) snippet used to populate Unikraft's menu with application-specific options.
+
+1. **exportsyms.uk**:
+   A text file where each line contains the name of one symbol that should be exported to other libraries.
+   This file usually contains only the `main()` function for an application that is developed/ported as a single library to Unikraft.
+   If an `exportsyms.uk` file is not present, all symbols will be exported.
+
+1. **extra.ld**:
+   [Optional] Contains an amendment to the main linker script.
+
+In the tutorial below, we will focus on files belonging to an application (i.e. not to a library).
+The process of porting a library is very similar, just change the `APP` prefix of the variable names to `LIB`.
+
+#### Makefile
+
+The `Makefile` is generally short and simple and might remind you of Linux kernel modules that are built off-tree.
+For most applications the `Makefile` should contain no more than the following:
+
+```Makefile
+UK_ROOT  ?= $(PWD)/../../unikraft
+UK_LIBS  ?= $(PWD)/../../libs
+UK_PLATS ?= $(PWD)/../../plats
+LIBS  := $(UK_LIBS)/lib1:$(UK_LIBS)/lib2:$(UK_LIBS)/libN
+PLATS ?=
+
+all:
+        @make -C $(UK_ROOT) A=$(PWD) L=$(LIBS) P=$(PLATS)
+
+$(MAKECMDGOALS):
+        @make -C $(UK_ROOT) A=$(PWD) L=$(LIBS) P=$(PLATS) $(MAKECMDGOALS)
+```
+
+You can notice that the `Makefile` is just a wrapper around the [Unikraft core `Makefile`](https://github.com/unikraft/unikraft/blob/staging/Makefile).
+You can get the same result if you use:
+
+```console
+$ make -C ../../unikraft A=. L=../../libs/lib1:../../libs/lib2:../../libs/libN
+```
+
+#### Makefile.uk
+
+The Unikraft build system provides a number of functions and macros to make it easier to write the `Makefile.uk` file.
+Also, ensure that all variables that you define begin with `APP[NAME]_` or `LIB[NAME]_` (e.g., `APPHELLOWORLD_`) so that they are properly namespaced.
+
+The first thing to do is to call [the Unikraft `addlib` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L195) to register the application with the system (note the letters `lib`: everything in Unikraft is ultimately a library).
+This function call will also populate `APPNAME_BASE` (containing the directory path to the application sources) and `APPNAME_BUILD` (containing the directory path to the application's build directory):
+
+```Makefile
+$(eval $(call addlib,appname))
+```
+
+where `name` would be replaced by your application's name.
+In case your main application code should be downloaded as an archive from a remote server, the next step is to set up a variable to point to a URL with the application sources (or objects, or pre-linked libraries, see further below), and to call [the Unikraft `fetch` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L456) to download and unpack those sources (`APPNAME_ORIGIN` is populated containing the directory path to the extracted files):
+
+```Makefile
+APPNAME_ZIPNAME = myapp-v0.0.1
+APPNAME_URL = http://app.org/$(APPNAME_ZIPNAME).zip
+$(eval $(call fetch,appname,$(APPNAME_URL)))
+```
+
+Next we set up a call to [the Unikraft `patch` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L360).
+Even if you don't have any patches yet, it's good to have this set up in case you need it later.
+
+```Makefile
+APPNAME_PATCHDIR=$(APPNAME_BASE)/patches
+$(eval $(call patch,appname,$(APPNAME_PATCHDIR),$(APPNAME_ZIPNAME)))
+```
+
+With all of this in place, you can already start testing things out:
+
+```console
+$ make menuconfig
+[choose appropriate options and save configuration, see user's guide]
+$ make
+```
+
+You should see Unikraft downloading the application archive and unpacking it.
+It will do the same for libraries specified in the `Makefile` or through the menu.
+Libraries will then be built.
+There will be nothing to build for your application yet, as we haven't specified any sources to build.
+When building, Unikraft creates a `build/` directory and places all temporary and object files under it;
+the application sources are placed under `build/origin/[tarballname]/`.
+
+To tell Unikraft which source files to build, we add files to the `APPNAME_SRCS-y` variable:
+
+```Makefile
+APPNAME_SRCS-y += $(APPNAME_BASE)/path_to_src/myfile.c
+```
+
+For source files, Unikraft so far supports C (`.c`), C++ (`.cc`, `.cxx`, `.cpp`) and assembly files (`.s`, `.S`).
+
+In case you have pre-compiled object files, you could add them (but due to possible incompatible compilation flags of your pre-compiled object files, you should handle this with care):
+
+```Makefile
+APPNAME_OBJS-y += $(APPNAME_BASE)/path_to_src/myobj.o
+```
+
+You can also use `APPNAME_OBJS-y` to add pre-built libraries (as `.o` or `.a`):
+
+```Makefile
+APPNAME_OBJS-y += $(APPNAME_BASE)/path_to_lib/mylib.a
+```
+
+Once you have specified all of your source files (and optionally binary files), it is generally also necessary to specify include paths and compile flags:
+
+```Makefile
+# Include paths
+APPNAME_ASINCLUDES  += -I$(APPNAME_BASE)/path_to_include/include [for assembly files]
+APPNAME_CINCLUDES   += -I$(APPNAME_BASE)/path_to_include/include [for C files]
+APPNAME_CXXINCLUDES += -I$(APPNAME_BASE)/path_to_include/include [for C++ files]
+
+# Flags for application sources
+APPNAME_ASFLAGS-y   += -DFLAG_NAME1 ... -DFLAG_NAMEN [for assembly files]
+APPNAME_CFLAGS-y    += -DFLAG_NAME1 ... -DFLAG_NAMEN [for C files]
+APPNAME_CXXFLAGS-y  += -DFLAG_NAME1 ... -DFLAG_NAMEN [for C++ files]
+```
+
+With all of these in place, you can save `Makefile.uk`, and type `make`.
+Assuming that the chosen Unikraft libraries provide all of the support that your application needs, Unikraft should compile and link everything together, and output one image per target platform specified in the menu.
+
+In addition to all the functionality mentioned, applications might need to perform a number of additional tasks after the sources are downloaded and unpacked, but **before** the compilation takes place (e.g., run a configure script or a custom script that generates source code from source files).
+To support this, Unikraft provides the [`UK_PREPARE` variable](https://github.com/unikraft/unikraft/blob/staging/Makefile#L278), connected to the internal [`prepare` target](https://github.com/unikraft/unikraft/blob/staging/Makefile#L708), which you can set to a temporary marker file and from there to a target in your `Makefile.uk` file.
+For example:
+
+```Makefile
+$(APPNAME_BUILD)/.prepared: [dependencies to further targets]
+       cmd && $(TOUCH) $@
+
+UK_PREPARE += $(APPNAME_BUILD)/.prepared
+```
+
+In this way, you ensure that `cmd` is run before any compilation takes place.
+If you use `fetch`, add `$(APPNAME_BUILD)/.origin` as dependency.
+If you use `patch`, add `$(APPNAME_BUILD)/.patched` instead.
+
+Further, you may find it necessary to specify compile flags or includes only for a _specific_ source file.
+Unikraft supports this through the following syntax:
+
+```Makefile
+APPNAME_SRCS-y += $(APPNAME_BASE)/filename.c
+APPNAME_FILENAME_FLAGS-y += -DFLAG
+APPNAME_FILENAME_INCLUDES-y += -Iextra/include
+```
+
+It is also possible to compile a single source file multiple times with different flags.
+For this case, Unikraft supports variants:
+
+```Makefile
+APPNAME_SRCS-y += $(APPNAME_BASE)/filename.c|variantname
+APPNAME_FILENAME_VARIANTNAME_FLAGS-y += -DFLAG2
+APPNAME_FILENAME_VARIANTNAME_INCLUDES-y += -Iextra/include
+```
+
+{{% alert theme="info" %}}
+Note: The build system treats the reserved `isr` variant differently.
+This variant is intended for build units that contain code that can also be called from interrupt context.
+Separate global architecture flags are used to generate interrupt-safe code (`ISR_ARCHFLAGS-y` instead of `ARCHFLAGS-y`).
+Generally, these flags avoid the use of extended machine units which aren't saved by the processor before entering interrupt context (e.g. floating point units, vector units).
+{{% /alert %}}
+
+Finally, you may also need to provide "glue" code, for instance to implement the `main()` function that Unikraft expects you to implement by calling your application's main or init routines.
+As a rule of thumb, we suggest to place any such files in the application's main directory (`APPNAME_BASE`), and any includes they may depend on under `APPNAME_BASE/include/`.
+And, of course, don't forget to add the source files and include path to `Makefile.uk`.
+
+To see full examples of `Makefile.uk` files, you can browse the available repositories for [applications](https://github.com/search?q=topic%3Aunikraft-application+org%3Aunikraft&type=Repositories) or [external libraries](https://github.com/search?q=topic%3Alibrary+org%3Aunikraft&type=Repositories).
+
+Reserved variable names in the name scope are so far:
+
+```text
+APPNAME_BASE                              - Path to source base
+APPNAME_BUILD                             - Path to target build dir
+APPNAME_EXPORTS                           - Path to the list of exported symbols
+                                            (default is '$(APPNAME_BASE)/exportsyms.uk')
+APPNAME_ORIGIN                            - Path to extracted archive
+                                            (when fetch or unarchive was used)
+APPNAME_CLEAN APPNAME_CLEAN-y             - List of files to clean additional
+                                            on make clean
+APPNAME_SRCS APPNAME_SRCS-y               - List of source files to be
+                                            compiled
+APPNAME_OBJS APPNAME_OBJS-y               - List of object files to be linked
+                                            for the library
+APPNAME_OBJCFLAGS APPNAME_OBJCFLAGS-y     - link flags (e.g., define symbols
+                                            as internal)
+APPNAME_CFLAGS APPNAME_CFLAGS-y           - Flags for C files of the library
+APPNAME_CXXFLAGS APPNAME_CXXFLAGS-y       - Flags for C++ files of the library
+APPNAME_ASFLAGS APPNAME_ASFLAGS-y         - Flags for assembly files of the
+                                            library
+APPNAME_CINCLUDES APPNAME_CINCLUDES-y     - Includes for C files of the
+                                            library
+APPNAME_CXXINCLUDES APPNAME_CXXINCLUDES-y - Includes for C++ files of the
+                                            library
+APPNAME_ASINCLUDES APPNAME_ASINCLUDES-y   - Includes for assembly files of
+                                            the library
+APPNAME_FILENAME_FLAGS                    - Flags for a *specific* source file
+APPNAME_FILENAME_FLAGS-y                    of the library (not exposed to its
+                                            variants)
+APPNAME_FILENAME_INCLUDES                 - Includes for a *specific* source
+APPNAME_FILENAME_INCLUDES-y                 file of the library (not exposed
+                                            to its variants)
+APPNAME_FILENAME_VARIANT_FLAGS            - Flags for a *specific* source file
+APPNAME_FILENAME_VARIANT_FLAGS-y            and variant of the library
+APPNAME_FILENAME_VARIANT_INCLUDES         - Includes for a *specific* source
+APPNAME_FILENAME_VARIANT_INCLUDES-y         file and variant of the library
+```
+
+#### Config.uk
+
+Unikraft's configuration system is based on [Linux's KConfig system](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html).
+With `Config.uk` you define possible configurations for your application and define dependencies to other libraries.
+This file is included by Unikraft to render the menu-based configuration, and to load and store configurations (aka `.config`).
+Each setting that is defined in this file will be globally populated as a set variable for all `Makefile.uk` files, as well as a defined macro in your source code when you use `"#include <uk/config.h>"`.
+Please ensure that all settings are properly namespaced.
+They should begin with `[APPNAME]_` (e.g. `APPHELLOWORLD_`).
+Please also note that some variable names are predefined for each application or library namespace (see [`Makefile.uk`](docs/develop/porting/#makefileuk)).
+
+As best practice, we recommend to begin the file with defining dependencies with an invisible boolean option that is set to `y` (i.e. an option that will not be visible in the `menuconfig` screen):
+
+```kconfig
+### Invisible option for dependencies
+config APPHELLOWORLD_DEPENDENCIES
+	bool
+	default y
+	# dependencies with `select`:
+	select LIBNOLIBC if !HAVE_LIBC
+	select LIB1
+	select LIB2
+```
+
+In this example, `LIB1` and `LIB2` would be enabled (the user can't unselect them).
+Additionally, if the user did not provide and select any `libc`, the Unikraft internal replacement `nolibc` would be selected.
+You can find a documentation of the syntax in the [Linux kernel tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/kbuild/kconfig-language.txt).
+Of course, you could also directly define a dependency on a particular `libc` (e.g., `libmusl`), instead.
+You can also depend on feature flags (like `HAVE_LIBC`) to provide or hide options.
+The feature flag `HAVE_LIBC` in this example is set as soon as a proper and full-fledged `libc` was selected by the user.
+You can get an overview of available feature flags in `libs/Config.uk`.
+
+Any other setting of your application can be a type of boolean, int, or string.
+You are even able to define dropdown-selections.
+See [the KConfig documentation](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) for details on the syntax.
+Please note that Unikraft does not have tristates (the `m` option, for kernel modules, is not available).
+
+```kconfig
+  ### App configuration
+  config APPHELLOWORLD_OPTION
+  	bool "Boolean Option 1"
+  	default y
+  	help
+  	  Help text of Option 1
+```
+
+#### exportsyms.uk
+
+Unikraft provides separate namespaces for each library.
+This means that every function and variable will only be visible and linkable internally.
+
+To make a symbol visible for other libraries, add it to this `exportsyms.uk` file.
+It is simply a flat file, with one symbol name per line.
+Line comments may be introduced by the hash character (`#`).
+
+If you are writing an application, you need to add your program entry point to this file.
+Most likely nothing else should be there.
+For a library, all external API functions must be listed.
+
+For the sake of file structure consistency, it is not recommended to change the default path of this symbols file, unless it is really necessary (e.g., multiple libraries are sharing the same base folder, this symbols file is part of a remotely fetched archive).
+You can override it by defining the `APPNAME_EXPORTS` variable.
+The path must be either absolute (you can refer with `$(APPNAME_BASE)` to the base directory of your application sources) or relative to the Unikraft sources directory.
+
+{{% alert theme="info" %}}
+If no `exportsyms.uk` file is present within a given library (internal or external), all the symbols will be exported by default.
+{{% /alert %}}
+
+#### extra.ld
+
+If your library/application needs a section in the final executable image, edit your `Makefile.uk` to add:
+
+```Makefile
+LIBYOURAPPNAME_SRCS-$(CONFIG_LIBYOURAPPNAME) += $(LIBYOURAPPNAME_BASE)/extra.ld
+```
+
+An example context of `extra.ld`:
+
+```ld
+SECTIONS
+{
+    .uk_fs_list : {
+         PROVIDE(uk_fslist_start = .);
+         KEEP (*(.uk_fs_list))
+         PROVIDE(uk_fslist_end = .);
+    }
+}
+INSERT AFTER .text;
+```
+
+This will add the section `.uk_fs_list` after the `.text` section.
+
+## After Porting
+
+After porting an application or library, you can share it with the rest of the community by creating a PR.
+You can find more about that on the [contributing page](/docs/contributing/).
