@@ -11,12 +11,14 @@ module.exports = {
       var actual_lines = inline.content.split("\n");
       actual_lines.forEach((line, index, arr) => {
 		let outside = true;
+		let outside_ticks = true;
 		let count = 0;
 		Array.from(line).forEach((char) => {
-			if ((char == "." || char == "?" || char == "!") && outside) {
+			if ((char == "." || char == "?" || char == "!") &&
+				(outside && outside_ticks)) {
 				count++;
 			}
-			if (char == "`") outside = !outside;
+			if (char == "`") outside_ticks = !outside_ticks;
 			if (char == "[") outside = false;
 			if (char == "(") outside = false;
 			if (char == "]") outside = true;
