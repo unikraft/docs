@@ -17,12 +17,15 @@ As an alternative to `kraft` it is also possible to build Unikraft using a regul
 
 ## Installing the CLI companion tool `kraft`
 
-The kraft tool and Unikraft build system have a number of package requirements;
-please run the following command (on apt-get-based systems) to install the
-requirements:
+The kraft tool and Unikraft build tool have a number of package requirements.
+Follow the steps below according to your Linux distribution.
+
+### Ubuntu, Debian and other APT-based distributions
+
+Please run the following command to install the requirements:
 
 ```shell-script
-apt-get install -y --no-install-recommends \
+$ apt-get install -y --no-install-recommends \
   build-essential \
   libncurses-dev \
   libyaml-dev \
@@ -40,10 +43,11 @@ apt-get install -y --no-install-recommends \
 To install kraft simply run:
 
 ```console
-pip3 install git+https://github.com/unikraft/kraft.git
+$ pip3 install git+https://github.com/unikraft/kraft.git
 ```
 
 You can then type kraft to see its help menu:
+
 ```text
 Usage: kraft [OPTIONS] COMMAND [ARGS]...
 
@@ -102,24 +106,27 @@ You can also build and run an applications from the existing templates by using 
 For example, building and running the [helloworld app](https://github.com/unikraft/app-helloworld):
 
 ```console
-kraft up -p kvm -m x86_64 -t helloworld helloworld
+$ kraft up -p kvm -m x86_64 -t helloworld helloworld
 ```
 
 For more information about all the steps behind `kraft up`, check [Creating an App](docs/usage/init).
 For more information about the `up` command type kraft up -h.
 For more information about kraft type kraft -h or read the documentation at Unikraft’s website.
-If you find any problems please fill out an issue. Thank you!
+If you find any problems please fill out an issue.
+Thank you!
 
 ## Building Unikraft via `Makefile`
 
 To manually set up the build environment for the [helloworld app](https://github.com/unikraft/app-helloworld), we first have to create a specific directory structure:
-```
+
+```text
  my-unikernel
       ├────apps
       │      └─app-helloworld     <- helloworld application
       ├─── libs                   <- additional libraries go here
       └─── unikraft               <- Unikraft core
 ```
+
 We can do this by executing the following sequence of commands:
 
 ```console
@@ -132,8 +139,10 @@ $ cd apps
 $ git clone https://github.com/unikraft/app-helloworld
 $ cd app-helloworld
 ```
+
 All following configuration and build operations are done from within the helloworld application folder.
 Notice that it already contains a `Makefile` that looks like this:
+
 ```Makefile
 UK_ROOT ?= $(PWD)/../../unikraft
 UK_LIBS ?= $(PWD)/../../libs
@@ -145,10 +154,10 @@ all:
 $(MAKECMDGOALS):
 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS) $(MAKECMDGOALS)
 ```
+
 In the first two lines, we provide the paths to the Unikraft core repository and the directory where we can put additional libraries.
 Since the helloworld application uses `nolibc` as C library, which comes with the Unikraft core, we do not have any external dependencies.
 We thus do not have to download or reference any libraries in the `Makefile` and can leave the `LIBS` variable empty.
-
 
 With the `Makefile` present and the directory structure correctly set up, we are able to configure the unikernel as the next step.
 This will allow us to select the target architecture (e.g., aarch64 or x86-64) and platform (e.g., KVM or Xen).
@@ -198,7 +207,7 @@ LIBS := $(UK_LIBS)/lib-lwip
 We can now re-run
 
 ```console
-make menuconfig
+$ make menuconfig
 ```
 
 and select `lwip` in the `Library Configuration` sub-menu.
@@ -210,7 +219,8 @@ $ make prepare
 $ make
 ```
 
-The `prepare` step gives the build system the chance to pull the actual source code for `lwip` and apply necessary patches to make it work with Unikraft. This has to be done only once after adding a new library.
+The `prepare` step gives the build tool the chance to pull the actual source code for `lwip` and apply necessary patches to make it work with Unikraft.
+This has to be done only once after adding a new library.
 
 Note that the build may fail because depending on the configuration, `lwip` requires a more extensive C library (e.g., [newlib](https://github.com/unikraft/lib-newlib)) and a POSIX threads implementation (e.g., [pthread-embedded](https://github.com/unikraft/lib-pthread-embedded)).
 You can add these additional dependencies just as described.
