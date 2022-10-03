@@ -10,12 +10,17 @@ image: /assets/imgs/2022-10-hack-munich.png
 ## Munich Unikraft Hackathon
 
 Unikraft and [Technical University of Munich](https://www.tum.de/en/) come together to organize the **Unikraft Munich Hackathon** to be held Saturday and Sunday, October 22-23, 2022.
-The hackathon will take place face-to-face at TU Munich.
+The hackathon will take place face-to-face at TU Munich, in Lecture Hall 2 of the Department of Informatics.
+
+Address is [Boltzmannstr. 3, 85748 Garching bei München](https://goo.gl/maps/6iAwZ4HKNiEy5zKX7).
+Lecture Hall 2 is located in the ground floor of the building, with a capacity of 100 people.
+Please see [this map](https://portal.mytum.de/campus/roomfinder/roomfinder_viewmap?mapid=142&roomid=00.04.011@5604) of the building with the location of Lecture Hall 2.
+
 Support information and discussions will take place on [Discord](http://bit.ly/UnikraftDiscord) on the `#hack-munich22` channel.
 
 ### Registration
 
-To take part in the hackathon please fill this [registration form](https://forms.gle/YE1LSGBvn2edUHFE8).
+To take part in the hackathon please fill this [registration form](https://forms.gle/YE1LSGBvn2edUHFE8) by **Wednesday, October 19, 2022, 10pm CEST**.
 
 ### People
 
@@ -28,7 +33,7 @@ The host of the hackathon are:
 * [Jörg Ott](https://www.professoren.tum.de/en/ott-joerg)
 * [Sophia Adelmeier](https://dse.in.tum.de/contact/)
 
-As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) (UPB), [Alexander Jung](https://github.com/nderjung) and other community members will be present on-site for the hackathon.
+As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) (UPB) and [Radu Nichita](https://github.com/RaduNichita/) will be present onsite with other community members providing support online, on Discord.
 
 ### Schedule
 
@@ -37,12 +42,12 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 | Time (CET)    | Session                                                           | Presenter          |
 | ------------- | ----------------------------------------------------------------- | ------------------ |
 | 10:00 - 10:15 | High-level presentation of unikernels and Unikraft                | Răzvan Deaconescu  |
-| 10:15 - 11:15 | Introduction to Unikraft. First steps in configuring, building    | Alexander Jung     |
+| 10:15 - 11:15 | Introduction to Unikraft. First steps in configuring, building    | Radu Nichita       |
 | 11:15 - 11:30 | Break                                                             |                    |
 | 11:30 - 12:45 | Inside Unikraft: Building, configuring, using different libraries | Răzvan Deaconescu  |
 | 12:45 - 14:00 | Lunch                                                             |                    |
 | 14:00 - 15:00 | Debugging in Unikraft                                             | Răzvan Deaconescu  |
-| 15:00 - 16:00 | Running (Complex) Application in Unikraft                         | Alexander Jung     |
+| 15:00 - 16:00 | Running (Complex) Application in Unikraft                         | Radu Nichita       |
 | 16:00 - 16:15 | Break                                                             |                    |
 | 16:15 - 16:30 | Lightweight and extensible unikernels                             | Masanori Misono    |
 | 16:30 - 16:45 | Unikernels for FPGAs                                              | Atsushi Koshiba    |
