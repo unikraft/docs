@@ -20,7 +20,7 @@ Support information and discussions will take place on [Discord](http://bit.ly/U
 
 ### Registration
 
-To take part in the hackathon please fill this [registration form](https://forms.gle/YE1LSGBvn2edUHFE8) by **Wednesday, October 19, 2022, 10pm CEST**.
+To take part in the hackathon please fill this [registration form](https://forms.gle/YE1LSGBvn2edUHFE8) by **Friday, October 14, 2022, 11am CEST**.
 
 ### People
 
