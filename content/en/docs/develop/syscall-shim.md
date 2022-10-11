@@ -1,0 +1,158 @@
+---
+title: Syscall Shim Layer
+date: 2022-10-11T14:09:21+09:00
+draft: false
+weight: 404
+---
+
+## Syscall Shim Layer
+
+The system call shim layer ([`lib/syscall_shim`](https://github.com/unikraft/unikraft/tree/staging/lib/syscall_shim)) provides Linux-style mappings of system call numbers to actual system call handler functions.
+You can implement a system call handler by using one of the defined macros ([`UK_SYSCALL_DEFINE`](https://github.com/unikraft/unikraft/blob/staging/lib/syscall_shim/include/uk/syscall.h#L199), [`UK_SYSCALL_R_DEFINE`](https://github.com/unikraft/unikraft/blob/staging/lib/syscall_shim/include/uk/syscall.h#L233)) and register the system call by adding it to `UK_PROVIDED_SYSCALLS-y` within your `Makefile.uk` file.
+
+The syscall shim layer library supports two implementation variants for system call handlers:
+
+1. libc-style: The function implementation returns `-1` and sets `errno` in case of errors.
+
+1. raw: The function implementation returns a negative error value in case of errors.
+   `errno` is not used at all.
+
+Because of the library internals, each system call implementation needs to be provided with both variants.
+The build option `Drop unused functions and data` is making sure that all the variants that are compiled-in are actually in use.
+
+You can use helper macros in order to implement the call just once.
+The first variant can be implemented with the `UK_SYSCALL_DEFINE` macro:
+
+```c
+UK_SYSCALL_DEFINE(return_type, syscall_name, arg1_type, arg1_name,
+                                             arg2_type, arg2_name, ..)
+{
+    /* ... */
+}
+```
+
+For example:
+
+```c
+#include <uk/syscall.h>
+
+UK_SYSCALL_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
+{
+    ssize_t ret;
+
+    ret = vfs_do_write(fd, buf, count);
+    if (ret < 0) {
+        errno = EFAULT;
+        return -1;
+    }
+    return ret;
+}
+```
+
+Raw implementations should use the `UK_SYSCALL_R_DEFINE` macro:
+
+```c
+UK_SYSCALL_R_DEFINE(return_type, syscall_name, arg1_type, arg1_name,
+                                               arg2_type, arg2_name, ..)
+{
+    /* ... */
+}
+```
+
+For example:
+
+```c
+#include <uk/syscall.h>
+
+UK_SYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
+{
+    ssize_t ret;
+
+    ret = vfs_do_write(fd, buf, count);
+    if (ret < 0) {
+        return -EFAULT;
+    }
+    return ret;
+}
+```
+
+**Note: in the raw case (`UK_SYSCALL_R_DEFINE`), errors are always returned as negative values.
+Whenever the return type is a pointer value, the helpers defined in [`<uk/errptr.h>`](https://github.com/unikraft/unikraft/blob/staging/include/uk/errptr.h) can be used to forward error codes.**
+
+Both macros create the following three symbols:
+
+```c
+/* libc-style system call that returns -1 and sets errno on errors */
+long uk_syscall_e_<syscall_name>(long <arg1_name>, long <arg2_name>, ...);
+
+/* Raw system call that returns negative error codes on errors */
+long uk_syscall_r_<syscall_name>(long <arg1_name>, long <arg2_name>, ...);
+
+/* libc-style wrapper (the same as uk_syscall_e_<syscall_name> but with actual types) */
+<return_type> <syscall_name>(<arg1_type> <arg1_name>,
+                             <arg2_type> <arg2_name>, ...);
+```
+
+In case the libc-style wrapper does not match the signature and return type of the underlying system call, a so called low-level variant of these two macros are available: `UK_LLSYSCALL_DEFINE`, `UK_LLSYSCALL_R_DEFINE`.
+These macros only generate the `uk_syscall_e_<syscall_name>` and `uk_syscall_r_<syscall_name>` symbols.
+You can then provide the custom libc-style wrapper on top:
+
+```c
+#include <uk/syscall.h>
+
+UK_LLSYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
+{
+    ssize_t ret;
+
+    ret = vfs_do_write(fd, buf, count);
+    if (ret < 0) {
+        return -EFAULT;
+    }
+    return ret;
+}
+
+#if UK_LIBC_SYSCALLS
+ssize_t write(int fd, const void *buf, size_t count)
+{
+    return (ssize_t) uk_syscall_e_write((long) fd,
+                                        (long) buf, (long) count);
+}
+#endif /* UK_LIBC_SYSCALLS */
+```
+
+**Note: Please note that the implementation of custom libc-style wrappers has to be guarded with `#if UK_LIBC_SYSCALLS`.
+This macro is provided by the [`<uk/syscall.h>`](https://github.com/unikraft/unikraft/blob/staging/lib/syscall_shim/include/uk/syscall.h) header.
+Some libc ports (e.g. musl) deactivate this option whenever they provide their own wrapper functions.
+For such cases, the `syscall_shim` library will only provide the `uk_syscall_e_<syscall_name>` and `uk_syscall_r_<syscall_name>` symbols.**
+
+**Note: When `syscall_shim` library is not enabled, the original design idea was that the macros provide the libc-style wrapper only.
+However, all the described macros are still available and populate the symbols as documented here.
+This is done to support the case that a system call is implemented by calling another.**
+
+If your library uses an `exportsyms.uk` file, you need to add the three symbols for making them publicly available:
+
+```text
+uk_syscall_e_<syscallname>
+uk_syscall_r_<syscallname>
+<syscallname>
+```
+
+In our example:
+
+```text
+uk_syscall_e_write
+uk_syscall_r_write
+write
+```
+
+In order to register the system call to `syscall_shim`, add it to `UK_PROVIDED_SYSCALLS-y` with the library `Makefile.uk`:
+
+```makefile
+UK_PROVIDED_SYSCALLS-$(CONFIG_<YOURLIB>) += <syscall_name>-<number_of_arguments>
+```
+
+The `Makefile.uk` snippet for our example:
+
+```makefile
+UK_PROVIDED_SYSCALLS-$(CONFIG_LIBWRITESYS) += write-3
+```
