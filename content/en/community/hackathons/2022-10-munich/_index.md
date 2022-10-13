@@ -28,10 +28,12 @@ The hackathon will take place at the TU Munich.
 We'll provide the detailed address soon.
 
 The host of the hackathon are:
+
 * [Pramod Bhatotia](https://twitter.com/pramod_bhatotia)
 * [Charalampos Mainas](https://cmainas.gitlab.io/)
 * [Jörg Ott](https://www.professoren.tum.de/en/ott-joerg)
 * [Sophia Adelmeier](https://dse.in.tum.de/contact/)
+* [Nitinder Mohan](https://www.nitindermohan.com/)
 
 As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) (UPB) and [Radu Nichita](https://github.com/RaduNichita/) will be present onsite with other community members providing support online, on Discord.
 
