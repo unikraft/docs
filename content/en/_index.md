@@ -6,9 +6,9 @@ draft: false
 landing:
   quickStart: Quick Start
   notify:
-    pill: New release
-    text: v0.10.0 (Phoebe) is out!
-    link: /blog/2022-08-20-unikraft-releases-phoebe
+    pill: 1K STARS
+    text: Unikraft reaches 1K on GitHub!
+    link: /blog/2022-10-14-unikraft-reaches-1k-github-stars
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
