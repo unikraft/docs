@@ -4,6 +4,7 @@
 	"MD046": { "style": "fenced" },
 	"MD029": { "style": "one" },
 	"MD014": false,
+	"MD040": false,
 	"line-length": false,
 	"no-hard-tabs": false
 }
