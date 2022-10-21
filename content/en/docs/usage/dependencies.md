@@ -7,9 +7,7 @@ weight: 402
 
 ## Managing Unikraft Ecosystem
 
-Once `kraft` is installed, you can use it to manage dependencies for
-applications, including finding and retrieving existing applications, libraries,
-platforms and architectures.
+Once `kraft` is installed, you can use it to manage dependencies for applications, including finding and retrieving existing applications, libraries, platforms and architectures.
 
 Libraries are additional software components that will be linked with Unikraft for the final image.
 Each unikernel image is using its specific libraries.
@@ -44,7 +42,6 @@ Apart from that, there are also environment variables available for the above su
 | `UK_ROOT`            | The directory for Unikraft's core source code        | `$UK_WORKDIR/unikraft` |
 | `UK_LIBS`            | The directory of all the external Unikraft libraries | `$UK_WORKDIR/libs`     |
 | `UK_APPS`            | The directory of all the template applications       | `$UK_WORKDIR/apps`     |
-
 
 ## `kraft list`
 
@@ -107,7 +104,7 @@ GitHub rate limit exceeded. You can tell kraft to use a personal access token by
 
 In this case, create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and use the following command:
 
-```
+```console
 $ UK_KRAFT_GITHUB_TOKEN=<your_GitHub_token_here> kraft list update
 ```
 
@@ -239,8 +236,7 @@ $ kraft lib init [OPTIONS] [NAME]
 ```text
 Usage: kraft lib [OPTIONS] COMMAND [ARGS]...
 
-  Unikraft library sub-commands are useful for maintaining and working
-  directly with Unikraft libraries.
+  Unikraft library sub-commands are useful for maintaining and working directly with Unikraft libraries.
 
 Options:
   -h, --help  Show this message and exit.
