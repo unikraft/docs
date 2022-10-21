@@ -5,7 +5,7 @@ It can also be used to introduce new features to the application, although this 
 #### Identifying a Change to the Application
 
 Identifying a change to the application which requires a patch is sometimes quite subtle.
-The process usually occurs during [steps 5 and 6 of providing build files](/community/hackathons/usoc22/basic-app-porting/#providing-build-files) of the application or library in question.
+The process usually occurs during [steps 5 and 6 of providing build files](/community/hackathons/sessions/basic-app-porting/#providing-build-files) of the application or library in question.
 During this process, we are expected to see compile-time and link-time errors from `gcc` as we add new files to the build and make fixes.
 
 The `iperf3` application port to Unikraft has four patches in order to make it work.

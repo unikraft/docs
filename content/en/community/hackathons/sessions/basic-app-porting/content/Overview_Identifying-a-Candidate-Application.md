@@ -19,4 +19,4 @@ However, if the language you wish to run is interpreted and not yet available on
 **Note:** In the case of higher-level languages which are interpreted, you do not need to follow this tutorial.
 Instead, simply mount the application code with the relevant Unikernel binary.
 For example, mounting a directory with python code to the python Unikraft unikernel.
-Please review [Session 04: Complex Applications](/community/hackathons/usoc22/complex-applications/) for more information on this topic.
+Please review [Session 04: Complex Applications](/community/hackathons/sessions/complex-applications/) for more information on this topic.
