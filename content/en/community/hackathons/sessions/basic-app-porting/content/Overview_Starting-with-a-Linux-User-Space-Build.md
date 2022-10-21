@@ -9,6 +9,6 @@ It makes for an excellent application to be run as a Unikernel because:
 
 Bringing an application to Unikraft will involve understanding some of the way in which the application works, especially how it is built.
 Usually during the porting process we also end up diving through the source code, and in the worst-case scenario, have to make a change to it.
-More on this is covered [later in this tutorial](/community/hackathons/usoc22/basic-app-porting/#patching-the-application).
+More on this is covered [later in this tutorial](/community/hackathons/sessions/basic-app-porting/#patching-the-application).
 
 We start by simply trying to follow the steps to compile the application from source.

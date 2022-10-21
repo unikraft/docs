@@ -6,7 +6,7 @@ $ cd path/to/repository/clone
 
 $ git pull --rebase
 
-$ cd content/en/community/hackathons/usoc22/syscall-shim/
+$ cd content/en/community/hackathons/sessions/syscall-shim/
 
 $ ls
 demo  images  index.md  work
@@ -17,7 +17,7 @@ If you haven't cloned the repository yet, clone it and enter the session directo
 ```
 $ git clone https://github.com/unikraft/docs.git
 
-$ cd content/en/community/hackathons/usoc22/syscall-shim/
+$ cd content/en/community/hackathons/sessions/syscall-shim/
 
 $ ls -F
 demo  images  index.md  work

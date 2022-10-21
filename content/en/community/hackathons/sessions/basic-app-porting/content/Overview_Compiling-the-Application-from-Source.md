@@ -30,7 +30,7 @@ If this has worked for you, your terminal will be greeted with several pieces of
    If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as via `apt-get`.
 
    The `./configure` program also comes with a useful `--help` page where we can learn about which features we would like to turn on and off before the build.
-   It's useful to study this page and see what is available, as these can later become build options (see [exercise 2](/community/hackathons/usoc22/basic-app-porting#02-add-fortunes-to-unikrafts-boot-sequence)) for the application when it is brought to the Unikraft ecosystem.
+   It's useful to study this page and see what is available, as these can later become build options (see [exercise 2](/community/hackathons/sessions/basic-app-porting#02-add-fortunes-to-unikrafts-boot-sequence)) for the application when it is brought to the Unikraft ecosystem.
    The only thing to notice for the case of `iperf3` is that it uses [OpenSSL](https://www.openssl.org).
    [Unikraft already has a port of OpenSSL](https://github.com/unikraft/lib-openssl), which means we do not have to port this before starting.
    **If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.**

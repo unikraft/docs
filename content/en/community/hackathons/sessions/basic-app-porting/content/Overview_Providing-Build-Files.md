@@ -118,7 +118,7 @@ This process is usually very iterative because it requires building the unikerne
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.
-   Remember in [the Unikraft build lifecycle](community/hackathons/usoc22/basic-app-porting/#the-unikraft-build-lifecycle) that there is a step which occurs between fetching the remote original code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
+   Remember in [the Unikraft build lifecycle](community/hackathons/sessions/basic-app-porting/#the-unikraft-build-lifecycle) that there is a step which occurs between fetching the remote original code and compiling it. This step (3), known as `prepare`, is used to make modifications to the origin code before it is compiled.
    This may be useful for applications which have complex build systems or auxiliary files which need to be created or modified before they are built.
    Examples for preparing include:
 
