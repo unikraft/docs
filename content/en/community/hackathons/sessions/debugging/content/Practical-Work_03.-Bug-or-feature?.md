@@ -11,6 +11,8 @@ Is this a bug or a feature?
 
 #### Support Instructions
 
+Use the `connect.sh` and `debug.sh` scripts located in the task directory for debugging a Unikraft instance.
+
 Follow these steps:
 
 1. Check the disassembly code of `main()` both in the **Linuxu** and the **KVM** image.
@@ -33,8 +35,6 @@ Follow these steps:
    set disassembly-flavor intel
    disass
    ```
-
-   For **KVM** adapt the `connect.sh` and `debug.sh` scripts from the previous task.
 
 1. Use `nexti` and `stepi` instructions to step through the code.
    Get a general idea of what the program does.
