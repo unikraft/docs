@@ -7,9 +7,7 @@ weight: 402
 
 ## Managing Unikraft Ecosystem
 
-Once `kraft` is installed, you can use it to manage dependencies for
-applications, including finding and retrieving existing applications, libraries,
-platforms and architectures.
+Once `kraft` is installed, you can use it to manage dependencies for applications, including finding and retrieving existing applications, libraries, platforms and architectures.
 
 Libraries are additional software components that will be linked with Unikraft for the final image.
 Each unikernel image is using its specific libraries.
@@ -45,11 +43,11 @@ Apart from that, there are also environment variables available for the above su
 | `UK_LIBS`            | The directory of all the external Unikraft libraries | `$UK_WORKDIR/libs`     |
 | `UK_APPS`            | The directory of all the template applications       | `$UK_WORKDIR/apps`     |
 
-
 ## `kraft list`
 
 You can find a list of all aplication, libraries and platforms by using:
-```bash
+
+```console
 $ kraft list
 ```
 
@@ -68,17 +66,20 @@ helloworld-cpp  	0.6     	02 Dec 21 	17 hours ago
 
 You can add origins for kraft to use in the `.kraftrc` file, under `[list]`.
 If you create a new library using the `kraft lib` command shown below, you can add the new local library to the `.kraftrc` file by using:
-```bash
+
+```console
 $ kraft lib add ~/path/to/local/lib
 $ kraft list update
 ```
 
 You can check that everything worked fine and view basic informations about the new library by using:
-```bash
+
+```console
 $ kraft list show LIBNAME
 ```
 
 You can manually add URLs, git, git+ssh and wildcards in the `.kraftrc` file:
+
 ```text
 [list]
 origins = [
@@ -90,7 +91,8 @@ origins = [
 ```
 
 After every update to `.kraftrc`, run:
-```bash
+
+```console
 $ kraft list update
 ```
 
@@ -102,7 +104,7 @@ GitHub rate limit exceeded. You can tell kraft to use a personal access token by
 
 In this case, create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and use the following command:
 
-```
+```console
 $ UK_KRAFT_GITHUB_TOKEN=<your_GitHub_token_here> kraft list update
 ```
 
@@ -142,7 +144,8 @@ Commands:
 ## `kraft init`
 
 If you want to initiate an existing application, you can use:
-```bash
+
+```console
 $ kraft init -t TEMPLATE_NAME [TARGET_NAME]
 ```
 
@@ -172,7 +175,8 @@ Options:
 ## `kraft up`
 
 You can retreive, build and run an existing appliication from the list above by using only one command:
-```bash
+
+```console
 $ kraft up -t TEMPLATE_NAME TARGET_NAME
 ```
 
@@ -215,13 +219,15 @@ Options:
 
 You can also use kraft to manage Unikraft libraries.
 You can add and remove libraries from the project:
-```bash
+
+```console
 $ kraft lib add NAME
 $ kraft lib remove NAME
 ```
 
 Or you can initialize a new Unikraft library using:
-```bash
+
+```console
 $ kraft lib init [OPTIONS] [NAME]
 ```
 
@@ -230,8 +236,7 @@ $ kraft lib init [OPTIONS] [NAME]
 ```text
 Usage: kraft lib [OPTIONS] COMMAND [ARGS]...
 
-  Unikraft library sub-commands are useful for maintaining and working
-  directly with Unikraft libraries.
+  Unikraft library sub-commands are useful for maintaining and working directly with Unikraft libraries.
 
 Options:
   -h, --help  Show this message and exit.
