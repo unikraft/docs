@@ -39,7 +39,7 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 
 ### Schedule
 
-**Saturday, October 22, 2022**
+#### Saturday, October 22, 2022
 
 | Time (CET)    | Session                                                           | Presenter          |
 | ------------- | ----------------------------------------------------------------- | ------------------ |
@@ -56,8 +56,7 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 | 16:45 - 17:00 | Nested acceleration with unikernels                               | Charalampos Mainas |
 | 17:00 - 17:30 | Lightweight virtualization                                        | Peter Okelmann     |
 
-
-**Sunday, October 23, 2022**
+#### Sunday, October 23, 2022
 
 | Time (CET)    | Session                                             |
 | ------------- | --------------------------------------------------- |
