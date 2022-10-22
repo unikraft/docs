@@ -24,7 +24,7 @@ For KVM, you can start the guest with the kernel image that includes debugging i
 We recommend creating the guest in a paused state (the `-S` option):
 
 ```bash
-$ qemu-system-x86_64 -s -S -cpu host -enable-kvm -m 128 -nodefaults -no-acpi -display none -serial stdio -device isa-debug-exit -kernel build/app-helloworld_kvm-x86_64.dbg -append verbose
+$ qemu-system-x86_64 -s -S -cpu host -enable-kvm -m 128 -nodefaults -no-acpi -display none -nographic -device isa-debug-exit -kernel build/app-helloworld_kvm-x86_64.dbg -append verbose
 ```
 
 Note that the `-s` parameter is shorthand for `-gdb tcp::1234`.

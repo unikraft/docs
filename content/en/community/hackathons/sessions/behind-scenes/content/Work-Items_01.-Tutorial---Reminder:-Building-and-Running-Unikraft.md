@@ -100,10 +100,10 @@ We follow the steps:
 1. Load the resulting image in QEMU by using
 
    ```
-   $ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -serial stdio
+   $ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -nographic
    ```
 
-Besides `-serial stdio`, no other option is needed to run the `app-helloworld` application.
+Besides `-nographic`, no other option is needed to run the `app-helloworld` application.
 Other, more complex applications, will require more options given to the `qemu-system-x86_64` command.
 
 We have run Unikraft in the emulation mode, with the command from above.
@@ -115,15 +115,15 @@ You can instruct KVM to use your local CPU model, by adding `-cpu host` to the c
 The final command will look like this:
 
 ```
-$ sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -serial stdio
+$ sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -nographic
 ```
 
 While we are here, we can check some differences between emulation and virtualization.
 Record the time needed by each image to run, using `time`, like this:
 
 ```
-$ time sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -serial stdio
-$ time sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -serial stdio
+$ time sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -nographic
+$ time sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -nographic
 ```
 
 Because `helloworld` is a simple application, the **real** running time will be similar.
@@ -149,7 +149,7 @@ $ make
 To run Unikraft, use the following command:
 
 ```
-$ sudo qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel ./build/app-helloworld_kvm-arm64 -serial stdio
+$ sudo qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel ./build/app-helloworld_kvm-arm64 -nographic
 ```
 
 Note that now we need to provide a machine and a CPU model to be emulated, as there are no defaults available.

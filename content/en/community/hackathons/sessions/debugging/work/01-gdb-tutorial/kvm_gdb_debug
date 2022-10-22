@@ -10,7 +10,7 @@ qemu-system-x86_64 -s \
                    -nodefaults \
                    -no-acpi \
                    -display none \
-                   -serial stdio \
+                   -nographic \
                    -device isa-debug-exit \
                    -kernel $path_to_kernel \
                    -append verbose &
