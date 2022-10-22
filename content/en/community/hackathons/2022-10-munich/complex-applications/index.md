@@ -5,7 +5,7 @@ weight: 5
 summary: "We will run full-fledged applications on top of Unikraft (nginx, redis, sqlite). Expected time: 75min."
 ---
 
-## Complex Applications
+## Overview
 
 ### Support Files
 

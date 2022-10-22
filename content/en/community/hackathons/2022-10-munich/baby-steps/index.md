@@ -5,9 +5,9 @@ weight: 2
 summary: "Basic working (configure, build, run) with Unikraft and kraft. Expected time: 60min."
 ---
 
-## Baby Steps
+## Overview
 
-## Introduction
+### Introduction
 
 {{< readfile file="/community/hackathons/sessions/baby-steps/content/intro.md" markdown="true" >}}
 
