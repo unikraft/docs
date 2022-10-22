@@ -634,3 +634,122 @@ To make a patch:
    ```
 
 This concludes the necessary steps to port an application to Unikraft "from first principles".
+
+### Compile Your Application with `Clang`
+
+As `clang` becomes more and more used in the industry, we also provide a series of steps in order to compile your application with it. Besides coming up with cool security mechanisms (see our ongoing [Shadow Stack support](https://github.com/unikraft/unikraft/pull/505)), `clang` becomes a very interesting alternative to `gcc` when it comes to speed and memory[^1], so why not give it a try?!
+
+Firstly, we must consider what architecture we are working on, because the steps differ quite a bit. 
+
+**Note**: The process requires manual work as some PRs needed in order to automize the compilation with `clang` are still in drafts.
+Be aware of the fact that it might take a while to have the setup ready.
+
+#### `Clang` on `x86`
+
+Compiling your application with `clang` for the `x86` architecture is the easy one compared to the `ARM` process. 
+We suggest you start your journey using `clang` with this platform, as testing and feature improvements happen mostly on `x86`.
+
+Configure your application as you would usually do, then build it using:
+
+```bash
+make CC=clang
+```
+
+Until the [PR that enables compilation with clang](https://github.com/unikraft/unikraft/pull/560) gets integrated, add this line to your `unikraft/Makefile.uk`:
+
+```Makefile
+ASFLAGS-$(call have_clang)     += -mllvm -asm-macro-max-nesting-depth=1000
+```
+
+Some applications might use flags not recognized by `clang`.
+One good example is `app-nginx`, you will have to modify the `Makefile.uk` from `lib-nginx`, as it follows:
+
+```patch
+diff --git a/Makefile.uk b/Makefile.uk
+index c6b9cc7..c67478e 100644
+--- a/Makefile.uk
++++ b/Makefile.uk
+@@ -82,7 +82,7 @@ LIBNGINX_FLAGS = -Wpointer-arith -Werror
+ 
+ # Suppress some warnings to make the build process look neater
+ LIBNGINX_FLAGS_SUPPRESS = -Wno-unused-parameter -Wno-unused-variable   \
+--Wno-unused-but-set-variable -Wno-unused-value
++-Wno-unused-value
+ 
+ LIBNGINX_CFLAGS-y +=  $(LIBNGINX_FLAGS)
+ LIBNGINX_CFLAGS-y +=  $(LIBNGINX_FLAGS_SUPPRESS)
+```
+
+Notice how we deleted the `-Wno-unused-but-set-variable`; it is not recognized by the compiler, and the build step would've failed if we kept it.
+
+From this point onwards, the flow of the application should follow the same route as when compiled with `gcc`, so continue as you would normally do.
+
+#### `Clang` on `AArch64`
+
+**Note**: There are several changes and PRs needed for the steps in this tutorial, continue at your own risk!
+
+If you are thinking of using any app somewhat more complex than `app-helloworld` (that relies on `lib-newlib`), for `Aarch64` you will need to apply the [`newlib` PR](https://github.com/unikraft/lib-newlib/pull/21).
+
+Moreover, modifying `unikraft/Makefile` and `unikraft/plat/common/pci_ecam.c` is also a must:
+
+```patch
+diff --git a/Makefile b/Makefile
+index e9f4044..b00796e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -616,6 +616,10 @@ CC_VERSION	:= $(shell $(CC) --version | \
+CC_VER_MAJOR   := $(word 1,$(subst ., ,$(CC_VERSION)))
+CC_VER_MINOR   := $(word 2,$(subst ., ,$(CC_VERSION)))
+
++CFLAGS          += --target=$(CONFIG_LLVM_TARGET_ARCH)
++ASFLAGS         += --target=$(CONFIG_LLVM_TARGET_ARCH)
++CXXFLAGS        += --target=$(CONFIG_LLVM_TARGET_ARCH)
++
+ASFLAGS		+= -DCC_VERSION=$(CC_VERSION)
+CFLAGS		+= -DCC_VERSION=$(CC_VERSION)
+CXXFLAGS	+= -DCC_VERSION=$(CC_VERSION)
+diff --git a/plat/common/pci_ecam.c b/plat/common/pci_ecam.c
+index c884f11..7c069db 100644
+--- a/plat/common/pci_ecam.c
++++ b/plat/common/pci_ecam.c
+@@ -226,7 +226,7 @@ int gen_pci_irq_parse(const fdt32_t *addr, struct fdt_phandle_args *out_irq)
+    fdt32_t initial_match_array[16];
+    const fdt32_t *match_array = initial_match_array;
+    const fdt32_t *tmp, *imap, *imask;
+-	const fdt32_t dummy_imask[] = { [0 ... 16] = cpu_to_fdt32(~0) };
++	const fdt32_t dummy_imask[] = {cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0),
++				                   cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0),
++				                   cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0),
++				                   cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0), cpu_to_fdt32(~0)};
+    int intsize, newintsize;
+    int addrsize, newaddrsize = 0;
+    int imaplen, match, i, rc = -EINVAL;
+```
+
+The modifications we made in the core Unikraft `Makefile` are preparing the app to be build using a cross-compilation tool.
+Following this idea, we'll have to download said cross-compiling toolchain. Get it from [the official ARM developer website](https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads); look out for the `AArch64 bare-metal target (aarch64-none-elf)`.
+
+We are almost done with the patching of the necessary components. Now let's get to configuring the unikernel.
+Besides your usual configuration, you must follow these next 2 points:
+
+* disable all erratum options from `Architecture Selection` -> `Arm8 Compatible` -> `Workaround for [...] erratum`
+
+* configure the `Custom cross-compiler LLVM target` from `Build Options` -> `Custom cross-compiler LLVM target`; write `aarch64-none-elf`
+
+As a sneak peek, we've disabled the `erratum` options as they contain code specifically written for `gcc`, so it's of no interest to us (for now, at least). Regarding the `aarch64-none-elf` configuration, we've made sure that the build system will use the baremetal toolchain to cross-compile.
+
+As a result, the command used for building our application should look something like this:
+
+```bash
+make CC=clang LD=~/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc OBJCOPY=~/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-objcopy STRIP=~/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-strip
+```
+
+Tha last step is a little bit of patching: use [these modifications](https://sourceware.org/pipermail/glibc-cvs/2021q3/074785.html) in order to fix the `gcc`-isms errors from `strchr.S`, `strrchr.S` and `strchrnul.S`.
+We promise we'll patch these!
+
+With this step, consider our work done. The app is now ready to be run.
+
+**Note**: If you use any compiler with a version greater or equal to 10, you'll need to apply the [core Unikraft virtio PR](https://github.com/unikraft/unikraft/pull/519).
+Complex apps usually stumble across [this issue](https://github.com/unikraft/unikraft/issues/518) and fail at runtime.
+
+[^1]: https://opensource.apple.com/source/clang/clang-23/clang/tools/clang/www/features.html#performance
