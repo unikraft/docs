@@ -21,7 +21,7 @@ workdir
 ```
 
 We clone the [lib-sqlite](https://github.com/unikraft/lib-sqlite) repository in the `libs/` folder.
-The libraries on which `lib-sqlite` depends ([pthread-embedded](https://github.com/unikraft/lib-newlib) and [newlib](https://github.com/unikraft/lib-pthread-embedded)) are also to be cloned in the `libs/` folder.
+The libraries on which `lib-sqlite` depends ([pthread-embedded](https://github.com/unikraft/lib-pthread-embedded) and [newlib](https://github.com/unikraft/lib-newlib)) are also to be cloned in the `libs/` folder.
 
 We clone the [app-sqlite](https://github.com/unikraft/app-sqlite/) repository in the `apps/` folder.
 In this directory, we need to create two files:
