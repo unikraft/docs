@@ -22,7 +22,7 @@ $ make clean
 To send an argument with qemu-system, we use the `-append` option, like this:
 
 ```
-$ qemu-system-x86_64 -kernel build/app-helloworld_kvm-x86_64 -append "console=ttyS0 foo=bar" -serial stdio
+$ qemu-system-x86_64 -kernel build/app-helloworld_kvm-x86_64 -append "console=ttyS0 foo=bar" -nographic
 ```
 
 #### qemu-guest script
