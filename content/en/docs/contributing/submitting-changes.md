@@ -21,7 +21,7 @@ Make sure one pull request covers only one topic.
 
 When you make a submission, please make sure you follow the steps below, also part of the pull request template:
 
- - [ ] Read the [contribution guidelines](docs/contributing/_index) regarding submitting new changes to the project;
+ - [ ] Read the contribution guidelines in this page regarding submitting new changes to the project;
  - [ ] Test your changes against relevant architectures and platforms;
  - [ ] Run the [`checkpatch.pl`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/checkpatch.pl) on your commit series before opening this PR;
  - [ ] Update relevant documentation.
