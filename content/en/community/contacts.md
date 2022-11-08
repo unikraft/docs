@@ -11,12 +11,13 @@ The fastest way to get in contact with members of the community is to engage wit
 
 Primary contacts of the open-source project include:
 
-| Name              | Email                       | Affiliation                         |
-| ----------------- | --------------------------- | ----------------------------------- |
-| Simon Kuenzer     | simon.kuenzer@neclab.eu     | NEC Laboratories Europe GmbH        |
-| Răzvan Deaconescu | razvan.deaconescu@cs.pub.ro | University POLITEHNICA of Bucharest |
-| Alexander Jung    | a.jung@lancs.ac.uk          | Lancaster Universitiy               |
-| Marc Rittinghaus  | marc.rittinghaus@kit.edu    | Karlsruhe Institute of Technology   |
+| Name              | Email                 | Affiliation      |
+| ----------------- | --------------------- | ---------------- |
+| Simon Kuenzer     | simon@unikraft.org    | Unikraft GmbH    |
+| Răzvan Deaconescu | razvand@unikraft.org  | Unikraft GmbH    |
+| Alexander Jung    | alex@unikraft.org     | Unikraft GmbH    |
+| Marc Rittinghaus  | marc@unikraft.org     | Unikraft GmbH    |
+| Felipe Huici      | felipe@unikraft.org   | Unikraft GmbH    |
 
 For general enquiries and open discussions, please consult our open mailing lists:
 
