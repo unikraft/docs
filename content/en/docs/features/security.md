@@ -44,12 +44,13 @@ In Unikraft, most of the core security features have been merged or are pending 
 | [Stack Smashing Protection (SP)](https://github.com/unikraft/unikraft/tree/staging/lib/uksp)           | Upstream         | `ARCH_ARM_64 \|\| ARCH_X86_64` |
 | [Undefined Behavior Sanitization (UBSAN)](https://github.com/unikraft/unikraft/tree/staging/lib/ubsan) | Upstream         | any                            |
 | [Rust internal libraries in Unikraft](https://github.com/unikraft/unikraft/tree/staging/lib/ukrust)    | Upstream         | `ARCH_X86_64`                  |
-| [ARM Pointer authentication (PAuth)](#)                                                                | Under review     | `ARCH_ARM_64 \|\| ARCH_ARM_32` |
-| [ARM Branch Target Identification (BTI)](https://github.com/unikraft/unikraft/pull/421)                | Under review     | `ARCH_ARM_64`                  |
+| [ARM Pointer authentication (PAuth)](https://github.com/unikraft/unikraft/pull/369)                    | Upstream         | `ARCH_ARM_64`                  |
+| [ARM Branch Target Identification (BTI)](https://github.com/unikraft/unikraft/pull/421)                | Upstream         | `ARCH_ARM_64`                  |
+| [ARM Memory Tagging Extension (MTE)](https://github.com/unikraft/unikraft/pull/458)                    | Upstream         | `ARCH_ARM_64`                  |
+| [ARM True Random Number Generator (RNG)](https://github.com/unikraft/unikraft/pull/434)                | Upstream         | `ARCH_ARM_64`                  |
 | [Kernel Address Sanitizer (KASAN)](https://github.com/unikraft/unikraft/pull/191)                      | Under review     | `PLAT_KVM && ARCH_X86_64`      |
 | [Position Independent Executables (PIE)](https://github.com/unikraft/unikraft/pull/239)                | Under review     | `PLAT_KVM && ARCH_X86_64`      |
-| [True Random Number Generator](#)                                                                      | Under review     | `ARCH_X86_64`                  |
-| ARM Memory Tagging Extension (MTE)                                                                     | Work-in-progress | ARM                            |
+| [x86_64 True Random Number Generator](https://github.com/unikraft/unikraft/pull/420)                   | Under review     | `ARCH_X86_64`                  |
 | Intel Control-flow Enforcement Technology (CET)                                                        | Planned          | `ARCH_X86_64`                  |
 | Shadow stack                                                                                           | Planned          | any                            |
 | `FORTIFY_SOURCE`                                                                                       | Planned          | any                            |
