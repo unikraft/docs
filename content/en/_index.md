@@ -6,9 +6,9 @@ draft: false
 landing:
   quickStart: Quick Start
   notify:
-    pill: 1K STARS
-    text: Unikraft reaches 1K on GitHub!
-    link: /blog/2022-10-14-unikraft-reaches-1k-github-stars
+    pill: LATEST
+    text: Unikraft releases v0.11.0 (Janus)!
+    link: /blog/2022-12-02-unikraft-releases-janus
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
