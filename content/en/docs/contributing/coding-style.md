@@ -14,11 +14,11 @@ Please note that ported libraries from existing sources may use different style 
 Please follow the appropriate style depending on where you want to modify or introduce new code.
 
 You can also use `.clang-format` to check your patches.
-Most code closely follows an automatically-formatted style defined by the [.clang-format](https://github.com/unikraft/unikraft/blob/staging/.clang-format) file in the repository's root directory.
+Most code closely follows an automatically-formatted style defined by the [.clang-format](https://github.com/unikraft/unikraft/blob/staging/.clang-format) file in the repository's `root` directory.
 However, since this is an automated formatting tool, it's not perfect, and the Unikraft code can deviate from the `clang-format`'s programmatically created output (especially in the aesthetics of assignment alignments).
 Use `clang-format` as a helpful tool, but with a grain of salt.
 Again, note that some parts of the code (e.g. lib/fdt) follow different coding styles that you should follow if you change this code.
-In the future, me might provide .clang-format files appropriate for those libraries.
+In the future, me might provide `.clang-format` files appropriate for those libraries.
 We would also be very happy to accept `.clang-format` definitions for those.
 
 ### Code Documentation
