@@ -7,11 +7,11 @@ weight: 505
 
 ## Submitting Changes
 
-New features, bug fixes, improvements, maintenance and everything in between as contributions are welcome!
+New features, bugfixes, improvements, maintenance and everything in between as contributions are welcome!
 The Unikraft project is an open source and encourages the fostering open collaboration.
 If you are reading this guide on how to submit changes, then thank you in advance!
 
-Unikraft's source code is primarily hosted on [Github](https://github.com).
+Unikraft's source code is primarily hosted on [GitHub](https://github.com).
 This includes the Unikraft core repository, auxiliary external microlibraries, applications, platforms, architectures and additional tools like `kraft`.
 Any of these repositories follow the same submission process for changes: the pull request.
 
@@ -21,10 +21,10 @@ Make sure one pull request covers only one topic.
 
 When you make a submission, please make sure you follow the steps below, also part of the pull request template:
 
- - [ ] Read the contribution guidelines in this page regarding submitting new changes to the project;
- - [ ] Test your changes against relevant architectures and platforms;
- - [ ] Run the [`checkpatch.pl`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/checkpatch.pl) on your commit series before opening this PR;
- - [ ] Update relevant documentation.
+- [ ] Read the contribution guidelines in this page regarding submitting new changes to the project;
+- [ ] Test your changes against relevant architectures and platforms;
+- [ ] Run the [`checkpatch.pl`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/checkpatch.pl) on your commit series before opening this PR;
+- [ ] Update relevant documentation.
 
 The pull request template will also request you to fill additional configuration information and a description of changes.
 
@@ -52,11 +52,11 @@ Where `[selector]` can be one of the following:
 
 | Selector    | Description                                                                                                                                                           |
 |-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `arch`      | Patch for the architecture code in `arch/`.  `[component]` is the architecture (e.g, `x86`) applies also for corresponding headers in `include/uk/arch/`.             |
+| `arch`      | Patch for the architecture code in `arch/`,  `[component]` is the architecture (e.g, `x86`) applies also for corresponding headers in `include/uk/arch/`.             |
 | `plat`      | Patch for one of the platform libraries in `plat/`, `[component]` is the platform (e.g, `linuxu`).  This applies also for corresponding headers in `include/uk/plat/` |
-| `include`   | Changes to general Unikraft headers, e.g. `include/`, `include/uk`.                                                                                                   |
+| `include`   | Changes to general Unikraft headers (e.g. `include/`, `include/uk`).                                                                                                   |
 | `lib`       | Patch for one of the Unikraft base libraries (not external) in `lib/`, `[component]` is the library name without lib prefix (e.g, `fdt`).                             |
-| `build`     | Changes to build system or generic configurations, `[component]` is optional.                                                                                         |
+| `build`     | Changes to build tool or generic configurations, `[component]` is optional.                                                                                         |
 
 {{< alert icon="💡" text="Commit messages, along with all source files follow a 80-character rule." />}}
 
