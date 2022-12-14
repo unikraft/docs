@@ -1,41 +1,48 @@
 Let's start with installing kraft (and validating the installation).
 
 First of all, make sure you have all the dependencies installed:
-```bash
+
+```console
 $ sudo apt-get install -y --no-install-recommends build-essential \
         libncurses-dev libyaml-dev flex git wget socat bison \
         unzip uuid-runtime python3-pip
 ```
 
 You'll also need QEMU for launching virtual/emulated machines which will run unikernels targeting the KVM platform:
-```bash
+
+```console
 $ sudo apt-get -y install qemu-kvm qemu-system-x86
 ```
 
 To install the latest version of kraft, simply run:
-```bash
+
+```console
 $ pip3 install git+https://github.com/unikraft/kraft.git@staging
 ```
 
 After installing or updating kraft, the first step is to download / update the software components available for building unikernel images.
 For this, run:
-```bash
+
+```console
 $ kraft list update
 ```
 
 It's very likely that running the command above will result in the following error:
-```bash
+
+```console
 GitHub rate limit exceeded.  You can tell kraft to use a personal access token by setting the UK_KRAFT_GITHUB_TOKEN environmental variable.
 ```
 
 If this is the case, first create a GitHub personal access token with `repo:public-repo` permissions by following [these instructions](https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token).
 Then, use the following command:
-```bash
+
+```console
 $ UK_KRAFT_GITHUB_TOKEN=<your_GitHub_token_here> kraft list update
 ```
 
 After this is done, you can get a list of all components that are available for use with kraft:
-```bash
+
+```console
 $ kraft list
 UNIKRAFT                VERSION         RELEASED        LAST CHECKED
 unikraft                0.10.0          20 hours ago    14 hours ago

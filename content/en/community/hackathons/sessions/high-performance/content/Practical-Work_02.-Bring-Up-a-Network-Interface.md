@@ -4,7 +4,7 @@ To do this, open `Config.uk` and place the following dependency accordingly in t
 
 This dependency gives us access to the `<uk/netdev.h>` and `<uk/netbuf.h>` headers which are available within the `libuknetdev` library:
 
-```sh
+```console
 $ ls [PATH-TO-UNIKRAFT]/lib/uknetdev/include/uk/
 ```
 
@@ -92,7 +92,7 @@ Many of these steps should produce some kernel output so that you can quicker se
 In order to test your code you should run the guest with one interface attached.
 For this purpose we need to create a network bridge on your Linux host first (we just need to do this once):
 
-```sh
+```console
 # Ensure you have permissions to change stp
 sudo sysctl -w net.bridge.bridge-nf-call-arptables=0
 
@@ -111,6 +111,6 @@ echo 0 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
 
 As soon as your unikernel image builds, the guest can then be started with:
 
-```sh
+```console
 $ kraft run -b usocbr0
 ```

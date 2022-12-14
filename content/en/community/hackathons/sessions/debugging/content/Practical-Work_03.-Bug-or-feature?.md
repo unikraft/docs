@@ -18,20 +18,20 @@ Follow these steps:
 1. Check the disassembly code of `main()` both in the **Linuxu** and the **KVM** image.
    Use GDB and then use the commands:
 
-   ```
+   ```console
    hbreak main
    ```
 
    to break at the `main()` function.
    The use
 
-   ```
+   ```console
    c
    ```
 
    (for `continue`) to get the to `main()` function.
 
-   ```
+   ```console
    set disassembly-flavor intel
    disass
    ```
@@ -42,7 +42,7 @@ Follow these steps:
 1. Check the values of the `rax`, `rdx` and `rbp` registers.
    Use
 
-   ```
+   ```console
    info registers
    ```
 

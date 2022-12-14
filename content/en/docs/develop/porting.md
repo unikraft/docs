@@ -63,13 +63,13 @@ Let's walk through the build process of `iperf3` from its `README`:
 
 1. First we obtain the source code of the application:
 
-   ```bash
+   ```console
    git clone https://github.com/esnet/iperf.git
    ```
 
 1. Then, we are asked to configure and build the application:
 
-   ```bash
+   ```console
    cd ./iperf
    ./configure;
    make
@@ -115,7 +115,7 @@ Let's first start by initializing a working environment for ourselves:
 
 1. Let's create a workspace with a typical Unikraft structure using `kraft`:
 
-   ```bash
+   ```console
    cd ~/workspace
    export UK_WORKDIR=$(pwd)
    kraft list update
@@ -125,7 +125,7 @@ Let's first start by initializing a working environment for ourselves:
    This will generate the necessary directory structure to build a new Unikraft application, and will also download the latest `staging` branch of Unikraft's core.
    When we list the directories, we should get something like this:
 
-   ```bash
+   ```console
    $ tree -L 1
    .
    ├── apps
@@ -150,7 +150,7 @@ Let's first start by initializing a working environment for ourselves:
 
    We can now use `kraft` to initialize a template library for us:
 
-   ```bash
+   ```console
    cd ~/workspace/libs
    kraft lib init \
       --no-prompt \
@@ -173,21 +173,21 @@ Let's first start by initializing a working environment for ourselves:
 
 1. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain. To do this, simply add the path of the newly initialized library like so:
 
-   ```bash
+   ```console
    kraft list add ~/workspace/libs/iperf3
    ```
 
    This will modify your `.kraftrc` file with a new local library.
    When you have added this library directory, run the update command so that `kraft` can realize it:
 
-   ```bash
+   ```console
    kraft list update
    ```
 
 1. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
    To view basic information about the library and to confirm everything has worked, you can run:
 
-   ```bash
+   ```console
    kraft list show iperf3
    ```
 
@@ -199,14 +199,14 @@ To do this, we create a parallel application which uses both the library we are 
 
 1. First start by creating a new application structure, which we can do by initializing a blank project:
 
-   ```bash
+   ```console
    cd ~/workspace/apps
    kraft init iperf3
    ```
 
 1. We will now have an "empty" initialized project; you'll find boilerplate in this directory, including a `kraft.yaml` file which will look something like this:
 
-   ```bash
+   ```console
    cd ~/workspace/apps/iperf3
    cat kraft.yaml
    ```
@@ -221,7 +221,7 @@ To do this, we create a parallel application which uses both the library we are 
 
 1. After setting up your application project, we should add the new library we are working on to the application. This is done via:
 
-   ```bash
+   ```console
    kraft lib add iperf3@staging
    ```
 
@@ -249,14 +249,14 @@ To do this, we create a parallel application which uses both the library we are 
 1. We are ready to configure the application to use the library.
    It should be possible to now see the boilerplate `iperf3` library within the [`menuconfig`](https://en.wikipedia.org/wiki/Menuconfig) system by running:
 
-   ```bash
+   ```console
    kraft menuconfig
    ```
 
    within the application folder.
    However, it will also be selected automatically since it is in the `kraft.yaml` file now if you run the configure step:
 
-   ```bash
+   ```console
    kraft configure
    ```
 
@@ -274,7 +274,7 @@ This process is usually very iterative because it requires building the unikerne
 1. The first thing we must do before we start is to check that `fetch`ing the remote code for `iperf3` is possible.
    Let's try and do this by running in our application workspace:
 
-   ```bash
+   ```console
    cd ~/workspace/apps/iperf3
    kraft fetch
    ```
@@ -282,7 +282,7 @@ This process is usually very iterative because it requires building the unikerne
    If this is successful, we should see it download the remote zip file and we should see it saved within our Unikraft application's `build/`.
    The directory with the extracted contents should be located at:
 
-   ```bash
+   ```console
    $ ls -lsh build/libiperf3/origin/iperf-3.10.1/
    total 988K
     12K -rw-r--r-- 1 root root 9.3K Jun  2 22:29 INSTALL
@@ -317,7 +317,7 @@ This process is usually very iterative because it requires building the unikerne
    `iperf3` has an `iperf_config.h` file, so let's copy this file into our Unikraft port of the application.
    Make an `include/` directory in the library's repository and copy the file:
 
-   ```bash
+   ```console
    mkdir ~/workspace/libs/iperf3/include
    cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
    ```
@@ -334,7 +334,7 @@ This process is usually very iterative because it requires building the unikerne
 
 1. Next, let's run `make` with a special flag:
 
-   ```bash
+   ```console
    cd build/libiperf3/origin/iperf-3.10.1/
    make -n
    ```
@@ -342,7 +342,7 @@ This process is usually very iterative because it requires building the unikerne
    This flag, `-n`, has just shown us what `make` will run; the full commands for `gcc` including flags.
    What's interesting here is any line which start with:
 
-   ```bash
+   ```console
    echo "  CC      "
    ```
 
@@ -386,7 +386,7 @@ This process is usually very iterative because it requires building the unikerne
    This step, again, usually occurs iteratively along with the previous step of adding a new file one-by-one.
    Because the application has been `configure`d and we have `fetch`ed the contents, we can simply try running the build in the Unikraft application directory:
 
-   ```bash
+   ```console
    cd ~/workspace/apps/iperf3
    kraft build
    ```
@@ -417,7 +417,7 @@ This process is usually very iterative because it requires building the unikerne
    The `prepare` step is called naturally because of this target.
    However, it can be called separately from `kraft` via:
 
-   ```bash
+   ```console
    kraft prepare
    ```
 
@@ -591,14 +591,14 @@ To make a patch:
 
 1. First, ensure that the remote origin code has been downloaded to the application's `build/` folder:
 
-   ```bash
+   ```console
    cd ~/workspace/apps/iperf3
    kraft fetch
    ```
 
 1. Once the source files have been downloaded, turn it into a Git repository and save everything to an initial commit, in the case of `iperf3`:
 
-   ```bash
+   ```console
    cd build/libiperf3/origin/iperf-3.10.1
    git init
    git add .
@@ -613,7 +613,7 @@ To make a patch:
 1. After your changes have been saved to the git log, export them as patches.
    For example, if you have made one (`1`) patch only, export it like so:
 
-   ```bash
+   ```console
    git format-patch HEAD~1
    ```
 
@@ -621,7 +621,7 @@ To make a patch:
 
 1. The next step is to create a `patches/` folder within the Unikraft port of the library and to move the new `.patch` file into this folder:
 
-   ```bash
+   ```console
    mkdir ~/workspace/libs/iperf3/patches
    mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
    ```

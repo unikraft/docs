@@ -5,7 +5,7 @@ This process is usually very iterative because it requires building the unikerne
 1. The first thing we must do before we start is to check that fetching the remote code for `iperf3` is possible.
    Let's try and do this by running in our application workspace:
 
-   ```bash
+   ```console
    $ cd ~/workspace/apps/iperf3
    $ kraft fetch
    ```
@@ -13,7 +13,7 @@ This process is usually very iterative because it requires building the unikerne
    If this is successful, we should see it download the remote `zip` file and we should see it saved within our Unikraft application's `build/`.
    The directory with the extracted contents should be located at:
 
-   ```bash
+   ```console
    $ ls -lsh build/libiperf3/origin/iperf-3.10.1/
    ```
    ```
@@ -65,7 +65,7 @@ This process is usually very iterative because it requires building the unikerne
 
 1. Next, let's run `make` with a special flag:
 
-   ```bash
+   ```console
    $ cd build/libiperf3/origin/iperf-3.10.1/
    $ make -n
    ```
@@ -73,7 +73,7 @@ This process is usually very iterative because it requires building the unikerne
    This flag, `-n`, has just shown us what `make` will run, the full commands for `gcc` including flags.
    What's interesting here is any line which starts with:
 
-   ```
+   ```console
    $ echo "  CC      "
    ```
 
@@ -112,7 +112,7 @@ This process is usually very iterative because it requires building the unikerne
 1. Now that we have added all the source files, let's try and build the application!  This step, again, usually occurs iteratively along with the previous step of adding a new file one by one.
    Because the application has been configured and we have fetched the contents, we can simply try running the build in the Unikraft application directory:
 
-   ```bash
+   ```console
    $ cd ~/workspace/apps/iperf3
    $ kraft build
    ```
@@ -142,7 +142,7 @@ This process is usually very iterative because it requires building the unikerne
    The `prepare` step is called naturally because of this target.
    However, it can be called separately from `kraft` via:
 
-   ```bash
+   ```console
    $ kraft prepare
    ```
 

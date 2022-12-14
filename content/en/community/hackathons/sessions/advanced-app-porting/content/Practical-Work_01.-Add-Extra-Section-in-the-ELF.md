@@ -4,7 +4,7 @@ Navigate to the `01-extrald` directory.
 Copy `mycorelibrary` to the `lib` directory in `unikraft` and the two applications in the `apps` directory.
 Your working directory should look like this:
 
-```Bash
+```console
 workdir
 |_______apps
 |       |_______01-app

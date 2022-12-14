@@ -20,13 +20,14 @@ To configure an application, you can use `kraft configure [OPTIONS]`.
 The application can be targeted for multiple platforms and architectures that should be listed in the `kraft.yaml` file.
 
 You can choose the desired platform and target by running:
-```bash
+
+```console
 $ kraft configure -p PLAT -m ARCH
 ```
 
 Running the command with no options will let you choose from the available configurations by interactively using arrow keys to select the desired option.
 
-```bash
+```console
 $ kraft configure
 [?] Which target would you like to configure?: helloworld_xen-x86_64
    helloworld_linuxu-x86_64
@@ -102,12 +103,14 @@ Options:
 After building the application, you can run it using the `kraft run` command.
 
 You can specify the platform and architecture for the target using `-p --plat` and `-m --arch` options.
-```bash
+
+```console
 $ kraft run -p kvm -m x86_64
 ```
 
 You can pass arguments by listing them after all the options.
-```bash
+
+```console
 $ kraft run "arg1 arg2"
 ```
 
@@ -141,10 +144,13 @@ Options:
 ## `kraft fetch` and `kraft prepare`
 
 You can fetch and patch the nedded libraries by running:
-```bash
+
+```console
 $ kraft fetch
 ```
+
 or
-```bash
+
+```console
 $ kraft prepare
 ```

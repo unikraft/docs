@@ -5,7 +5,7 @@ Navigate to the `04-05-06-myramfs` directory.
 Copy `myramfs` directory to the `lib` directory in `unikraft` and the application in the `apps` directory.
 Your working directory should look like this:
 
-```Bash
+```console
 workdir
 |_______apps
 |       |_______ramfs-app

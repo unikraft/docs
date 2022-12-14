@@ -77,7 +77,7 @@ They can be found in `Platform Configuration` -> `KVM guest` -> `Virtio`.
 
 We build the application by running:
 
-```
+```console
 $ make
 ```
 
@@ -102,7 +102,7 @@ INSERT INTO tab VALUES (random(), cast(random() as text)),
 Up next, create a folder in the application folder called `sqlite_files` and write the above script into a file.
 When you run the application, you can specify the path of the newly created folder to the `qemu-guest` as following:
 
-```
+```console
 $ ./qemu-guest -k ./build/app-sqlite_kvm-x86_64 \
                -e ./sqlite_files \
                -m 500
@@ -119,7 +119,7 @@ In the end, we run `select * from tab` to see the contents of the table.
 
 If everything runs as expected, then we'll get the following output:
 
-```bash
+```console
 SeaBIOS (version 1.13.0-1ubuntu1.1)
 Booting from ROM...
 Powered by

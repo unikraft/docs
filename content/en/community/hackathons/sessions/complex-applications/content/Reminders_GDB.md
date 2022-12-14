@@ -5,7 +5,7 @@ For this we need to set `Debug information level` to `Level 3` from `make menuco
 
 For the Linux user space target (`linuxu`), simply point GDB to the resulting debug image:
 
-```bash
+```console
 $ gdb path_to_unikraft_gdb_image
 ```
 
@@ -17,35 +17,35 @@ For KVM we need to go through few steps:
 
    Using **qemu**:
 
-   ```bash
+   ```console
    $ qemu-guest -P -g 1234 -k path_to_unikraft_gdb_image
    ```
 
    Using **kraft**:
 
-   ```bash
+   ```console
    $ kraft run -d -g 1234 -P
    ```
 1. Attach debugger
 
-   ```bash
+   ```console
    $ gdb --eval-command="target remote :1234" path_to_unikraft_gdb_image
    ```
 
 3. Disconnect GDB
 
-   ```bash
+   ```console
    disconnect
    ```
 
 4. Set GDB's machine architecture to x86_64
 
-   ```bash
+   ```console
    $ set arch i386:x86-64:intel
    ```
 
 5. Re-connect
 
-   ```bash
+   ```console
    tar remote localhost:1234
    ```

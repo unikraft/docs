@@ -8,7 +8,7 @@ In this mission, if you choose to accept it, port `libfortune` to Unikraft using
 `libfortune` is a simple shared library and should also demonstrate how it is possible to build a library which can be used for both Linux user space as well as Unikraft with a little bit of glue.
 If you are successful in porting this library, you should be able to run the [`app-fortune`](https://github.com/unikraft/summer-of-code-2021/content/en/docs/sessions/08-basic-app-porting/work/01-app-fortune) located in this session's repository folder:
 
-```bash
+```console
 $ git clone https://github.com/unikraft/docs.git
 $ cd docs/content/en/community/hackathons/sessions/basic-app-porting/work/01-app-fortune/
 $ kraft configure

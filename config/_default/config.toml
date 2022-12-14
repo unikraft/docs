@@ -42,7 +42,7 @@ ignoreFiles = ["community/hackathons/sessions/01-baby-steps/content/.*\\.md"]
     lineNos = false
     lineNumbersInTable = true
     noClasses = true
-    style = 'dracula'
+    style = 'monokai'
     tabWidth = 8
   [markup.tableOfContents]
     endLevel = 4

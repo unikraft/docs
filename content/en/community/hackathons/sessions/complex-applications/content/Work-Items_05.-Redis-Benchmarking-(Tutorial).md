@@ -5,13 +5,13 @@ There are three binaries: `redis-cli`, `redis-benchmark`, and `redis-server`.
 First, we will start by benchmarking `app-redis` on Unikraft.
 Start Redis on top of Unikraft as we did before and in another terminal run the following command:
 
-```bash
+```console
 $ ./redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 172.88.0.2 -p 6379 -P 8 -t set,get
 ```
 
 The description of the used options can be seen here:
 
-```bash
+```console
 Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-k <boolean>]
 
  -h <hostname>      Server hostname (default 127.0.0.1)
@@ -27,7 +27,7 @@ Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-
 
 If everything runs as expected, you'll see the following output:
 
-```bash
+```console
 "SET","265252.00"
 "GET","276701.72"
 ```
@@ -36,13 +36,13 @@ The printed values represent `requests/second` for the `set` and `get` operation
 
 Further, we will run the executable `redis-server` (`./redis-server`), which can be found in the support folder, and the following command (only the IP address of the redis server was changed):
 
-```bash
+```console
 $ ./redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 127.0.0.1 -p 6379 -P 8 -t set,get
 ```
 
 The output should be similar to this:
 
-```bash
+```console
 "SET","495785.84"
 "GET","514138.81"
 ```

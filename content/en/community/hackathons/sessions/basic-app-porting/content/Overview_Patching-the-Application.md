@@ -53,14 +53,14 @@ To make a patch:
 
 1. First, ensure that the remote origin code has been downloaded to the application's `build/` folder:
 
-   ```bash
+   ```console
    $ cd ~/workspace/apps/iperf3
    $ kraft fetch
    ```
 
 1. Once the source files have been downloaded, turn it into a Git repository and save everything to an initial commit, in the case of `iperf3`:
 
-   ```bash
+   ```console
    $ cd build/libiperf3/origin/iperf-3.10.1
    $ git init
    $ git add .
@@ -75,7 +75,7 @@ To make a patch:
 1. After your changes have been saved to the git log, export them as patches.
    For example, if you have made one (`1`) patch only, export it like so:
 
-   ```bash
+   ```console
    git format-patch HEAD~1
    ```
 
@@ -83,7 +83,7 @@ To make a patch:
 
 5. The next step is to create a `patches/` folder within the Unikraft port of the library and to move the new `.patch` file into this folder:
 
-   ```bash
+   ```console
    mkdir ~/workspace/libs/iperf3/patches
    mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
    ```

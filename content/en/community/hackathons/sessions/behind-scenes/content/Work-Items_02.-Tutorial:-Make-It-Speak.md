@@ -26,13 +26,13 @@ The execution ends in the platform library, with the shutdown command.
 For the x86 part, just change the architecture in the configuration interface.
 Recall that, after changing the architecture, we have to clean the previously compiled files:
 
-```
+```console
 $ make clean
 ```
 
 Build Unikraft:
 
-```
+```console
 $ make
 ```
 

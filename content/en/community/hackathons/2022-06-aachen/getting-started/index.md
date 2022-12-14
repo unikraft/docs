@@ -387,7 +387,7 @@ We will go through the same steps as above:
 
 Go to the `app-helloworld` folder in:
 
-```Bash
+```console
 ubuntu@vm-11:~$ cd workdir/apps/app-helloworld/
 
 ubuntu@vm-11:~/workdir/apps/app-helloworld$ ls
@@ -398,7 +398,7 @@ CODING_STYLE.md  CONTRIBUTING.md  COPYING.md  Config.uk  MAINTAINERS.md  Makefil
 
 To configure the build process (and the resulting unikernel image) we access a text-user interface menu by using:
 
-```Bash
+```console
 $ make menuconfig
 ```
 
