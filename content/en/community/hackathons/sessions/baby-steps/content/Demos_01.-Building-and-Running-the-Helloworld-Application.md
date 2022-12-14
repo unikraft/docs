@@ -5,7 +5,8 @@ This is where the fun part begins - we get to build our first unikernel.
 kraft makes it easy to download, configure, build existing components into unikernel images and then run those images.
 The `kraft up` command makes it easy to do that with one swoop.
 Let's do that for the `helloworld` application (listed with `kraft list`):
-```bash
+
+```console
 $ kraft up -t helloworld hello
  100.00% :::::::::::::::::::::::::::::::::::::::: |       21 /       21 |:  app/helloworld@0.10.0
 [INFO    ] Initialized new unikraft application: /home/unikraft/hello
@@ -55,13 +56,15 @@ In the snippet above, we selected parts of the output showing what `kraft` does 
 All that magic is done using one command.
 
 A closer inspection of the `hello/` folder reveals it is a clone of the [app-helloworld repository](https://github.com/unikraft/app-helloworld) and it stores the resulting configuration file (`.config`) and resulting build folder (and images) (`build/`):
-```bash
+
+```console
 $ ls -Fa hello/
 ./  ../  build/  CODING_STYLE.md  .config  Config.uk  CONTRIBUTING.md  COPYING.md  .git/  kraft.yaml  main.c  MAINTAINERS.md  Makefile  Makefile.uk  monkey.h  README.md
 ```
 
 Once this is done, we can now run the resulting unikernel image any time we want by simply using `kraft run`:
-```bash
+
+```console
 $ cd hello/
 $ kraft run
 [...]
@@ -86,17 +89,20 @@ We will go through the same steps above, running a separate command for each ste
 
 First, let's create a directory that will host the application.
 We enter the `demo/` directory of the current session and we create the `01-hello-world/` directory:
-```bash
+
+```console
 $ cd demo/
 $ mkdir 01-hello-world
 $ cd 01-hello-world/
 ```
 
 Now, we initialize the application by using the template for the helloworld app and see that it's populated with files belonging to the app:
-```bash
+
+```console
 $ kraft init -t helloworld
 $ ls
-CODING_STYLE.md  Config.uk  CONTRIBUTING.md  COPYING.md  kraft.yaml  main.c  MAINTAINERS.md  Makefile  Makefile.uk  monkey.h  README.md
+CODING_STYLE.md  Config.uk  CONTRIBUTING.md  COPYING.md  kraft.yaml  main.c  MAINTAINERS.md  Makefile
+Makefile.uk  monkey.h  README.md
 ```
 
 The `kraft.yaml` file is the most important file when building an app using kraft.
@@ -108,7 +114,8 @@ We will detail them later in the session and in session 02: Behind the Scenes.
 
 A unikernel image may be targeted for multiple platforms and architectures.
 The available platforms and applications are listed in the `kraft.yaml` file:
-```bash
+
+```console
 $ cat kraft.yaml
 specification: '0.5'
 
@@ -127,7 +134,8 @@ In our case, we can target the `x86_64` or `arm64` architectures.
 And we can target `linuxu`, `kvm` or `xen` platforms.
 
 The simplest way to select the platform and architecture is by running `kraft configure` and then interactively use arrow keys to select the desired option:
-```bash
+
+```console
 $ kraft configure
 [?] Which target would you like to configure?: 01-hello-world_linuxu-x86_64
  > 01-hello-world_linuxu-x86_64
@@ -142,14 +150,16 @@ Once we select one, the configuration will be updated.
 
 The alternate way (non-interactive) is to pass arguments to `kraft configure` to select the desired platform and architecture.
 For example, if we want to use x86_64 and KVM, we use:
-```bash
+
+```console
 $ kraft configure -p kvm -m x86_64
 ```
 
 ##### Build
 
 Everything is set up now, all we have left to do is tell the build system to do its magic:
-```bash
+
+```console
 $ kraft build
 [...]
 Successfully built unikernels:
@@ -169,7 +179,8 @@ And that's it! Our final unikernel binary is ready to be launched from the `buil
 ##### Run
 
 To run an already-built unikernel image, we use `kraft run`:
-```bash
+
+```console
 $ kraft run
 [...]
 
@@ -179,7 +190,8 @@ Hello world!
 ```
 
 If we want to be more specific, we could use:
-```bash
+
+```console
 $ kraft run -p kvm -m x86_64
 ```
 
@@ -187,7 +199,8 @@ This command is useful in the case we have multiple images built (for differing 
 We can then select which one to run.
 
 For example, we can use the commands below to configure, build and run a helloworld image for the `linuxu` platform.
-```bash
+
+```console
 $ kraft configure -p linuxu -m x86_64
 $ kraft build
 $ kraft run -p linuxu -m x86_64
@@ -221,12 +234,14 @@ We will go through the same steps as above:
 ##### Initialize
 
 First, get out of the current build's directory and make a new one:
-```bash
+
+```console
 $ cd ../ && mkdir 01-hello-world-manual && cd 01-hello-world-manual
 ```
 
 Now, clone the remote Git repository:
-```bash
+
+```console
 $ git clone https://github.com/unikraft/app-helloworld.git .
 $ ls
 CODING_STYLE.md  Config.uk  CONTRIBUTING.md  COPYING.md  kraft.yaml  main.c  MAINTAINERS.md  Makefile  Makefile.uk  monkey.h  README.md
@@ -235,19 +250,22 @@ CODING_STYLE.md  Config.uk  CONTRIBUTING.md  COPYING.md  kraft.yaml  main.c  MAI
 ##### Configure
 
 To configure the build process (and the resulting unikernel image) we access a text-user interface menu by using:
-```bash
+
+```console
 $ make menuconfig
 ```
 
 Looks like we are met with an error:
-```bash
+
+```console
 $ make menuconfig
 Makefile:9: recipe for target 'menuconfig' failed
 make: *** [menuconfig] Error 2
 ```
 
 We look in the `Makefile`:
-```bash
+
+```console
 $ cat -n Makefile
      1  UK_ROOT ?= $(PWD)/../../unikraft
      2  UK_LIBS ?= $(PWD)/../../libs
@@ -259,18 +277,24 @@ $ cat -n Makefile
      8  $(MAKECMDGOALS):
      9          @$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS) $(MAKECMDGOALS)
 ```
+
 The underlying build / configuration system expects the Unikernel (`UK_ROOT`) to be located at `../../unikraft` from the current directory, which is very likely not the case.
 Recall that the build system makes use of some important environment variables, namely `UK_WORKDIR`, `UK_ROOT` and `UK_LIBS`.
 So, in order to properly inform the build system of our current location, we will have to manually set these by prefixing whatever build command we send with the hardcoded values of where our `Unikraft` work directory is.
-```bash
+
+```console
 $ UK_WORKDIR=~/.unikraft UK_ROOT=~/.unikraft/unikraft UK_LIBS=~/.unikraft/libs make menuconfig
 ```
+
 You can also export these environment variables for the current shell session:
-```bash
+
+```console
 $ export UK_WORKDIR=~/.unikraft UK_ROOT=~/.unikraft/unikraft UK_LIBS=~/.unikraft/libs
 ```
+
 Then simply run:
-```bash
+
+```console
 $ make menuconfig
 ```
 
@@ -298,7 +322,8 @@ We will choose both `linuxu` and `kvm`:
 ##### Build
 
 Now let's build the final image (recall the environment variables - make sure that they are correctly set):
-```bash
+
+```console
 $ UK_WORKDIR=~/.unikraft UK_ROOT=~/.unikraft/unikraft UK_LIBS=~/.unikraft/libs  make
 [...]
   LD      01-hello-world-manual_linuxu-x86_64.dbg
@@ -314,7 +339,8 @@ Our final binaries are located inside the `build/` directory.
 ##### Run
 
 Let's run the `linuxu` image by doing a Linux-like executable running. `linuxu` stands for Linux userspace; a `linuxu` image is just an executable that will be launched as a process on the host system:
-```bash
+
+```console
 $ ./build/01-hello-world-manual_linuxu-x86_64  # The linuxu image
 Powered by
 o.   .o       _ _               __ _
@@ -327,7 +353,8 @@ Hello world!
 ```
 
 To run the KVM image, we use the `qemu-system-x86_64` command:
-```bash
+
+```console
 $ qemu-system-x86_64 -kernel build/01-hello-world-manual_kvm-x86_64 -nographic
 Powered by
 o.   .o       _ _               __ _

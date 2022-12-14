@@ -10,7 +10,7 @@ We will use both the manual approach (`make` and `qemu-system-x86_64` / `qemu-gu
 The basic setup is in the `work/06-adding-filesystems/` folder in the session directory.
 Enter that folder:
 
-```
+```console
 $ cd work/06-adding-filesystems/
 
 $ ls -F
@@ -54,7 +54,7 @@ For filesystem functionalities (opening, reading, writing files) we require a mo
 [newlib](https://github.com/unikraft/lib-newlib) is already ported in Unikraft and will do nicely.
 For this, we update the `LIBS` line in the `Makefile`:
 
-```
+```console
 LIBS := $(UK_LIBS)/newlib
 ```
 
@@ -63,14 +63,14 @@ Update the `UK_ROOT` and `UK_LIBS` variables in the `Makefile` to point to the f
 **Make sure that both `unikraft` and `newlib` repositories are on the `staging` branch.**
 Go to each of the two repository folders (`unikraft` and `newlib`) and check the current branch:
 
-```
+```console
 $ git checkout
 ```
 
 Now we need to enable **9pfs** and **newlib** in Unikraft.
 To do this, we run:
 
-```
+```console
 $ make menuconfig
 ```
 
@@ -90,7 +90,7 @@ Save the configuration and exit.
 
 Do a quick check of the configuration in `.config` by pitting it against the `config.sol` file in the reference solution:
 
-```
+```console
 $ diff -u .config ../../sol/06-adding-filesytstems/config.sol
 ```
 
@@ -100,7 +100,7 @@ Differences should be minimal, such as the application identifier.
 
 Build the Unikraft image:
 
-```
+```console
 make
 ```
 
@@ -111,7 +111,7 @@ It has to pull newlib source code, patch it and then build it, together with the
 
 To run the Unikraft image with QEMU / KVM, we use the wrapper `launch.sh` script, that calls `qemu-system-x86_64` command with the proper arguments:
 
-```
+```console
 $ ./launch.sh ./build/unikraft-kraft-9pfs-issue_kvm-x86_64
 [...]
 o.   .o       _ _               __ _
@@ -127,7 +127,7 @@ Bye, world!
 
 A completely manual run would use the command:
 
-```
+```console
 $ qemu-system-x86_64 -fsdev local,id=myid,path=guest_fs,security_model=none -device virtio-9p-pci,fsdev=myid,mount_tag=fs0 -kernel build/06-adding-filesystems_kvm-x86_64 -nographic
 [...]
 Powered by
@@ -158,7 +158,7 @@ Before looking at the command, take some time to look through the script, and ma
 
 To run a QEMU / KVM application using `qemu-guest`, we use:
 
-```
+```console
 $ ./qemu-guest -e guest_fs/ -k build/06-adding-filesystems_kvm-x86_64
 ```
 
@@ -166,7 +166,7 @@ If we add the `-D` option, we can see the `qemu-system` command generated.
 
 You may get the following error:
 
-```
+```console
 [    0.100664] CRIT: [libvfscore] <rootfs.c @  122> Failed to mount /: 22
 ```
 
@@ -244,7 +244,7 @@ If you get an error like "missing component: newlib", you need to run `kraft lis
 
 We can now build the application using:
 
-```
+```console
 $ kraft build
 ```
 
@@ -252,7 +252,7 @@ $ kraft build
 
 Run the application using:
 
-```
+```console
 $ kraft run
 ```
 

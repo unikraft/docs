@@ -17,7 +17,7 @@ In our case, when the `syscall` instruction gets called there are a few steps ta
    This function has an intermediate role, printing some debug messages and passing the correct parameters further down.
    The next function that gets called is the `uk_syscall6_r` function.
 
-   ```
+   ```c
    void ukplat_syscall_handler(struct __regs *r)
    {
    	UK_ASSERT(r);
@@ -33,7 +33,7 @@ In our case, when the `syscall` instruction gets called there are a few steps ta
 
 1. The `uk_syscall6_r` is the function that redirects the flow of the program to the actual **system call** function inside the kernel.
 
-   ```
+   ```c
    switch (nr) {
    	case SYS_brk:
    		return uk_syscall_r_brk(arg1);
@@ -54,7 +54,7 @@ There are four definition macros that we can use in order to add a system call t
 
 The above two macros will generate the following functions:
 
-```C
+```c
 /* libc-style system call that returns -1 and sets errno on errors */
 long uk_syscall_e_<syscall_name>(long <arg1_name>, long <arg2_name>, ...);
 
@@ -73,7 +73,7 @@ Apart from using the macro to define the function, we also have to register the 
 Let's see how this is done with an example for the write system call.
 We have the following definition of the write system call:
 
-```C
+```c
 ssize_t write(int fd, const void * buf, size_t count)
 {
     ssize_t ret;
@@ -89,7 +89,7 @@ ssize_t write(int fd, const void * buf, size_t count)
 
 The next step is to define the function using the correct macro:
 
-```C
+```c
 #include <uk/syscall.h>
 
 UK_SYSCALL_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
@@ -107,7 +107,7 @@ UK_SYSCALL_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
 
 And the raw variant:
 
-```C
+```c
 #include <uk/syscall.h>
 
 UK_SYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
@@ -125,12 +125,12 @@ UK_SYSCALL_R_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
 The last step is to add the system call to `UK_PROVIDED_SYSCALLS-y` in the `Makefile.uk` file.
 The format is:
 
-```
+```make
 UK_PROVIDED_SYSCALLS-$(CONFIG_<YOURLIB>) += <syscall_name>-<number_of_arguments>
 ```
 
 So, in our case, we need to add:
 
-```
+```make
 UK_PROVIDED_SYSCALLS-$(CONFIG_LIBWRITESYS) += write-3
 ```

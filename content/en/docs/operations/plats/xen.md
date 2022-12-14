@@ -15,7 +15,7 @@ All applications will run in a separate domain and can be controlled by the `xl`
 
 In order to configure a Unikraft image to target the Xen platform, we simply select one of the Xen images at the configuration step, according to the target architecture (ARM64 or x86_64):
 
-```bash
+```console
 $ kraft configure
 ```
 ```
@@ -30,8 +30,8 @@ $ kraft configure
 
 After this step, `kraft build` and `kraft run` should work the same.
 
-By default, what `kraft run` does behind the scenes is to check if the host machine architecture is the same as the target one. 
-If they are the same, hardware acceleration is used. 
+By default, what `kraft run` does behind the scenes is to check if the host machine architecture is the same as the target one.
+If they are the same, hardware acceleration is used.
 If not, it is automatically disabled.
 
 
@@ -49,7 +49,7 @@ After creating the configuration, exit the configuration menu and **build** the 
 
 In order to run, you need to create a configuration file `helloworld.cfg`, that should look something like:
 
-```bash
+```console
 name          = "helloworld"
 vcpus         = "1"
 memory        = "4"
@@ -57,7 +57,7 @@ kernel        = "./build/helloworld_xen-x86_64"
 ```
 
 After this you can run the application using `xl`:
-```bash
+```console
 xl create -c helloworld.cfg
 ```
 
@@ -69,7 +69,7 @@ Of course, more configurations can be made, for more details about these options
 What `xen-guest` does it taking a simple list of arguments from the user and gemerate a more complex `xl` command.
 Here is the `xen-guest` command for running `app-helloworld` on x86_64:
 
-```bash
+```console
 $ xen-guest -k build/app-helloworld_xen-x86_64
 ```
 

@@ -54,19 +54,19 @@ Now we can build the application, but we need to make sure that we have checked 
 
 Now we will have to start the application in paused state.
 
-```bash
+```console
 qemu-guest -P -g 1234 -k build/app-helloworld-tracepoints_kvm-x86_64.dbg
 ```
 
 In another terminal, we will start the GDB:
 
-```bash
+```console
 gdb --eval-command="target remote :1234" build/app-helloworld-tracepoints_kvm-x86_64.dbg
 ```
 
 Put a hardware breakpoint  to main and continue until there.
 
-```bash
+```console
 (gdb) hbreak main
 (gdb) continue
 ```
@@ -78,7 +78,7 @@ To show all the tracepoints, we can use `uk trace`.
 Otherwise, you won't be able to use `uk trace`.
 
 
-```bash
+```console
 (gdb) break start_status
 (gdb) continue
 (gdb) uk trace
@@ -88,7 +88,7 @@ Otherwise, you won't be able to use `uk trace`.
 We notice that we got an output and that the tracepoint was reached.
 We continue until the second trace point and we will save all the tracepoints obtained with the command `uk trace save traces.dat`
 
-```bash
+```console
 (gdb) break stop_status
 (gdb) continue
 (gdb) uk trace save traces.dat

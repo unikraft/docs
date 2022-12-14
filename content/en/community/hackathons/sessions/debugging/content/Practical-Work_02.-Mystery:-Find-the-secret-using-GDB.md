@@ -16,19 +16,19 @@ GDB provides convenience variables that you can use within GDB to hold on to a v
 For example:
 
 
-```bash
+```console
 set $foo = *object_ptr
 ```
 
 Note that you can also cast variables in GDB similar to C:
 
-```bash
+```console
 set $var = (int *) ptr
 ```
 
 If you want to dereference a pointer and actually see the value, you can use the following command:
 
-```bash
+```console
 p *addr
 ```
 
@@ -48,14 +48,14 @@ Follow these steps:
 
 1. In the second terminal (running `./connect.sh`) run
 
-   ```
+   ```console
    hbreak main
    ```
 
    to break at the `main()` function.
    The use
 
-   ```
+   ```console
    c
    ```
 
@@ -64,7 +64,7 @@ Follow these steps:
 
 1. Use
 
-   ```
+   ```console
    set disassembly-flavor intel
    disass
    ```

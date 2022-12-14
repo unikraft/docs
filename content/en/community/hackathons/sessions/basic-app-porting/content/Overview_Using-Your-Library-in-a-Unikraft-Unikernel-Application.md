@@ -4,7 +4,7 @@ To do this, we create a parallel application which uses both the library we are 
 
 1. First start by creating a new application structure, which we can do by initializing a blank project:
 
-   ```bash
+   ```console
    $ cd ~/workspace/apps
    $ kraft init iperf3
    ```
@@ -12,7 +12,7 @@ To do this, we create a parallel application which uses both the library we are 
 2. We will now have a `empty` initialized project.
    You'll find boilerplate in this directory, including a `kraft.yaml` file which will look something like this:
 
-   ```bash
+   ```console
    $ cd ~/workspace/apps/iperf3
    $ cat kraft.yaml
    ```
@@ -27,7 +27,7 @@ To do this, we create a parallel application which uses both the library we are 
 3. After setting up your application project, we should add the new library we are working on to the application.
    This is done via:
 
-   ```bash
+   ```console
    $ kraft lib add iperf3@staging
    ```
 
@@ -53,14 +53,14 @@ To do this, we create a parallel application which uses both the library we are 
 4. We are ready to configure the application to use the library.
    It should be possible to now see the boilerplate `iperf3` library within the [`menuconfig`](https://en.wikipedia.org/wiki/Menuconfig) system by running:
 
-   ```bash
+   ```console
    $ kraft menuconfig
    ```
 
    within the application folder.
    However, it will also be selected automatically since it is in the `kraft.yaml` file now if you run the configure step:
 
-   ```bash
+   ```console
    $ kraft configure
    ```
 

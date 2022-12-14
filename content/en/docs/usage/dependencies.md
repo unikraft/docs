@@ -49,7 +49,8 @@ Apart from that, there are also environment variables available for the above su
 ## `kraft list`
 
 You can find a list of all aplication, libraries and platforms by using:
-```bash
+
+```console
 $ kraft list
 ```
 
@@ -68,17 +69,20 @@ helloworld-cpp  	0.6     	02 Dec 21 	17 hours ago
 
 You can add origins for kraft to use in the `.kraftrc` file, under `[list]`.
 If you create a new library using the `kraft lib` command shown below, you can add the new local library to the `.kraftrc` file by using:
-```bash
+
+```console
 $ kraft lib add ~/path/to/local/lib
 $ kraft list update
 ```
 
 You can check that everything worked fine and view basic informations about the new library by using:
-```bash
+
+```console
 $ kraft list show LIBNAME
 ```
 
 You can manually add URLs, git, git+ssh and wildcards in the `.kraftrc` file:
+
 ```text
 [list]
 origins = [
@@ -90,7 +94,8 @@ origins = [
 ```
 
 After every update to `.kraftrc`, run:
-```bash
+
+```console
 $ kraft list update
 ```
 
@@ -130,7 +135,8 @@ Commands:
 ## `kraft init`
 
 If you want to initiate an existing application, you can use:
-```bash
+
+```console
 $ kraft init -t TEMPLATE_NAME [TARGET_NAME]
 ```
 
@@ -160,7 +166,8 @@ Options:
 ## `kraft up`
 
 You can retreive, build and run an existing appliication from the list above by using only one command:
-```bash
+
+```console
 $ kraft up -t TEMPLATE_NAME TARGET_NAME
 ```
 
@@ -203,13 +210,15 @@ Options:
 
 You can also use kraft to manage Unikraft libraries.
 You can add and remove libraries from the project:
-```bash
+
+```console
 $ kraft lib add NAME
 $ kraft lib remove NAME
 ```
 
 Or you can initialize a new Unikraft library using:
-```bash
+
+```console
 $ kraft lib init [OPTIONS] [NAME]
 ```
 

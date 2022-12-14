@@ -52,7 +52,7 @@ $(eval $(call addlib,appredis))
 
 We configure the application by running:
 
-```bash
+```console
 $ make menuconfig
 ```
 
@@ -86,7 +86,7 @@ Nevertheless, don't forget to select the `posix-event` library: `Library Configu
 
 We build the application by running:
 
-```bash
+```console
 $ make
 ```
 
@@ -98,7 +98,7 @@ We used a script to run the application in which a bridge and a network interfac
 The network interface has an IP associated with it used by clients to connect to the Redis server.
 Also, the script takes care of starting the Redis server, but also of stopping it, deleting the settings created for the network.
 
-```bash
+```console
 sudo brctl addbr kraft0
 sudo ifconfig kraft0 172.44.0.1
 sudo ifconfig kraft0 up
@@ -132,7 +132,7 @@ The following image is presenting an overview of our setup:
 Consequently, after running the script, the Redis server will start and dnsmasq will act as a DHCP server and therefore it will dynamically assign to our Unikraft instance an IP address.
 The IP can be seen in the output of qemu as bellow:
 
-```bash
+```console
 Booting from ROM...
 en1: Added
 en1: Interface is up
@@ -147,23 +147,23 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 1:C 27 Aug 2022 12:37:07.026 # Redis version=5.0.6, bits=64, commit=c5ee3442, modified=1, pid=1, just started
 1:C 27 Aug 2022 12:37:07.031 # Configuration loaded
 1:M 27 Aug 2022 12:37:07.049 * Increased maximum number of open files to 10032 (it was originally set to 1024).
-                _._                                                  
-           _.-``__ ''-._                                             
+                _._
+           _.-``__ ''-._
       _.-``    `.  `_.  ''-._           Redis 5.0.6 (c5ee3442/1) 64 bit
-  .-`` .-```.  ```\/    _.,_ ''-._                                   
+  .-`` .-```.  ```\/    _.,_ ''-._
  (    '      ,       .-`  | `,    )     Running in standalone mode
  |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
  |    `-._   `._    /     _.-'    |     PID: 1
-  `-._    `-._  `-./  _.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |           http://redis.io        
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
- |`-._`-._    `-.__.-'    _.-'_.-'|                                  
- |    `-._`-._        _.-'_.-'    |                                  
-  `-._    `-._`-.__.-'_.-'    _.-'                                   
-      `-._    `-.__.-'    _.-'                                       
-          `-._        _.-'                                           
-              `-.__.-'                                               
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           http://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
 
 1:M 27 Aug 2022 12:37:07.090 # Server initialized
 1:M 27 Aug 2022 12:37:07.092 * Ready to accept connections
@@ -172,19 +172,19 @@ en1: Set IPv4 address 172.44.0.242 mask 255.255.255.0 gw 172.44.0.1
 
 Another way of inspecting the received IP is through the `dnsmasq.logs` file:
 
-```bash
-$ cat dnsmasq.logs 
+```console
+$ cat dnsmasq.logs
 [...]
-dnsmasq-dhcp: DHCPOFFER(kraft0) 172.44.0.242 52:54:00:20:37:c1 
-dnsmasq-dhcp: DHCPDISCOVER(kraft0) 52:54:00:20:37:c1 
-dnsmasq-dhcp: DHCPOFFER(kraft0) 172.44.0.242 52:54:00:20:37:c1 
-dnsmasq-dhcp: DHCPREQUEST(kraft0) 172.44.0.242 52:54:00:20:37:c1 
-dnsmasq-dhcp: DHCPACK(kraft0) 172.44.0.242 52:54:00:20:37:c1 
+dnsmasq-dhcp: DHCPOFFER(kraft0) 172.44.0.242 52:54:00:20:37:c1
+dnsmasq-dhcp: DHCPDISCOVER(kraft0) 52:54:00:20:37:c1
+dnsmasq-dhcp: DHCPOFFER(kraft0) 172.44.0.242 52:54:00:20:37:c1
+dnsmasq-dhcp: DHCPREQUEST(kraft0) 172.44.0.242 52:54:00:20:37:c1
+dnsmasq-dhcp: DHCPACK(kraft0) 172.44.0.242 52:54:00:20:37:c1
 ```
 
 Using the received IP, it will be possible to connect clients to it using `redis-cli` (the binary `redis-cli` is the folder for this work item):
 
-```bash
+```console
 $ ./redis-cli -h 172.44.0.242 -p 6379
 172.44.0.242:6379> PING
 PONG
@@ -194,7 +194,7 @@ PONG
 Nevertheless, after completing this task, you will need to check that the `dnsmasq` process is not running anymore, as it messes up your other connections.
 You can also disable and delete the bridge interface by running the following commands:
 
-```
+```console
 $ sudo ip l set dev kraft0 down
 $ sudo brctl delbr kraft0
 ```

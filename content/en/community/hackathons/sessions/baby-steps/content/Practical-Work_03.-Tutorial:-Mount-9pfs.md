@@ -4,17 +4,20 @@ The latter is used so that we have available an API that would enable us to inte
 
 
 We will need to download `newlib`. You can clone it directly:
-```bash
+
+```console
 $ git clone https://github.com/unikraft/lib-newlib.git ~/.unikraft/libs/newlib
 ```
 
 Or fetch it using `kraft`:
-```bash
+
+```console
 $ kraft list pull newlib
 ```
 
 Next, we include it in our `Makefile`:
-```
+
+```Makefile
 LIBS := $(UK_LIBS)/lwip:$(UK_LIBS)/newlib
 ```
 
@@ -28,9 +31,11 @@ We will also check these options inside `Library Configuration` -> `vfscore: Con
 ![fs3 selection menu](/community/hackathons/sessions/baby-steps/images/menuconfig_select_fs3.png)
 
 What is more, you should also have present in the current directory an additional directory called `fs0`:
-```bash
+
+```console
 $ mkdir fs0
 ```
+
 And so, `fs0` will contain whatever files you create, read from or write to from within your unikernel.
 
 For now, just make sure it successfully builds. If it does, move on to the next work item.

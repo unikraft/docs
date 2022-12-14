@@ -14,7 +14,7 @@ config APPHELLOWORLD_READFILE
 
 After this, we need to modify our code in `main.c`, to use this configuration option.
 
-```
+```c
 #ifndef CONFIG_APPHELLOWORLD_READFILE
 	printf("Hello world!\n");
 #else

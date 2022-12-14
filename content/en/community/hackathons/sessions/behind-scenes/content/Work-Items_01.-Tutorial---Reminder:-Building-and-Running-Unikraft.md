@@ -18,7 +18,7 @@ That is a hierarchy with:
 You would usually only have a single such hierarchy and add applications and / or libraries in their respective folders and use a single clone of the [`unikraft` repository].
 We create this hierarchy, if not having it created already, by using the commands:
 
-```
+```console
 $ mkdir workdir
 
 $ cd workdir/
@@ -37,7 +37,7 @@ $ tree --charset=ascii -L 1
 
 We want to work on the [`helloworld` application](https://github.com/unikraft/app-helloworld) so we clone in in the `apps/` subfolder.
 
-```
+```console
 $ cd apps
 $ git clone https://github.com/unikraft/app-helloworld helloworld
 ```
@@ -58,7 +58,7 @@ We follow the steps:
 
 1. While in the `helloworld` folder, run
 
-   ```
+   ```console
    $ make menuconfig
    ```
 
@@ -66,14 +66,14 @@ We follow the steps:
 1. From `Platform Configuration`, select `Linux user space`.
 1. Save, exit and run
 
-   ```
+   ```console
    $ make
    ```
 
 1. The resulting image, `app-helloworld_linuxu-x86_64`, will be present in the `build/` folder.
    Run it.
 
-   ```
+   ```console
    $ ./build/app-helloworld_linuxu-x86_64
    ```
 
@@ -85,7 +85,7 @@ We follow the steps:
 
 1. Run
 
-   ```
+   ```console
    $ make menuconfig
    ```
 
@@ -93,13 +93,13 @@ We follow the steps:
 1. From `Platform Configuration`, select `KVM guest`.
 1. Save, exit and run
 
-   ```
+   ```console
    $ make
    ```
 
 1. Load the resulting image in QEMU by using
 
-   ```
+   ```console
    $ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -nographic
    ```
 
@@ -114,14 +114,14 @@ You can instruct KVM to use your local CPU model, by adding `-cpu host` to the c
 
 The final command will look like this:
 
-```
+```console
 $ sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -nographic
 ```
 
 While we are here, we can check some differences between emulation and virtualization.
 Record the time needed by each image to run, using `time`, like this:
 
-```
+```console
 $ time sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -nographic
 $ time sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-helloworld_kvm-x86_64 -nographic
 ```
@@ -136,25 +136,25 @@ To configure Unikraft for the ARM architecture, go to the configuration menu, li
 Save and exit the configuration.
 As a new architecture is selected, you have to clean the previously compiled files:
 
-```
+```console
 $ make clean
 ```
 
 After cleaning, build the image:
 
-```
+```console
 $ make
 ```
 
 To run Unikraft, use the following command:
 
-```
+```console
 $ sudo qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel ./build/app-helloworld_kvm-arm64 -nographic
 ```
 
 Note that now we need to provide a machine and a CPU model to be emulated, as there are no defaults available.
 If you want to find information about other machines, run
 
-```
+```console
 $ sudo qemu-system-aarch64 -machine help
 ```

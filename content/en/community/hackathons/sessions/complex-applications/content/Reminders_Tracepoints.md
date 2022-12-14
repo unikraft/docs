@@ -22,7 +22,7 @@ Commands available in GDB:
 
 Any saved trace file can be later processed with the  `trace.py`  .
 
-```bash
+```console
 $ support/s/uk_trace/trace.py list <file>
 ```
 

@@ -16,13 +16,13 @@ You can do that by following the instructions [here](https://github.com/docker/d
 
 **Note: Building the site inside a Docker environment is highly recommended, since you will work in the same environment as the deployed site, so there will be no errors regarding packages version or filesystem layout.**
 
-```bash
+```console
 curl -fsSL https://get.docker.com/ | sh
 ```
 
 To then deploy the site, run:
 
-```bash
+```console
 $ make container
 $ make devenv
 
@@ -39,7 +39,7 @@ You can do it by following the instructions [here](https://gohugo.io/getting-sta
 
 Then, to build and deploy the site, run:
 
-```bash
+```console
 $ hugo serve
 ```
 

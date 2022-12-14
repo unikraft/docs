@@ -4,7 +4,7 @@ The file is `bad_elf`, located in the `work/07-bad-elf/` folder.
 Running it triggers a segmentation fault message.
 Running it using `strace` shows an error with `execve()`.
 
-```bash
+```console
 ~/Doc/U/summer-of-code-2021/c/e/d/s/0/w/05-bad-elf > ./bad_elf
 [1]    125458 segmentation fault  ./bad_elf
 ~/Doc/U/summer-of-code-2021/c/e/d/s/0/w/05-bad-elf > strace ./bad_elf
@@ -17,7 +17,7 @@ execve("./bad_elf", ["./bad_elf"], 0x7ffc9ca2e960 /* 66 vars */) = -1 EINVAL (In
 The ELF file itself is valid.
 You can check using `readelf`:
 
-```bash
+```console
 $ readelf -a ./bad_elf
 ```
 

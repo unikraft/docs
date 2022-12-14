@@ -3,7 +3,7 @@ Build the `app-elfloader` from an existing configuration.
 Copy the `.config` file from `work/03/config` to the `app-elfloader` folder.
 Now you can build it:
 
-```
+```console
 $ make
 ```
 

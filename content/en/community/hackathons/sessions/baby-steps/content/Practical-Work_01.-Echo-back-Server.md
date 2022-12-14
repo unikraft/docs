@@ -15,7 +15,8 @@ Things to consider:
 * Same goes with the manual approach: you must modify the `Makefile` to include the `lwip` library dependency.
 
 To test if your application works you can try sending it messages like so:
-```bash
+
+```console
 $ nc 172.44.0.2 1234
 ```
 

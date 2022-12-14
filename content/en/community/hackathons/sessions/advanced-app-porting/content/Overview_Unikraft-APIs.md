@@ -68,7 +68,7 @@ So the system call will eventually call the registered operation.
 
 In order to find the source that contains the definition of a structure, function or other component in the `unikraft` directory you can use the following command:
 
-```Bash
+```console
 $ grep -r <what_you_want_to_search_for>
 ```
 
@@ -291,7 +291,7 @@ Run `make menuconfig` and select the KVM platform.
 After that run `make`.
 You can start the program using the following command:
 
-```Bash
+```console
 $ qemu-guest -k build/02-linked-list-app_kvm-x86_64
 ```
 

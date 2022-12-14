@@ -8,7 +8,7 @@ Having done that, we can then select it in the menuconfig interface in order for
 
 Running an unikernel built for `kvm` can be done using the `qemu` command as follows:
 
-```make
+```console
 $ qemu-system-x86_64 -kernel unikraft_unikernel -nographic
 ```
 

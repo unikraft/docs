@@ -37,7 +37,7 @@ following goals are met:**
  * **Integrity**: Authorship, a Developer's Certificate of Origin, and auditing
    are important to attribution and copyright.  Many of Unikraft's subsystems
    and libraries are developed independently by third-party organisations such
-   as NEC, ARM and OpenSynergy.  
+   as NEC, ARM and OpenSynergy.
 
 This process can take some time but it ensures the stability and integrity of
 Unikraft.  More often than not, PRs must either be rebased, updated or undergo
@@ -68,24 +68,24 @@ micro-library component, as well as those who conduct the reviews themselves.
 
 
 ### Stages of the code review process
- 
+
 1. After [a new PR is submitted](/docs/contributing/submitting-changes/), the
    first thing to occur are a number of automatic checks and new builds of the
    branch-to-be-merged from [Unikraft's CI/CD
    system](https://builds.unikraft.io) based on
    [Concourse](https://concourse-ci.org).  One of the first operations to occur
-   is autolabelling.  
-   
+   is autolabelling.
+
 2. The operation to occur is the auto-assignment of a reviewer and maintainer
    (or "sheppard") to the PR.
-   
+
    * The job of the **reviewer** is to comb through the request for change. They
      will be providing feedback, checking the functionality locally, performing
      additional spellchecking, and generarlly advising the PR with regard to the
      goals mentioned above.
    * Theh job of the **maintainer** is to sheppard the PR into a mergable state,
      [see below](/docs/contributing/review-process#approval-process).
-   
+
    {{< img
       class="w-auto mx-auto"
       src="/assets/imgs/unikraft-bot-assignments.png"
@@ -102,7 +102,7 @@ micro-library component, as well as those who conduct the reviews themselves.
    a [Special Interest Group](/community/governance) which oversees the area of
    change the PR affects.
    {{</ alert >}}
-   
+
 3. The next automatic operation to occur is the running of the
    [`checkpatch.pl`](/docs/contributing/testing#using-checkpatchpl) program
    against the PR's branch applied on top of the `staging` the repository in
@@ -149,7 +149,7 @@ micro-library component, as well as those who conduct the reviews themselves.
    directory of a fresh clone of related Unikraft repositories at the `staging`
    branch:
 
-   ```bash
+   ```console
    $ kraft init --dump -t helloworld@staging /tmp/unikraft-pr-$PR_ID
    ```
 
@@ -157,7 +157,7 @@ micro-library component, as well as those who conduct the reviews themselves.
    repository](https://github.com/unikraft/unikraft), then you can simply update
    the branch of the local clone from the initialization step detailed above:
 
-   ```bash
+   ```console
    $ kraft configure -u unikraft@staging # Ensure to use staging branch of core
    $ cd /tmp/unikraft-pr-$PR_ID/.unikraft/unikraft
    $ gh pr checkout $PR_ID
@@ -167,7 +167,7 @@ micro-library component, as well as those who conduct the reviews themselves.
    relevant library or initialize the relevant application.  It is possible to
    add a standalone library to the helloworld application like so:
 
-   ```bash
+   ```console
    $ cd /tmp/unikraft-pr-$PR_ID/
    $ kraft lib add --dump $LIBNAME@staging
    $ kraft configure -u unikraft@staging # Ensure to use staging branch of core
@@ -266,7 +266,7 @@ An approval must use Github's review tool and mark the PR as state "approved"
 this can be done in the same way as the review in the figure above, or
 alternatively it can be done with GitHub's CLI companion tool like so:
 
-```bash
+```console
 $ gh pr review https://github.com/unikraft/app-nginx/pull/2 \
     --approve \
     --body "Approved-by: Your Name <your@email.com>"

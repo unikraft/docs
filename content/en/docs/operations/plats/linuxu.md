@@ -32,12 +32,12 @@ This mode should be used only for development and debugging.
 To configure Unikraft to build the image as a userspace application select the `linuxu` platform from the list using `kraft` or `menuconfig`.
 Currently, the `linuxu` platform is supported on both x86 and ARM architectures:
 
-```bash
+```console
 kraft configure -p linuxu -m your-architecture
 ```
 
 To run your Unikraft image in `linuxu` mode, just run the resulting executable directly:
 
-```bash
+```console
     ./build/app-helloworld_linuxu-your-architecture
 ```

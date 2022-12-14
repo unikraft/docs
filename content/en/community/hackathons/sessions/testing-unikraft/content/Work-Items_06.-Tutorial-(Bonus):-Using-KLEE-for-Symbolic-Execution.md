@@ -1,7 +1,7 @@
 One of the most popular symbolic execution engine is [KLEE](https://klee.github.io/).
 For convenience, we'll be using Docker.
 
-```Bash
+```console
 docker pull klee/klee:2.1
 docker run --rm -ti --ulimit='stack=-1:-1' klee/klee:2.1
 ```
@@ -63,13 +63,13 @@ Now, let's run this program symbolically.
 To do this, we'll uncomment the `klee_make_symbol` line, and comment the line with `read` and `printf`.
 We'll compile the program with `clang` this time:
 
-```Bash
+```console
 clang -c -g -emit-llvm  ex.c
 ```
 
 And run it with KLEE:
 
-```Bash
+```console
 klee ex.bc
 ```
 
@@ -93,7 +93,7 @@ It also gives us some info about the number of paths and instructions executed.
 After the run, a folder `klee-last` has been generated that contains all the test cases.
 We want to find the ones that generated memory errors:
 
-```
+```console
 klee@affd7769bb39:~/klee-last$ ls | grep err
 test000018.ptr.err
 test000020.ptr.err
@@ -101,7 +101,7 @@ test000020.ptr.err
 
 We look at testcase 18:
 
-```
+```console
 klee@affd7769bb39:~/klee-last$ ktest-tool test000018.ktest
 ktest file : 'test000018.ktest'
 args       : ['ex1.bc']

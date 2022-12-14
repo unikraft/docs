@@ -6,7 +6,7 @@ Let's first start by initializing a working environment for ourselves:
 
 1. Let's create a workspace with a typical Unikraft structure using `kraft`:
 
-   ```bash
+   ```console
    $ cd ~/workspace
    $ export UK_WORKDIR=$(pwd)
    $ kraft list update
@@ -16,7 +16,7 @@ Let's first start by initializing a working environment for ourselves:
    This will generate the necessary directory structure to build a new Unikraft application, and will also download the latest `staging` branch of Unikraft's core.
    When we list the directories, we should get something like this:
 
-   ```bash
+   ```console
    tree -L 1
    ```
 
@@ -44,7 +44,7 @@ Let's first start by initializing a working environment for ourselves:
 
    We can now use `kraft` to initialize a template library for us:
 
-   ```bash
+   ```console
    $ cd ~/workspace/libs
    $ kraft lib init \
       --no-prompt \
@@ -66,20 +66,20 @@ Let's first start by initializing a working environment for ourselves:
 1. The next step is to register this library with `kraft` such that we can use it and manipulate it with the `kraft` toolchain.
    To do this, simply add the path of the newly initialized library like so:
 
-   ```bash
+   ```console
    $ kraft list add ~/workspace/libs/iperf3
    ```
 
    This will modify your `.kraftrc` file with a new local library.
    When you have added this library directory, run the update command so that `kraft` can realize it:
 
-   ```bash
+   ```console
    $ kraft list update
    ```
 
 1. You should now be able to start using this boilerplate library with Unikraft and `kraft`.
    To view basic information about the library and to confirm everything has worked, you can run:
 
-   ```bash
+   ```console
    $ kraft list show iperf3
    ```

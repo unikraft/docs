@@ -45,7 +45,7 @@ so your transmit code should look like this:
 
 In order to see if everything works, attach `tshark` or `tcpdump` on your Linux host to `usocbr0` on a second terminal:
 
-```sh
+```console
 $ tshark -i usocbr0
 ```
 

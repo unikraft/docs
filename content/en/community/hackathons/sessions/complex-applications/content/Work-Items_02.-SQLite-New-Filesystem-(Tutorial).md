@@ -14,7 +14,7 @@ Create a folder, move the SQLite script in it, and `cd `in it.
 
 After that we run the following command:
 
-```bash
+```console
 $ find -type f | bsdcpio -o --format newc > ../archive.cpio
 ```
 
@@ -22,13 +22,13 @@ We'll obtain a cpio archive called `archive.cpio` in the parent directory.
 
 Next, we run the following `qemu-guest` command to run the instance:
 
-```bash
+```console
 $ ./qemu-guest -k build/app-sqlite_kvm-x86_64 -m 100 -i archive.cpio
 ```
 
 If everything runs as expected, then we'll get the following output:
 
-```bash
+```console
 SeaBIOS (version 1.13.0-1ubuntu1.1)
 Booting from ROM...
 Powered by

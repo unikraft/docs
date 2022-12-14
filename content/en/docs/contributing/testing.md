@@ -16,14 +16,14 @@ During development, disable `CONFIG_OPTIMIZE_DEADELIM` (Found in themenuconfig v
 
 ### Using `checkpatch.pl`
 
-To support you in checking your coding style, we provide a tailored version of the Linux kernel's `checkpatch.pl` script in [`support/scripts/checkpatch.pl`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/checkpatch.pl). 
+To support you in checking your coding style, we provide a tailored version of the Linux kernel's `checkpatch.pl` script in [`support/scripts/checkpatch.pl`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/checkpatch.pl).
 You should run this from the root of the Unikraft repository because it contains a [`.checkpatch.conf`](https://github.com/unikraft/unikraft/blob/staging/.checkpatch.conf) file which disables some tests that we consider irrelevant for Unikraft.
 
 Please run this script on all commit you are about to submit.
 To do this, create a patch file for each commit on your working branch by running `git format-patch`.
 For example, to create patch files for the last 5 commits:
 
-```bash
+```console
 $ git format-patch HEAD~5
 $ ./support/scripts/checkpatch.pl ./000*
 ```
