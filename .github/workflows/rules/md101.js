@@ -30,7 +30,6 @@ const keywords = [
     new WordPattern("stderr"),
     new WordPattern("SIGTERM"),
     new WordPattern("NaN"),
-    new WordPattern(".png", { noWordBoundary: true }),
     new WordPattern(".xml", { noWordBoundary: true }),
     new WordPattern(".jar", { noWordBoundary: true }),
     new WordPattern(".gz", { noWordBoundary: true }),
