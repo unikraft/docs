@@ -154,7 +154,7 @@ too by specifying the install location of the repository from
 [GitHub](https://github.com/unikraft/kraft.git):
 
 ```console
-pip3 install https://github.com/unikraft/kraft.git@stable
+pip3 install git+https://github.com/unikraft/kraft.git
 ```
 
 ### Install to hack
