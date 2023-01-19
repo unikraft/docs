@@ -99,6 +99,16 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 Listening on port 8123...
 ```
 
+In this step you may face the following error:
+
+```text
+access denied by acl file
+qemu-system-ppc64: -netdev bridge,br=virbr0,id=net0: bridge helper failed
+```
+
+To fix this, check if the `/etc/qemu/bridge.conf` file exists.
+If it doesn't, then create it first and then add the line `allow virbr0` to it to allow your bridge to run.
+
 The boot message confirms the assigning of the `172.44.0.2/24` IP address to the virtual machine.
 It's listening on port 8123 for HTTP connections on that IP address.
 We use `wget` to validate it's working properly and we are able to get the `index.html` file:
