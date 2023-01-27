@@ -9,7 +9,7 @@ image: /assets/imgs/2023-03-hack-athens.jpg
 
 ## Athens Unikraft Hackathon
 
-Unikraft, [Nubificus](https://nubificus.co.uk/), [the High Speed Communication Networks Lab (HSCN)](http://hscnl.ece.ntua.gr/) and [the Computing Systems Lab (CSLab)](http://www.cslab.ece.ntua.gr/) from the National Technical University of Athens ([ICCS](https://www.iccs.gr/en/)/[NTUA](https://www.ntua.gr/en/)) come together to organize the **Unikraft Athens Hackathon** to be held on Thursday and Friday, March 30-31, 2023.
+Unikraft, [Nubificus](https://nubificus.co.uk/), [the High Speed Communication Networks Lab (HSCN)](http://hscnl.ece.ntua.gr/) and [the Computing Systems Lab (CSLab)](http://www.cslab.ece.ntua.gr/) of the National Technical University of Athens ([ICCS](https://www.iccs.gr/en/)/[NTUA](https://www.ntua.gr/en/)) come together to organize the **Unikraft Athens Hackathon** to be held on Thursday and Friday, March 30-31, 2023.
 
 The hackathon will take place as an in-person event at the Multimedia Amphitheater at the Zografou campus of NTUA.
 The full address is: [Multimedia Amphitheater, Central Library Building, Heroon Polytechniou 9, 15780 Zografou, Greece](https://goo.gl/maps/NPyEgR286NdeCM2X7).
@@ -28,13 +28,13 @@ For any situation, we will have virtual machines ready, to be able to get hackin
 
 The hosts of the hackathon are:
 
-* [Anastassios Nanos](https://ananos.co.uk/)
-* [Charalampos Mainas](https://cmainas.gitlab.io/)
-* [Michalis Pappas](https://github.com/michpappas)
-* [Panagiotis Kokkinos](https://gr.linkedin.com/in/panagiotis-kokkinos-8238783)
 * [George Goumas](http://www.cslab.ntua.gr/~goumas/)
-* [Manos Varvarigos](https://www.ece.ntua.gr/en/staff/193)
+* [Panagiotis Kokkinos](https://gr.linkedin.com/in/panagiotis-kokkinos-8238783)
 * [Nectarios Koziris](http://www.cslab.ntua.gr/~nkoziris/)
+* [Charalampos Mainas](https://cmainas.gitlab.io/)
+* [Anastassios Nanos](https://ananos.co.uk/)
+* [Michalis Pappas](https://github.com/michpappas)
+* [Manos Varvarigos](https://www.ece.ntua.gr/en/staff/193)
 
 As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvand/) and [Ștefan Jumărea](https://github.com/StefanJum) will be present on-site, with other community members providing support online, on Discord.
 
