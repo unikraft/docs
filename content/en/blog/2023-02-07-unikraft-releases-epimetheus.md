@@ -1,5 +1,5 @@
 ---
-title: "Unikraft releases v0.12.0 (Janus)"
+title: "Unikraft releases v0.12.0 (Epimetheus)"
 date: "2023-02-07T12:00:00+01:00"
 authors: [
   "Răzvan Deaconescu",
