@@ -7,8 +7,8 @@ landing:
   quickStart: Quick Start
   notify:
     pill: LATEST
-    text: Unikraft releases v0.11.0 (Janus)!
-    link: /blog/2022-12-02-unikraft-releases-janus
+    text: Unikraft releases v0.12.0 (Epimetheus)!
+    link: /blog/2023-02-07-unikraft-releases-epimetheus
   viewOnGithub: View on GitHub
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
