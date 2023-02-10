@@ -13,7 +13,8 @@ This page gives an overview of our vision, highlights present security propertie
 
 Unikraft is characterized by extreme specialization: its images contain only the code that is strictly necessary for the application to run, resulting in a drastically reduced attack surface.
 As an example, a Unikraft production image contains no shell, no unneeded system services, no unneeded system calls or OS features, and dead code within used components is significantly reduced by aggressive compile and link stage optimizations.
-Even the kernel functionality, unlike other unikernel projects, is modular, allowing users to easily remove components (e.g., the network stack) if not needed. While this does not eliminate all attack vectors, it severely reduces them, especially compared to a general-purpose OS.
+Even the kernel functionality, unlike other unikernel projects, is modular, allowing users to easily remove components (e.g., the network stack) if not needed.
+While this does not eliminate all attack vectors, it severely reduces them, especially compared to a general-purpose OS.
 
 ### Strong Cross-Application Isolation
 
@@ -34,10 +35,10 @@ However, their security properties have been [called into question](https://rese
 This aspect has historically been overlooked by unikernel prototypes for many reasons, including the fact that many, if not most, unikernels projects have been research ones and adding such features would have had little research value.
 In contrast, Unikraft has the explicit aim of targeting real-world deployments, and as such we have, and are putting, effort into providing such features; we describe these next.
 
-
 ## Unikraft Security Features
 
-In Unikraft, most of the core security features have been merged or are pending merge (e.g., ASLR / PIE, stack protection, ARM pointer authentication, etc.). This effort is by nature a continuous, community-driven task, but we are expecting completion of most core security features by the end of 2022. An overview of the state of security feature support is shown in the following table:
+In Unikraft, most of the core security features have been merged or are pending merge (e.g., ASLR / PIE, stack protection, ARM pointer authentication, etc.).
+This effort is by nature a continuous, community-driven task, but we are expecting completion of most core security features by the end of 2022. An overview of the state of security feature support is shown in the following table:
 
 | Security feature                                                                                       | Status           | Targets                        |
 | ------------------------------------------------------------------------------------------------------ | ---------------- | ------------------------------ |
@@ -59,18 +60,20 @@ In Unikraft, most of the core security features have been merged or are pending 
 | Supervisor Mode Access Prevention (SMAP)                                                               | N/A              | N/A                            |
 | Privileged Access Never (PAN)                                                                          | N/A              | N/A                            |
 
-
 Note that, as shown in the table, some security features of mainstream OSes do
 not apply to Unikraft: this is the case, for example, with numerous software counter-measures against speculative execution vulnerabilities such as KPTI, unnecessary because of the presence of a single application in the virtual machine.
 
 ### Testing
 
-In addition to matching mainstream OSes' security features, any unikernel with production pretensions must have a thorough testing process: this aspect too has been often overlooked by the unikernel community due to its limited research value. Unikraft aims to improve on this by adopting state-of-the-art practices with [a rigorous review of code changes](/docs/contributing/review-process/) and systematic integration/unit testing with our [public Concourse CI/CD pipeline](https://builds.unikraft.io).  In addition to this, there is an ongoing effort to systematically and continuously fuzz test Unikraft as is done on Linux; we aim to write a blog post on this soon.
+In addition to matching mainstream OSes' security features, any unikernel with production pretensions must have a thorough testing process: this aspect too has been often overlooked by the unikernel community due to its limited research value.
+Unikraft aims to improve on this by adopting state-of-the-art practices with [a rigorous review of code changes](/docs/contributing/review-process/) and systematic integration/unit testing with our [public Concourse CI/CD pipeline](https://builds.unikraft.io).
+In addition to this, there is an ongoing effort to systematically and continuously fuzz test Unikraft as is done on Linux; we aim to write a blog post on this soon.
 
 ## Advanced Unikraft Security: Fine-Grained Compartmentalization
 
-Longer term, we are looking into evolving Unikraft into a framework that allows users to flexibly introduce isolation boundaries within the unikernel to further increase the security of the system. This is a research direction that we recently explored with [FlexOS](https://project-flexos.github.io).
-We developed a prototype that allows users to easily and safely compartmentalize less trusted, riskier, or unsafe parts of the application and the kernel with limited impact on performance, and to easily try a wide range of different design choices in the security vs. performance trade-off space (see graph below: each column is one such point in the design space).
+Longer term, we are looking into evolving Unikraft into a framework that allows users to flexibly introduce isolation boundaries within the unikernel to further increase the security of the system.
+This is a research direction that we recently explored with [FlexOS](https://project-flexos.github.io).
+We developed a prototype that allows users to easily and safely compartmentalize less trusted, riskier, or unsafe parts of the application and the kernel with limited impact on performance, and to easily try a wide range of different design choices in the security versus performance trade-off space (see graph below: each column is one such point in the design space).
 
 {{< img
   class="max-w-3xl"
