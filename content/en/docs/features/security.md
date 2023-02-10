@@ -51,8 +51,8 @@ In Unikraft, most of the core security features have been merged or are pending 
 | [Kernel Address Sanitizer (KASAN)](https://github.com/unikraft/unikraft/pull/191)                      | Under review     | `PLAT_KVM && ARCH_X86_64`      |
 | [Position Independent Executables (PIE)](https://github.com/unikraft/unikraft/pull/239)                | Under review     | `PLAT_KVM && ARCH_X86_64`      |
 | [x86_64 True Random Number Generator](https://github.com/unikraft/unikraft/pull/420)                   | Under review     | `ARCH_X86_64`                  |
+| [Shadow Stack](https://github.com/unikraft/unikraft/pull/505)                                          | In Progress      | `ARCH_ARM_64`                  |
 | Intel Control-flow Enforcement Technology (CET)                                                        | Planned          | `ARCH_X86_64`                  |
-| Shadow stack                                                                                           | Planned          | any                            |
 | `FORTIFY_SOURCE`                                                                                       | Planned          | any                            |
 | ARM Speculation Barrier (SB)                                                                           | Planned          | `ARCH_ARM_64`                  |
 | Kernel Page Table Isolation (KPTI)                                                                     | N/A              | N/A                            |
