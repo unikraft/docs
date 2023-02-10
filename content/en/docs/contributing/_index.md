@@ -11,7 +11,7 @@ collapsible: true
 This page contains information about how to get started with contributing to the Unikraft Open-Source Project.
 In this guide, you will find details of the procedures put in place to make contributions, as well as recommended workflows, tools, and more to help you get started.
 
-If you are looking for ideas regarding possible contributions to Unikraft, we keep an up-to-date list of open projects, enhancements and bugs on the project's github main repo under the <a class="badge badge-pill badge-primary" href="#">kind/project</a>, [kind-enhancement](^kind-enhancement) and [kind-bug](^kind-bug) labels, respectively.
+If you are looking for ideas regarding possible contributions to Unikraft, we keep an up-to-date list of open projects, enhancements and bugs on the project's github main repo under the [kind/project](https://github.com/unikraft/unikraft/labels/kind%2Fproject), [kind/enhancement](https://github.com/unikraft/unikraft/labels/kind%2Fenhancement) and [kind/bug](https://github.com/unikraft/unikraft/labels/kind%2Fbug) labels, respectively.
 Please browse through it and if you have any questions, please do not hesitate to ask any questions you may have.
 
 We use [Discord](https://bit.ly/UnikraftDiscord) as the main community online channel.
