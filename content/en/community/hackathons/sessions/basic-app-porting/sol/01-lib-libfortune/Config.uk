@@ -1,3 +1,0 @@
-menuconfig LIBFORTUNE
-	bool "libfortune - Good fortunes!"
-	default n

@@ -1,3 +1,0 @@
-$(eval $(call addlib,rot13))
-
-ROT13_SRCS-y += $(ROT13_BASE)/main.c

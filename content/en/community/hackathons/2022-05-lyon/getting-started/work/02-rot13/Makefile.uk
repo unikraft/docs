@@ -1,3 +1,0 @@
-$(eval $(call addlib,echoback))
-
-ECHOBACK_SRCS-y += $(ECHOBACK_BASE)/main.c

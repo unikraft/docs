@@ -1,3 +1,0 @@
-$(eval $(call addlib,appfortune))
-
-APPFORTUNE_SRCS-y += $(APPFORTUNE_BASE)/main.c

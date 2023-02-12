@@ -1,9 +1,0 @@
-package-lock.json
-node_modules/
-resources/_gen
-/public/
-
-# Temporary and swap files
-*~
-*.swp
-*.swo

@@ -1,4 +1,0 @@
-config LIBMYRAMFS
-	bool "My-ramfs: dummy implementation of ramfs"
-	default n
-	depends on LIBVFSCORE

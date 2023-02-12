@@ -1,4 +1,0 @@
-config  APP2
-	bool
-	default y
-	select LIBNOLIBC if !HAVE_LIBC

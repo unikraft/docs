@@ -1,7 +1,0 @@
-specification: '0.5'
-name: storestrings
-unikraft:
-  version: stable
-targets:
-  - architecture: x86_64
-    platform: kvm
