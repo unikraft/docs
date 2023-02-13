@@ -1,6 +1,0 @@
-### Invisible option for dependencies
-config MOUNT9PFS_DEPENDENCIES
-	bool
-	default y
-	select LIBNOLIBC if !HAVE_LIBC
-

@@ -1,4 +1,0 @@
-$(eval $(call addlib,appextrald))
-
-APPEXTRALD_SRCS-y += $(APPEXTRALD_BASE)/main.c
-APPEXTRALD_SRCS-y += $(APPEXTRALD_BASE)/extra.ld

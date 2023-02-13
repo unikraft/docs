@@ -1,6 +1,0 @@
-### Invisible option for dependencies
-config STORESTRINGS_DEPENDENCIES
-	bool
-	default y
-	select LIBNOLIBC if !HAVE_LIBC
-

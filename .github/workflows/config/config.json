@@ -1,9 +1,0 @@
-{
-	"default": true,
-	"MD048": { "style": "backtick" },
-	"MD046": { "style": "fenced" },
-	"MD029": { "style": "one" },
-	"MD014": false,
-	"line-length": false,
-	"no-hard-tabs": false
-}

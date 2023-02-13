@@ -1,3 +1,0 @@
-$(eval $(call addlib,applinkedlist))
-
-APPLINKEDLIST_SRCS-y += $(APPLINKEDLIST_BASE)/main.c
