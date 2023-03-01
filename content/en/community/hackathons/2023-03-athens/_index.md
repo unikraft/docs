@@ -31,6 +31,7 @@ The hosts of the hackathon are:
 * [George Goumas](http://www.cslab.ntua.gr/~goumas/)
 * [Panagiotis Kokkinos](https://gr.linkedin.com/in/panagiotis-kokkinos-8238783)
 * [Nectarios Koziris](http://www.cslab.ntua.gr/~nkoziris/)
+* [Aristotelis Kretsis](https://www.ece.ntua.gr/en/staff/245)
 * [Charalampos Mainas](https://cmainas.gitlab.io/)
 * [Anastassios Nanos](https://ananos.co.uk/)
 * [Michalis Pappas](https://github.com/michpappas)
