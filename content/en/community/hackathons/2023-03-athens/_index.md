@@ -18,7 +18,7 @@ Support information and discussions will take place on [Discord](http://bit.ly/U
 
 ### Registration
 
-To take part in the hackathon please fill this [registration form](https://forms.gle/a315sJrzRQV8rZdz8) by **Sunday, March 19, 2023, 11pm CET**.
+To take part in the hackathon please fill this [registration form](https://forms.gle/a315sJrzRQV8rZdz8) by **Sunday, March 26, 2023, 11pm CET**.
 
 Please bring your own laptop.
 It's best if you have a native Linux installed on your laptop.
