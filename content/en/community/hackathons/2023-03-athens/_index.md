@@ -43,7 +43,7 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 
 #### Thursday, March 30, 2023
 
-| Time (CET)    | Session                                                              | Presenter          |
+| Time (EEST)    | Session                                                              | Presenter          |
 | ------------- | -------------------------------------------------------------------- | ------------------ |
 | 10:00 - 10:15 | Overview of Unikernels and Unikraft                                  |                    |
 | 10:15 - 11:15 | Introduction to Unikraft: Building and Running Standard Applications |                    |
@@ -57,7 +57,7 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 
 #### Friday, March 31, 2023
 
-| Time (CET)    | Session                                             |
+| Time (EEST)    | Session                                             |
 | ------------- | --------------------------------------------------- |
 | 10:00 - 10:15 | Overview of Hackathon Challenges                    |
 | 10:15 - 11:30 | Work on Hackathon Challenges                        |
