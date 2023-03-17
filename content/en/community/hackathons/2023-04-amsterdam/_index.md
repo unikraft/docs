@@ -4,6 +4,7 @@ date: 2023-03-10T05:40:00+02:00
 draft: false
 collapsible: true
 description: Information on the Amsterdam Unikraft Hackathon, April 15-16, 2023
+image: /assets/imgs/2023-04-hack-amsterdam.jpg
 ---
 
 ## Amsterdam Unikraft Hackathon
