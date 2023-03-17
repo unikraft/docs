@@ -18,7 +18,7 @@ Most code closely follows an automatically-formatted style defined by the [.clan
 However, since this is an automated formatting tool, it's not perfect, and the Unikraft code can deviate from the `clang-format`'s programmatically created output (especially in the aesthetics of assignment alignments).
 Use `clang-format` as a helpful tool, but with a grain of salt.
 Again, note that some parts of the code (e.g. lib/fdt) follow different coding styles that you should follow if you change this code.
-In the future, me might provide `.clang-format` files appropriate for those libraries.
+In the future, we might provide `.clang-format` files appropriate for those libraries.
 We would also be very happy to accept `.clang-format` definitions for those.
 
 ### Code Documentation
