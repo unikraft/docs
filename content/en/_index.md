@@ -30,7 +30,7 @@ landing:
       link: "#research-backed"
     - text: Feature-rich
       link: "#fully-modular"
-    - text: Production ready 
+    - text: Production ready
       link: "#production-ready"
 blazingFast:
   feature: Blazing Fast
@@ -57,7 +57,7 @@ multiFeature:
   leader2: Optimize images with built-in Dead-Code Elimination, Link-Time Optizations and more.
   link2: /docs/features/performance
   id3: posix-compatible
-  feature3: POSIX-compatible 
+  feature3: POSIX-compatible
   leader3: With the more than 160+ syscalls and multiple lib-C's and standard libraries.
   link3: /docs/features/posix-compatibility
 researchBacked:
@@ -87,7 +87,7 @@ smallFootprint:
   leading: Unikraft is green &amp; efficient
   about: From cloud to embedded devices, running an application on Unikraft both increases efficiency and reduces power consumption as less resources are necessary.
   bubble1heading: <span class="text-4xl">70%</span> less
-  bubble1about: <span class="font-bold text-white">Power consumption</span> compared to Alpine Linux &amp; RaspianOS.
+  bubble1about: <span class="font-bold text-white">Power consumption</span> compared to Alpine Linux &amp; Raspbian.
   bubble2heading: <span class="text-4xl">Kilobytes</span>
   bubble2about: <span class="font-bold text-white">Idle memory usage</span> for popular apps like NGINX or Redis.
   bubble3about: Unikraft supports <span class="font-medium">ARM</span> and <span class="font-medium">ARM64</span> architectures and popular platforms including <span class="font-medium">Raspberry Pi B+</span>.

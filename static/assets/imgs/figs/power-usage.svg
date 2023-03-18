@@ -13,7 +13,7 @@
 	.st8{fill:#def7ec;}
 </style>
 <rect x="6.1" y="42.7" class="st0" width="70.5" height="15.8"/>
-<text transform="matrix(1 0 0 1 14.2966 55.0214)" class="st1 st2 st3">RaspianOS</text>
+<text transform="matrix(1 0 0 1 14.2966 55.0214)" class="st1 st2 st3">Raspbian</text>
 <rect x="6.1" y="79" class="st0" width="70.5" height="15.8"/>
 <text transform="matrix(1 0 0 1 17.1087 92.4037)" class="st1 st4 st5">Unikraft</text>
 <rect x="6.1" y="6.4" class="st0" width="70.5" height="15.8"/>
