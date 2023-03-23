@@ -69,6 +69,11 @@ UK_TESTCASE(vfscore_stat_testsuite, vfscore_test_newfile)
 /* Register the test suite */
 uk_testsuite_register(vfscore_stat_testsuite, NULL);
 ```
+After you select vfscore in the configuration screen, a new option should appear in the `Library Configuration` menu to select a `ramfs` filesystem:
+
+![ramfs menu](/community/hackathons/sessions/testing-unikraft/images/menuconfig_ramfs_option.png)
+
+Make sure you enable it, otherwise the `mount` syscall will fail.
 
 We will be using a simple app without any main function to run the testsuite, the output should be similar with:
 
