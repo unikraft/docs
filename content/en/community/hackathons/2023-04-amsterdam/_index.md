@@ -1,5 +1,5 @@
 ---
-title: Amsteradam 2023
+title: Amsterdam 2023
 date: 2023-03-10T05:40:00+02:00
 draft: false
 collapsible: true
