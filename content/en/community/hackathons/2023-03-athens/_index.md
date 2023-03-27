@@ -43,21 +43,23 @@ As part of the Unikraft community [Răzvan Deaconescu](https://github.com/razvan
 
 #### Thursday, March 30, 2023
 
-| Time (EEST)    | Session                                                              | Presenter          |
+| Time (EEST)   | Session                                                              | Presenter          |
 | ------------- | -------------------------------------------------------------------- | ------------------ |
-| 10:00 - 10:15 | Overview of Unikernels and Unikraft                                  |                    |
-| 10:15 - 11:15 | Introduction to Unikraft: Building and Running Standard Applications |                    |
+| 10:00 - 10:15 | Overview of Unikernels and Unikraft                                  | Răzvan Deaconescu  |
+| 10:15 - 11:15 | Introduction to Unikraft: Building and Running                       | Ștefan Jumărea     |
 | 11:15 - 11:30 | Break                                                                |                    |
-| 11:30 - 12:45 | Unikraft Internals: Building, Configuring, Using Libraries           |                    |
+| 11:30 - 12:45 | Unikraft Internals: Building, Configuring, Using Libraries           | Răzvan Deaconescu  |
 | 12:45 - 14:00 | Lunch                                                                |                    |
-| 14:00 - 15:00 | Running (Complex) Applications in Unikraft                           |                    |
-| 15:00 - 16:00 | Porting Applications to Unikraft                                     |                    |
+| 14:00 - 15:00 | Running (Complex) Applications in Unikraft                           | Ștefan Jumărea     |
+| 15:00 - 16:00 | Porting Applications to Unikraft                                     | Răzvan Deaconescu  |
 | 16:00 - 16:15 | Break                                                                |                    |
-| 16:15 - 17:45 | Guest Talks                                                          |                    |
+| 16:15 - 16:45 | Guest Talk: The Value of Unikernels <br /> in the Emerging Disaggregated HPC and AI Clusters | Dimitris Syrivelis <br /> (NVIDIA) |
+| 16:45 - 17:15 | Guest Talk: Unikernels for Serverless                                | Anastassios Nanos <br /> (Nubicus Ltd.) |
+| 17:15 - 17:45 | Guest Talk: Running MPI Applications on Toro Unikernel               | Matias Vara Larsen <br /> (Vates / Toro Unikernel) |
 
 #### Friday, March 31, 2023
 
-| Time (EEST)    | Session                                             |
+| Time (EEST)   | Session                                             |
 | ------------- | --------------------------------------------------- |
 | 10:00 - 10:15 | Overview of Hackathon Challenges                    |
 | 10:15 - 11:30 | Work on Hackathon Challenges                        |
