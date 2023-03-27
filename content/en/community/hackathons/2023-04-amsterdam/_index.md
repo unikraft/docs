@@ -29,7 +29,7 @@ The hosts of the hackathon are:
 
 * [Cristiano Giuffrida](https://www.vusec.net/people/cristiano-giuffrida/)
 
-As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razvand/) will be on-site, with other community members providing support online, on Discord.
+As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razvand/) and [Hugo Lefeuvre](https://github.com/hlef/) will be on-site, with other community members providing support online, on Discord.
 
 ### Schedule
 
