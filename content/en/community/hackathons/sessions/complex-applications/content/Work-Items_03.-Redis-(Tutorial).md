@@ -4,7 +4,7 @@ Find the support files in the `work/03-set-up-and-run-redis/` folder of the sess
 [Redis](https://redis.io/topics/introduction) is one of the most popular key-value databases, with a design that facilitates the fast writing and reading of data from memory, as well as the storage of data on disk in order to be able to reconstruct the state of data in memory in case of a system restart.
 Unlike other data storage systems, Redis supports different types of data structures such as lists, maps, strings, sets, bitmaps, streams.
 
-The Redis application is built using an external library, [lib-redis](https://github.com/unikraft/lib-redis), that depends on other ported libraries for Unikraft ([pthread-embedded](https://github.com/unikraft/lib-pthread-embedded), [newlib](https://github.com/unikraft/lib-newlib) and [lwip](https://github.com/unikraft/lib-lwip) library), all of which you should be familiar with by now.
+The Redis application is built using an external library, [lib-redis](https://github.com/unikraft/lib-redis), that depends on other ported libraries for Unikraft ([musl](https://github.com/unikraft/lib-musl) and [lwip](https://github.com/unikraft/lib-lwip) library), all of which you should be familiar with by now.
 To successfully compile and run the Redis application for the KVM platform and x86-64 architecture, we follow the steps below.
 
 #### Setup
@@ -12,7 +12,7 @@ To successfully compile and run the Redis application for the KVM platform and x
 As above, we make sure we have the directory structure to store the local clones of Unikraft, library and application repositories.
 The structure should be:
 
-```
+```console
 workdir
 |-- unikraft/
 |-- libs/
@@ -20,7 +20,7 @@ workdir
 ```
 
 We clone the [lib-redis](https://github.com/unikraft/lib-redis) repository in the `libs/` folder.
-We also clone the library repositories which [lib-redis](https://github.com/unikraft/lib-redis) depends on ([pthread-embedded](https://github.com/unikraft/lib-pthread-embedded), [newlib](https://github.com/unikraft/lib-newlib) and [lwip](https://github.com/unikraft/lib-lwip)) in the `libs/` folder.
+We also clone the library repositories which [lib-redis](https://github.com/unikraft/lib-redis) depends on ([musl](https://github.com/unikraft/lib-musl) and [lwip](https://github.com/unikraft/lib-lwip)) in the `libs/` folder.
 
 We clone the [app-redis](https://github.com/unikraft/app-redis/) repository in the `apps/` folder.
 In this directory, we need to create two files:
@@ -33,7 +33,7 @@ In the `Makefile`, the order in which the libraries are mentioned in the `LIBS` 
 ```Makefile
 UK_ROOT ?= $(PWD)/../../unikraft
 UK_LIBS ?= $(PWD)/../../libs
-LIBS := $(UK_LIBS)/lib-pthread-embedded:$(UK_LIBS)/lib-newlib:$(UK_LIBS)/lib-lwip:$(UK_LIBS)/lib-redis
+LIBS := $(UK_LIBS)/lib-musl:$(UK_LIBS)/lib-lwip:$(UK_LIBS)/lib-redis
 
 all:
 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS)
@@ -56,7 +56,7 @@ We configure the application by running:
 $ make menuconfig
 ```
 
-We select  the Redis library from the configuration menu, `Library Configuration` section.
+We select the Redis library from the configuration menu, in the `Library Configuration` section.
 For starters, we select the option to generate the main source file used to run the application.
 
 ![redis selection menu](/community/hackathons/sessions/complex-applications/images/redis_menu.png)
@@ -77,7 +77,7 @@ The Redis application needs a configuration file to start.
 Thus, a filesystem should be selected in the configuration menu.
 The filesystem we previously used was 9PFS.
 
-As such, in the `Library Configuration` section of the configuration menu, the following selection chain should be made in the vfscore library: `VFSCore Interface` -> `vfscore Configuration` -> `Automatically mount a root filesystem` -> `Default root filesystem` -> `9PFS`.
+As such, in the `Library Configuration` section of the configuration menu, the following selection chain should be made in the `vfscore` library: `VFSCore Interface` -> `vfscore Configuration` -> `Automatically mount a root filesystem` -> `Default root filesystem` -> `9PFS`.
 Same as before, since we'll be using the `qemu-guest` script, we'll need to name the `Default root device` `fs0` (`Library Configuration` -> `vfscore` -> `Default root device`).
 
 Nevertheless, don't forget to select the `posix-event` library: `Library Configuration` -> `posix-event`.
@@ -129,8 +129,8 @@ The following image is presenting an overview of our setup:
 
 ![lwip selection menu](/community/hackathons/sessions/complex-applications/images/redis_setup.png)
 
-Consequently, after running the script, the Redis server will start and dnsmasq will act as a DHCP server and therefore it will dynamically assign to our Unikraft instance an IP address.
-The IP can be seen in the output of qemu as bellow:
+Consequently, after running the script, the Redis server will start and `dnsmasq` will act as a DHCP server and, therefore it will dynamically assign to our Unikraft instance an IP address.
+The IP can be seen in the output of `qemu` as bellow:
 
 ```console
 Booting from ROM...

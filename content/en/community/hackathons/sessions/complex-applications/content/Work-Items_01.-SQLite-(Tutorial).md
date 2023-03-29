@@ -5,7 +5,7 @@ Find the support files in the `work/01-set-up-and-run-sqlite/` folder of the ses
 It is one of the most popular in the world and it differs from other SQL database engines because it is simple to administer, use, maintain, and test.
 Thanks to these features, SQLite is a fast, secure, and (most crucial) simple application.
 
-The SQLite application is built using an external library, [lib-sqlite](https://github.com/unikraft/lib-sqlite), that depends on two other libraries that are ported for Unikraft: [pthread-embedded](https://github.com/unikraft/lib-pthread-embedded) (a lightweight implementation of POSIX Threads) and [newlib](https://github.com/unikraft/lib-newlib) (a standard C library).
+The SQLite application is built using an external library, [lib-sqlite](https://github.com/unikraft/lib-sqlite), that depends on another library that is ported for Unikraft: [Musl](https://github.com/unikraft/lib-musl) (a standard C library).
 To successfully compile and run the SQLite application for the KVM platform on the x86-64 architecture, we follow the steps below.
 
 #### Setup
@@ -13,7 +13,7 @@ To successfully compile and run the SQLite application for the KVM platform on t
 First, we make sure we have the directory structure to store the local clones of Unikraft, library and application repositories.
 The structure should be:
 
-```
+```console
 workdir
 |-- unikraft/
 |-- libs/
@@ -21,7 +21,7 @@ workdir
 ```
 
 We clone the [lib-sqlite](https://github.com/unikraft/lib-sqlite) repository in the `libs/` folder.
-The libraries on which `lib-sqlite` depends ([pthread-embedded](https://github.com/unikraft/lib-pthread-embedded) and [newlib](https://github.com/unikraft/lib-newlib)) are also to be cloned in the `libs/` folder.
+The libraries on which `lib-sqlite` depends ([Musl](https://github.com/unikraft/lib-musl)) are also to be cloned in the `libs/` folder.
 
 We clone the [app-sqlite](https://github.com/unikraft/app-sqlite/) repository in the `apps/` folder.
 In this directory, we need to create two files:
@@ -34,7 +34,7 @@ In the `Makefile`, the order in which the libraries are mentioned in the `LIBS` 
 ```Makefile
 UK_ROOT ?= $(PWD)/../../unikraft
 UK_LIBS ?= $(PWD)/../../libs
-LIBS := $(UK_LIBS)/lib-pthread-embedded:$(UK_LIBS)/lib-newlib:$(UK_LIBS)/lib-sqlite
+LIBS := $(UK_LIBS)/lib-musl:$(UK_LIBS)/lib-sqlite
 
 all:
 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS)
@@ -53,7 +53,7 @@ $(eval $(call addlib,appsqlite))
 
 We configure the application by running:
 
-```
+```console
 $ make menuconfig
 ```
 
@@ -85,7 +85,7 @@ $ make
 
 For testing we can use the following SQLite script, which inserts ten values into a table:
 
-```
+```sql
 CREATE TABLE tab (d1 int, d2 text);
 INSERT INTO tab VALUES (random(), cast(random() as text)),
 (random(), cast(random() as text)),
@@ -99,8 +99,8 @@ INSERT INTO tab VALUES (random(), cast(random() as text)),
 (random(), cast(random() as text));
 ```
 
-Up next, create a folder in the application folder called `sqlite_files` and write the above script into a file.
-When you run the application, you can specify the path of the newly created folder to the `qemu-guest` as following:
+Up next, create a folder in the application folder called `sqlite_files/` and write the above script into a file.
+When you run the application, you can specify the path of the newly created folder to the `qemu-guest` script as following:
 
 ```console
 $ ./qemu-guest -k ./build/app-sqlite_kvm-x86_64 \
