@@ -10,7 +10,7 @@ We can obtain that by using the command `make menuconfig` and from the `vfscore:
 The InitRD filesystem can load only [cpio archives](https://www.ibm.com/docs/en/zos/2.2.0?topic=formats-cpio-format-cpio-archives). In order to load our SQLite script into InitRD, we need to create a cpio out of it.
 This can be achieved in the following way:
 
-Create a folder, move the SQLite script in it, and `cd `in it.
+Create a folder, move the SQLite script in it, and `cd` into it.
 
 After that we run the following command:
 
@@ -18,7 +18,7 @@ After that we run the following command:
 $ find -type f | bsdcpio -o --format newc > ../archive.cpio
 ```
 
-We'll obtain a cpio archive called `archive.cpio` in the parent directory.
+We'll obtain a `cpio` archive called `archive.cpio` in the parent directory.
 
 Next, we run the following `qemu-guest` command to run the instance:
 
