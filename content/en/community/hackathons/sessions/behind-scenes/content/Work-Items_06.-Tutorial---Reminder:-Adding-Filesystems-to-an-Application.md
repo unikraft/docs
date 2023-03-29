@@ -51,23 +51,23 @@ Firstly, we will use the manual approach to configure, build and run the applica
 **Configure**
 
 For filesystem functionalities (opening, reading, writing files) we require a more powerful libc.
-[newlib](https://github.com/unikraft/lib-newlib) is already ported in Unikraft and will do nicely.
+[Musl](https://github.com/unikraft/lib-musl) is already ported in Unikraft and will do nicely.
 For this, we update the `LIBS` line in the `Makefile`:
 
 ```console
-LIBS := $(UK_LIBS)/newlib
+LIBS := $(UK_LIBS)/lib-musl
 ```
 
 Update the `UK_ROOT` and `UK_LIBS` variables in the `Makefile` to point to the folders storing the Unikraft and libraries repositories.
 
-**Make sure that both `unikraft` and `newlib` repositories are on the `staging` branch.**
-Go to each of the two repository folders (`unikraft` and `newlib`) and check the current branch:
+**Make sure that both `unikraft` and `musl` repositories are on the `staging` branch.**
+Go to each of the two repository folders (`unikraft` and `musl`) and check the current branch:
 
 ```console
 $ git checkout
 ```
 
-Now we need to enable **9pfs** and **newlib** in Unikraft.
+Now we need to enable **9pfs** and **musl** in Unikraft.
 To do this, we run:
 
 ```console
@@ -76,7 +76,7 @@ $ make menuconfig
 
 We need to select the following options, from the `Library Configuration` menu:
 
-* `libnewlib`
+* `libmusl`
 * `vfscore: VFS Core Interface`
 * `vfscore: VFS Configuration` -> `Automatically mount a root filesystem` -> `Default root filesystem` -> `9pfs`
   * For the `Default root device` option fill the `fs0` string (instead of the default `rootfs` string).
@@ -105,7 +105,7 @@ make
 ```
 
 Building the Unikraft image will take a while.
-It has to pull newlib source code, patch it and then build it, together with the Unikraft source code.
+It has to pull musl source code, patch it and then build it, together with the Unikraft source code.
 
 **Run with qemu-system-x86_64**
 
