@@ -1,8 +1,8 @@
-As stated previously, the system call shim layer in Unikraft is what we use in order to achieve the same system call behaviour as the Linux kernel.
+As stated previously, the system call shim layer in Unikraft is what we use in order to achieve the same system call behavior as the Linux kernel.
 
 Let's take a code snippet that does a system call from a binary:
 
-```
+```asm
 mov	edx,4		; message length
 mov	ecx,msg		; message to write
 mov	ebx,1		; file descriptor (stdout)
@@ -48,9 +48,9 @@ All the above functions are generated, so the only thing that we have to do when
 
 There are four definition macros that we can use in order to add a system call to the system call shim layer:
 
-* `UK_SYSCALL_DEFINE` - to implement the libc style system calls.
-  That returns `-1` and sets the `errno` accordingly.
-* `UK_SYSCALL_R_DEFINE` - to implement the raw variant which returns a negative error value in case of errors. `errno` is not used at all.
+* `UK_SYSCALL_DEFINE` - to implement the `libc` style system calls, that return `-1` and set the `errno` accordingly.
+* `UK_SYSCALL_R_DEFINE` - to implement the raw variant which returns a negative error value in case of errors.
+  `errno` is not used at all.
 
 The above two macros will generate the following functions:
 
@@ -70,8 +70,8 @@ For the case that the libc-style wrapper does not match the signature and return
 These macros only generate the ``uk_syscall_e_<syscall_name>`` and ``uk_syscall_r_<syscall_name>`` symbols. You can then provide the custom libc-style wrapper on top.
 
 Apart from using the macro to define the function, we also have to register the system call by adding it to `UK_PROVIDED_SYSCALLS-y` withing the corresponding `Makefile.uk` file.
-Let's see how this is done with an example for the write system call.
-We have the following definition of the write system call:
+Let's see how this is done with an example for the `write` system call.
+We have the following definition of the `write` system call:
 
 ```c
 ssize_t write(int fd, const void * buf, size_t count)
@@ -105,7 +105,7 @@ UK_SYSCALL_DEFINE(ssize_t, write, int, fd, const void *, buf, size_t, count)
 }
 ```
 
-And the raw variant:
+Or the raw variant:
 
 ```c
 #include <uk/syscall.h>
