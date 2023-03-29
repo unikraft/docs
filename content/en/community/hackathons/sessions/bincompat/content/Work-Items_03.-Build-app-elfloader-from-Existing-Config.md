@@ -4,7 +4,7 @@ Copy the `.config` file from `work/03/config` to the `app-elfloader` folder.
 Now you can build it:
 
 ```console
-$ make
+$ WITH_ZYDIS=y make
 ```
 
 In the `build/` folder you should have the `app-elfloader_kvm-x86_64` binary.

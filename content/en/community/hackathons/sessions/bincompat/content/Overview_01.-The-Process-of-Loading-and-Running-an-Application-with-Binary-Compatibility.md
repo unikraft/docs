@@ -7,8 +7,8 @@ For the first point we decided to use the initial ramdisk in order to pass the b
 With `qemu-guest`, in order to pass an initial ramdisk to a virtual machine you have to use the `-initrd` option.
 As an example, if we have a `helloworld` binary, we can pass it to the unikernel with the following command:
 
-```
-sudo qemu-guest -kernel build/unikernel_image -initrd helloworld_binary
+```console
+sudo qemu-guest -kernel build/unikernel_image -i helloworld_binary
 ```
 
 After the unikernel reads the binary the next step is to load it into memory.
@@ -17,7 +17,7 @@ The job of the ELF Loader is to load the executable into the main memory.
 It does so by reading the program headers located in the ELF formatted executable and acting accordingly.
 For example, you can see the program headers of a program by running `readelf -l binary`:
 
-```
+```console
 $ readelf -l helloworld_binary
 
 Elf file type is DYN (Shared object file)
@@ -63,6 +63,6 @@ After the program is loaded, the last step is to jump to its entry point and sta
 The unikernel image is the [`app-elfloader` application](https://github.com/unikraft/app-elfloader).
 This application parses the ELF file and then loads it accordingly.
 
-The `app-elfloader` currently only supports executables that are `static-pie`: all the libraries are part of the executables and the code is position-independent (PIE: _Position Independent Executable_).
+We will work only with `static-pie` executables (all the libraries are part of the executables and the code is position-independent).
 A position independent executable is a binary that can run correctly independent of the address at which it was loaded.
 So, for building executables, we currently need to use `-static-pie` compiler / linker option, available in GCC since version 8.
