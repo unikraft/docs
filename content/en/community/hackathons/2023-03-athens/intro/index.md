@@ -37,12 +37,58 @@ We encourage you to form teams of 3-4 people and work together during the:
 
 ### Resources
 
-For this hackathon, you require a Linux-based environment and / or virtual machine.
--- TODO: Add links to virtual machines, guacamole setp, docker container
+For this hackathon, you require a native Linux environment and / or virtual machine.
+
+You need to install required packages.
+On a Debian/Ubuntu-based setup, use the commands below to install required packages:
+
+```console
+$ sudo apt -y update
+$ sudo apt -y install sudo
+$ sudo apt -y install vim
+$ sudo apt -y install less
+$ sudo apt -y install ca-certificates
+$ sudo apt -y install --no-install-recommends \
+            build-essential \
+            libncurses-dev \
+            libyaml-dev \
+            flex \
+            git \
+            wget \
+            socat \
+            bison \
+            unzip \
+            uuid-runtime \
+            python3 \
+            qemu-kvm \
+            qemu-system-x86 \
+            sgabios
+```
+
+If a native Linux environment is not available, you can use [this virtual machine](https://drive.google.com/file/d/1u5DtN5kMPWxBU8UdBfnZ7DNRP2n6oiTy/view?usp=share_link).
+It's in OVA format, import it in VirtualBox or VMware or any other OVA-supporting virtualization solution.
 
 As a backup, we provide virtual machines where everything is setup.
+They are available on [UPB Guacamole infrastructure](https://guacamole.grid.pub.ro/).
 Please see the `hack-athens23` channel on Discord for instructions on accessing the virtual machine.
 You will require a computing system with a browser and an SSH client and that should be it.
+
+We also have a Docker setup prepared that you can use.
+Make sure you have [Docker installed](https://docs.docker.com/engine/install/).
+Grab the Docker container by running:
+
+```console
+$ docker pull index.unikraft.io/unikraft.org/hackathons/base:latest
+```
+
+You can then run an instance using:
+
+```console
+$ docker run --rm -it index.unikraft.io/unikraft.org/hackathons/base:latest /bin/bash
+```
+
+Inside the container you have all packages and setup required to setup and build Unikraft images.
+Running (via QEMU) is still recommended to happen outside the Docker container.
 
 ### Setup Checks
 
@@ -158,7 +204,7 @@ HTTP request sent, awaiting response... 200 OK
 Length: unspecified [text/html]
 Saving to: ‘index.html’
 
-index.html              [ <=>                ]     159  --.-KB/s    in 0s      
+index.html              [ <=>                ]     159  --.-KB/s    in 0s
 
 2023-03-30 07:56:30 (10,5 MB/s) - ‘index.html’ saved [159]
 ```
