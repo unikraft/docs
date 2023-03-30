@@ -1,14 +1,27 @@
-Session support files can be found [here](https://github.com/unikraft/docs/tree/main/content/en/community/hackathons/sessions/baby-steps), in the `unikraft/docs` repo.
-You can then clone the repo and enter the session directory:
+```
+Session support files are available [in the repository](https://github.com/unikraft/docs).
+If you already cloned the repository, update it and enter the session directory:
 
 ```console
-$ mkdir unikraft_docs
-$ cd unikraft_docs/
+$ cd path/to/repository/clone
 
-$ git clone https://github.com/unikraft/docs/ .
+$ git pull --rebase
 
-$ cd content/en/community/hackathons/sessions/baby-steps
+$ cd content/en/community/hackathons/sessions/baby-steps/
 
-$ ls -F
-content/  demo/  images/  index.md  sol/  work/
+$ ls
+demo/  images/  index.md/  sol/  work/
+```
+
+If you haven't cloned the repository yet, clone it and enter the session directory:
+
+```console
+$ git clone https://github.com/unikraft/docs
+
+$ cd docs/
+
+$ cd content/en/community/hackathons/sessions/baby-steps/
+
+$ ls
+demo/  images/  index.md/  sol/  work/
 ```

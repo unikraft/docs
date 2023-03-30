@@ -17,6 +17,8 @@ If you haven't cloned the repository yet, clone it and enter the session directo
 ```console
 $ git clone https://github.com/unikraft/docs
 
+$ cd docs/
+
 $ cd content/en/community/hackathons/sessions/basic-app-porting/
 
 $ ls -F

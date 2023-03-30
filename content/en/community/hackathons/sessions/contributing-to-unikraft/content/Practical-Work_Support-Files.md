@@ -17,6 +17,8 @@ If you haven't cloned the repository yet, clone it and enter the session directo
 ```
 $ git clone https://github.com/unikraft/docs
 
+$ cd docs/
+
 $ cd docs/content/en/community/hackathons/sessions/contributing-to-unikraft/
 
 $ ls -F

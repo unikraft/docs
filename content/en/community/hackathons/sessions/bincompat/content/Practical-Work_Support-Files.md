@@ -17,6 +17,8 @@ If you haven't cloned the repository yet, clone it and enter the session directo
 ```
 $ git clone https://github.com/unikraft/docs.git
 
+$ cd docs/
+
 $ cd content/en/community/hackathons/sessions/syscall-shim/
 
 $ ls -F
