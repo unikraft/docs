@@ -216,6 +216,8 @@ This will allow us to select the target architecture (e.g., aarch64 or x86-64) a
 $ make menuconfig
 ```
 
+**Note: `OS X` is default shipped with [`FreeBSD sed`](https://man.freebsd.org/cgi/man.cgi?sed(1)), not [`GNU sed`](https://www.gnu.org/software/sed/), may cause failure when executing above command, you need to manually install `GNU sed` through `$ brew install gnu-sed` and export environment varibale `$ PATH="~/gnu-sed/libexec/gnubin:$PATH"`.**
+
 By default the build system selects x86-64 as target architecture, so we only have to choose a target platform.
 We will decide for KVM by navigating to the `Platform Configuration | KVM guest` option and selecting it.
 Afterwards, we save and exit the configuration menu.
@@ -225,10 +227,6 @@ You can then build the unikernel with:
 ```console
 $ make
 ```
-**Note: `OS X` is default shipped with [`FreeBSD sed`](https://man.freebsd.org/cgi/man.cgi?sed(1)), not [`GNU sed`](https://www.gnu.org/software/sed/), may cause failure when executing above command, you need to manually install `GNU sed` through `$ brew install gnu-sed` and export environment varibale `$ PATH="~/gnu-sed/libexec/gnubin:$PATH"`.**
-
-
-
 
 Consider adding `-jX` with `X` being the number of CPUs in your machine to speed up the build process.
 
