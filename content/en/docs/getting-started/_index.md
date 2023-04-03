@@ -225,6 +225,10 @@ You can then build the unikernel with:
 ```console
 $ make
 ```
+**Note: `OS X` is default shipped with [`FreeBSD sed`](https://man.freebsd.org/cgi/man.cgi?sed(1)), not [`GNU sed`](https://www.gnu.org/software/sed/), may cause failure executing above command, you need to manually install `GNU sed` through `$ brew install gnu-sed` and export environment varibale `$ PATH="~/gnu-sed/libexec/gnubin:$PATH"`.**
+
+
+
 
 Consider adding `-jX` with `X` being the number of CPUs in your machine to speed up the build process.
 
