@@ -15,7 +15,7 @@ As an alternative to `kraft` it is also possible to build Unikraft using a regul
 
 ## Installing the CLI companion tool `kraft`
 
-In order to build and run Unikraft and to use its companion tool [`kraft`](https://github.com/unikraft/kraft), several tools and libraries being must be part of your system.
+In order to build and run Unikraft and to use its companion tool [`kraft`](https://github.com/unikraft/kraft), several tools and libraries must be part of your system.
 Follow the steps below according to your Linux distribution.
 
 ### Ubuntu, Debian and Other APT-based Distributions
