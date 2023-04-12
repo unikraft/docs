@@ -29,6 +29,7 @@ For any situation, we will have virtual machines ready, to be able to get hackin
 The hosts of the hackathon are:
 
 * [Cristiano Giuffrida](https://www.vusec.net/people/cristiano-giuffrida/)
+* [Manuel Wiesinger](https://www.vusec.net/people/manuel-wiesinger/)
 
 As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razvand/) and [Hugo Lefeuvre](https://github.com/hlef/) will be on-site, with other community members providing support online, on Discord.
 
@@ -36,26 +37,28 @@ As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razva
 
 #### Saturday, April 15, 2023
 
-| Time (CET)    | Session                                                              | Presenter          |
-| ------------- | -------------------------------------------------------------------- | ------------------ |
-| 10:00 - 10:15 | Overview of Unikernels and Unikraft                                  |                    |
-| 10:15 - 11:15 | Introduction to Unikraft: Building and Running Standard Applications |                    |
-| 11:15 - 11:30 | Break                                                                |                    |
-| 11:30 - 12:45 | Unikraft Internals: Building, Configuring, Using Libraries           |                    |
-| 12:45 - 14:00 | Lunch                                                                |                    |
-| 14:00 - 15:00 | Running (Complex) Applications in Unikraft                           |                    |
-| 15:00 - 16:00 | Porting Applications to Unikraft                                     |                    |
-| 16:00 - 16:15 | Break                                                                |                    |
-| 16:15 - 17:45 | Guest Talks                                                          |                    |
+| Time (CET)    | Session                                         | Presenter          |
+| ------------- | ----------------------------------------------- | ------------------ |
+| 10:00 - 10:15 | Overview of Unikernels and Unikraft             | Răzvan Deaconescu  |
+| 10:15 - 11:15 | Introduction to Unikraft                        | Hugo Lefeuvre      |
+| 11:15 - 11:30 | Break                                           |                    |
+| 11:30 - 12:45 | Unikraft Internals                              | Răzvan Deaconescu  |
+| 12:45 - 14:00 | Lunch                                           |                    |
+| 14:00 - 15:00 | Running (Complex) Applications in Unikraft      | Hugo Lefeuvre      |
+| 15:00 - 16:00 | Porting Applications to Unikraft                | Răzvan Deaconescu  |
+| 16:00 - 16:15 | Break                                           |                    |
+| 16:00 - 17:00 | Porting Applications to Unikraft                | Răzvan Deaconescu  |
+| 17:00 - 17:45 | Guest Talk: DangZero <br /> Guest Talk: Rowhammer Attacks and Defenses                     | Floris Gorter  <br /> Andrei Tatar     |
 
 #### Sunday, April 16, 2023
 
-| Time (CET)    | Session                                             |
-| ------------- | --------------------------------------------------- |
-| 10:00 - 10:15 | Overview of Hackathon Challenges                    |
-| 10:15 - 11:30 | Work on Hackathon Challenges                        |
-| 11:30 - 11:45 | Break                                               |
-| 11:45 - 12:45 | Work on Hackathon Challenges                        |
-| 12:45 - 14:00 | Lunch                                               |
-| 14:00 - 17:30 | Work on Hackathon Challenges                        |
-| 17:30 - 17:45 | Results, Final Remarks                              |
+| Time (CET)    | Session                                             | Presenter          |
+| ------------- | --------------------------------------------------- | ------------------ |
+| 10:00 - 10:15 | Overview of Hackathon Challenges                    |                    |
+| 10:15 - 11:30 | Work on Hackathon Challenges                        |                    |
+| 11:30 - 11:45 | Break                                               |                    |
+| 11:45 - 12:45 | Work on Hackathon Challenges                        |                    |
+| 12:45 - 14:00 | Lunch                                               |                    |
+| 14:00 - 14:45 | Guest Talk: Quarantine Project <br /> CoF (Rowhammer Defense)                                         | Manuel Wiesinger / Mathe Hertogh <br /> Andrea Di Dio                   |
+| 14:45 - 17:30 | Work on Hackathon Challenges                        |                    |
+| 17:30 - 17:45 | Results, Final Remarks                              |                    |
