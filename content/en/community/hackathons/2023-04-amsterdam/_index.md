@@ -22,7 +22,7 @@ To take part in the hackathon please fill this [registration form](https://forms
 
 Please bring your own laptop.
 It's best if you have a native Linux installed on your laptop.
-For any situation, we will have virtual machines ready, to be able to get hacking quickly and easily.
+Otherwise, please install [this virtual machine](https://drive.google.com/file/d/1u5DtN5kMPWxBU8UdBfnZ7DNRP2n6oiTy/view?usp=share_link).
 
 ### People
 
