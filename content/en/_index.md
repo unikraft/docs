@@ -10,6 +10,7 @@ landing:
     text: Unikraft releases v0.12.0 (Epimetheus)!
     link: /blog/2023-02-07-unikraft-releases-epimetheus
   viewOnGithub: View on GitHub
+  joinDiscord: Join Discord
   whatsAUnikraft: What's a unikernel?
   leading: Unikraft is a fast, secure and open-source Unikernel Development Kit
   subtext: By tailoring the operating system, libraries and configuration to the particular needs of your application, it vastly reduces virtual machine and container image sizes to a few KBs, provides blazing performance, and drastically cuts down your software stack's attack surface.
