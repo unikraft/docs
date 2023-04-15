@@ -1,8 +1,6 @@
 For this tutorial, the aim is to create a simple QEMU / KVM application that reads from a file and displays the contents to standard output.
 A local directory is to be mounted as the root directory (`/`) inside the QEMU / KVM virtual machine.
 
-Some parts of this tutorial were already discussed in [Session 01: Baby Steps](community/hackathons/sessions/baby-steps).
-
 We will use both the manual approach (`make` and `qemu-system-x86_64` / `qemu-guest`) and `kraft` to configure, build and run the application.
 
 #### Setup
