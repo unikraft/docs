@@ -44,6 +44,10 @@ weigth: 20
 
 {{< readfile file="/community/hackathons/sessions/behind-scenes/content/Overview_06.-The-Build-System---basics.md" markdown="true" >}}
 
+### 07. Running Unikraft
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Overview_07.-Running-Unikraft.md" markdown="true" >}}
+
 ## Summary
 
 {{< readfile file="/community/hackathons/sessions/behind-scenes/content/Summary.md" markdown="true" >}}
@@ -58,9 +62,33 @@ weigth: 20
 
 {{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-Tutorial---Reminder:-Building-and-Running-Unikraft.md" markdown="true" >}}
 
+#### Set Up
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-Set-Up.md" markdown="true" >}}
+
+#### linuxu, x86_64
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-linuxu-x86_64.md" markdown="true" >}}
+
+#### KVM, x86_64
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-KVM-x86_64.md" markdown="true" >}}
+
+#### KVM, ARM
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-KVM-ARM.md" markdown="true" >}}
+
 ### 02. Tutorial: Make It Speak
 
 {{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_02.-Tutorial:-Make-It-Speak.md" markdown="true" >}}
+
+#### KVM, x86_64
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_02.-KVM-x86_64.md" markdown="true" >}}
+
+#### KVM, ARM
+
+{{< readfile file="/community/hackathons/sessions/behind-scenes/content/Work-Items_01.-KVM-ARM.md" markdown="true" >}}
 
 ### 03. More Messages
 
