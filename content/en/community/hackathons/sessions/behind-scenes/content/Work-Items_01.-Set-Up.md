@@ -13,7 +13,7 @@ That is a hierarchy with:
 * `apps/` storing folders for applications
 * `libs/` storing folders for libraries
 
-You would usually only have a single such hierarchy and add applications and / or libraries in their respective folders and use a single clone of the [`unikraft` repository].
+You would usually only have a single such hierarchy and add applications and / or libraries in their respective folders and use a single clone of the [`unikraft` repository](https://github.com/unikraft/unikraft).
 We create this hierarchy, if not having it created already, by using the commands:
 
 ```console

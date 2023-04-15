@@ -1,10 +1,10 @@
 Session support files are available [in the repository](https://github.com/unikraft/docs.git).
-If you already cloned the repository, update it and enter the session directory:
+If you haven't cloned the repository yet, clone it and enter the session directory:
 
 ```console
-$ cd path/to/repository/clone
+$ git clone https://github.com/unikraft/docs.git
 
-$ git pull --rebase
+$ cd docs/
 
 $ cd content/en/community/hackathons/sessions/behind-scenes/
 
@@ -12,12 +12,13 @@ $ ls
 demo  images  index.md  sol  work
 ```
 
-If you haven't cloned the repository yet, clone it and enter the session directory:
+Otherwise, if you already cloned the repository, update it and enter the session directory.
+Assuming the session directory is `path/to/repository/clone`, do the following:
 
 ```console
-$ git clone https://github.com/unikraft/docs.git
+$ cd path/to/repository/clone
 
-$ cd docs/
+$ git pull --rebase
 
 $ cd content/en/community/hackathons/sessions/behind-scenes/
 
