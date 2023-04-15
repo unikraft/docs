@@ -19,10 +19,6 @@ summary: "Run Linux ELF binaries on top of Unikraft using the binary compatibili
 
 ## Work Items
 
-### Support Files
-
-{{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_Support-Files.md" markdown="true" >}}
-
 ### 00. Setup
 
 {{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_00.-Setup.md" markdown="true" >}}
@@ -31,11 +27,15 @@ summary: "Run Linux ELF binaries on top of Unikraft using the binary compatibili
 
 {{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_01.-Run-Binary-Applications.md" markdown="true" >}}
 
-### 02. Debug Run
+### 02. Build `app-elfloader`
 
-{{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_02.-Debug-Run.md" markdown="true" >}}
+{{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_02.-Build-app-elfloader.md" markdown="true" >}}
 
-### 03. Create your Own Application
+### 03. Doing It Manually
+
+{{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_03.-Doing-It-Manually.md" markdown="true" >}}
+
+### 04. Create your Own Application
 
 {{< readfile file="/community/hackathons/sessions/bincompat/content/Work-Items_06.-Create-your-Own-Application.md" markdown="true" >}}
 

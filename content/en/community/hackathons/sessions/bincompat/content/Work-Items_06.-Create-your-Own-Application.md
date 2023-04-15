@@ -1,4 +1,3 @@
-Create your own application as a static PIE ELF file.
-Use a programming language that provides static PIE ELF files.
+Create your own application or get an existing application, build it and run it in binary compatability mode.
 
-Run it with the `app-elfloader`.
+See the existing examples in [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps) or [the `static-pie-apps` repository](https://github.com/unikraft/static-pie-apps).
