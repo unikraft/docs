@@ -12,7 +12,7 @@ image: /assets/imgs/2023-05-hack-porto.jpg
 Unikraft, [Faculdade de Engenharia Universidade do Porto](https://sigarra.up.pt/feup/en/web_page.Inicial) and University of Porto Faculty of Engineering ACM Student Chapter come together to organize the **Unikraft Porto Hackathon** to be held on Wednesday and Thursday, May 10-11, 2023.
 
 The hackathon will take place as an in-person event at [Faculdade de Engenharia Universidade do Porto](https://sigarra.up.pt/feup/en/web_page.Inicial).
-The full address is: [Rua Dr. Roberto Frias, s/n, 4200-465 Porto, Portugal](https://goo.gl/maps/k9zQPvJWuGskFfBc9).
+The full address is: [Rua Dr. Roberto Frias, s/n, 4200-465 Porto, Portugal](https://goo.gl/maps/A6FLVC7WCDuzxpe86).
 
 Support information and discussions will take place on [Discord](http://bit.ly/UnikraftDiscord) on the `#hack-porto23` channel.
 
@@ -32,7 +32,7 @@ The hosts of the hackathon are:
 * [Pedro Diniz](https://sigarra.up.pt/feup/pt/func_geral.formview?p_codigo=672712)
 * [Pedro Souto](https://sigarra.up.pt/feup/en/func_geral.formview?p_codigo=238172)
 * [João Mendes Moreira](https://dei.fe.up.pt/mdse/portfolio/director/)
-* <a href="mailto:neacm@fe.up.pt">Tiago Filipe Castro Viana</a>
+* [Tiago Filipe Castro Viana](https://github.com/tiagofcviana)
 
 As part of the Unikraft community, [Ștefan Jumărea](https://github.com/StefanJum) and [Edi Vintilă](https://github.com/eduardvintila) will be present on-site, with other community members providing support online, on Discord.
 
