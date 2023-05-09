@@ -9,7 +9,7 @@ sudo dnsmasq -d \
              --listen-addr=172.44.0.1 \
              --dhcp-range=172.44.0.2,172.44.0.254,255.255.255.0,12h &> dnsmasq.logs &
 
-./qemu-guest.sh -k ./build/app-nginx_kvm-x86_64 \
+./qemu-guest.sh -k ./build/app-nginx_qemu-x86_64 \
                 -a "" \
                 -b kraft0 \
                 -e ./nginx_files \
