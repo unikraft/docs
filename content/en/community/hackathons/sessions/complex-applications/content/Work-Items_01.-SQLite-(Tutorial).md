@@ -103,7 +103,7 @@ Up next, create a folder in the application folder called `sqlite_files/` and wr
 When you run the application, you can specify the path of the newly created folder to the `qemu-guest` script as following:
 
 ```console
-$ ./qemu-guest -k ./build/app-sqlite_kvm-x86_64 \
+$ ./qemu-guest -k ./build/app-sqlite_qemu-x86_64 \
                -e ./sqlite_files \
                -m 500
 ```

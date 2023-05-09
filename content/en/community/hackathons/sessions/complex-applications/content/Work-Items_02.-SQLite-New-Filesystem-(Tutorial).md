@@ -23,7 +23,7 @@ We'll obtain a `cpio` archive called `archive.cpio` in the parent directory.
 Next, we run the following `qemu-guest` command to run the instance:
 
 ```console
-$ ./qemu-guest -k build/app-sqlite_kvm-x86_64 -m 100 -i archive.cpio
+$ ./qemu-guest -k build/app-sqlite_qemu-x86_64 -m 100 -i archive.cpio
 ```
 
 If everything runs as expected, then we'll get the following output:
