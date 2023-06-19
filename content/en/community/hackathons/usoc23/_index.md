@@ -20,7 +20,7 @@ The workshops will be followed by a full day hackathon which will be held online
 
 If you're eager to learn more about operating systems and unikernels, to work on practical open source tasks, to expand your knowledge of low-level topics, you'll want to be part of USoC'23.
 To take part in the event, please fill this [registration form](https://forms.gle/ZUVLnkb6YNWhr9Cp8).
-You will need to complete a set of challenges by June 15, 2023, 23:55 CEST, that will get you accustomed to the environment you will be using during the sessions.
+You will need to complete a set of challenges by June 21, 2023, 23:55 CEST, that will get you accustomed to the environment you will be using during the sessions.
 
 It's recommended you check these prerequisites before taking part in USoC'23:
 
