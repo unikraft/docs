@@ -7,6 +7,9 @@ tags = ["GSoC'23", "VS Code", "IDE Extension"]
 
 <img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-2023-badge.svg" align="right" />
 
+
+# GSoC'23: Enhancing VS Code Developer Experience
+
 ## Motivation
 
 The VS Code Extension for Unikraft enables developers to quickly and painlessly build unikernels from the VS Code IDE.
@@ -35,4 +38,4 @@ This project aims to achieve the following outcomes:
 
 ## About Me
 
-I'm [Md Sahil](https://github.com/MdSahil-oss), a third year undergraduate student of Computer Science Engineering at [Maharshi Dayanand University](https://mdu.ac.in/).
+I'm [Md Sahil](https://github.com/MdSahil-oss), A third year undergraduate student of Computer Science Engineering at [Maharshi Dayanand University](https://mdu.ac.in/).
