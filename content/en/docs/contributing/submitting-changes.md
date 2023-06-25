@@ -136,6 +136,21 @@ Each author should have their name added as part of the respective commit.
 Unikraft OSS project adopts a similar process seen with the Linux kernel, where a new merge request or PR can have multiple authors, multiple reviewers, testers, acknowledgements and more.
 
 Each author **must** add a `Signed-off-by` message, in order to certify that the submission is published under the [`DCO`](docs/contributing/submitting-changes/#developers-certificate-of-origin).
+The co-authors should also add a `Co-authored-by` line to the commit message.
+This should be done for every author except the one that actually created the commit, so the output of `git log` will look something like this:
+
+```console
+Author: Author Name <author-email>
+Date: [...]
+
+    [...]
+
+    Co-authored-by: Co-Author 1 Name <co-author-1-email>
+    Co-authored-by: Co-Author 2 Name <co-author-2-email>
+    Signed-off-by: Author Name <author-email>
+    Signed-off-by: Co-Author 1 Name <co-author-1-email>
+    Signed-off-by: Co-Author 2 Name <co-author-2-email>
+```
 
 ## Rebasing and Squashing
 
