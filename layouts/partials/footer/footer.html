@@ -31,14 +31,17 @@
       </div>
     </div>
     <div class="border-t border-blue-800 pt-8 lg:flex lg:items-center lg:justify-between xl:mt-0">
-      <div class="mb-8 lg:mb-0">
+      <div class="mb-8 xl:pr-8 lg:mb-0">
         <p class="text-base text-blue-500">
           {{ .funding | markdownify }}
         </p>
       </div>
-      <div class="flex max-w-md grid-cols-2 gap-6 items-end">
+      <div class="flex min-w-max grid-cols-2 gap-6 items-end">
         <a href="http://unicore-project.eu/">
           <img class="h-12" src="/assets/imgs/unicore-project.svg" />
+        </a>
+        <a href="http://accordion-project.eu/" class="flex-shrink-0">
+          <img class="h-12" src="https://www.accordion-project.eu/wp-content/uploads/2020/03/cropped-ACCORDION-logo.png" />
         </a>
         <img class="h-12" src="/assets/imgs/european-union.svg" />
       </div>
