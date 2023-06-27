@@ -133,6 +133,6 @@ footer:
           link: /docs/features/green
         - title: POSIX-Compatibility
           link: /docs/features/posix-compatibility
-  funding: Partly funded by the <span class="font-medium">European Union's Horizon 2020</span> research and innovation programme trough the <a class="font-medium hover:underline hover:text-white" href="http://unicore-project.eu/">UNICORE project</a>, grant agreeent No. 825377.
+  funding: Partly funded by the European Union’s Horizon 2020 research and innovation programme trough the <a class="font-medium hover:underline hover:text-white" href="http://unicore-project.eu/">UNICORE project</a>, grant agreeent No. 825377, and <a class="font-medium hover:underline hover:text-white" href="https://www.accordion-project.eu/">ACCORDION project</a>, grant agreement No. 871793.
   copyright: "&copy; {year} The Unikraft Authors. All rights reserved. Documentation distributed under CC BY-NC 4.0."
 ---
