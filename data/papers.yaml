@@ -13,6 +13,7 @@
 - title: "FlexOS: Towards Flexible OS Isolation"
   venue: ACM ASPLOS'22
   year: 2022
+  link: https://dl.acm.org/doi/10.1145/3503222.3507759
   pdf: https://arxiv.org/pdf/2112.06566.pdf
   slides: https://unikraft.org/assets/files/asplos2022-slides.pdf
   authors:
