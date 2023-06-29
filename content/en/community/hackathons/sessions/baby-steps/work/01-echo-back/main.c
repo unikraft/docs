@@ -6,32 +6,43 @@
 #include <unistd.h>
 #include <errno.h>
 
+/* TODO bonus : add logger header */
+
 #define BUFLEN 100
 #define LISTEN_PORT 1234
 
+/* TODO bonus: add a log_manager as parameter of this function */
 int receive_and_send(int client_recvfd, int client_sendfd)
 {
 	char buf[BUFLEN];
-	int bytes_send;
+	int bytes_send = 0;
 	int bytes_received = 0;
 
 	memset(buf, 0, BUFLEN);
 
-	// TODO:  recv() buffer into buf;
-	// bytes_received = ...
+	/* TODO: recv() buffer into buf; */
+	/* bytes_received = ...*/
 
 	if (bytes_received < 0) {
 		fprintf(stderr, "bytes_received recv");
 		return -1;
 	}
 
-	// TODO: send() buf back;
-	// bytes_send = ...
+	/* TODO: send() buf back */
+	/* bytes_send = ... */	
 
 	if (bytes_send < 0) {
 		fprintf(stderr, "bytes_send send");
 		return -1;
 	}
+
+	/* TODO bonus: parse commands */
+	if (!strncmp(buf, "view logs", strlen("view logs"))) {}
+	else if (!strncmp(buf, "delete logs", strlen("delete logs"))) {}
+	else if (!strncmp(buf, "enable logs", strlen("enable logs"))) {}
+	else if (!strncmp(buf, "disable logs", strlen("disable logs"))) {}
+
+	/* TODO: if we receive a string different from the commads above write it in a file */
 
 	return bytes_received;
 }
@@ -42,8 +53,12 @@ int main(int argc, char* argv[])
 	int err;
 	struct sockaddr_in serv_addr;
 
-	// TODO: open socket fd;
-	// listen_fd = ...
+	/* TODO bonus: declare a log manager*/
+
+	/* TODO: open socket fd; */
+	/* listen_fd = ... */
+
+	/* TODO bonus: create a log_manager structure */
 
 	if (listen_fd < 0) {
 		fprintf(stderr, "socket");
@@ -60,8 +75,8 @@ int main(int argc, char* argv[])
 	serv_addr.sin_port = htons(LISTEN_PORT);
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 
-	// TODO: bind() the socket;
-	// err = ...
+	/* TODO: bind() the socket; */
+	/* err =  ... */
 
 	if (err < 0) {
 		fprintf(stderr, "bind");
@@ -76,8 +91,8 @@ int main(int argc, char* argv[])
 
 	listen(listen_fd, 1);
 
-	// TODO: accept() new connection;
-	// conn_fd = ...
+	/* TODO: accept() new connection; */
+	/* conn_fd = ... */
 
 	if (conn_fd < 0) {
 		fprintf(stderr, "conn_fd accept");
@@ -85,10 +100,13 @@ int main(int argc, char* argv[])
 	}
 
 	do {
+		/* TODO bonus: add a log_manager as argument of this function */
 		bytes_received = receive_and_send(conn_fd, conn_fd);
 	} while (bytes_received > 0);
 
-	// TODO: close file descriptors
+	/* TODO: close file descriptors */
+
+	/* TODO bonus: destroy the log manager */
 
 	return 0;
 }

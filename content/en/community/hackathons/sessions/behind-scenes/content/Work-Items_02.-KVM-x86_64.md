@@ -36,9 +36,29 @@ $ make -j $(nproc)
 **Run the Unikraft Application**
 
 ```console
-$ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_kvm-x86_64 -nographic
+$ sudo qemu-system-x86_64 -kernel ./build/app-helloworld_qemu-x86_64 -nographic
 ```
 
-We see what timer is used, the `i8254` one.
-Also, we see that the PCI bus is used.
-And other boot-related items.
+```console
+Booting from ROM..[    0.000000] Info: [libkvmplat] <setup.c @  245> Memory 00fd00000000-010000000000 outside mapped area                             
+[    0.000000] Info: [libkvmplat] <bootinfo.c @   56> Unikraft Atlas (0.13.1~28d0edfe)                                                                
+[    0.000000] Info: [libkvmplat] <bootinfo.c @   59> Architecture: x86_64                                                                            
+[    0.000000] Info: [libkvmplat] <bootinfo.c @   62> Boot loader : qemu-multiboot                                                                    
+[    0.000000] Info: [libkvmplat] <bootinfo.c @   67> Command line: ./build/app-helloworld_qemu-x86_64
+[...]
+[    0.000000] Info: [libukboot] <boot.c @  288> Initialize memory allocator...
+[    0.000000] Info: [libukallocbbuddy] <bbuddy.c @  515> Initialize binary buddy allocator 183000
+[    0.000000] Info: [libukboot] <boot.c @  313> Initialize IRQ subsystem...
+[    0.000000] Info: [libukboot] <boot.c @  320> Initialize platform time...
+[    0.000000] Info: [libkvmplat] <tscclock.c @  255> Calibrating TSC clock against i8254 timer
+[...]
+[    0.111088] Info: [libukboot] <boot.c @  369> Pre-init table at 0x120060 - 0x120060
+[    0.111823] Info: [libukboot] <boot.c @  380> Constructor table at 0x120060 - 0x120060
+[    0.112619] Info: [libukboot] <boot.c @  401> Calling main(1, ['./build/app-helloworld_qemu-x86_64'])
+Hello world
+[    0.114181] Info: [libukboot] <boot.c @  410> main returned 0, halting system
+[    0.115266] Info: [libkvmplat] <shutdown.c @   35> Unikraft halted
+```
+
+We now see some information about what happens from the booting process until the application actually starts.
+Furthermore, we are able to see all the initialization performed and how much they take. 

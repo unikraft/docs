@@ -15,7 +15,7 @@ $ make
 To run Unikraft, use the following command:
 
 ```console
-$ sudo qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel ./build/app-helloworld_kvm-arm64 -nographic
+$ sudo qemu-system-aarch64 -machine virt -cpu cortex-a57 -kernel ./build/app-helloworld_qemu-arm64 -nographic
 ```
 
 Note that now we need to provide a machine and a CPU model to be emulated, as there are no defaults available.

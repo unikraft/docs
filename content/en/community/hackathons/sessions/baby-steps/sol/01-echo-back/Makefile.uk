@@ -3,3 +3,4 @@ $(eval $(call addlib,echoback))
 ECHOBACK_SRCS-y += $(ECHOBACK_BASE)/main.c
 
 # TODO: add the file with operations for the log mananger
+ECHOBACK_SRCS-y += $(ECHOBACK_BASE)/log_manager.c
