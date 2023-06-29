@@ -81,4 +81,4 @@ $ time sudo qemu-system-x86_64 -enable-kvm -cpu host -kernel ./build/app-hellowo
 
 Because `helloworld` is a simple application, the **real** running time will be similar.
 The differences are where each image runs most of its time: in user space, or in kernel space.
-As a task for you, find an explanation to the differences.
+As a task for you, find an explanation for the differences.

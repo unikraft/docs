@@ -9,7 +9,7 @@ kvm_image="$1"
 fs_tag="fs0"
 local_fs_dir="./guest_fs/"
 
-echo "Starting KVM image $kvm_image mounting "$local_fs_dir" ..."
+echo "Starting QEMU image $kvm_image mounting "$local_fs_dir" ..."
 sudo qemu-system-x86_64  -fsdev local,id=myid,path=$(pwd)/"$local_fs_dir",security_model=none \
     -device virtio-9p-pci,fsdev=myid,mount_tag="$fs_tag",disable-modern=on,disable-legacy=off \
     -kernel "$kvm_image" \

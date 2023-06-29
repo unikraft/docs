@@ -1,5 +1,3 @@
-#### Linuxu, x86_64
-
 We build the Unikraft `helloworld` image for the **linuxu** platform, for the **x86_64** architecture.
 We follow the steps:
 
