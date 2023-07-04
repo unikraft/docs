@@ -34,6 +34,7 @@ LABEL maintainer "Alexander Jung <a.jung@lancs.ac.uk>"
 ARG HUGO_VER=0.98.0
 ARG GO_VER=1.18.3
 ARG GO_ARCH=amd64
+ARG NODE_VER=14
 ARG BUILD_REF=latest
 
 RUN mkdir /usr/src/docs
@@ -47,11 +48,11 @@ RUN set -xe; \
       g++ \
       lsb-release \
       gnupg; \
-    curl -sLf -o /dev/null 'https://deb.nodesource.com/node_12.x/dists/buster/Release'; \
+    curl -sLf -o /dev/null "https://deb.nodesource.com/node_${NODE_VER}.x/dists/buster/Release"; \
     curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -; \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -; \
-    echo 'deb https://deb.nodesource.com/node_12.x buster main' > /etc/apt/sources.list.d/nodesource.list; \
-    echo 'deb-src https://deb.nodesource.com/node_12.x buster main' >> /etc/apt/sources.list.d/nodesource.list; \
+    echo "deb https://deb.nodesource.com/node_${NODE_VER}.x buster main" > /etc/apt/sources.list.d/nodesource.list; \
+    echo "deb-src https://deb.nodesource.com/node_${NODE_VER}.x buster main" >> /etc/apt/sources.list.d/nodesource.list; \
     echo 'deb https://dl.yarnpkg.com/debian/ stable main' >> /etc/apt/sources.list.d/yarn.list; \
     apt-get update; \
     apt-get install -y \
