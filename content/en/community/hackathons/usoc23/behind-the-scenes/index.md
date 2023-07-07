@@ -1,7 +1,7 @@
 ---
 title: Session 03 - Behind the Scenes
 linkTitle: Working with Unikraft
-weight: 5
+weight: 3
 summary: |
   Interacting with Unikraft by modifying configs and writing first lines of code.
   Expected time: 100 minutes

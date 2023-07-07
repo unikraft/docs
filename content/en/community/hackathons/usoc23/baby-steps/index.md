@@ -1,7 +1,7 @@
 ---
 title: Session 02 - Baby Steps
 linkTitle: Bulding Unikernels
-weight: 5
+weight: 2
 summary: |
   We start presenting the modular architecture of Unikraft and how students can build their unikernels using the manual, `make`-based approach.
   Expected time: 100 minutes
