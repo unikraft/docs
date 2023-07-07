@@ -2,6 +2,7 @@
 title: "Registration Challenges"
 date: 2023-04-12T01:10:00+02:00
 draft: false
+weight: 20
 collapsible: true
 description: Unikraft Summer of Code 2023, Registration Challenges
 ---

@@ -1,7 +1,7 @@
 ---
 title: Session 01 - Overview of Unikraft
 linkTitle: Setting Up Unikraft
-weight: 5
+weight: 1
 summary: |
   We present the initial steps in setting up the Unikraft development / usage environment.
   Students will use the basic Unikraft toolchain to set up, configure, build and run Unikraft images.
