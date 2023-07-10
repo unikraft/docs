@@ -2,71 +2,79 @@ Now we have everything set up.
 We can start an iterative process of building the target unikernel with the application.
 This process is usually very iterative because it requires building the unikernel step-by-step, including new files to the build, making adjustments, and re-building, etc.
 
-1. The first thing we must do before we start is to check that fetching the remote code for `iperf3` is possible.
-   Let's try and do this by running in our application workspace:
-
-   ```console
-   $ cd ~/workspace/apps/iperf3
-   $ kraft fetch
-   ```
-
-   If this is successful, we should see it download the remote `zip` file and we should see it saved within our Unikraft application's `build/`.
+1. The first thing we must do before we start is to check that fetching the remote code for `iperf3` worked.
    The directory with the extracted contents should be located at:
 
    ```console
-   $ ls -lsh build/libiperf3/origin/iperf-3.10.1/
-   ```
-   ```
-   total 988K
-    12K -rw-r--r-- 1 root root 9.3K Jun  2 22:29 INSTALL
-    12K -rw-r--r-- 1 root root  12K Jun  2 22:29 LICENSE
-   4.0K -rw-r--r-- 1 root root   23 Jun  2 22:29 Makefile.am
-    28K -rw-r--r-- 1 root root  26K Jun  2 22:29 Makefile.in
-   8.0K -rw-r--r-- 1 root root 6.5K Jun  2 22:29 README.md
-    32K -rw-r--r-- 1 root root  31K Jun  2 22:29 RELNOTES.md
-   368K -rw-r--r-- 1 root root 365K Jun  2 22:29 aclocal.m4
-   4.0K -rwxr-xr-x 1 root root 2.0K Jun  2 22:29 bootstrap.sh
-      0 drwxr-xr-x 2 root root  260 Jun  2 22:29 config
-   496K -rwxr-xr-x 1 root root 494K Jun  2 22:29 configure
-    12K -rw-r--r-- 1 root root  11K Jun  2 22:29 configure.ac
-      0 drwxr-xr-x 2 root root  140 Jun  2 22:29 contrib
-      0 drwxr-xr-x 3 root root  280 Jun  2 22:29 docs
-      0 drwxr-xr-x 2 root root  120 Jun  2 22:29 examples
-   4.0K -rw-r--r-- 1 root root 3.0K Jun  2 22:29 iperf3.spec.in
-   4.0K -rwxr-xr-x 1 root root 1.2K Jun  2 22:29 make_release
-      0 drwxr-xr-x 2 root root  980 Jun  2 22:29 src
-   4.0K -rwxr-xr-x 1 root root 1.9K Jun  2 22:29 test_commands.sh
+   $ ls -lsh build/libiperf3/origin/iperf-3.14/
+   total 1,0M
+   372K -rw-r--r-- 1 stefan stefan 367K iul  8 00:47 aclocal.m4
+   4,0K -rwxr-xr-x 1 stefan stefan 1,5K iul  8 00:47 bootstrap.sh
+   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 config
+   504K -rwxr-xr-x 1 stefan stefan 499K iul  8 00:47 configure
+   12K -rw-r--r-- 1 stefan stefan  11K iul  8 00:47 configure.ac
+   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 contrib
+   4,0K drwxr-xr-x 3 stefan stefan 4,0K iul  8 00:47 docs
+   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 examples
+   12K -rw-r--r-- 1 stefan stefan 9,3K iul  8 00:47 INSTALL
+   4,0K -rw-r--r-- 1 stefan stefan 1,5K iul  8 00:47 iperf3.spec.in
+   12K -rw-r--r-- 1 stefan stefan  12K iul  8 00:47 LICENSE
+   4,0K -rw-r--r-- 1 stefan stefan   23 iul  8 00:47 Makefile.am
+   28K -rw-r--r-- 1 stefan stefan  26K iul  8 00:47 Makefile.in
+   4,0K -rwxr-xr-x 1 stefan stefan 1,2K iul  8 00:47 make_release
+   8,0K -rw-r--r-- 1 stefan stefan 6,4K iul  8 00:47 README.md
+   36K -rw-r--r-- 1 stefan stefan  36K iul  8 00:47 RELNOTES.md
+   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 src
+   4,0K -rwxr-xr-x 1 stefan stefan 2,0K iul  8 00:47 test_commands.sh
    ```
 
    If this has not worked, you must fiddle with the preamble at the top of the library's `Makefile.uk` to ensure that correct paths are being set.
-   Remove the `build/` directory and try `fetching` again.
+   Remove the `build/` directory and try `make fetch` again.
 
 1. Now that we can fetch the remote sources, `cd` into this directory and perform the `./configure` step as above.
    This will do two things for us.
-   The first is that it will generate (and this is very common for C-based programs) a `config.h` file.
+   The first is that it will generate (and this is very common for C-based programs) a `config.h` file:
+
+   ```console
+   $ cd build/libiperf3/origin/iperf-3.14/
+   $ ./configure
+   [...]
+   config.status: creating src/version.h
+   config.status: creating examples/Makefile
+   config.status: creating iperf3.spec
+   config.status: creating src/iperf_config.h
+   config.status: executing depfiles commands
+   config.status: executing libtool commands
+
+   $ ls -sl src/iperf_config.h
+   8 -rw-rw-r-- 1 stefan stefan 4246 iul 10 19:51 src/iperf_config.h
+   ```
+
    This file is a list of macro flags which are used to include or exclude lines of code by the preprocessor.
    If the program has one of these, we need it.
 
-   `iperf3` has an `iperf_config.h` file, so let's copy this file into our Unikraft port of the application.
+   Let's copy this file into our Unikraft port of the application.
    Make an `include/` directory in the library's repository and copy the file:
 
-   ```
-   $ mkdir ~/workspace/libs/iperf3/include
-   $ cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workspace/libs/iperf3/include
+   ```console
+   $ mkdir ~/workdir/app-iperf/.unikraft/libs/iperf3/include
+   $ cp build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workdir/app-iperf/.unikraft/libs/iperf3/include
    ```
 
-   Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that this directory exists:
+   Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that this directory exists, and should be used as a location to look for header files:
+   Add this line in the `.unikraft/libs/iperf3/Makefile.uk` file:
+
    ```Makefile
    LIBIPERF3_CINCLUDES-y += -I$(LIBIPERF3_BASE)/include
    ```
 
-   We'll come back to `iperf_config.h`: likely it needs edits from us to turn features on or off depending on availability or applicability based on the unikernel-context.
-   We can also wrap build options here (see [exercise 2](#02-add-fortunes-to-unikrafts-boot-sequence)).
+   We'll come back to `iperf_config.h`;
+   likely it needs edits from us to turn features on or off depending on availability or applicability based on the unikernel-context.
 
 1. Next, let's run `make` with a special flag:
 
    ```console
-   $ cd build/libiperf3/origin/iperf-3.10.1/
+   $ cd build/libiperf3/origin/iperf-3.14/
    $ make -n
    ```
 
@@ -92,7 +100,7 @@ This process is usually very iterative because it requires building the unikerne
    LIBIPERF3_CFLAGS-y += -Wno-unused-parameter
    ```
 
-1. We have a full list of files for `iperf3` from step 3.
+1. We have a full list of files for `iperf3` from the previous step.
    We can add them as known source files like so to the Unikraft port of `iperf3`'s `Makefile.uk`:
 
    ```Makefile
@@ -105,16 +113,16 @@ This process is usually very iterative because it requires building the unikerne
 
    **Note:** The path in the variable `LIBIPERF3_SRC` may need to be adjusted from the boilerplate code to match the layout of the application you are porting.
 
-   **Tip:** It's best to add these files iteratively, i.e. one by one, and attempt the compilation process (step 5) in between adding all files.
-   This will show you errors about what's missing and you can accurately determine which files are truly necessary for the build.
+   **Tip:** It's best to add these files iteratively, i.e. one by one, and attempt the compilation process (next step) in between adding all files.
+   This will show you errors about what's missing, and you can accurately determine which files are truly necessary for the build.
    In addition to this, we can also find intermittent errors which will be the result of incompatibilities between Unikraft and the application in question (covered in the next section on making patches).
 
 1. Now that we have added all the source files, let's try and build the application!  This step, again, usually occurs iteratively along with the previous step of adding a new file one by one.
    Because the application has been configured and we have fetched the contents, we can simply try running the build in the Unikraft application directory:
 
    ```console
-   $ cd ~/workspace/apps/iperf3
-   $ kraft build
+   $ cd ~/workdir/app-iperf3
+   $ make
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.

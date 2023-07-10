@@ -1,4 +1,4 @@
-Test the resulted library by calling the test function from the `app-kdtree` application.
+Test the resulting library by calling the test function from the `app-kdtree` application.
 If you did everything correctly, the output of the application should look something like this:
 
 ```text
@@ -27,4 +27,4 @@ Total tests : 2
 Total errors: 0
 ```
 
-**Note**: Don't forget to include the updated library header in the main application file.
+**Note**: Remember to include the updated library header in the main application file.

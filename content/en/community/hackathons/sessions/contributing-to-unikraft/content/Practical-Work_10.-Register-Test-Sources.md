@@ -2,4 +2,4 @@ Moving back to the library's `Makefile.uk`, register the tests sources to the bu
 
 **Note**: Inspect the functions from the tests.
 
-**Hint**: Use preprocessing symbols to rename the tests main functions, in order to use them later.
+**Hint**: Use preprocessing symbols (`-D` `gcc` flag) to rename the tests main functions, in order to use them later.

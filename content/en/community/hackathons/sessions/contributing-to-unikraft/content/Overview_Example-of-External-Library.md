@@ -1,10 +1,10 @@
 Let's focus for now on an already ported library: [lib-libhogweed](https://github.com/unikraft/lib-libhogweed).
 Let's examine its core components.
-Go to the `work/01-tut-porting/libs/libhogweed/` directory and follow the bookmarks marked with `USOC_X`, where `X` is the index of the item in the list, from the files specified in the sections below.
+Go to the `work/01-tut-porting/app-libhogweed/.unikraft/libs/libhogweed/` directory and follow the bookmarks marked with `USOC_X`, where `X` is the index of the item in the list, from the files specified in the sections below.
 
 #### Glue Code
 
-In some cases, not all the dependencies of an external library are already present in the Unikraft project, so the solution is to add them manually, as glue code, to the library's sources.
+In some cases, not all the code requirements of an external library are already present in the Unikraft project, so the solution is to add them manually, as glue code, to the library's sources.
 
 Another situation when we need glue code is when the ported library comes with test modules, used for testing the library's functionalities.
 The goal, in this case, is to wrap all the test modules into one single function.
@@ -26,27 +26,27 @@ Moving to the source code, `libhogweed/Config.uk`, we have:
 
    ```config
    menuconfig LIBHOGWEED
-   	bool "libhogweed - Public-key algorithms"
-   	default n
+    bool "libhogweed - Public-key algorithms"
+    default n
    ```
 
-1. We can also set another library's main variable, in this case `newlib`, which involves including it in the build process:
+1. We can also set another library's main variable, in this case `musl`, which involves including it in the build process:
 
    ```config
-   select LIBNEWLIBC
+   select LIBMUSL
    ```
 
 1. Creating an auxiliary menu, containing all the test cases:
 
    ```config
    config TESTSUITE
-   		bool "testsuite - tests for libhogweed"
-   		default n
-   		if TESTSUITE
-   			config TEST_X
-   				bool "test x functionality"
-   				default y
-   		endif
+      bool "testsuite - tests for libhogweed"
+      default n
+      if TESTSUITE
+        config TEST_X
+          bool "test x functionality"
+          default y
+      endif
    ```
 
    Each test case has its own variable in order to allow testing just some functions from the whole suite.
@@ -84,7 +84,7 @@ The `libhogweed/Makefile.uk` file is used to:
 1. Set the locations where the headers are searched:
 
    ```make
-   // including the path of the glue header added by us
+   # including the path of the glue header added by us
    LIBHOGWEED_COMMON_INCLUDES-y += -I$(LIBHOGWEED_BASE)/include
    ```
 
@@ -129,7 +129,7 @@ The `libhogweed/Makefile.uk` file is used to:
 
    ```make
    $(LIBHOGWEED_EXTRACTED)/config.h: $(LIBHOGWEED_BUILD)/.origin
-   	$(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
+    $(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
            cd $(LIBHOGWEED_EXTRACTED) && ./configure --enable-mini-gmp \
        )
    LIBHOGWEED_PREPARED_DEPS = $(LIBHOGWEED_EXTRACTED)/config.h

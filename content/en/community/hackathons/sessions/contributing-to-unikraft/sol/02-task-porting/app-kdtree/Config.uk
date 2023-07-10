@@ -4,7 +4,6 @@ config APPKDTREE_DEPENDENCIES
 	default y
 	select ARCH_X86_64
 	select PLAT_KVM
-	select PLAT_LINUXU
-	select LIBNEWLIBC
+	select LIBMUSL
 	select LIBKDTREE
 	select BUILD_TESTS
