@@ -1,13 +1,9 @@
 #!/bin/bash
 
-if test ! -d unikraft; then
-    git clone https://github.com/unikraft/unikraft
+if test ! -d app-libhogweed/.unikraft/unikraft; then
+    git clone https://github.com/unikraft/unikraft app-libhogweed/.unikraft/unikraft
 fi
 
-test -d unikraft/.git && rm -fr unikraft/.git
-
-if test ! -d libs/newlib; then
-    git clone https://github.com/unikraft/lib-newlib libs/newlib
+if test ! -d ./app-libhogweed/.unikraft/libs/musl; then
+    git clone https://github.com/unikraft/lib-musl ./app-libhogweed/.unikraft/libs/musl
 fi
-
-test -d libs/newlib/.git && rm -fr libs/newlib/.git
