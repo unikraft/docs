@@ -38,7 +38,8 @@ In contrast, Unikraft has the explicit aim of targeting real-world deployments, 
 ## Unikraft Security Features
 
 In Unikraft, most of the core security features have been merged or are pending merge (e.g., ASLR / PIE, stack protection, ARM pointer authentication, etc.).
-This effort is by nature a continuous, community-driven task, but we are expecting completion of most core security features by the end of 2022. An overview of the state of security feature support is shown in the following table:
+This effort is by nature a continuous, community-driven task, but we are expecting completion of most core security features in the near future.
+An overview of the state of security feature support is shown in the following table:
 
 | Security feature                                                                                       | Status           | Targets                        |
 | ------------------------------------------------------------------------------------------------------ | ---------------- | ------------------------------ |
