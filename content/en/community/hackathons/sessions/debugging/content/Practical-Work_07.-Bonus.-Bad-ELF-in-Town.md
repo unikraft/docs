@@ -1,4 +1,5 @@
 We managed to build an ELF file that is valid when doing static analysis, but that can't be executed.
+We want to run this ELF file in unikraft in binary compatibility mode.
 The file is `bad_elf`, located in the `work/07-bad-elf/` folder.
 
 Running it triggers a segmentation fault message.

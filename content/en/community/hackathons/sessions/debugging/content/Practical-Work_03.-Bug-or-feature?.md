@@ -19,21 +19,21 @@ Follow these steps:
    Use GDB and then use the commands:
 
    ```console
-   hbreak main
+   (gdb) hbreak main
    ```
 
    to break at the `main()` function.
    The use
 
    ```console
-   c
+   (gdb) c
    ```
 
    (for `continue`) to get the to `main()` function.
 
    ```console
-   set disassembly-flavor intel
-   disass
+   (gdb) set disassembly-flavor intel
+   (gdb) disass
    ```
 
 1. Use `nexti` and `stepi` instructions to step through the code.
@@ -43,7 +43,7 @@ Follow these steps:
    Use
 
    ```console
-   info registers
+   (gdb) info registers
    ```
 
    for that.

@@ -1,8 +1,7 @@
 Let's try a new application based on networking, **Nginx**.
 
 First clone the repository for [app-nginx](https://github.com/unikraft/app-nginx) and put it in the right hierarchy.
-Then you need to create `Makefile` and `Makefile.uk`.
-Make sure to respect the order of libraries in `Makefile`. For more information, check the [lib-nginx](https://github.com/unikraft/lib-nginx) repository.  
+For more information about the port of Nginx, check the [lib-nginx](https://github.com/unikraft/lib-nginx) repository.  
 
 * **Besides** the libraries listed in the [lib-nginx](https://github.com/unikraft/lib-nginx) repository, you will also
 need to select the `posix-event` internal library in the configuration menu (`Library Configuration -> posix-event`).
