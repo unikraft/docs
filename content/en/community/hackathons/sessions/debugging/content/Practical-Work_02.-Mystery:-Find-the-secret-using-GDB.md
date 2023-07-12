@@ -17,19 +17,19 @@ For example:
 
 
 ```console
-set $foo = *object_ptr
+(gdb) set $foo = *object_ptr
 ```
 
 Note that you can also cast variables in GDB similar to C:
 
 ```console
-set $var = (int *) ptr
+(gdb) set $var = (int *) ptr
 ```
 
 If you want to dereference a pointer and actually see the value, you can use the following command:
 
 ```console
-p *addr
+(gdb) p *addr
 ```
 
 You can find more GDB commands [here](https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
@@ -49,14 +49,14 @@ Follow these steps:
 1. In the second terminal (running `./connect.sh`) run
 
    ```console
-   hbreak main
+   (gdb) hbreak main
    ```
 
    to break at the `main()` function.
    The use
 
    ```console
-   c
+   (gdb) c
    ```
 
    (for `continue`) to get the to `main()` function.
@@ -65,8 +65,8 @@ Follow these steps:
 1. Use
 
    ```console
-   set disassembly-flavor intel
-   disass
+   (gdb) set disassembly-flavor intel
+   (gdb) disass
    ```
 
    to disassemble the `main()` function.

@@ -2,19 +2,23 @@ For this tutorial, we will just start the `app-helloworld` application and inspe
 
 First make sure you have the following conventional working directory also shown in [Section 02: Behind the Scenes](../behind-scenes/#01-tutorial--reminder-building-and-running-unikraft).
 
-```
+```text
 .
-|-- apps/
-|   `-- helloworld/
-|-- libs/
-`-- unikraft/
+app-helloworld/
+|-- Makefile
+....
+`-- .unikraft
+    `-- unikraft
+    `-- libs
+        `-- lib-...
 ```
 
-For instructions on building `app-hellworld` using the manual method, see the [application README](https://github.com/unikraft/app-helloworld) or [Section 02: Behind the Scenes](../behind-scenes).
+For instructions on building `app-hellworld` using the manual method, see the [application README](https://github.com/unikraft/app-helloworld) or Section 03: Behind the Scenes
 
 #### Linuxu
 
-For the image for the **linuxu** platform we can use GDB directly with the binary already created.
+For the image for the **linuxu** platform we can use GDB directly with the binary already created because
+the resulting image is an actual Linux binary.
 
 ```console
 $ gdb build/app-helloworld_linuxu-x86_64.dbg
@@ -22,14 +26,14 @@ $ gdb build/app-helloworld_linuxu-x86_64.dbg
 
 #### KVM
 
-To avoid using a command with a lot of parameters that you noticed above in the **KVM** section, we can use [the `qemu-guest` script from `kraft`](https://github.com/unikraft/kraft/blob/staging/scripts/qemu-guest).
+To avoid using a command with a lot of parameters that you noticed above in the **KVM** section, we can use [the `qemu-guest` script from `kraft`](https://github.com/unikraft/unikraft/blob/staging/support/scripts/qemu-guest).
 
 ```console
-$ wget https://raw.githubusercontent.com/unikraft/kraft/staging/scripts/qemu-guest
+$ wget https://github.com/unikraft/unikraft/blob/staging/support/scripts/qemu-guest
 
 $ chmod a+x qemu-guest
 
-$ ./qemu-guest -P -g 1234 -k build/app-helloworld_kvm-x86_64.dbg
+$ ./qemu-guest -P -g 1234 -k build/app-helloworld_kvm-x86_64
 ```
 
 Open another terminal to connect to GDB by using the debug image with:
