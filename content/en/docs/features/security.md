@@ -49,10 +49,12 @@ This effort is by nature a continuous, community-driven task, but we are expecti
 | [ARM Branch Target Identification (BTI)](https://github.com/unikraft/unikraft/pull/421)                | Upstream         | `ARCH_ARM_64`                  |
 | [ARM Memory Tagging Extension (MTE)](https://github.com/unikraft/unikraft/pull/458)                    | Upstream         | `ARCH_ARM_64`                  |
 | [ARM True Random Number Generator (RNG)](https://github.com/unikraft/unikraft/pull/434)                | Upstream         | `ARCH_ARM_64`                  |
+| [x86_64 True Random Number Generator (RNG)](https://github.com/unikraft/unikraft/pull/695)             | Upstream         | `ARCH_X86_64`                  |
 | [Kernel Address Sanitizer (KASAN)](https://github.com/unikraft/unikraft/pull/191)                      | Under review     | `PLAT_KVM && ARCH_X86_64`      |
 | [Position Independent Executables (PIE)](https://github.com/unikraft/unikraft/pull/239)                | Under review     | `PLAT_KVM && ARCH_X86_64`      |
-| [x86_64 True Random Number Generator](https://github.com/unikraft/unikraft/pull/420)                   | Under review     | `ARCH_X86_64`                  |
-| [Shadow Stack](https://github.com/unikraft/unikraft/pull/505)                                          | In Progress      | `ARCH_ARM_64`                  |
+| [Shadow Stack](https://github.com/unikraft/unikraft/pull/505)                                          | In progress      | `ARCH_ARM_64`                  |
+| Arm CCA (Confidential Compute Architecture)                                                            | In progress      | `ARCH_ARM_64` (Armv9)          |
+| Page Table Protection                                                                                  | In progress      | any                            |
 | Intel Control-flow Enforcement Technology (CET)                                                        | Planned          | `ARCH_X86_64`                  |
 | `FORTIFY_SOURCE`                                                                                       | Planned          | any                            |
 | ARM Speculation Barrier (SB)                                                                           | Planned          | `ARCH_ARM_64`                  |
