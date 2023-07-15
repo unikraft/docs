@@ -5,8 +5,6 @@ weight: 7
 summary: "Challenges to solve during the hackathon"
 ---
 
-## Hackathon
-
 You've made it so far.
 Now the time has come to show the Unikraft world what you are really made of.
 A true Dragon Slayer!
@@ -17,7 +15,7 @@ We will keep the scoreboard [here](https://docs.google.com/spreadsheets/d/1RubMl
 
 Join the discussion on the [USoC'23 Hackathon thread on Discord](https://discord.com/channels/762976922531528725/1129344076194525214).
 
-### Steps
+## Steps
 
 Follow the steps below to solve challenges for the hackathon:
 
@@ -35,7 +33,7 @@ Follow the steps below to solve challenges for the hackathon:
 1. **Check out the challenges.**
 
    See the items added in the [`Hackathons` project](https://github.com/orgs/unikraft/projects/29).
-   See a detailed description of them below in the [#challenge-types](`Challenge Types` section).
+   See a detailed description of them below in the [`Challenge Types` section](#challenge-types).
    Discuss challenges in your team.
 
 1. **Select challenges as "In Progress".**
@@ -68,7 +66,7 @@ Follow the steps below to solve challenges for the hackathon:
    Then move and grab another challenge.
    Show you're the past.
 
-## Challenges
+## Working on Challenges
 
 You will get the number of points for submitting a solution that works.
 Those points will be doubled if the PR is accepted upstream.
@@ -77,7 +75,7 @@ We recommend you start small then move up to more difficult challenges.
 
 Please check the community guidelines on [submitting changes](/docs/contributing/submitting-changes) and [the review process](/docs/contributing/review-process).
 
-### Challenge Types
+## Challenge Types
 
 Challenge types generally fall into the categories below.
 You can go beyond the items marked in the [`Hackathons` project](https://github.com/orgs/unikraft/projects/29).
@@ -126,3 +124,17 @@ You can go beyond the items marked in the [`Hackathons` project](https://github.
    For the applications in the [`dynamic-apps` repository](https://github.com/unikraft/dynamic-apps), add scripts that will run the app on top of Unikraft and check that it works.
 
    20 points will be awarded for each script.
+
+1. **Building and testing helloworld with Hyper-V**
+
+   For this you need a Windows installation with Hyper-V support.
+   Follow the instructions [here](https://github.com/unikraft/plat-hyperv/pull/1#issuecomment-1324421133) to build and test a helloworld application with Hyper-V.
+
+   30 points for making it work, no PR submission required
+
+1. **Building and testing helloworld with VMware**
+
+   For this you need to install VMware support.
+   Follow the instructions [here](https://docs.google.com/document/d/189y5zncps37ghng7QS86foFoYoFK_q63RE0vpn0kCg0/edit?usp=sharing) to build and test a helloworld application with VMware.
+
+   30 points for making it work, no PR submission required
