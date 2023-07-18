@@ -30,6 +30,7 @@ The hosts of the hackathon are:
 
 * [Joel Nider](https://people.ece.ubc.ca/joel/)
 * [Shayan Hosseini](https://shayanh.com/)
+* [Margo Seltzer](https://www.seltzer.com/margo/)
 * [Alexandra (Sasha) Fedorova](https://people.ece.ubc.ca/sasha/)
 
 As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razvand/) will be on-site, with other community members providing support online, on Discord.
