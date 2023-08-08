@@ -1,0 +1,52 @@
+{{ define "main" }}
+<div class="top bg-backdrop bg-blue-800">
+  <div class="mx-auto container py-12 border-b-4 border-orange-400">
+    <h1 class="text-white text-3xl font-semibold">{{ i18n "unikraft-faq" }}</h1>
+  </div>
+</div>
+
+<div class="mid">
+  <main class="main">
+    <div class="mx-auto container">
+      <div class="grid grid-cols-4">
+        <div class="sm:border-l sm:border-r sm:border-gray-200 bg-white px-8 pt-8 col-span-3">
+          <ul>
+            {{ $paginator := .Paginate (where .RegularPages "Type" .Type) }}
+            {{ range $paginator.Pages }}
+              <li>
+                <div class="relative pb-8">
+                  <span class="absolute top-0 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                  <div class="relative flex space-x-3">
+                    <div>
+                      <span class="h-8 w-8 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 16 16">
+                          <path fill="currentColor" d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8s8-3.6 8-8s-3.6-8-8-8zm0 15c-3.9 0-7-3.1-7-7c0-2.4 1.2-4.6 3.2-5.9C4.1 2.7 4 3.4 4 4c0 4.9 4 8.9 8.9 9c-1.3 1.3-3 2-4.9 2z"></path>
+                        </svg>
+                      </span>
+                    </div>
+                    <div class="min-w-0 flex-1 pt-1 flex justify-between space-x-4">
+                      <div>
+                        <p class="text-gray-500">
+                          <code>{{ .Title }}</code> <a href="#" class="font-medium text-gray-900">{{ .Params.codename }}</a>
+                        </p>
+                        <div class="prose pt-4" style="max-width:100%!important;">
+                          {{ .Content }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            {{ end }}
+          </ul>
+          {{ partial "main/component/pagination.html" . }}
+        </div>
+        <div class="space-y-1 pt-4 ml-3">
+	  {{ $section_to_display :=  .Sections | default .Pages }}
+	  {{ partial "navbar/faq-navbar.html" (dict "context" . "section_to_display" $section_to_display) }}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{ end }}

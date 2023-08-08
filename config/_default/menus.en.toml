@@ -21,3 +21,9 @@
   name = "Community"
   url = "community"
   weight = 4
+
+[[main]]
+  identifier = "faq"
+  name = "FAQ"
+  url = "faq"
+  weight = 5
