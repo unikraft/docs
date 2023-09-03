@@ -319,7 +319,7 @@ We plan to keep organising the Unikraft Summer of Code in the following years, a
 {{< figure
     src="/assets/imgs/usoc23-hackathon.jpg"
     position="center"
-}}
+>}}
 
 ### Unikernels Alliance
 
@@ -349,7 +349,7 @@ This event has been a great chance for getting together people from the Unikerne
 {{< figure
     src="/assets/imgs/unikernels-in-the-wild-2023-07-07.jpg"
     position="center"
-}}
+>}}
 
 If you are using Unikraft, consider adding your affiliation in our [`ADOPTERS.md`](https://github.com/unikraft/unikraft/blob/staging/ADOPTERS.md) file.
 We use this file to keep a track of entities that use Unikraft for their commercial and / or research work.
