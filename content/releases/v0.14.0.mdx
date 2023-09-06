@@ -1,15 +1,13 @@
 ---
-title: v0.14.0
-date: 2023-08-18T00:00:00+01:00
-version: 0
-subversion: 14
-extraversion: 0
-codename: Atlas
+version: 0.14.0
+releaseDate: 2023-08-18
+codename: Prometheus
 commit: 70bc0af0bd1c74b3af3c0584d7b7373dc42b2ce7
+blogPost: /blog/2023-08-18-unikraft-releases-prometheus
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.13.0...RELEASE-0.14.0
 ---
 
-We are proud to announce the latest version of Unikraft, v0.14.0 (Prometheus)!
-This is one of the biggest releases so far with tons of fixes and improvements!
+We are proud to announce the latest version of Unikraft, v0.14.0 (Prometheus)!  Along with many fixes, this release comes with a bunch of new features that are worth your attention!
 
 Here is the full updates list:
 
@@ -97,7 +95,7 @@ Here is the full updates list:
 * lib/vfscore: Fix double-lock bug in symlink ([#952](https://github.com/unikraft/unikraft/pull/952)) by [@andreittr](https://github.com/andreittr)
 * lib/vfscore: Reorder locks in `*at` syscalls ([#951](https://github.com/unikraft/unikraft/pull/951)) by [@andreittr](https://github.com/andreittr)
 * build: Add minumum required compiler version and fix cpu model and erratas for arm64 ([#949](https://github.com/unikraft/unikraft/pull/949)) by [@StefanJum](https://github.com/StefanJum)
-* build: Use -fcf-protection for GCC >= 8 or Clang >= 7 ([#944](https://github.com/unikraft/unikraft/pull/944)) by [@Krechals](https://github.com/Krechals)
+* build: Use -fcf-protection for GCC &gt;&equals; 8 or Clang &gt;&equals; 7 ([#944](https://github.com/unikraft/unikraft/pull/944)) by [@Krechals](https://github.com/Krechals)
 * lib/uknetdev: Export stats via uk_store [#943](https://github.com/unikraft/unikraft/pull/943)) by [@michpappas](https://github.com/michpappas)
 * lib/ukschedcoop: Add early check for runnable thread in idle thread ([#941](https://github.com/unikraft/unikraft/pull/941)) by [@mogasergiu](https://github.com/mogasergiu)
 * lib/posix-sysinfo: Provide `_SC_GETPW_R_SIZE_MAX` ([#936](https://github.com/unikraft/unikraft/pull/936)) by [@andreittr](https://github.com/andreittr)
@@ -127,7 +125,7 @@ Here is the full updates list:
 * `[lib-compiler-rt]` Split off functionality that relies on libm ([#18](https://github.com/unikraft/lib-compiler-rt/pull/18)) by [@andreittr](https://github.com/andreittr)
 * `[lib-compiler-rt]` Build: Split off functionality that depends on libunwind ([#14](https://github.com/unikraft/lib-compiler-rt/pull/14)) by [@andreittr](https://github.com/andreittr)
 * `[lib-googletest]` Update to upstream 1.13.0 ([#2](https://github.com/unikraft/lib-googletest/pull/2)) by [@andreittr](https://github.com/andreittr)
-* `[lib-intel-intrinsics]` Add compatibility with GCC <= 11.2 & Clang 10 ([#4](https://github.com/unikraft/lib-intel-intrinsics/pull/4)) by [@andreittr](https://github.com/andreittr)
+* `[lib-intel-intrinsics]` Add compatibility with GCC &lt;&equals; 11.2 & Clang 10 ([#4](https://github.com/unikraft/lib-intel-intrinsics/pull/4)) by [@andreittr](https://github.com/andreittr)
 * `[lib-intel-intrinsics]` Rework of x86 intrinsics support ([#3](https://github.com/unikraft/lib-intel-intrinsics/pull/3)) by [@andreittr](https://github.com/andreittr)
 * `[lib-libcxx]` Makefile.uk: Add minimum compiler version check ([#33](https://github.com/unikraft/lib-libcxx/pull/33)) by [@andreittr](https://github.com/andreittr)
 * `[lib-libgo]` Upgrade Go to 1.18 ([#7](https://github.com/unikraft/lib-libgo/pull/7)) by [@eduardvintila](https://github.com/eduardvintila)
@@ -151,7 +149,7 @@ Here is the full updates list:
 * `[lib-musl]` Allow deselection of ukmmap ([#52](https://github.com/unikraft/lib-musl/pull/52)) by [@marcrittinghaus](https://github.com/marcrittinghaus)
 * `[lib-musl]` Makefile.uk: Fix gcc specific warnings ([#51](https://github.com/unikraft/lib-musl/pull/51)) by [@mbrdg](https://github.com/mbrdg)
 * `[lib-newlib]` Makefile.uk: Call tcb reserve conditionally ([#35](https://github.com/unikraft/lib-newlib/pull/35)) by [@razvand](https://github.com/razvand)
-* `[lib-opwnssl]` Add patch to remove include of <linux/mman.h> ([#5](https://github.com/unikraft/lib-opwnssl/pull/5)) by [@andreittr](https://github.com/andreittr)
+* `[lib-opwnssl]` Add patch to remove include of &gt;linux/mman.h&lt; ([#5](https://github.com/unikraft/lib-opwnssl/pull/5)) by [@andreittr](https://github.com/andreittr)
 * `[lib-python3]` Add support for the Shapely extension ([#17](https://github.com/unikraft/lib-python3/pull/17)) by [@andreittr](https://github.com/andreittr)
 * `[lib-python3]` Add support for NumPy ([#16](https://github.com/unikraft/lib-python3/pull/16)) by [@andreittr](https://github.com/andreittr)
 * `[lib-python3]` Update to upstream Python 3.10.11 ([#15](https://github.com/unikraft/lib-python3/pull/15)) by [@andreittr](https://github.com/andreittr)
@@ -191,7 +189,3 @@ Here is the full updates list:
 * `[app-wamr]` Port application to musl ([#5](https://github.com/unikraft/app-wamr/pull/5)) by [@R0mbertus](https://github.com/R0mbertus)
 
 A big thank you also to all those who helped in the [review process](unikraft.org/docs/contributing/review-process/): [@adinamariav](https://github.com/adinamariav), [@nderjung](https://github.com/nderjung), [@andraprs](https://github.com/andraprs), [@craciunoiuc](https://github.com/craciunoiuc), [@csvancea](https://github.com/csvancea), [@DeliaPavel](https://github.com/DeliaPavel), [@dragosp27](https://github.com/dragosp27), [@Starnox](https://github.com/Starnox), [@eduardvintila](https://github.com/eduardvintila), [@maniatro111](https://github.com/maniatro111), [@gabrielmocanu](https://github.com/gabrielmocanu), [@Ted](https://github.com/John-Ted), [@mschlumpp](https://github.com/mschlumpp), [@mariasfiraiala](https://github.com/mariasfiraiala), [@michpappas](https://github.com/michpappas), [@RaduNichita](https://github.com/RaduNichita), [@miculescu](https://github.com/rares-miculescu), [@razvand](https://github.com/razvand), [@razvanvirtan](https://github.com/razvanvirtan), [@kubanrob](https://github.com/kubanrob), [@mogasergiu](https://github.com/mogasergiu), [@skuenzer](https://github.com/skuenzer), [@StefanJum](https://github.com/StefanJum), [Tu Dinh Ngoc](https://github.com/dinhngtu).
-
----
-
-For more information, check out [the accompanying blog post](/blog/2023-08-18-unikraft-releases-prometheus) or [view the full changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.13.0...RELEASE-0.14.0).

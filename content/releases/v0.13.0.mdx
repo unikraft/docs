@@ -1,20 +1,19 @@
 ---
-title: v0.13.0
-date: 2023-05-15T22:00:00+01:00
-version: 0
-subversion: 13
-extraversion: 0
+version: 0.13.0
+releaseDate: 2023-05-15
 codename: Atlas
 commit: b0da6bfc5286027fd4b77256e4bef5725cbeaba9
+blogPost: /blog/2023-05-15-unikraft-releases-atlas
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.12.0...RELEASE-0.13.0
 ---
 
 We are proud to announce the latest version of Unikraft, v0.13.0 (Atlas)!  Along with many fixes, this release comes with a bunch of new features that are worth your attention!
 
-**This release includes a breaking change which affects output unikernel binary name. See [native Firecracker support](/blog/2023-05-15-unikraft-releases-atlas/#native-firecracker-vmm-support-760httpsgithubcomunikraftunikraftpull760) for details.**
+<Warning>
+This release includes a breaking change which affects output unikernel binary name. See [native Firecracker support](/blog/2023-05-15-unikraft-releases-atlas/#native-firecracker-vmm-support-760httpsgithubcomunikraftunikraftpull760) for details.
+</Warning>
 
-Here is the full updates list:
-
-### 🚀 New Features
+## 🚀 New Features
 
 * Update parser in `lib/uklibparam` ([#882](https://github.com/unikraft/unikraft/pull/882)) by [Simon Kuenzer](https://github.com/skuenzer)
 * Support escaping of quotes in `lib/ukargparse` ([#893](https://github.com/unikraft/unikraft/pull/882)) by [Simon Kuenzer](https://github.com/skuenzer)
@@ -50,7 +49,7 @@ Here is the full updates list:
 * VFS and native dynamic loader support ([app-elfloader#17](https://github.com/unikraft/app-elfloader/pull/17)) by [Simon Kuenzer](https://github.com/skuenzer)
 
 
-### 🐛 Bug Fixes & Improvements
+## 🐛 Bug Fixes & Improvements
 
 * Add semicolon to `DPRINTF` macro in `lib/vfscore` ([#890](https://github.com/unikraft/unikraft/pull/890)) by [Răzvan Deaconescu](https://github.com/razvand)
 * Initialize lists for `stdio_vnode` in `lib/vfscore` ([#889](https://github.com/unikraft/unikraft/pull/889)) by [Răzvan Deaconescu](https://github.com/razvand)
@@ -116,7 +115,3 @@ Here is the full updates list:
 * Align the stack pointer at a 16-byte boundary at function calls ([#9](https://github.com/unikraft/app-elfloader/pull/9)) by [Cosmin Vancea](https://github.com/csvancea)
 
 A big thank you also to all those who helped in the [review process](unikraft.org/docs/contributing/review-process/): [Adina Smeu](https://github.com/adinasm), [Alexander Jung](https://github.com/nderjung), [Alexandru Calciu](https://github.com/calex257), [Alexandru Apostolescu](https://github.com/Alex-deVis), [Andra Paraschiv](https://github.com/andraprs), [Andrei Tătar](https://github.com/andreittr), [Cezar Crăciunoiu](https://github.com/craciunoiuc), [Delia Pavel](https://github.com/DeliaPavel), [Dragoș Petre](https://github.com/dragosp27), [Eduard Mihăilescu](https://github.com/Starnox), [Eduard Vintilă](https://github.com/eduardvintila), [Florin Postolache](https://github.com/maniatro111), [Gabriel Mocanu](https://github.com/gabrielmocanu), [Teodor Țeugea](https://github.com/John-Ted), [Luca Serițan](https://github.com/LucaSeri), [Marco Schlumpp](https://github.com/mschlumpp), [Marc Rittinghaus](https://github.com/marcrittinghaus), [Maria Sfîrăială](https://github.com/mariasfiraiala), [Michalis Pappas](https://github.com/michpappas), [Radu Nichita](https://github.com/RaduNichita), [Rareș Miculescu](https://github.com/rares-miculescu), [Răzvan Deaconescu](https://github.com/razvand), [Răzvan Vîrtan](https://github.com/razvanvirtan), [Robert Kuban](https://github.com/kubanrob), [Sergiu Moga](https://github.com/mogasergiu), [Simon Kuenzer](https://github.com/skuenzer), [Ștefan Jumarea](https://github.com/StefanJum), [Teodor Tiron](https://github.com/teotiron), [Tu Dinh Ngoc](https://github.com/dinhngtu), [Vlad Bădoiu](https://github.com/vladandrew).
-
----
-
-For more information, check out [the accompanying blog post](/blog/2023-05-15-unikraft-releases-atlas) or [view the full changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.12.0...RELEASE-0.13.0).
