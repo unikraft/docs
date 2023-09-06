@@ -1,9 +1,0 @@
-### Invisible option for dependencies
-config APPKDTREE_DEPENDENCIES
-	bool
-	default y
-	select ARCH_X86_64
-	select PLAT_KVM
-	select LIBMUSL
-	select LIBKDTREE
-	select BUILD_TESTS

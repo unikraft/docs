@@ -1,1 +1,0 @@
-We want to build the [`helloworld` application](https://github.com/unikraft/app-helloworld), using the Kconfig-based system, for the **linuxu** and **KVM** platforms, for the **ARM** and **x86** architectures, and then run them.

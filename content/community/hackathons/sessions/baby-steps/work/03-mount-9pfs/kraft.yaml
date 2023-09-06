@@ -1,7 +1,0 @@
-specification: '0.5'
-name: mount9pfs
-unikraft:
-  version: stable
-targets:
-  - architecture: x86_64
-    platform: kvm

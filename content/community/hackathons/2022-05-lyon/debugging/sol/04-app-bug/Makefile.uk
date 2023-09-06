@@ -1,3 +1,0 @@
-$(eval $(call addlib,appbug))
-
-APPBUG_SRCS-y += $(APPBUG_BASE)/main.c

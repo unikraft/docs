@@ -1,3 +1,0 @@
-$(eval $(call addlib,apphogweed))
-
-APPHOGWEED_SRCS-y += $(APPHOGWEED_BASE)/main.c
