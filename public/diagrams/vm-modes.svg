@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2023 Alexander Jung <alex@nder.sh>  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 405.4 153.1" style="enable-background:new 0 0 405.4 153.1;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;}
+	.st2{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:4,4;}
+	.st3{fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:10;}
+	.st4{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
+	.st5{fill:#99D5F1;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+	.st6{fill:none;}
+	.st7{font-family:'Inter-Regular';}
+	.st8{font-size:9px;}
+	.st9{fill:#56C1A7;stroke:#337061;stroke-width:0.75;stroke-miterlimit:10;}
+	.st10{font-family:'LinBiolinumOB';}
+	.st11{fill:#F8B9C7;stroke:#AF64A2;stroke-width:0.75;stroke-miterlimit:10;}
+	.st12{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;}
+</style>
+<g id="Lines">
+	<g class="st0">
+		<g class="st1">
+			<line class="st2" x1="59.5" y1="204.1" x2="205" y2="-14.2"/>
+			<g>
+				<path d="M206.9-17c-0.4,1.7-0.7,3.9-0.4,5.5l-1.7-2.3l-2.8-0.7C203.6-14.9,205.6-16,206.9-17z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Blur_bg">
+</g>
+<g id="Platform_Code">
+</g>
+<g id="Text">
+</g>
+<g id="Blur_Text">
+</g>
+<g id="Kernel_Code">
+</g>
+<g id="HLL">
+	<line class="st3" x1="5.7" y1="73.7" x2="399.4" y2="73.7"/>
+	<rect x="90.9" y="51" class="st4" width="90.5" height="45.4"/>
+	<rect x="90.9" y="73.7" class="st5" width="73.5" height="22.7"/>
+	<rect x="90.7" y="51" class="st6" width="90.7" height="22.7"/>
+	<text transform="matrix(1 0 0 1 109.9766 65.6355)" class="st7 st8">Applications</text>
+	<rect x="90.9" y="96.4" class="st9" width="90.5" height="22.7"/>
+	<rect x="90.7" y="96.4" class="st6" width="90.9" height="22.7"/>
+	<text transform="matrix(1 0 0 1 115.3558 110.9899)" class="st7 st8">Hardware</text>
+	<rect x="90.9" y="73.7" class="st6" width="73.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 106.226 88.3125)" class="st7 st8">OS/Kernel</text>
+	<rect x="8.5" y="73.7" class="st6" width="62.6" height="45.4"/>
+	<text transform="matrix(1 0 0 1 29.0694 94.2503)"><tspan x="0" y="0" class="st7 st8">Privileged </tspan><tspan x="13.3" y="10.8" class="st7 st8">modes</tspan></text>
+	<rect x="192.8" y="28.3" class="st4" width="93.1" height="68"/>
+	<rect x="218" y="51" class="st6" width="51" height="22.7"/>
+	<text transform="matrix(1 0 0 1 224.5714 65.5035)" class="st10 st8">Guest OS</text>
+	<rect x="192.8" y="73.7" class="st11" width="93.1" height="22.7"/>
+	<rect x="218" y="73.7" class="st6" width="68" height="22.7"/>
+	<text transform="matrix(1 0 0 1 240.7345 88.1799)" class="st10 st8">VMM</text>
+	<rect x="192.5" y="28.3" class="st6" width="93.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 214.4613 42.9582)" class="st7 st8">Guest Apps</text>
+	<rect x="192.8" y="73.7" class="st11" width="93.1" height="22.7"/>
+	<rect x="192.8" y="73.7" class="st6" width="93.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 228.3637 88.3118)" class="st7 st8">VMM</text>
+	<rect x="5.7" y="28.3" class="st6" width="65.4" height="45.4"/>
+	<text transform="matrix(1 0 0 1 7.7452 48.8959)"><tspan x="0" y="0" class="st7 st8">Non-privileged </tspan><tspan x="34.6" y="10.8" class="st7 st8">modes</tspan></text>
+	<rect x="296.9" y="5.7" class="st4" width="91.2" height="68"/>
+	<polygon class="st6" points="387.9,28.3 297.4,28.3 297.4,5.7 388.1,5.7 	"/>
+	<text transform="matrix(1 0 0 1 317.9683 20.2801)" class="st7 st8">Guest Apps</text>
+	<rect x="296.9" y="51" class="st11" width="90.9" height="45.4"/>
+	<rect x="296.9" y="51" class="st6" width="90.9" height="22.7"/>
+	<text transform="matrix(1 0 0 1 331.356 65.6346)" class="st7 st8">VMM</text>
+	<rect x="296.9" y="73.7" class="st5" width="73.9" height="22.7"/>
+	<rect x="296.9" y="73.7" class="st6" width="73.9" height="22.7"/>
+	<text transform="matrix(1 0 0 1 316.3325 88.3125)" class="st7 st8">Host OS</text>
+	<rect x="296.9" y="96.4" class="st9" width="90.7" height="22.7"/>
+	<rect x="297.6" y="96.4" class="st6" width="90.2" height="22.7"/>
+	<text transform="matrix(1 0 0 1 321.9306 110.989)" class="st7 st8">Hardware</text>
+	<rect x="296.9" y="28.3" class="st5" width="73.9" height="22.7"/>
+	<rect x="297.4" y="28.3" class="st6" width="73.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 298.8503 42.9581)" class="st7 st8">Guest OS/Kernel</text>
+	<g>
+		<g>
+			<line class="st12" x1="79.4" y1="85" x2="79.4" y2="62.4"/>
+			<g>
+				<path d="M79.4,89.6c0.8-2.1,2.1-4.8,3.6-6.4l-3.6,1.3l-3.6-1.3C77.2,84.8,78.6,87.4,79.4,89.6z"/>
+			</g>
+			<g>
+				<path d="M79.4,57.8c0.8,2.1,2.1,4.8,3.6,6.4L79.4,63l-3.6,1.3C77.2,62.6,78.6,60,79.4,57.8z"/>
+			</g>
+		</g>
+	</g>
+	<rect x="96.6" y="127.6" class="st6" width="85.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 103.8533 136.7707)"><tspan x="0" y="0" class="st7 st8">(a) Uniprocessor </tspan><tspan x="19.5" y="10.8" class="st7 st8">System</tspan></text>
+	<rect x="201.3" y="127.6" class="st6" width="85" height="22.7"/>
+	<text transform="matrix(1 0 0 1 222.4434 136.7707)"><tspan x="0" y="0" class="st7 st8">(b) Type-I </tspan><tspan x="-1.8" y="10.8" class="st7 st8">Hypervisor</tspan></text>
+	<rect x="303.1" y="127.6" class="st6" width="85" height="22.7"/>
+	<text transform="matrix(1 0 0 1 323.346 136.7698)"><tspan x="0" y="0" class="st7 st8">(c) Type-II </tspan><tspan x="-0.9" y="10.8" class="st7 st8">Hypervisor</tspan></text>
+	<rect x="192.8" y="96.4" class="st9" width="93.1" height="22.7"/>
+	<rect x="192.8" y="96.4" class="st6" width="93.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 218.5841 110.989)" class="st7 st8">Hardware</text>
+	<rect x="192.8" y="51" class="st5" width="76.3" height="22.7"/>
+	<rect x="192.8" y="51" class="st5" width="76.3" height="22.7"/>
+	<rect x="192.5" y="51" class="st6" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 195.5035 65.6354)" class="st7 st8">Guest OS/Kernel</text>
+</g>
+<g id="Diagram">
+</g>
+<g id="Models__x26__Services">
+</g>
+<g id="Layer_3">
+</g>
+</svg>

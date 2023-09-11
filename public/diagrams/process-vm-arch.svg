@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2023 Alexander Jung <alex@nder.sh>  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 195.6 102" style="enable-background:new 0 0 195.6 102;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;}
+	.st2{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:4,4;}
+	.st3{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
+	.st4{fill:#3EC6F0;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+	.st5{fill:#99D5F1;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+	.st6{fill:none;}
+	.st7{font-family:'Inter-Regular';}
+	.st8{font-size:9px;}
+	.st9{fill:#56C1A7;stroke:#337061;stroke-width:0.75;stroke-miterlimit:10;}
+	.st10{fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:square;stroke-miterlimit:10;}
+</style>
+<g id="Lines">
+	<g class="st0">
+		<g class="st1">
+			<line class="st2" x1="65.2" y1="181.4" x2="210.7" y2="-36.9"/>
+			<g>
+				<path d="M212.6-39.7c-0.4,1.7-0.7,3.9-0.4,5.5l-1.7-2.3l-2.8-0.7C209.3-37.6,211.2-38.7,212.6-39.7z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Blur_bg">
+</g>
+<g id="Platform_Code">
+</g>
+<g id="Text">
+</g>
+<g id="Blur_Text">
+</g>
+<g id="Kernel_Code">
+</g>
+<g id="HLL">
+	<rect x="53.9" y="5.7" class="st3" width="136.1" height="68"/>
+	<rect x="53.9" y="28.3" class="st4" width="136.1" height="45.4"/>
+	<rect x="53.9" y="51" class="st5" width="119.1" height="22.7"/>
+	<rect x="53.9" y="28.3" class="st6" width="136.1" height="22.7"/>
+	<text transform="matrix(1 0 0 1 77.817 42.9582)" class="st7 st8">Virtualising Software</text>
+	<rect x="53.9" y="5.7" class="st6" width="136.1" height="22.7"/>
+	<text transform="matrix(1 0 0 1 79.8367 20.2802)" class="st7 st8">Application Process</text>
+	<rect x="53.9" y="73.7" class="st9" width="136.1" height="22.7"/>
+	<rect x="53.9" y="73.7" class="st6" width="136.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 101.1827 88.3128)" class="st7 st8">Hardware</text>
+	<rect x="53.9" y="51" class="st6" width="119.1" height="22.7"/>
+	<text transform="matrix(1 0 0 1 91.9347 65.6354)" class="st7 st8">OS/Kernel</text>
+	<path class="st10" d="M48.2,28.3c-0.8,0-1.4-0.6-1.4-1.4l0-8.5c0-0.8-0.6-1.4-1.4-1.4c0.8,0,1.4-0.6,1.4-1.4l0-8.5
+		c0-0.8,0.6-1.4,1.4-1.4"/>
+	<path class="st10" d="M48.2,51c-0.8,0-1.4-0.6-1.4-1.4l0-8.5c0-0.8-0.6-1.4-1.4-1.4c0.8,0,1.4-0.6,1.4-1.4l0-8.5
+		c0-0.8,0.6-1.4,1.4-1.4"/>
+	<path class="st10" d="M48.2,96.4c-0.8,0-1.4-0.6-1.4-1.4l0-19.8c0-0.8-0.6-1.4-1.4-1.4c0.8,0,1.4-0.6,1.4-1.4l0-19.8
+		c0-0.8,0.6-1.4,1.4-1.4"/>
+	<rect y="28.3" class="st6" width="39.7" height="22.7"/>
+	<text transform="matrix(1 0 0 1 4.9635 42.9582)" class="st7 st8">Runtime</text>
+	<rect x="0" y="5.7" class="st6" width="39.7" height="22.7"/>
+	<text transform="matrix(1 0 0 1 14.552 20.2802)" class="st7 st8">Guest</text>
+	<rect x="0" y="51" class="st6" width="39.9" height="45.4"/>
+	<text transform="matrix(1 0 0 1 19.9147 76.9735)" class="st7 st8">Host</text>
+</g>
+<g id="Diagram">
+</g>
+<g id="Models__x26__Services">
+</g>
+<g id="Layer_3">
+</g>
+</svg>

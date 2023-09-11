@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2023 Alexander Jung <alex@nder.sh>  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 405.4 150.2" style="enable-background:new 0 0 405.4 150.2;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;}
+	.st2{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:4,4;}
+	.st3{fill:none;}
+	.st4{font-family:'Inter-Regular';}
+	.st5{font-size:9px;}
+	.st6{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
+	.st7{fill:#F8B9C7;stroke:#AF64A2;stroke-width:0.75;stroke-miterlimit:10;}
+	.st8{fill:#56C1A7;stroke:#337061;stroke-width:0.75;stroke-miterlimit:10;}
+	.st9{fill:#3EC6F0;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+	.st10{fill:#99D5F1;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+</style>
+<g id="Lines">
+	<g class="st0">
+		<g class="st1">
+			<line class="st2" x1="53.9" y1="201.3" x2="199.4" y2="-17"/>
+			<g>
+				<path d="M201.3-19.8c-0.4,1.7-0.7,3.9-0.4,5.5l-1.7-2.3l-2.8-0.7C197.9-17.8,199.9-18.8,201.3-19.8z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Blur_bg">
+</g>
+<g id="Platform_Code">
+</g>
+<g id="Text">
+</g>
+<g id="Blur_Text">
+</g>
+<g id="Kernel_Code">
+</g>
+<g id="HLL">
+	<rect x="5.9" y="124.7" class="st3" width="85.3" height="22.7"/>
+	<text transform="matrix(1 0 0 1 18.8913 133.936)"><tspan x="0" y="0" class="st4 st5">(a) Traditional </tspan><tspan x="-5.6" y="10.8" class="st4 st5">Virtual Machines</tspan></text>
+	<rect x="212.4" y="124.7" class="st3" width="85" height="22.7"/>
+	<text transform="matrix(1 0 0 1 224.7307 133.9351)"><tspan x="0" y="0" class="st4 st5">(c) Containers </tspan><tspan x="15.8" y="10.8" class="st4 st5">in VMs</tspan></text>
+	<rect x="314.6" y="124.7" class="st3" width="85" height="22.7"/>
+	<text transform="matrix(1 0 0 1 327.391 139.3355)" class="st4 st5">(d) Unikernels</text>
+	<rect x="2.8" y="25.5" class="st6" width="93.5" height="68"/>
+	<rect x="2.8" y="25.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 27.2469 40.1235)" class="st4 st5">Guest App</text>
+	<rect x="2.8" y="70.9" class="st7" width="93.5" height="22.7"/>
+	<rect x="2.8" y="70.9" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 38.561 85.4771)" class="st4 st5">VMM</text>
+	<rect x="2.8" y="93.5" class="st8" width="93.5" height="22.7"/>
+	<rect x="2.8" y="93.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 28.7818 108.1544)" class="st4 st5">Hardware</text>
+	<rect x="104.9" y="25.5" class="st6" width="93.5" height="68"/>
+	<rect x="104.9" y="25.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 129.2939 40.1235)" class="st4 st5">Guest App</text>
+	<rect x="121.9" y="48.2" class="st9" width="76.5" height="45.4"/>
+	<rect x="104.9" y="70.9" class="st10" width="76.5" height="22.7"/>
+	<rect x="104.9" y="70.9" class="st3" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 107.8663 85.4778)" class="st4 st5">Guest OS/Kernel</text>
+	<rect x="206.9" y="70.9" class="st7" width="93.5" height="22.7"/>
+	<rect x="206.9" y="70.9" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 242.6551 85.4771)" class="st4 st5">VMM</text>
+	<rect x="206.9" y="93.5" class="st8" width="93.5" height="22.7"/>
+	<rect x="206.9" y="93.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 232.8759 108.1544)" class="st4 st5">Hardware</text>
+	<rect x="121.9" y="48.2" class="st3" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 139.3966 58.8006)"><tspan x="0" y="0" class="st4 st5">Container </tspan><tspan x="3.4" y="8" class="st4 st5">Runtime</tspan></text>
+	<rect x="206.9" y="2.8" class="st6" width="93.5" height="68"/>
+	<rect x="206.9" y="2.8" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 231.341 17.4463)" class="st4 st5">Guest App</text>
+	<rect x="223.9" y="25.5" class="st9" width="76.5" height="45.4"/>
+	<rect x="206.9" y="48.2" class="st10" width="76.5" height="22.7"/>
+	<rect x="206.9" y="48.2" class="st3" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 209.9134 62.8006)" class="st4 st5">Guest OS/Kernel</text>
+	<rect x="223.9" y="25.5" class="st3" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 241.4436 36.1235)"><tspan x="0" y="0" class="st4 st5">Container </tspan><tspan x="3.4" y="8" class="st4 st5">Runtime</tspan></text>
+	<rect x="309" y="70.9" class="st7" width="93.5" height="22.7"/>
+	<rect x="309" y="70.9" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 344.7022 85.4771)" class="st4 st5">VMM</text>
+	<rect x="309" y="48.2" class="st6" width="93.5" height="22.7"/>
+	<rect x="309" y="48.2" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 325.8519 62.8007)" class="st4 st5">Unikernel App</text>
+	<rect x="309" y="93.5" class="st8" width="93.5" height="22.7"/>
+	<rect x="309" y="93.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 334.9229 108.1544)" class="st4 st5">Hardware</text>
+	<rect x="110.6" y="124.7" class="st3" width="85" height="22.7"/>
+	<text transform="matrix(1 0 0 1 122.6391 139.3355)" class="st4 st5">(b) Containers</text>
+	<rect x="104.9" y="93.5" class="st8" width="93.5" height="22.7"/>
+	<rect x="104.9" y="93.5" class="st3" width="93.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 130.8288 108.1544)" class="st4 st5">Hardware</text>
+	<rect x="2.8" y="48.2" class="st10" width="76.5" height="22.7"/>
+	<rect x="2.8" y="48.2" class="st3" width="76.5" height="22.7"/>
+	<text transform="matrix(1 0 0 1 5.8193 62.8007)" class="st4 st5">Guest OS/Kernel</text>
+</g>
+<g id="Diagram">
+</g>
+<g id="Models__x26__Services">
+</g>
+<g id="Layer_3">
+</g>
+</svg>

@@ -1,0 +1,27 @@
+{
+  "routes": [
+    {
+      "title": "Internals",
+      "routes": [
+        {
+          "title": "Unikraft Core",
+          "open": true,
+          "routes": [
+            {
+              "title": "Architecture",
+              "path": "/docs/internals/architecture"
+            },
+            {
+              "title": "Build Process",
+              "path": "/docs/internals/build-process"
+            },
+            {
+              "title": "Coding Conventions",
+              "path": "/docs/internals/coding-conventions"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

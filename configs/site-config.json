@@ -1,0 +1,50 @@
+{
+  "copyright": "Copyright © {{date}} Unikraft GmbH. All Rights Reserved.",
+  "algolia": {
+    "apiKey": "df1dcc41f7b8e5d68e73dd56d1e19701",
+    "indexName": "unikraft",
+    "inputSelector": "#algolia-search"
+  },
+  "repo": {
+    "url": "https://github.com/unikraft/unikraft",
+    "editUrl": "https://github.com/unikraft/docs/tree/main/content",
+    "blobUrl": "https://github.com/unikraft/unikraft/blob/staging"
+  },
+  "discord": {
+    "url": "https://unikraft.org/discord"
+  },
+  "youtube": "https://www.youtube.com/@unikraft",
+  "seo": {
+    "title": "Unikraft",
+    "titleTemplate": "%s - Unikraft",
+    "description": "A fast, secure and open-source Unikernel Development Kit.",
+    "siteUrl": "https://unikraft.org",
+    "twitter": {
+      "handle": "@UnikraftSDK",
+      "site": "@UnikraftSDK",
+      "cardType": "summary_large_image"
+    },
+    "openGraph": {
+      "type": "website",
+      "locale": "en_US",
+      "url": "https://unikraft.org",
+      "title": "Unikraft",
+      "description": "A fast, secure and open-source Unikernel Development Kit.",
+      "site_name": "Unikraft: A fast, secure and open-source Unikernel Development Kit.",
+      "images": [
+        {
+          "url": "/og-image.png",
+          "width": 1240,
+          "height": 480,
+          "alt": "Unikraft: A fast, secure and open-source Unikernel Development Kit."
+        },
+        {
+          "url": "/og-image.png",
+          "width": 1012,
+          "height": 506,
+          "alt": "Unikraft: A fast, secure and open-source Unikernel Development Kit."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,73 @@
+[
+  {
+    "title": "Getting Started",
+    "routes": [
+      {
+        "title": "What is a unikernel?",
+        "path": "/docs/concepts"
+      },
+      {
+        "title": "Install CLI companion tool",
+        "path": "/docs/cli/install"
+      },
+      {
+        "title": "Unikraft Internals",
+        "path": "/docs/internals"
+      },
+      {
+        "title": "Roadmap",
+        "path": "https://github.com/orgs/unikraft/projects/24"
+      }
+    ]
+  },
+  {
+    "title": "Community",
+    "routes": [
+      {
+        "title": "Events & Meetups",
+        "path": "/community/events"
+      },
+      {
+        "title": "Talks & Presentations",
+        "path": "/community/events"
+      },
+      {
+        "title": "Papers & Publications",
+        "path": "/community/papers"
+      },
+      {
+        "title": "Hackathons",
+        "path": "/hackathons"
+      },
+      {
+        "title": "Contributing",
+        "path": "/community/contributing"
+      },
+      {
+        "title": "Team",
+        "path": "/community/team"
+      }
+    ]
+  },
+  {
+    "title": "Features",
+    "routes": [
+      {
+        "title": "Performance",
+        "path": "/docs/concepts/performance"
+      },
+      {
+        "title": "Security",
+        "path": "/docs/concepts/security"
+      },
+      {
+        "title": "Efficiency",
+        "path": "/docs/concepts/efficiency"
+      },
+      {
+        "title": "Compatibility",
+        "path": "/docs/concepts/compatibility"
+      }
+    ]
+  }
+]

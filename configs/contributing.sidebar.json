@@ -1,0 +1,17 @@
+{
+  "routes": [
+    {
+      "title": "Contributing",
+      "routes": [
+        {
+          "title": "KraftKit",
+          "path": "/docs/contributing/kraftkit"
+        },
+        {
+          "title": "Unikraft",
+          "path": "/docs/contributing/unikraft"
+        }
+      ]
+    }
+  ]
+}

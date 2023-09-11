@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 458 124" style="enable-background:new 0 0 458 124;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.5;}
+	.st1{fill:none;stroke:#BBE0F5;stroke-width:0.5;stroke-linejoin:round;}
+	.st2{fill:none;stroke:#BBE0F5;stroke-width:0.5;stroke-linejoin:round;stroke-dasharray:9.999995e-03,1.98,9.999995e-03,0;}
+	.st3{fill:none;stroke:#BBE0F5;stroke-width:0.5;stroke-linejoin:round;stroke-dasharray:2,0,9.999995e-03,1.98,9.999995e-03,0;}
+	.st4{fill:none;}
+	.st5{fill:#FFFFFF;}
+	.st6{font-family:'Inter-SemiBold';}
+	.st7{font-size:13px;}
+	.st8{font-family:'Inter-Regular';}
+	.st9{font-size:12px;}
+	.st10{opacity:0.9;fill:#FFFFFF;}
+	.st11{opacity:0.2;fill:#FFFFFF;}
+	.st12{font-size:11px;}
+</style>
+<g class="st0">
+	<g>
+		<line class="st1" x1="193.1" y1="108" x2="193.1" y2="107"/>
+		<line class="st2" x1="193.1" y1="107" x2="193.1" y2="106"/>
+		<line class="st3" x1="193.1" y1="105" x2="193.1" y2="17"/>
+		<line class="st1" x1="193.1" y1="17" x2="193.1" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="228.32" y1="108" x2="228.32" y2="107"/>
+		<line class="st2" x1="228.32" y1="107" x2="228.32" y2="106"/>
+		<line class="st3" x1="228.32" y1="105" x2="228.32" y2="17"/>
+		<line class="st1" x1="228.32" y1="17" x2="228.32" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="269.42" y1="108" x2="269.42" y2="107"/>
+		<line class="st2" x1="269.42" y1="107" x2="269.42" y2="106"/>
+		<line class="st3" x1="269.42" y1="105" x2="269.42" y2="17"/>
+		<line class="st1" x1="269.42" y1="17" x2="269.42" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="310.52" y1="108" x2="310.52" y2="107"/>
+		<line class="st2" x1="310.52" y1="107" x2="310.52" y2="106"/>
+		<line class="st3" x1="310.52" y1="105" x2="310.52" y2="17"/>
+		<line class="st1" x1="310.52" y1="17" x2="310.52" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="351.62" y1="108" x2="351.62" y2="107"/>
+		<line class="st2" x1="351.62" y1="107" x2="351.62" y2="106"/>
+		<line class="st3" x1="351.62" y1="105" x2="351.62" y2="17"/>
+		<line class="st1" x1="351.62" y1="17" x2="351.62" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="392.72" y1="108" x2="392.72" y2="107"/>
+		<line class="st2" x1="392.72" y1="107" x2="392.72" y2="106"/>
+		<line class="st3" x1="392.72" y1="105" x2="392.72" y2="17"/>
+		<line class="st1" x1="392.72" y1="17" x2="392.72" y2="16"/>
+	</g>
+</g>
+<g class="st0">
+	<g>
+		<line class="st1" x1="433.56" y1="108" x2="433.56" y2="107"/>
+		<line class="st2" x1="433.56" y1="107" x2="433.56" y2="106"/>
+		<line class="st3" x1="433.56" y1="105" x2="433.56" y2="17"/>
+		<line class="st1" x1="433.56" y1="17" x2="433.56" y2="16"/>
+	</g>
+</g>
+<rect x="8" y="12" class="st4" width="136" height="20"/>
+<text transform="matrix(1 0 0 1 49.8389 26.7272)" class="st5 st6 st7">Unikraft (KVM)</text>
+<rect x="8" y="32" class="st4" width="136" height="20"/>
+<text transform="matrix(1 0 0 1 40.8247 46.3639)" class="st5 st8 st9">Linux (Bare Metal)</text>
+<rect x="8" y="52" class="st4" width="136" height="20"/>
+<text transform="matrix(1 0 0 1 30.666 66.3639)" class="st5 st8 st9">Docker (Bare metal)</text>
+<rect x="8" y="72" class="st4" width="136" height="20"/>
+<text transform="matrix(1 0 0 1 53.0977 86.3639)" class="st5 st8 st9">Linux VM (KVM)</text>
+<line class="st4" x1="32" y1="112" x2="32" y2="92"/>
+<rect x="8" y="92" class="st4" width="136" height="20"/>
+<text transform="matrix(1 0 0 1 15.7515 106.3639)" class="st5 st8 st9">Linux VM (Firecracker)</text>
+<path class="st10" d="M438,28H158c-3.31,0-6-2.69-6-6v0c0-3.31,2.69-6,6-6h280c3.31,0,6,2.69,6,6v0C444,25.31,441.31,28,438,28z"/>
+<path class="st11" d="M332.34,48H158c-3.31,0-6-2.69-6-6v0c0-3.31,2.69-6,6-6h174.34c3.31,0,6,2.69,6,6v0
+	C338.34,45.31,335.65,48,332.34,48z"/>
+<path class="st11" d="M318.72,68H158c-3.31,0-6-2.69-6-6v0c0-3.31,2.69-6,6-6h160.72c3.31,0,6,2.69,6,6v0
+	C324.72,65.31,322.03,68,318.72,68z"/>
+<path class="st11" d="M267.97,88H158c-3.31,0-6-2.69-6-6v0c0-3.31,2.69-6,6-6h109.97c3.31,0,6,2.69,6,6v0
+	C273.97,85.31,271.28,88,267.97,88z"/>
+<path class="st11" d="M227.99,108H158c-3.31,0-6-2.69-6-6v0c0-3.31,2.69-6,6-6h69.99c3.31,0,6,2.69,6,6v0
+	C233.99,105.31,231.3,108,227.99,108z"/>
+<text transform="matrix(-9.715623e-07 -1 1 -8.580518e-07 432.0002 108.0005)" class="st5 st8 st12">300,000 req/s</text>
+</svg>

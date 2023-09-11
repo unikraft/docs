@@ -1,0 +1,29 @@
+{
+  "routes": [
+    {
+      "title": "Community",
+      "routes": [
+        {
+          "title": "Team",
+          "path": "/community/team"
+        },
+        {
+          "title": "Hackathons",
+          "path": "/community/hackathons"
+        },
+        {
+          "title": "Events & Meetups",
+          "path": "/community/events"
+        },
+        {
+          "title": "Talks & Presentations",
+          "path": "/community/talks"
+        },
+        {
+          "title": "Papers & Publications",
+          "path": "/community/papers"
+        }
+      ]
+    }
+  ]
+}

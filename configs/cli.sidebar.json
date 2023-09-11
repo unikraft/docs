@@ -1,0 +1,189 @@
+{
+  "routes": [
+    {
+      "title": "CLI Reference",
+      "heading": false,
+      "routes": [
+        {
+          "title": "Usage",
+          "path": "/docs/cli/usage",
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "Install",
+              "path": "/docs/cli/install"
+            },
+            {
+              "title": "Options",
+              "path": "/docs/cli/options"
+            },
+            {
+              "title": "Packaging",
+              "path": "/docs/cli/packaging"
+            },
+            {
+              "title": "Building",
+              "path": "/docs/cli/building"
+            },
+            {
+              "title": "Running",
+              "path": "/docs/cli/running"
+            },
+            {
+              "title": "Hacking",
+              "path": "/docs/cli/hacking"
+            }
+          ]
+        },
+        {
+          "title": "Reference",
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`Kraftfile`",
+              "path": "/docs/cli/reference/kraftfile/latest"
+            }
+          ]
+        },
+        {
+          "title": "Build Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft build`",
+              "path": "/docs/cli/reference/kraft/build"
+            },
+            {
+              "title": "`kraft clean`",
+              "path": "/docs/cli/reference/kraft/clean"
+            },
+            {
+              "title": "`kraft fetch`",
+              "path": "/docs/cli/reference/kraft/fetch"
+            },
+            {
+              "title": "`kraft menu`",
+              "path": "/docs/cli/reference/kraft/menu"
+            },
+            {
+              "title": "`kraft prepare`",
+              "path": "/docs/cli/reference/kraft/prepare"
+            }
+          ]
+        },
+        {
+          "title": "Packaging Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft pkg`",
+              "path": "/docs/cli/reference/kraft/pkg"
+            },
+            {
+              "title": "`kraft pkg ls`",
+              "path": "/docs/cli/reference/kraft/pkg/ls"
+            },
+            {
+              "title": "`kraft pkg pull`",
+              "path": "/docs/cli/reference/kraft/pkg/pull"
+            },
+            {
+              "title": "`kraft pkg push`",
+              "path": "/docs/cli/reference/kraft/pkg/push"
+            },
+            {
+              "title": "`kraft pkg source`",
+              "path": "/docs/cli/reference/kraft/pkg/source"
+            },
+            {
+              "title": "`kraft pkg unsource`",
+              "path": "/docs/cli/reference/kraft/pkg/unsource"
+            },
+            {
+              "title": "`kraft pkg update`",
+              "path": "/docs/cli/reference/kraft/pkg/update"
+            }
+          ]
+        },
+        {
+          "title": "Runtime Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft ps`",
+              "path": "/docs/cli/reference/kraft/ps"
+            },
+            {
+              "title": "`kraft rm`",
+              "path": "/docs/cli/reference/kraft/rm"
+            },
+            {
+              "title": "`kraft run`",
+              "path": "/docs/cli/reference/kraft/run"
+            },
+            {
+              "title": "`kraft stop`",
+              "path": "/docs/cli/reference/kraft/stop"
+            }
+          ]
+        },
+        {
+          "title": "Networking Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft net create`",
+              "path": "/docs/cli/reference/kraft/net/create"
+            },
+            {
+              "title": "`kraft net down`",
+              "path": "/docs/cli/reference/kraft/net/down"
+            },
+            {
+              "title": "`kraft net inspect`",
+              "path": "/docs/cli/reference/kraft/net/inspect"
+            },
+            {
+              "title": "`kraft net ls`",
+              "path": "/docs/cli/reference/kraft/net/ls"
+            },
+            {
+              "title": "`kraft net rm`",
+              "path": "/docs/cli/reference/kraft/net/rm"
+            },
+            {
+              "title": "`kraft net up`",
+              "path": "/docs/cli/reference/kraft/net/up"
+            }
+          ]
+        },
+        {
+          "title": "Miscellaneous Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft login`",
+              "path": "/docs/cli/reference/kraft/login"
+            },
+            {
+              "title": "`kraft version`",
+              "path": "/docs/cli/reference/kraft/version"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

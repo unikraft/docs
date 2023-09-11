@@ -1,0 +1,39 @@
+{
+  "routes": [
+    {
+      "routes": [
+        {
+          "title": "Welcome",
+          "path": "/docs/getting-started"
+        },
+        {
+          "title": "Roadmap",
+          "path": "https://github.com/orgs/unikraft/projects/24/views/13",
+          "external": true
+        },
+        {
+          "title": "Contributing",
+          "path": "/docs/contributing"
+        },
+        {
+          "title": "FAQ",
+          "path": "/docs/faq"
+        },
+        {
+          "title": "Integrations",
+          "open": true,
+          "routes": [
+            {
+              "title": "HashiCorp Packer",
+              "path": "/docs/getting-started/integrations/hcp-packer"
+            },
+            {
+              "title": "GitHub Actions",
+              "path": "/docs/getting-started/integrations/github-actions"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

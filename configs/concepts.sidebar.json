@@ -1,0 +1,53 @@
+{
+  "routes": [
+    {
+      "title": "Concepts",
+      "routes": [
+        {
+          "title": "Background",
+          "open": true,
+          "routes": [
+            {
+              "title": "Introduction",
+              "path": "/docs/concepts"
+            },
+            {
+              "title": "Design Principles",
+              "path": "/docs/concepts/design-principles"
+            },
+            {
+              "title": "Virtualization",
+              "path": "/docs/concepts/virtualization"
+            },
+            {
+              "title": "Build Process",
+              "path": "/docs/concepts/build-process"
+            }
+          ]
+        },
+        {
+          "title": "Features",
+          "open": true,
+          "routes": [
+            {
+              "title": "Performance",
+              "path": "/docs/concepts/performance"
+            },
+            {
+              "title": "Security",
+              "path": "/docs/concepts/security"
+            },
+            {
+              "title": "Efficiency",
+              "path": "/docs/concepts/efficiency"
+            },
+            {
+              "title": "Compatibility",
+              "path": "/docs/concepts/compatibility"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
