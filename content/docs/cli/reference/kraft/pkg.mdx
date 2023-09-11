@@ -1,0 +1,56 @@
+---
+title: "kraft pkg"
+description: Package and distribute Unikraft unikernels and their dependencies
+---
+
+Package and distribute Unikraft unikernels and their dependencies.
+
+With `kraft pkg` you are able to turn output artifacts from `kraft build`
+into a distributable archive ready for deployment.  At the same time,
+`kraft pkg` allows you to manage these archives: pulling, pushing, or
+adding them to a project.
+
+The default behaviour of `kraft pkg` is to package a project.  Given no
+arguments, you will be guided through interactive mode.
+
+
+```
+kraft pkg [FLAGS] [SUBCOMMAND|DIR]
+```
+
+### Examples
+
+```
+# Package a project as an OCI archive and embed the target's KConfig.
+$ kraft pkg --as oci --name unikraft.org/nginx:latest --with-kconfig
+```
+
+## Options
+
+```
+  -m, --arch string          Filter the creation of the package by architecture of known targets
+  -a, --args string          Pass arguments that will be part of the running kernel's command line
+  -M, --as string            Force the packaging despite possible conflicts (default "auto")
+      --dbg                  Package the debuggable (symbolic) kernel image instead of the stripped image
+      --force-format         Force the use of a packaging handler format
+  -h, --help                 help for pkg
+  -k, --kernel string        Override the path to the unikernel image
+      --kraftfile string     Set an alternative path of the Kraftfile
+  -n, --name string          Specify the name of the package
+  -o, --output string        Save the package at the following output
+  -p, --plat string          Filter the creation of the package by platform of known targets
+  -t, --target string        Package a particular known target
+  -i, --with-initrd string   Path to init ramdisk to bundle within the package (passing a path will automatically generate a CPIO image)
+      --with-kconfig         Include the target .config
+```
+
+## See Also
+
+* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [kraft pkg list](/docs/cli/reference/kraft/pkg/list)	 - List installed Unikraft component packages
+* [kraft pkg pull](/docs/cli/reference/kraft/pkg/pull)	 - Pull a Unikraft unikernel and/or its dependencies
+* [kraft pkg push](/docs/cli/reference/kraft/pkg/push)	 - Push a Unikraft unikernel package to registry
+* [kraft pkg source](/docs/cli/reference/kraft/pkg/source)	 - Add Unikraft component manifests
+* [kraft pkg unsource](/docs/cli/reference/kraft/pkg/unsource)	 - Remove Unikraft component manifests
+* [kraft pkg update](/docs/cli/reference/kraft/pkg/update)	 - Retrieve new lists of Unikraft components, libraries and packages
+

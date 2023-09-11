@@ -1,0 +1,130 @@
+---
+title: Unikraft CLI Companion Tool
+description: |
+  Unikraft's companion command-line tool `kraft` has been modeled after many
+  popular package managers and build tools with the explicit aim of making it 
+  easy to build and manage your application as a unikernel.
+---
+
+Before beginning, it is important to familiarize yourself with [the concept of a
+unikernel](/docs/concepts/) and how unikernels differ from other runtime
+mediums, including: containers, standard VMs and OSes (e.g. Linux).  At the same
+time, a general understanding of [how a unikernel is constructed with
+Unikraft](/docs/internals/build-process) will help you understand how to use
+`kraft` effectively.
+
+Please let us know if you run into any issues [by reaching out through one of
+the main communication channels](#) or by filing an [issue on GitHub](#). Happy
+krafting! 🐒
+
+## Quick-start example based on `qemu/x86_64`
+
+Start by using the interactive installer:
+
+```shell
+curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
+```
+
+This will install the `kraft` binary executable onto your host as well as
+additional dependencies necessary for building and running Unikraft unikernels.
+The installer detects your OS and suggests an appropriate installation
+procedure.
+
+<Info>
+For more information on customizing your installation of `kraft`, please refer 
+to the [complete installation guide](/docs/cli/install).
+</Info>
+
+To test your installation, you can try running our pre-built "Hello, World"
+unikernel on your machine by simply invoking the following command:
+
+```
+kraft run unikraft.org/helloworld:latest
+```
+
+If all goes well, you should be greeted with a message and some helpful tips.
+If things didn't go well, please check out our [troubleshooting guide](#) for
+more information and for frequently asked questions.
+
+```
+kraft -h
+```
+```txt nocopy=true
+
+    .
+   /^\     Build and use highly customized and ultra-lightweight unikernels.
+  :[ ]:
+  | = |
+ /|/=\|\   Documentation:    https://kraftkit.sh/
+(_:| |:_)  Issues & support: https://github.com/unikraft/kraftkit/issues
+   v v
+   ' '
+
+USAGE
+  kraft [SUBCOMMAND] [FLAGS]
+
+BUILD COMMANDS
+  build          Configure and build Unikraft unikernels
+  clean          Remove the build object files of a Unikraft project
+  fetch          Fetch a Unikraft unikernel's dependencies
+  menu           Open's Unikraft configuration editor TUI
+  prepare        Prepare a Unikraft unikernel
+  properclean    Completely remove the build artifacts of a Unikraft project
+
+PACKAGING COMMANDS
+  pkg            Package and distribute Unikraft unikernels and their dependencies
+  pkg ls         List installed Unikraft component packages
+  pkg pull       Pull a Unikraft unikernel and/or its dependencies
+  pkg push       Push a Unikraft unikernel package to registry
+  pkg source     Add Unikraft component manifests
+  pkg unsource   Remove Unikraft component manifests
+  pkg update     Retrieve new lists of Unikraft components, libraries and packages
+
+RUNTIME COMMANDS
+  ps             List running unikernels
+  rm             Remove one or more running unikernels
+  run            Run a unikernel
+  stop           Stop one or more running unikernels
+
+LOCAL NETWORKING COMMANDS
+  net create     Create a new machine network
+  net down       Bring a network offline
+  net inspect    Inspect a machine network
+  net ls         List machine networks
+  net rm         Remove a network
+  net up         Bring a network online
+
+MISCELLANEOUS COMMANDS
+  login          Provide authorization details for a remote service
+  version        Show kraft version information
+
+FLAGS
+      --config-dir string        Path to KraftKit config directory
+      --containerd-addr string   Address of containerd daemon socket
+      --editor string            Set the text editor to open when prompt to edit a file
+      --events-pid-file string   Events process ID used when running multiple unikernels (default "/var/kraftkit/events.pid")
+      --git-protocol string      Preferred Git protocol to use (default "https")
+  -h, --help                     help for kraft
+      --http-unix-sock string    When making HTTP(S) connections, pipe requests via this shared socket
+      --log-level string         Log level verbosity (default "info")
+      --log-timestamps           Enable log timestamps
+      --log-type string          Log type (default "fancy")
+      --manifests-dir string     Path to Unikraft manifest cache
+      --no-check-updates         Do not check for updates
+      --no-emojis                Do not use emojis in any console output
+      --no-parallel              Do not run internal tasks in parallel
+      --no-prompt                Do not prompt for user interaction
+      --pager string             System pager to pipe output to
+      --plugins-dir string       Path to KraftKit plugin directory
+      --runtime-dir string       Directory for placing runtime files (e.g. pidfiles) (default "/var/kraftkit")
+      --sources-dir string       Path to Unikraft component cache
+      --with-manifest strings    Paths to package or component manifests (default [https://manifests.kraftkit.sh/index.yaml])
+      --with-mirror strings      Paths to mirrors of Unikraft component artifacts
+```
+## Next steps
+
+Once installed and running, learn more about:
+
+- [Building your first unikernel](#)
+- [Packaging and distributing unikernels](#)
+- [Running and managing multiple unikernels](#)

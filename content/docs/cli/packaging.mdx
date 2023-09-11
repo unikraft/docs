@@ -1,0 +1,253 @@
+---
+title: "Packaging unikernels"
+description: |
+  Learn how to access pre-built unikernels, Unikraft library components, or
+  distribute newly constructed unikernels.
+---
+
+Package management with `kraft` is handled through the `pkg` subcommand which
+offers convenient mechanisms for retrieving, packaging and distributing
+components used during the formation of unikernels based on Unikraft.  `kraft
+pkg` can also help retrieve or distribute completely pre-built unikernels ready
+for use.
+
+To get started building unikernels or accessing pre-built unikernels, we must
+first learn how we can retrieve one or many of these components using `kraft
+pkg`.
+
+
+## Checking for updates
+
+By default and when left unconfigured, `kraft` will retrieve a list of official
+Unikraft library components that can be used later on [when building a
+unikernel](#).  The first step is to retrieve the latest information about these
+components.  Simply run:
+
+```bash
+kraft pkg update
+```
+
+<AsciinemaPlayer
+   rows={8}
+   src="/asciinema/kraft-pkg-update.cast"
+   />
+
+This will locally store information locally about packages and library
+components.  [This location on-disk](#) and [the remote location of the
+component locations](#) can be configured to yours needs.
+
+It is recommended to regularly run `kraft pkg update` as Unikraft regularly
+updates its components with new features, bug fixes, newly supported
+applications, libraries, etc. [See Unikraft's release schedule](#).
+
+<Info>
+In some cases, such as with `kraft build`, updating is done implicitly before
+the command's main functionality is executed.  Because of this, in some
+subcommands, a `--no-update` flag is offered to prevent this operation from
+occurring.
+</Info>
+
+
+## Package component types
+
+Unikraft ships (and `kraft` allows you to ship) packages of different component
+types.  A component is a building block, and ultimately a code base, repository
+or distributable archive or binary, which is used within the Unikraft ecosystem.
+Components are one of 5 unique types:
+
+| Type   | Description |
+|--------|-------------|
+| `core` | A repository containing the [Unikraft core codebase](https://github.com/unikraft/unikraft) which consists of a Make and KConfig-based build system.  The Unikraft core provides the glue for stiching other components as well as your application together. |
+| `arch` | The component that defines behavior and hardware interactions specific to the target architecture. |
+| `plat` | A repository containing code that defines the interaction with the underlying hardware, depending on whether a hypervisor is present or not, and which hypervisor is present. |
+| `lib`  | A repository containing a [Unikraft external library](https://unikraft.org/docs/concepts/#unikraft-libraries), that defines an user-space functionality. |
+| `app`  | The final component type is that of a fully functioning unikernel.  The `app` component defines the use of the `core`, a `arch` and `plat` combination, as well as a list of `lib`s. |
+
+
+## Package Manages
+
+Internal to `kraft` are programmable package managers that allows you to fetch
+resources that either comprise of library components (distributed through [the
+KraftKit manifest specification](#manifest-based-packages)) of a unikernel or
+fully pre-built unikernels (distributed using the [OCI Image
+Specification](#oci-based-packages)).
+
+
+### Manifest-based packages
+
+A manifest-based package is a simple representation of a component that is one
+of three distributable types:
+
+- A Git repository;
+- A directory; or,
+- A tarball.
+
+
+### OCI-based packages
+
+It is possible to access pre-built and to distribute yourself unikernel images
+using the [OCI Image
+Specification](https://github.com/opencontainers/image-spec/blob/main/spec.md).
+This feature enables you to use existing registries to store and distribute
+unikernel images quickly and easily.
+
+Built in to `kraft` is a reference to our public-access OCI registry which is
+hosted simply at `unikraft.org`.  To access unikernel images in another
+registry, simply [add it as a source](#sourcing-additional-packages).
+
+You can configure different backends for OCI images, the default is
+directory-based and will store the artifacts locally on disk.  Alternatively,
+you can use [containerd](https://https://containerd.io/) as a backend by setting
+the [`containerd_addr` to the daemon socket in the global
+settings](/docs/cli/options).
+
+
+## Listing and searching for packages
+
+You can list all packages and components with:
+
+```bash
+kraft pkg list
+```
+
+<AsciinemaPlayer src="/asciinema/kraft-pkg-list.cast" />
+
+To view the latest applications distributed as OCI images that are provided by
+the Unikraft OSS Project's registry, simply run the following: 
+
+```bash
+kraft pkg ls -u --apps
+```
+
+The above command lists components by `--apps` and requests an update
+(`-u|--update`) such that it queries the remote registry.
+
+
+## Sourcing additional packages
+
+<Info>
+By default, you do not need to source any additional repositories or manifests
+if you have a freshly installed version of `kraft` and simply wish to get
+started using existing applications, libraries or the Unikraft core based on
+the publicly available and official channels.
+</Info>
+
+To manage components with `kraft`, we must first know where we can find them.
+This is done by "sourcing" them from a remote location with:
+
+```bash
+kraft pkg source SOURCE
+```
+
+Where `SOURCE` is, for example:
+
+```bash
+# Source a component represented as a public Git repository
+kraft pkg source https://github.com/unikraft/lib-lwip.git
+
+# Sourcing a private Git repository
+kraft pkg source git@github.com:unikraft/lib-mylib.git
+
+# Sourcing a manifest (index) of packages
+kraft pkg source https://manifests.kraftkit.sh/index.yaml
+
+# Sourcing a manifest of a single package
+kraft pkg source https://manifests.kraftkit.sh/lib/lwip.yaml
+
+# Source an OCI registry
+kraft pkg source localhost:3000
+```
+
+In the above example, there are three types of sources:
+
+1. **Git repositories representing a component**: When sourcing repositories
+   directly, e.g. when you wish to use a git repository representing a
+   microlibrary, `kraft pkg source` will attempt to determine the component type
+   with the naming convention `$type-$name` (e.g. `lib-lwip`, `app-helloworld`).  
+   
+   See `kraft pkg source --help` for more information about how to correctly
+   annotate sources with unconventional names. 
+
+2. **Manifests**: It is possible to pass `kraft pkg source` a local path on disk
+   or a remote URL to a [Manifest file](#Manifest-Specification) which
+   represents either a list of components or a single component.
+
+   The officially maintained manifest for all Unikraft components (and default
+   manifest if KraftKit is left unconfigured) is:
+   ```
+   https://manifests.kraftkit.sh/index.yaml
+   ```
+
+3. **OCI Registries**: It is possible to add a reference to a remote OCI
+   registry to view pre-built unikernel images. 
+
+### Removing a source of packages
+
+To remove a source, you can unsource it by invoking:
+
+```
+kraft pkg unsource [SOURCE]
+```
+
+Invoking `kraft pkg unsource` without the optional `[SOURCE]` positional
+argument (which must be an exact match) you will be prompted to interactively
+select which source(s) you would like to remove from KraftKit.
+
+
+## Retrieving a package
+
+To cache a package locally on your machine either for multiple uses or within
+the context of a project's build, you can use:
+
+```
+kraft pkg pull [PACKAGE]
+```
+
+Without any flags, the above command will store a copy in [the manifest cache
+directory](#).  When used with `-w`, it will save it in the context of a
+project.
+
+
+## Packaging your application
+
+[Once you have successfully built a Unikraft unikernel](/docs/cli/building) and
+you wish to distribute your application, you can use the top-level `kraft pkg`
+subcommand.  Left without any arguments, the command will use information
+supplied in the `Kraftfile` to determine how to package the artifact(s):
+
+```bash
+# Simply invoke kraft pkg within the application directory
+kraft pkg
+
+# Or pass a path to a an application directory
+kraft pkg path/to/my/app
+```
+
+To package your image as an OCI image, you can force the type and OCI Image
+Reference name (or tag) to be used:
+
+```bash
+kraft pkg --as oci --name unikraft.org/helloworld:latest
+```
+
+<AsciinemaPlayer
+   rows={8}
+   src="/asciinema/kraft-pkg-as-oci.cast" />
+
+In the above example, [a "Hello, world!"
+project](https://github.com/unikraft/app-helloworld) with a single target
+(`qemu/x86_64`) is packaged as an OCI image with the name
+`unikraft.org/helloworld:latest`.
+
+If your project has multiple targets, each built target will be packaged
+together to produce a [multi-platform
+image](https://docs.docker.com/build/building/multi-platform/).
+
+## Distributing your application
+
+Once packaged, it is possible to push the resulting image to the remote
+registry.  Simply invoke:
+
+```bash
+kraft pkg push unikraft.org/helloworld:latest
+```

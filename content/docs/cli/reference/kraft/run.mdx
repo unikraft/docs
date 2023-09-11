@@ -1,0 +1,81 @@
+---
+title: "kraft run"
+description: Run a unikernel
+---
+
+Run a unikernel virtual machine
+
+```
+kraft run [FLAGS] PROJECT|PACKAGE|BINARY -- [APP ARGS]
+```
+
+### Examples
+
+```
+Run a built target in the current working directory project:
+$ kraft run
+
+Run a specific target from a multi-target project at the provided project directory:
+$ kraft run -t TARGET path/to/project
+
+Run a specific kernel binary:
+$ kraft run --arch x86_64 --plat qemu path/to/kernel-x86_64-qemu
+
+Run an OCI-compatible unikernel, mapping port 8080 on the host to port 80 in the unikernel:
+$ kraft run -p 8080:80 unikraft.org/nginx:latest
+
+Attach the unikernel to an existing network kraft0 backed by the bridge driver:
+$ kraft run --network bridge:kraft0
+
+Run a Linux userspace binary in POSIX-/binary-compatibility mode:
+$ kraft run a.out
+
+Supply an initramfs CPIO archive file to the unikernel for its rootfs:
+$ kraft run --initrd ./initramfs.cpio
+
+Supply a path which is dynamically serialized into an initramfs CPIO archive:
+$ kraft run --initrd ./path/to/rootfs
+
+Mount a bi-directional path from on the host to the unikernel mapped to /dir:
+$ kraft run -v ./path/to/dir:/dir
+
+Supply a read-only root file system at / via initramfs CPIO archive and mount a bi-directional volume at /dir:
+$ kraft run --initrd ./initramfs.cpio --volume ./path/to/dir:/dir
+
+Customize the default content directory of the official Unikraft NGINX OCI-compatible unikernel and map port 8080 to localhost:
+$ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
+
+```
+
+## Options
+
+```
+  -m, --arch string            Set the architecture
+      --as string              Force a specific runner
+  -d, --detach                 Run unikernel in background
+  -W, --disable-acceleration   Disable acceleration of CPU (usually enables TCG)
+  -h, --help                   help for run
+      --initrd string          Use the specified initrd (readonly)
+  -i, --interactive            Keep stdin open even if not attached
+      --ip string              Assign the provided IP address
+  -a, --kernel-arg strings     Set additional kernel arguments
+      --kraftfile string       Set an alternative path of the Kraftfile
+      --mac string             Assign the provided MAC address
+  -M, --memory string          Assign MB memory to the unikernel (default "64M")
+  -n, --name string            Name of the instance
+      --network string         Attach instance to the provided network in the format <driver>:<network>, e.g. bridge:kraft0
+      --no-start               Do not start the machine
+      --plat string            Set the platform virtual machine monitor driver (default "auto")
+  -p, --port stringArray       Publish a machine's port(s) to the host
+      --rm                     Automatically remove the unikernel when it shutsdown
+      --rootfs string          Specify a path to use as root file system (can be volume or initramfs)
+      --symbolic               Use the debuggable (symbolic) unikernel
+  -t, --target string          Explicitly use the defined project target
+      --tty                    Allocate a pseudo-TTY
+  -v, --volume strings         Bind a volume to the instance
+```
+
+## See Also
+
+* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+

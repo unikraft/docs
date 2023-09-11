@@ -1,0 +1,121 @@
+---
+title: Concepts
+description: |
+  Unikraft is an alternative system for running your application in the cloud.
+  In production environments, it feels no different to managing traditional 
+  containers, but how your application is packaged and executed is radically 
+  different compared to containers and traditional VMs.
+---
+
+In the following sections, we detail the major concepts that are relevant
+Unikraft.  This text serves to fully conceptualize all information to help you
+understand the reasoning behind Unikraft's design and implementation, as well as
+serve as reference for its architecture.
+
+> For more information on [how build your application with
+> Unikraft](/docs/cli/building) or [how to manage unikernel applications in
+> production](/docs/cli/running) please see the [getting started
+> documentation](/docs/getting-started).
+
+## Introduction to unikernels
+
+The high level goal of Unikraft is to be able to build specialized OS images,
+known as unikernels, easily, quickly and without time-consuming expert work.  A
+key distinction between unikernels and classical monolithic Operating Systems
+(OS) is that it is a single-address space binary object: it does not have
+separation between kernel and user address spaces which allows for much faster
+execution.
+
+<Image
+  border
+  ratio={16/6}
+  src="/diagrams/vm-container-unikernel.svg"
+  title="Figure 1"
+  description="High-level comparison of the software components of traditional
+  VMs (a), containers (b), containers in VMs (c) with unikernels (d)."
+/>
+
+Unikernels are specifically designed for use in cloud environments.  In most
+production systems often the standard unit of isolation is the VM since this
+provides the greatest degree of security for the enclosed application(s).  Its
+isolation is made possible directly by hardware primitives instead of OS-level
+(software) primitives.  However, a fully virtualized traditional VMs is too
+heavy for most applications which has led to the container-based model.
+Naturally, the evolution of running applications in the cloud has led to the
+model where containers are deployed within VMs due to the properties of each
+system (seen in (c) in Figure 1).  Kubernetes is a prime example of such
+deployment model (nodepools are generally deployed as VMs) and is the _de facto_
+orchestration framework container applications.
+
+Unikernels find parallels from the themes developed in early microkernel design
+efforts.  For instance, virtualisation techniques offered by [Type-1
+hypervisors](/docs/concepts/virtualization) are used today to handle network
+multiplexing via grant tables to guest OSes.  Application interaction with the
+host architecture, through APIs or IPC mechanisms made available by the libOS,
+allows for the control of hardware resources and the proliferation of
+application-level resource management when desired.
+
+Unikraft has a size comparable with that of a container, while it retains the
+power of a virtual machine, meaning it can directly control the hardware
+components (virtualized, or not, if running bare-metal). This gives it an
+advantage over classical Operating Systems. Being a special type of operating
+system, Unikraft can run bare-metal or over a hypervisor.
+
+The following table makes a comparison between regular virtual machines (think
+of an Ubuntu VM), Containers and Unikernels, represented by Unikraft:
+
+|                      | Virtual Machines              | Containers                        | Unikernels                  |
+| :------------------: | :---------------------------: | :-------------------------------: | :-------------------------: |
+| **Time performance** | Slowest of the 3              | Fast                              | Fast                        |
+| **Memory footprint** | Heavy                         | Depends on the number of features | Light                       |
+| **Security**         | Very secure                   | Least secure of the 3             | Very secure                 |
+| **Features**         | Everything you could think of | Depends on the needs              | Only the absolute necessary |
+
+
+## Componenization
+
+At the heart of the unikernel model lies with the collection of composable,
+inter-changable and interoperable OS components which are formed into a library,
+known as a library OS (libOS).  These components can be logically organized in
+two types.  The first set of functionalities which enable essential runtime
+services, such as system resource virtualisation and device drivers.  The second
+type of OS service is discussed in the next section, offering added-value
+capabilities to applications, like IP networking and file system access.
+
+In Unikraft, libraries are first-class and all libraries in the core are
+inter-changable, from the scheduler to the memory allocator and more.  To
+facilitate the use of the wider ecosystem, Unikraft allows for wrapping
+pre-existing libraries such as OpenSSL.
+
+> Read more about [Unikraft's modular
+> architecture](/docs/concepts/architecture).
+
+
+## Configurability
+
+To meet the needs of a large variety of different use cases, KPIs and contexts,
+configuration of library components allow users to tune specific attributes to
+their liking.  This ability to configure all parts of the unikernel is
+first-class in Unikraft and enables developers to develop the best-in-class 
+
+In Unikraft, this system is enabled by a custom port of [Linux's KConfig
+system](#) which allows users to quickly and easily pick and choose which
+libraries to include in the build process, as well as to configure options for
+each of them, where available.
+
+
+## Tooling and Integrations
+
+The core of Unikraft is a suite of tools which aid in the creation of the final
+unikernel image.  Based on Go, GNU Make, C and KConfig, it takes care of
+compiling and linking all the relevant modules and of producing images for the
+different platforms selected via the configuration menu.
+
+<Info>
+You can get started easily today by installing the command-line companion tool
+`kraft` by [following our getting started guide](/docs/cli).
+</Info>
+
+External libraries consist of existing code not specifically meant for Unikraft.
+This includes standard libraries such as libc or openssl, but also run-times
+like Python.

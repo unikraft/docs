@@ -1,0 +1,343 @@
+---
+title: Kraftfile Reference (v0.5)
+description: |
+  This document contains information about how to write a `Kraftfile` which is
+  used to configure, build and package your application as a Unikraft unikernel.
+---
+
+<Warning>
+**This document does NOT contain the latest `Kraftfile` specification
+information**, please [refer to this document for the
+latest](/docs/cli/reference/kraftfile/latest) information.
+</Warning>
+
+The `Kraftfile` is the static configuration file used to programmatically build
+and package a unikernel using `kraft`.  This file contains information about the
+Unikraft core build system, third-party libraries, all configuration options
+which are used for the build and a list of possible targets for the application.
+A `Kraftfile` is typically found at the top-level of a repository.  It is
+possible to change this location with additional flags found in `kraft`.
+
+The `Kraftfile` acts as the initialization for the configuration of the
+unikernel, including the source location of the Unikraft core and any auxiliary
+third-party libraries that are necessary for your application (e.g. OpenSSL).
+
+## File names
+
+For legacy reasons, the following file names are recognized by `kraft` where
+`Kraftfile` is the latest preferred name:
+
+* `Kraftfile`
+* `kraft.yaml`
+* `kraft.yml`
+
+## Top-level `specification` and `name` attributes
+
+All `Kraftfile`s MUST include a top-level `specification` attribute which is
+used by `kraft` to both validate as well as correctly parse the rest of the
+file. The latest specification number is `v0.5`:
+
+```yaml
+specification: v0.5
+
+name: helloworld
+```
+
+Finally, an application `name` CAN specified.  When no `name` attribute is
+specified, the directory's base name is used as the name.
+
+## Top-level `unikraft` attribute
+
+The `unikraft` attribute MUST be specified and is used to define the source
+location of the [Unikraft core](https://github.com/unikraft/unikraft) which
+contains the main build system and core primitives for connecting your
+application as well as any third-party libraries or drivers.
+
+In all cases, there are two forms of syntax that can be used in the `Kraftfile`,
+known as "short-hand" and "long-hand" depending on preference.
+
+
+### Setting a specific version
+
+The attribute can be specified in multiple ways, the most common is simply to
+request the latest from a "stable" channel of Unikraft, e.g.:
+
+```yaml ln={5-6,8-10}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand syntax
+unikraft: stable
+
+# Long-hand syntax
+unikraft:
+  version: stable
+```
+
+<Info>
+The Unikraft project adopts two-channel release mode via `stable` and `staging`.
+Specifying the latter will provide to you bleeding-edge version of Unikraft.
+</Info>
+
+To specify a specific version of Unikraft, including a specific Git commit, you
+simply set it as follows:
+
+```yaml ln={5-6,8-10,12-13,15-17}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand for a specific version of Unikraft
+unikraft: v0.14.0
+
+# Long-hand for a specific version of Unikraft
+unikraft:
+  version: v0.14.0
+
+# Short-hand for a specific commit of Unikraft
+unikraft: 70bc0af
+
+# Long-hand for a specific commit of Unikraft
+unikraft:
+  version: 70bc0af
+```
+
+
+### Setting a specific source location
+
+If you wish to use a copy of the Unikraft core code which is a remote fork or
+mirror, it is possible to set this as the entry for the attribute.  When specified
+like so, the top of the HEAD of the default branch will be used:
+
+```yaml ln={5-6,8-10}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand syntax
+unikraft: https://github.com/unikraft/unikraft.git
+
+# Long-hand syntax
+unikraft:
+  source: https://github.com/unikraft/unikraft.git
+```
+
+Alternatively, a specific tag, branch or Git SHA can be specified by setting:
+
+```yaml ln={5-6,8-11,13-14,16-19,21-22,24-27}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand syntax for a specific branch
+unikraft: https://github.com/unikraft/unikraft.git@staging
+
+# Long-hand syntax for a specific branch
+unikraft:
+  source: https://github.com/unikraft/unikraft.git
+  version: staging
+
+# Short-hand syntax for a specific tag
+unikraft: https://github.com/unikraft/unikraft.git@RELEASE-0.14.0
+
+# Long-hand syntax for a specific ta
+unikraft:
+  source: https://github.com/unikraft/unikraft.git
+  version: RELEASE-0.14.0
+
+# Short-hand syntax for a specific commit
+unikraft: https://github.com/unikraft/unikraft.git@70bc0af
+
+# Long-hand syntax for a specific commit
+unikraft:
+  source: https://github.com/unikraft/unikraft.git
+  version: 70bc0af0bd1c74b3af3c0584d7b7373dc42b2ce7
+```
+
+It is possible to access remote repositories which requires authentication over
+SSH, simply set this as part of the scheme:
+
+```yaml ln={5-7,9-13}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand syntax for specifying an authenticated Git repository over SSH,
+# which will select the default branch
+unikraft: ssh://git@github.com/unikraft/unikraft.git
+
+# Long-hand syntax for specifying an authenticated Git repository over SSH, and
+# specifying a specific branch (or tag)
+unikraft:
+  source: ssh://git@github.com/unikraft/unikraft.git
+  version: staging
+```
+
+<Info>
+To use Git authentication over SSH, you must start an SSH agent before invoking
+`kraft`, for example:
+```shell
+eval `ssh-agent`
+ssh-add ~/.ssh/id_ed25519
+```
+</Info>
+
+Finally, it is possible to set the location of Unikraft's core to a path on the
+host.  This is useful when you are hacking at the core directly or working
+whilst traveling and do not have access to an internet connection:
+
+```yaml ln={5-6,8-11}
+specification: v0.5
+
+name: helloworld
+
+# Short-hand sytnax for a specific path on disk
+unikraft: path/to/unikraft
+
+# Long-hand syntax for a specific path on disk
+unikraft:
+  source: path/to/unikraft
+```
+
+### Specifying KConfig configuration
+
+To declare any specific options from Unikraft's configuration system, you must
+always use the long-hand syntax.  All KConfig options start with `CONFIG_` and
+can be set in either list format with key and value delimetered with an equal
+(`=`) symbol or in map format:
+
+```yaml ln={5-8,10-13}
+specification: v0.5
+
+name: helloworld
+
+# Using list-style formatting
+unikraft:
+  kconfig:
+  - CONFIG_EXAMPLE=y
+
+# Using map-style formatting
+unikraft:
+  kconfig:
+    CONFIG_EXAMPLE: "y"
+```
+
+### A more complex example
+
+All three sub-attributes, `source`, `version` and `kconfig`, can be used
+together to generate a very specific definition of the Unikraft core:
+
+```yaml ln={5-9}
+specification: v0.5
+
+name: helloworld
+
+unikraft:
+  source: https://github.com/unikraft/unikraft.git
+  version: stable
+  kconfig:
+    CONFIG_EXAMPLE: "y"
+```
+
+## Top-level `libraries` attributes
+
+Additional third-party libraries CAN be specified as part of the build and are
+listed in map-format.  Similar to the `unikraft` attribute, each library can
+specify a `source`, `version` and a set of `kconfig` options, for example:
+
+```yaml ln={8-9,11-26}
+specification: v0.5
+
+name: helloworld
+
+unikraft: stable
+
+libraries:
+  # Short-hand syntax for specifying the library "musl" on the stable channel
+  musl: stable
+
+  # Long-hand syntax for specifying a library at a specified source, using a
+  # specific Git branch, and specifying additional KConfig options
+  lwip:
+    source: https://github.com/unikraft/lib-lwip.git
+    version: stable
+    kconfig:
+      CONFIG_LWIP_AUTOIFACE: "y"
+      CONFIG_LWIP_DHCP: "y"
+      CONFIG_LWIP_DNS: "y"
+      CONFIG_LWIP_IPV4: "y"
+      CONFIG_LWIP_SOCKET: "y"
+      CONFIG_LWIP_TCP_KEEPALIVE: "y"
+      CONFIG_LWIP_TCP: "y"
+      CONFIG_LWIP_THREADS: "y"
+      CONFIG_LWIP_UKNETDEV: "y"
+      CONFIG_LWIP_WND_SCALE: "y"
+```
+
+In the above example, two additional libraries are used,
+[`musl`](https://github.com/unikraft/lib-musl) and
+[`lwip`](https://github.com/unikraft/lib-lwip).  The names of these libraries
+are determined by what is [sourced via `kraft`'s package
+manager](/docs/cli/packaging#listing-and-searching-for-packages).
+
+## Top-level `targets` attributes
+
+A target is defined as a specific destination that the resulting unikernel is
+destined for and consists at minimum of a specific platform (e.g. `qemu` or
+`firecracker`) and architecture (e.g. `x86_64` or `arm64`) tuple.  A project can
+have multiple targets depending on use case but MUST have at least one. 
+
+Each target consists of at minimum an architecture and platform combination,
+therefore a project with two targets of `qemu/x86_64` and `xen/arm64`:
+
+```yaml ln={8-9,11-12}
+specification: v0.5
+
+name: helloworld
+
+unikraft: stable
+
+targets:
+- platform: qemu
+  architecture: x86_64
+
+- platform: xen
+  architecture: arm64
+```
+
+When left without any flags, `kraft build` will prompt you for the intended
+target to build.
+
+It is possible to define targets simply based on different runtime properties or
+requirements.  This is possible by setting both a `name` sub-attribute and a set
+of `kconfig` options, for example the following two targets both target
+`qemu/x86_64` platform/architecture tuple but initialize the rootfs either based
+on 9pfs or initrd, respectively:
+
+
+```yaml ln={8-15,17-24}
+specification: v0.5
+
+name: helloworld
+
+unikraft: stable
+
+targets:
+- name: helloworld-qemu-x86_64-9pfs
+  platform: qemu
+  architecture: x86_64
+  kconfig:
+    CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: "y"
+    CONFIG_LIBVFSCORE_ROOTFS_9PFS: "y"
+    CONFIG_LIBVFSCORE_ROOTFS: "9pfs"
+    CONFIG_LIBVFSCORE_ROOTDEV: "fs0"
+
+- name: helloworld-qemu-x86_64-initrd
+  platform: qemu
+  architecture: x86_64
+  kconfig:
+    CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: "y"
+    CONFIG_LIBVFSCORE_ROOTFS_INITRD: "y"
+    CONFIG_LIBVFSCORE_ROOTFS: "initrd"
+```

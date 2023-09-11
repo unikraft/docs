@@ -1,0 +1,113 @@
+---
+title: Building a unikernel
+description: |
+  Learn how to build your application into a unikernel using `kraft`.  In this
+  document we outline general practices and different methods for building new
+  applications from scratch or converting existing applications to a unikernel.
+---
+
+Before beginning, it's important to famliarize yourself with [the general
+understanding of what a unikernel is](/docs/concepts#introduction-to-unikernels)
+and [Unikraft's underlying build process](/docs/concepts/build-process). This
+can help you better troubleshoot issues may run into when building your
+application as a unikernel.
+
+There are several different ways you can build a unikernel using Unikraft and
+with `kraft`.  Fundementally, there are two ways in which a unikernel can be
+used:
+
+1. To compile code natively against the Unikraft library Operating System (which
+   generally has better performance).  In this first scenario, the user-level
+   application code is written in a compile-time language, like C, Go or Rust.
+
+2. To use a "loader" which accepts arbirary user code or binaries which is
+   executed on top of an existing, pre-built unikernel.  In this second
+   scenario, either the user program is built using an interpreted language such
+   as Python or JavaScript, or, it is a pre-compiled Linux userspace binary.
+
+This document goes into detail regarding the former case: where you are
+compiling your application against Unikraft.  For pre-built Linux userspace 
+binaries or runtime languages such as Python or JavaScript, please [read more
+about running your application as a unikernel](#).
+
+
+## Initializing a project with a `Kraftfile`
+
+The first step in preparing your application to be built or run with Unikraft is
+to create a top-level `Kraftfile` in your source repository.
+
+<Info>
+See also the complete [`Kraftfile` syntax and schema information](/docs/cli/reference/kraftfile).
+</Info>
+
+
+## Configuring your project
+
+[The `Kraftfile` is the static configuration
+file](/docs/cli/reference/kraftfile) used to programmatically build and package
+a unikernel using `kraft`.  This file contains information about the Unikraft
+core build system, third-party libraries, all configuration options which are
+used for the build and a list of possible targets for the application.  For all
+components, you can define [KConfig options](#specifying-kconfig-configuration)
+which set options and their respective values.
+
+To discover more options or to set things graphically, you can invoke:
+
+```bash
+kraft menu
+```
+
+<AsciinemaPlayer src="/asciinema/kraft-menu.cast" />
+
+In the above example, the ["Hello, world!" example
+application](https://github.com/unikraft/app-helloworld) was configured by hand
+using Unikraft's built-in [menuconfig](https://en.wikipedia.org/wiki/Menuconfig)
+system for `qemu/x86_64`.  Colored ANSI output and the internal test suite,
+`uktest`, were selected and enabled for the build.
+
+<Warning>
+The configuration for the application is written to a new file and **not** the
+original `Kraftfile`.  Instead, for `qemu/x86_64`, it is written to
+`.config.helloworld_qemu-x86_64` in the project directory.  This `.config.*`
+file is an intermediate file that is generated from either a `Kraftfile` or from
+running `kraft menu`.  **This `.config*` file is the source-of-truth for `kraft`
+in terms of build-time configuration.**
+</Warning>
+
+
+## Compiling and linking your application with Unikraft
+
+Projects that are compiled against Unikraft, such as those written in C/C++, Go,
+Rust, etc. must define a `Makefile.uk` which includes all relevant source files
+of your application, e.g.:
+
+```make
+$(eval $(call addlib,apphelloworld))
+
+APPHELLOWORLD_SRCS-y += $(APPHELLOWORLD_BASE)/main.c
+```
+
+Once your source files have been defined, it is simply a case of running the
+following to build your project:
+
+```bash
+kraft build
+```
+
+<AsciinemaPlayer rows={14} src="/asciinema/kraft-build.cast" />
+
+<Info title="Pro Tip">
+Quickly switch between logging modes to get a better idea of what's happening
+under the hood by setting the following environmental variables:
+```
+export KRAFTKIT_LOG_LEVEL=debug
+export KRAFTKIT_LOG_TYPE=basic
+```
+Or by setting the equivalent command-line flags.
+</Info>
+
+```bash
+kraft --log-level=debug --log-type=basic build
+```
+
+<AsciinemaPlayer src="/asciinema/kraft-build-debug.cast" />

@@ -1,0 +1,91 @@
+---
+title: "Unikraft Plugin for HashiCorp Packer"
+description: |
+  The plugin can be used with the Packer CLI to create highly customized and
+  ultra-lightweight VMs.  This integration with Unikraft enables developer
+  experience towards seamlessly building your application as a unikernel.
+---
+
+<Info>
+To get started immediately, [check out the repository README](https://github.com/unikraft/packer-plugin-unikraft/blob/main/README.md) or see the [installation instructions below](#Installation).
+</Info>
+
+## Overview
+
+The plugin interfaces with the native [Go API
+offered](https://pkg.go.dev/kraftkit.sh) by [KraftKit](https://kraftkit.sh),
+Unikraft's command-line companion tool, to handle everything related to linking
+your application with Unikraft.  Thanks to this interface, the plugin itself is
+kept light and modular.
+
+
+The following minimalistic configuration allows you to build unikernel
+applications.  For example building [`app-helloworld` unikernel
+application](https://github.com/unikraft/app-helloworld.git):
+
+```hcl
+source "unikraft-builder" "example" {
+  // Target architecture of the resulting VM binary
+  architecture = "x86_64"
+
+  // Target platform of the resulting VM binary
+  platform = "kvm"
+
+  // Path of the resulting binaries
+  build_path = "/tmp/my-packer-unikernel/.unikraft/apps/helloworld"
+
+  // Path where to pull the sources and build the binaries
+  workdir = "/tmp/my-packer-unikernel"
+
+  // Application to pull and build
+  pull_source = "helloworld"
+
+  // Extra sources to use for the application 
+  sources = [
+    "https://github.com/unikraft/app-helloworld.git",
+  ]
+}
+```
+
+
+## Installation
+
+### Quickstart
+
+```
+packer plugins install github.com/unikraft/unikraft
+```
+
+### Using the `packer init` command
+
+Starting from Packer v1.7, plugins can be automatically installed via the
+[`packer init`](https://www.packer.io/docs/commands/init) command.  To install
+this plugin, copy and paste the following code snippet preamble into your Packer
+configuration file:
+
+```hcl
+packer {
+  required_plugins {
+    unikraft = {
+      version = ">= 0.1.0"
+      source  = "github.com/unikraft/packer-plugin-unikraft"
+    }
+  }
+}
+```
+
+
+### Manual installation
+
+You can find pre-built binary releases of the plugin
+[here](https://github.com/unikraft/packer-plugin-unikraft/releases).  Full
+installation instructions for installing plugins from source can be found on
+[Packer's
+documentation](https://www.packer.io/docs/extending/plugins/#installing-plugins).
+
+
+### Configuration
+
+For more information on how to configure the plugin, please read the
+documentation located in the [`docs/`](docs) directory.
+

@@ -1,0 +1,38 @@
+---
+title: "kraft pkg list"
+description: List installed Unikraft component packages
+---
+
+List installed Unikraft component packages.
+
+
+```
+kraft pkg list [FLAGS] [DIR]
+```
+
+### Examples
+
+```
+$ kraft pkg list
+```
+
+## Options
+
+```
+      --apps               Show applications
+  -M, --archs              Show architectures
+  -C, --core               Show Unikraft core versions
+  -h, --help               help for list
+      --kraftfile string   Set an alternative path of the Kraftfile
+  -L, --libs               Show libraries
+  -l, --limit int          Set the maximum number of results (default 50)
+      --no-limit           Do not limit the number of items to print
+  -o, --output string      Set output format (default "table")
+  -P, --plats              Show platforms
+  -u, --update             Get latest information about components before listing results
+```
+
+## See Also
+
+* [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
+

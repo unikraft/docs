@@ -1,0 +1,34 @@
+---
+title: "kraft pkg unsource"
+description: Remove Unikraft component manifests
+---
+
+```
+kraft pkg unsource [FLAGS] [SOURCE]
+```
+
+### Examples
+
+```
+# Remove a single component as a Git repository or manifest
+$ kraft pkg unsource https://github.com/unikraft/unikraft.git
+$ kraft pkg unsource https://manifests.kraftkit.sh/index.yaml
+
+```
+
+## Options
+
+```
+  -h, --help   help for unsource
+```
+
+## Options inherited from parent commands
+
+```
+      --kraftfile string   Set an alternative path of the Kraftfile
+```
+
+## See Also
+
+* [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
+

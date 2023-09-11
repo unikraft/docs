@@ -1,0 +1,50 @@
+---
+title: "kraft build"
+description: Configure and build Unikraft unikernels
+---
+
+Build a Unikraft unikernel.
+
+The default behaviour of `kraft build` is to build a project.  Given no
+arguments, you will be guided through interactive mode.
+
+
+```
+kraft build [FLAGS] [SUBCOMMAND|DIR]
+```
+
+### Examples
+
+```
+# Build the current project (cwd)
+$ kraft build
+
+# Build path to a Unikraft project
+$ kraft build path/to/app
+```
+
+## Options
+
+```
+      --all                Build all targets
+  -m, --arch string        Filter the creation of the build by architecture of known targets
+      --build-log string   Use the specified file to save the output from the build
+  -c, --config string      Override the path to the KConfig .config file
+      --dbg                Build the debuggable (symbolic) kernel image instead of the stripped image
+  -h, --help               help for build
+  -j, --jobs int           Allow N jobs at once
+      --kraftfile string   Set an alternative path of the Kraftfile
+  -F, --no-cache           Force a rebuild even if existing intermediate artifacts already exist
+      --no-configure       Do not run Unikraft's configure step before building
+      --no-fast            Do not use maximum parallelization when performing the build
+      --no-fetch           Do not run Unikraft's fetch step before building
+      --no-pull            Do not pull packages before invoking Unikraft's build system
+      --no-update          Do not update package index before running the build
+  -p, --plat string        Filter the creation of the build by platform of known targets
+  -t, --target string      Build a particular known target
+```
+
+## See Also
+
+* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+

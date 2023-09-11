@@ -1,0 +1,174 @@
+---
+title: Building KraftKit from source
+description:
+  The Unikraft companion command-line tool `kraft` is developed via the 
+  KraftKit project which is a general-purpose, Go-based SDK for building 
+  Unikraft unikernels programmatically.  Learn how to use this framework and
+  build the `kraft` binary.
+---
+
+The [KraftKit](https://kraftkit.sh) is an open-source, `BSD-3-Clause` licensed
+sub-project of Unikraft and is designed as a general-purpose, Go-based SDK which
+is used to deliver the `kraft` binary as well as a number of additional tools
+which are used for managing unikernels based on Unikraft.
+
+To get started building `kraft` from source, start by simply cloning the
+repository with Git:
+
+```shell
+git clone https://github.com/unikraft/kraftkit.git
+```
+
+Then `cd` into the repository:
+
+```shell
+cd kraftkit/
+```
+
+KraftKit uses [GNU Make](https://www.gnu.org/software/make/) to simplify
+building specific targets and includes a top-level help menu that can be used to
+reference developer-specific actions:
+
+```shell
+make help
+```
+```txt nocopy=true
+KraftKit developer build targets.
+
+USAGE
+  make [VAR=... [VAR=...]] TARGET
+
+TARGETS
+  devenv                   Start the development environment container.
+  tidy                     Tidy import Go modules.
+  fmt                      Format all files according to linting preferences.
+  cicheck                  Run CI checks.
+  test                     Run all tests.
+  test-unit                Run unit tests.
+  test-e2e                 Run CLI end-to-end tests.
+  install-golangci-lint    Install the Golang CI lint tool
+  properclean              Completely clean the repository's build artifacts.
+  help                     Show this help menu and exit.
+  buildenv-base            OCI image used for building Unikraft unikernels with kraft.
+  buildenv-myself-full     OCI image containing the build environment for KraftKit.
+  buildenv-myself          OCI image containing KraftKit binaries.
+  buildenv-qemu            OCI image containing a Unikraft-centric build of QEMU.
+  buildenv-github-action   OCI image used when building Unikraft unikernels in GitHub Actions.
+  tools                    Build all tools.
+  kraft                    The kraft binary.
+```
+
+<Warning>
+We recommend using one of the available [developer
+environments](#using-a-developer-environment) to get started.  If you do not
+wish to use this environment and wish to use the `go` toolchain which is native
+to your host, unset the `DOCKER` environmental variable before continuing:
+```shell
+export DOCKER=
+```
+Without setting this, relevant `make` targets will be proxied via `docker`.
+Note that if you have an alternative container runtime system such as
+[containerd](https://containerd.io/) or [Podman](https://podman.io/) and wish to
+use this proxy, set the `DOCKER` environmental variable to the relevant tool,
+for example:
+```shell
+# For containerd
+export DOCKER=nerdctl
+
+# For Podman
+export DOCKER=podman 
+```
+</Warning>
+
+
+## Using a developer environment
+
+To build `kraft` without having to manage additional build dependencies on your
+host you can use one of two available developer environments.
+
+
+### GitHub Codespace
+
+Get started quickly and easily by using [GitHub
+Codespaces](https://github.com/features/codespaces) which will include a
+prepared environment for both hacking KraftKit's source code which is written in
+Go as well as running Unikraft unikernels in [emulation mode](#) for testing
+purposes:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/unikraft/kraftkit)
+
+
+### Local Docker/container environment
+
+For local development, it is possible to access a pre-built developer
+environment container image which includes all the necessary tools and libraries
+for building `kraft`.  You can pre-fetch this image by calling:
+
+```shell
+docker pull kraftkit.sh/myself-full:latest
+```
+
+Or you can build this locally by calling:
+
+```shell
+make buildenv-myself-full
+```
+
+Once you have the `myself-full` image stored locally, you can spawn an ephemeral
+build environment which will map the KraftKit codebase into the path
+`/workspace`, simply invoke:
+
+```shell
+make devenv
+```
+
+The above command will drop you into a new shell where you can access the same
+`make` commands and work on changes which are immediately reflected on your host
+to the container build environment.  To quit this environment from the shell,
+type <Kbd>Ctrl</Kbd>+<Kbd>D</Kbd> or type `exit`.
+
+## Building the `kraft` binary
+
+To build the `kraft` binary you must have at least Go 1.20 installed on your
+host.  You can find [relevant installation instructions for the Go toolchain
+here](https://go.dev/doc/install).  Once installed, simply call:
+
+```shell
+make kraft
+```
+
+This will generate a binary image within the directory `dist/`.
+
+<Info>
+Within a developer environment, the `kraft` binary within the `dist/` folder
+will already be placed within the globally accessible `PATH`.  Outside of this
+environment, you can access this binary either by calling it directly or by
+adding it your path like so:
+```shell
+export PATH=$(pwd)/dist:$PATH
+```
+</Info>
+
+
+## Preparation for submitting pull requests
+
+We welcome contributions! Before continuing, please read through our
+[contribution guidelines](#) and our [community code of conduct](#).  Before
+creating a PR we recommend the following in preparation which will check new
+additions with our linting requirements:
+
+```shell
+make cicheck
+```
+
+As well as all test suites to prevent any regressions:
+
+```shell
+make test
+```
+
+## The KraftKit Go SDK
+
+To view internal documentation about KraftKit and how to use exported packages
+and methods, please refer to the auto-generated documentation at:
+https://pkg.go.dev/kraftkit.sh

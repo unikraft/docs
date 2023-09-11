@@ -1,0 +1,188 @@
+---
+title: Options
+description:
+  Learn how to configure `kraft` to your preferences.  In this document, we
+  outline where configuration is stored and what the options mean, including
+  possible values and best practices.
+---
+
+When you install `kraft`, it will create a number of directories and files on
+your host that are used for configuraiton purposes and to store cache
+information.
+
+
+## Overview of configuration options
+
+The default location for user configuration for `kraft` is stored
+at: `~/.config/kraftkit/config.yaml`.  This file can be edited to your
+liking or to suite your needs.  Below is an overview of each configuration
+option, how to set its value, their default value and purpose.
+
+<Table>
+  <thead>
+    <Tr>
+      <Th>Option</Th>
+      <Th>Environmental Variable</Th>
+      <Th minW={'12rem'}>Global CLI flag</Th>
+      <Th>Default Value</Th>
+    </Tr>
+  </thead>
+  <tbody>
+    <Tr>
+      <Td><code>no_prompt</code></Td>
+      <Td><code>KRAFTKIT_NO_PROMPT</code></Td>
+      <Td><code>--no-prompt</code></Td>
+      <Td><code>false</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Do not prompt for user interaction</Td>
+    </Tr>
+    <Tr>
+      <Td><code>no_parallel</code></Td>
+      <Td><code>KRAFTKIT_NO_PARALLEL</code></Td>
+      <Td><code>--no-parallel</code></Td>
+      <Td><code>false</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Do not run internal tasks in parallel</Td>
+    </Tr>
+    <Tr>
+      <Td><code>no_check_updates</code></Td>
+      <Td><code>KRAFTKIT_NO_CHECK_UPDATES</code></Td>
+      <Td><code>--no-check-updates</code></Td>
+      <Td><code>false</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Do not check for updates</Td>
+    </Tr>
+    <Tr>
+      <Td><code>pager</code></Td>
+      <Td><code>KRAFTKIT_PAGER</code></Td>
+      <Td><code>--pager</code></Td>
+      <Td><code></code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">System pager to pipe output to</Td>
+    </Tr>
+    <Tr>
+      <Td><code>runtime_dir</code></Td>
+      <Td><code>KRAFTKIT_RUNTIME_DIR</code></Td>
+      <Td><code>--runtime-dir</code></Td>
+      <Td><code>/var/kraftkit</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Directory for placing runtime files (e.g. pidfiles)</Td>
+    </Tr>
+    <Tr>
+      <Td><code>containerd_addr</code></Td>
+      <Td><code>KRAFTKIT_CONTAINERD_ADDR</code></Td>
+      <Td><code>--containerd-addr</code></Td>
+      <Td><code></code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Address of containerd daemon socket</Td>
+    </Tr>
+    <Tr>
+      <Td><code>paths.config</code></Td>
+      <Td><code>KRAFTKIT_PATHS_CONFIG</code></Td>
+      <Td><code>--paths-config</code></Td>
+      <Td><code>~/.config/kraftkit</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Path to KraftKit config directory</Td>
+    </Tr>
+    <Tr>
+      <Td><code>paths.manifests</code></Td>
+      <Td><code>KRAFTKIT_PATHS_MANIFESTS</code></Td>
+      <Td><code>--paths-manifests</code></Td>
+      <Td><code>~/.local/share/kraftkit/manifests</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Path to Unikraft manifest cache</Td>
+    </Tr>
+    <Tr>
+      <Td><code>paths.sources</code></Td>
+      <Td><code>KRAFTKIT_PATHS_SOURCES</code></Td>
+      <Td><code>--paths-sources</code></Td>
+      <Td><code>~/.local/share/kraftkit/sources</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Path to Unikraft component cache</Td>
+    </Tr>
+    <Tr>
+      <Td><code>log.level</code></Td>
+      <Td><code>KRAFTKIT_LOG_LEVEL</code></Td>
+      <Td><code>--log-level</code></Td>
+      <Td><code>info</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Log level verbosity</Td>
+    </Tr>
+    <Tr>
+      <Td><code>log.timestamps</code></Td>
+      <Td><code>KRAFTKIT_LOG_TIMESTAMPS</code></Td>
+      <Td><code>--log-timestamps</code></Td>
+      <Td><code>false</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Enable log timestamps</Td>
+    </Tr>
+    <Tr>
+      <Td><code>log.type</code></Td>
+      <Td><code>KRAFTKIT_LOG_TYPE</code></Td>
+      <Td><code>--log-type</code></Td>
+      <Td><code>fancy</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Log type (choice of <code>fancy</code>, <code>basic</code> and <code>json</code>)</Td>
+    </Tr>
+    <Tr>
+      <Td><code>unikraft.mirrors</code></Td>
+      <Td><code>KRAFTKIT_UNIKRAFT_MIRRORS</code></Td>
+      <Td><code>--unikraft-mirrors</code></Td>
+      <Td><code></code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Paths to mirrors of Unikraft component artifacts</Td>
+    </Tr>
+    <Tr>
+      <Td><code>unikraft.manifests</code></Td>
+      <Td><code>KRAFTKIT_UNIKRAFT_MANIFESTS</code></Td>
+      <Td><code>--unikraft-manifests</code></Td>
+      <Td><code>https://manifests.kraftkit.sh/index.yaml</code></Td>
+    </Tr>
+    <Tr>
+      <Td colSpan="4">Paths to package or component manifests</Td>
+    </Tr>
+  </tbody>
+</Table>
+
+
+## Additional influential environmental variables
+
+To increase compatibility across systems and to respect to pre-defined user
+environments, `kraft` recognizes the following additional environmental
+variables:
+
+| Variable          | Affects                                                                                            |
+|-------------------|----------------------------------------------------------------------------------------------------|
+| `PAGER`           | How the output is rendered in some commands. Can be set to `cat` or `less`.                        |
+| `NO_COLOR`        | Do not use any ANSI or truecolor output in any log messaging.                                      |
+| `CLICOLOR`        | Same as `NO_COLOR`.                                                                                |
+| `XDG_CONFIG_HOME` | Path to the general configuration directory. Affects the default value of `paths.config`.          |
+| `XDG_STATE_HOME`  | Path to the generate state directory.                                                              |
+| `XDG_DATA_HOME`   | Path to the general data directory.  Affects the default value of `unikraft.manifests` and others. |
+
+
+## Best practice recommendations
+
+The following are a few additional recommendations for global configuration
+values given certain contexts, environments or scenarios:
+
+* In CI/CD contexts, it is best to switch the log type from its default option
+  of `fancy` to either `basic` or `json` to allow for better readability. 
+  KraftKit _should_ recognize pseudo TTY environments and dynamically adjust.
+* If you are experiencing a build error from Unikraft's build system, it is best
+  to switch to `basic` log type and to set the log level to `debug` to get a
+  better understanding of what's being run underneath by KraftKit.
+

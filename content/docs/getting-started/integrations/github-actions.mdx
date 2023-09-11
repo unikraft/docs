@@ -1,0 +1,188 @@
+---
+title: "GitHub Actions"
+description: |
+  The easiest way to build, package and test your unikernel application with
+  GitHub workflows is to use the official Unikraft GitHub Action available on
+  the marketplace.
+---
+
+The Unikraft GitHub Actions is designed to programmatically manage repositories
+that can be built as a Unikraft unikernel via GitHub Workflows:
+
+- Build projects that have a `Kraftfile`;
+- Test unikernels in emulation mode or run the internal test suite;
+- Package images into an OCI image and push to compatible registries.
+
+<Info>
+  View the Action on the GitHub Marketplace:<br />
+  https://github.com/marketplace/actions/build-unikernel-images-with-unikraft
+</Info>
+
+## Basic Usage
+
+In the following example, a repository that has been initialized with a
+top-level `Kraftfile` that contains [a
+target](/docs/cli/reference/kraftfile#targets) for `qemu/x86_64` will be built
+every time a PR is opened, synchronized or re-opened:
+
+```yaml
+name: example1
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: unikraft/kraftkit@stable
+      with:
+        workdir: .
+        kraftfile: Kraftfile
+        arch: x86_64
+        plat: qemu
+```
+
+## Using matrices to build multiple targets
+
+If your project [has multiple targets](/docs/cli/reference/kraftfile#targets),
+you can use the [workflow `matrix`
+syntax](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs)
+which enumerates matrices to build each target independently:
+
+```yaml ln={5-12,21-22}
+name: example2
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - plat: qemu
+          arch: x86_64
+        - plat: qemu
+          arch: arm64
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: unikraft/kraftkit@stable
+      with:
+        workdir: .
+        kraftfile: Kraftfile
+        plat: ${{matrix.plat}}
+        arch: ${{matrix.arch}}
+```
+
+## Testing run-to-completion-type unikernels
+
+Applications which are designed as run-to-completion, meaning that they execute
+a single task non-continuously and exit, can be executed by the GitHub action
+via [QEMU's TCG](https://wiki.qemu.org/Documentation/TCG) (which emulates
+hardware ISA).  Simply enable the `execute: true` attribute of the action.  This
+is useful for applications which perform a single task, or run a suite of tests:
+
+```yaml ln={18}
+name: example3
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: unikraft/kraftkit@stable
+      with:
+        workdir: .
+        kraftfile: Kraftfile
+        arch: x86_64
+        plat: qemu
+        execute: true
+```
+
+<Info>
+See an example with [Unikraft's official
+workflow](https://github.com/unikraft/unikraft/actions/runs/5788361663/job/15687206624#step:5:368)
+which runs the internal test suite [`uktest`](/docs/internals/testing).
+</Info>
+
+## Inline-`Kraftfile`
+
+For more complex scenarios where you may wish to do variable substitutions in
+the workflow file, it is possible to embed the `Kraftfile` directly in the
+action, this is possible using the following syntax:
+
+```yaml ln={15-22}
+name: example4
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: unikraft/kraftkit@stable
+      with:
+        workdir: .
+        kraftfile: |
+          specification: v0.5
+          unikraft: stable
+          libraries:
+            musl: stable
+          targets:
+          - plat: qemu
+            arch: x86_64
+        arch: x86_64
+        plat: qemu
+```
+
+## Packaging and publishing images
+
+The GitHub action, for now, only supports packaging the resulting unikernel
+image in [OCI Image
+format](https://github.com/opencontainers/image-spec/blob/main/spec.md).  This
+allows you to distribute the image using conventional OCI Image Registries, such
+as the one provided by [GitHub
+(GHCR)](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+This image format is also recognized by [`kraft`](#).  To publish your image in
+a registry, you must first login to the registry and then specify the canonical
+name via `output: oci://...` and indicate you wish to `push` the image:
+
+```yaml ln={12-17,25-26}
+name: example5
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to OCI registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.REG_USERNAME }}
+        password: ${{ secrets.REG_TOKEN }}
+
+    - uses: unikraft/kraftkit@stable
+      with:
+        workdir: .
+        kraftfile: Kraftfile
+        arch: x86_64
+        plat: qemu
+        output: oci://ghcr.io/username/repo:latest
+        push: true
+```
+ 

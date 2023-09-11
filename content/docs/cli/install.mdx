@@ -1,0 +1,186 @@
+---
+title: Installation
+description: |
+  With `kraft`, you can easily leverage Unikraft and manage specialized, 
+  high-performance applications at every stage of their lifecycle: from 
+  construction to production.
+---
+
+Whilst the target architecture and platform for the unikernel may differ from
+your host system, `kraft` itself can be used on the following supported systems
+to build and package unikernels.
+
+
+## Recommended installation method
+
+You can quickly and easily install KraftKit using the interactive installer.
+Simply run the following command to get started: 
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
+```
+
+The above script will identify your host and guide you through an the
+installation process, including suggestions for how to receive updates.  The
+installer will try to use your native package manager.
+
+
+## macOS
+
+Start by downloading the latest kraft darwin binary for your architecture from:
+https://github.com/unikraft/kraftkit/releases/latest
+
+Extract the archive to a local directory. For example:
+
+```
+tar -xvf kraftkit_0.6.6_darwin_arm64.tar.gz
+```
+
+Then install the following dependencies for `kraft`:
+
+```
+brew install gnu-sed make coreutils m4 gawk grep wget qemu socat
+# ...for compiling x86_64 Unikernels (needed for KraftCloud)
+brew install x86_64-elf-binutils x86_64-elf-gcc
+# ...for compiling aarch-64 Unikernels
+brew install aarch64-elf-binutils aarch64-elf-gcc
+```
+
+## Debian/Ubuntu
+
+We recommend installing KraftKit using the interactive method described above.
+However, if you would like to manage your installation directly, we offer APT
+repositories that can be referenced to access the latest stable version of
+`kraft`.  To get started, install the following preliminary tools:
+
+```
+sudo apt-get update
+sudo apt-get install \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+```
+
+Add Unikraft’s official GPG key:
+
+```bash
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://apt.pkg.kraftkit.sh/kraftkit/linux/debian/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/unikraft.gpg
+```
+
+Use the following command to set up the APT repository:
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/unikraft.gpg] https://apt.pkg.kraftkit.sh \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/unikraft.list > /dev/null
+```
+
+Update the APT package index, and install the latest version of `kraftkit`:
+
+```bash
+sudo apt-get update
+sudo apt-get install kraftkit
+```
+
+
+## Fedora/RHEL
+
+We recommend installing KraftKit using the interactive method described above.
+However, 
+
+
+## Arch Linux
+
+We recommend installing KraftKit using the interactive method described above.
+However, 
+
+
+## Windows
+
+KraftKit currently does not support an installation natively on Microsoft
+Windows.  However, you can use [Windows Subsystem for Linux 2
+(WSL2)](https://learn.microsoft.com/en-us/windows/wsl/about) which supports both
+running `kraft` as well as executing Unikraft unikernels.
+
+To get started, please ensure that you have [WSL2 set up on your
+host](https://learn.microsoft.com/en-us/windows/wsl/install).  We recommend
+using the Linux distributions Ubuntu or Debian: 
+
+```powershell
+wsl --install -d debian
+```
+
+Once complete, restart WSL either by shutting down Windows or by closing all of
+your WSL terminal windows and issue this command in Powershell, CMD, or Windows
+Run menu (Windows+R)
+
+```powershell
+wsl.exe --shutdown
+```
+
+### Troubleshooting
+
+Once restarted, simply following the instructions for [installing `kraft`
+for Debian/Ubuntu](#debianubuntu) from within WSL2.
+
+
+Once installed, you must ensure that nested-virtualization is enabled.  This
+will allow you to [run Unikraft via QEMU for KVM later](#) by editing
+`/etc/wsl.conf`:
+
+```toml
+[wsl2]
+nestedVirtualization=true
+
+[boot]
+command = /bin/bash -c 'chown -v root:kvm /dev/kvm && chmod 660 /dev/kvm'
+```
+
+Then add yourself to the `kvm` group:
+
+```
+sudo usermod -a -G kvm ${USER}
+```
+
+
+<Info colorScheme='purple'>
+If you have experience with Hyper-V platform APIs, please consider
+[contributing to Unikraft platform drivers](#) as we have [an on-going track for
+this](#).  If you have experience building Go applications for Microsoft
+Windows, we also have [an open issue on KraftKit to support this platform](#).
+Thank you!
+</Info>
+
+
+## Build unikernels from within a container
+
+<Warning>
+Please note that a unikernel and a container are not the same.  Read more
+about [the differences between Unikraft and existing runtime systems](#).
+</Warning>
+
+You can use KraftKit inside of a container to help you build and package
+unikernels.  We ship a standard build environment called "base" that includes
+all the tools necessary for building Unikraft unikernrels, including the latest
+version of `kraft`.
+
+
+```bash
+docker run -it --rm -v `pwd`:/app kraftkit.sh/base:latest
+```
+
+
+## From source
+
+To build `kraft` from source, please see our [hacking documentation](#).
+
+
+## See also
+
+KraftKit can be used in other contexts, such as within a CI/CD pipeline.  See
+additional resources on how to build, package (or run) unikernels:
+
+* [GitHub Actions](/docs/getting-started/integrations/github-actions);
+* [HashiCorp Packer](/docs/getting-started/integrations/hcp-packer).
