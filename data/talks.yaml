@@ -1,278 +1,365 @@
-- title: "Debugging and Monitoring in Unikraft: Everything beyond printf()"
+- title: 'Introducing Unikraft: An SDK for fast, secure, and highly-specialized unikernels'
+  year: 2023
+  video: https://www.facebook.com/hkoscon/videos/775282717602140
+  slides: https://docs.google.com/presentation/d/1ALQ83_JcoCaeMHtqv9nq8LgBotBQ1Yhub2ycvVXpV24/edit?usp=sharing
+  thumbnail: "/thumbnails/hkoscon2023.png"
+  presenters:
+  - name: Michalis Pappas
+    affiliation: Unikraft GmbH
+  venue: HKOSCon'23
+
+- title: KraftKit Project Update
+  year: 2023
+  video: https://youtu.be/v1-CGxU9Vps?t=135
+  thumbnail: "/thumbnails/cncftagruntime23-kraftkit-update.png"
+  presenters:
+  - name: Alexander Jung
+    affiliation: Unikraft GmbH
+  venue: CNCF TAG-Runtime Meeting
+
+- title: 'Unikraft: From Research/Academia to Deployment Reality'
+  year: 2023
+  video: https://www.youtube.com/watch?v=RC_j4s8lPDw
+  url: https://sched.co/1K58Y
+  slides: https://static.sched.com/hosted_files/ossna2023/a2/OSS%20NA%202023%20-%20Unikraft_%20From%20Research_Academia%20to%20Deployment%20Reality.pdf
+  thumbnail: "/thumbnails/ossummit23-reality.png"
+  presenters:
+  - name: Razvan Deaconescu
+    affiliation: Unikraft GmbH
+  venue: LF Open Source Summit North America 2023
+
+- title: Unikraft Weather Report
+  year: 2023
+  video: https://www.youtube.com/watch?v=_LMwAC5L9So
+  url: https://sched.co/1LKmi
+  slides: https://static.sched.com/hosted_files/xen2023/8d/XenSummit%2723%20-%20Unikraft%20Weather%20Report.pdf
+  thumbnail: "/thumbnails/xen23-weatherreport.png"
+  presenters:
+  - name: Razvan Deaconescu
+    affiliation: Unikraft GmbH
+  venue: XenSummit '23
+
+- title: 'Unikraft Weather Report: The Unikraft Project During 2022'
+  year: 2023
+  url: https://fosdem.org/2023/schedule/event/unikraft/
+  slides: https://fosdem.org/2023/schedule/event/unikraft/attachments/slides/5817/export/events/attachments/unikraft/slides/5817/Unikraft_FOSDEM23_Weather_Report.pdf
+  video: https://ftp.heanet.ie/mirrors/fosdem-video/2023/H.1308%20(Rolin)/unikraft.webm
+  thumbnail: "/thumbnails/fosdem23-weatherreport.png"
+  presenters:
+  - name: Razvan Deaconescu
+    affiliation: Unikraft GmbH
+  venue: FOSDEM'23
+
+- title: 'Building a Linux-compatible Unikernel: How your application runs with Unikraft'
+  year: 2023
+  url: https://fosdem.org/2023/schedule/event/appunikraft/
+  slides: https://fosdem.org/2023/schedule/event/appunikraft/attachments/slides/5981/export/events/attachments/appunikraft/slides/5981/fosdem23_unikraft_appcompat.pdf
+  video: https://ftp.heanet.ie/mirrors/fosdem-video/2023/H.1308%20(Rolin)/appunikraft.mp4
+  thumbnail: "/thumbnails/fosdem23-elfloader.png"
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: Unikraft GmbH
+  venue: FOSDEM'23
+
+- title: 'Beyond Orchestration: The Cloud Native Runtimes Ecosystem for Performance
+    and Security'
+  year: 2023
+  video: https://www.youtube.com/watch?v=h-Il4OBW5aI
+  url: https://sched.co/182OM
+  thumbnail: "/thumbnails/kubecon22na-runtimes.png"
+  presenters:
+  - name: Alexander Jung
+    affiliation: Unikraft GmbH
+  venue: KubeCon + CloudNative North America 2022
+
+- title: 'Debugging and Monitoring in Unikraft: Everything beyond printf()'
   year: 2022
-  link: https://fosdem.org/2022/schedule/event/skuenzer/
+  url: https://fosdem.org/2022/schedule/event/skuenzer/
   slides: https://fosdem.org/2022/schedule/event/skuenzer/attachments/slides/5153/export/events/attachments/skuenzer/slides/5153/unikraft_microkerneldevroom_fosdem2022.pdf
   video: https://video.fosdem.org/2022/D.microkernel/skuenzer.webm
-  speaker: Simon Kuenzer & Marc Rittinghaus
-  affiliation: NEC Laboratories Europe & KIT
+  thumbnail: "/thumbnails/fosdem22-mondebug.png"
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: NEC Laboratories Europe
+  - name: Marc Rittinghaus
+    affiliation: KIT
   venue: FOSDEM'22
 
-- title: "Rethinking the OS for Isolation Flexibility with FlexOS"
+- title: Rethinking the OS for Isolation Flexibility with FlexOS
   year: 2022
-  link: https://fosdem.org/2022/schedule/event/tee_flexos/
+  url: https://fosdem.org/2022/schedule/event/tee_flexos/
   video: https://video.fosdem.org/2022/D.trusted-hardware/tee_flexos.webm
   slides: https://unikraft.org/assets/files/fosdem2022-flexos-slides.pdf
-  speaker: Hugo Lefeuvre
-  affiliation: The University of Manchester
+  thumbnail: "/thumbnails/fosdem22-flexos.png"
+  presenters:
+  - name: Hugo Lefeuvre
+    affiliation: The University of Manchester
   venue: FOSDEM'22
 
-- title: "Massive Unikernel Matrices with Unikraft, Concourse and More!"
+- title: Massive Unikernel Matrices with Unikraft, Concourse and More!
   year: 2022
-  link: https://fosdem.org/2022/schedule/event/massive_unikernel_matrices_with_unikraft_concourse_and_more/
+  url: https://fosdem.org/2022/schedule/event/massive_unikernel_matrices_with_unikraft_concourse_and_more/
   video: https://video.fosdem.org/2022/D.cicd/massive_unikernel_matrices_with_unikraft_concourse_and_more.webm
-  speaker: Alexander Jung
-  affiliation: Unikraft UG (haftungsbeschränkt)
+  thumbnail: "/thumbnails/fosdem22-matrixconcourse.png"
+  presenters:
+  - name: Alexander Jung
+    affiliation: Unikraft UG (haftungsbeschränkt)
   venue: FOSDEM'22
 
-- title: "Unikraft Performance Monitoring with Prometheus"
+- title: Unikraft Performance Monitoring with Prometheus
   year: 2022
-  link: https://fosdem.org/2022/schedule/event/unikraft/
+  url: https://fosdem.org/2022/schedule/event/unikraft/
   video: https://youtu.be/hBiq2xjwECA
-  speaker: Cezar Crăciunoiu
-  affiliation: University Politehnica of Bucharest
+  thumbnail: "/thumbnails/fosdem22-prometheus.png"
+  presenters:
+  - name: Cezar Crăciunoiu
+    affiliation: University Politehnica of Bucharest
   venue: FOSDEM'22
 
-- title: "Deploying Unikernels in Production with Kubernetes"
+- title: Deploying Unikernels in Production with Kubernetes
   year: 2021
-  link: https://kccncna2021.sched.com/event/lV2y/deploying-unikernels-in-production-with-kubernetes-alexander-jung-lancaster-university
+  url: https://kccncna2021.sched.com/event/lV2y/deploying-unikernels-in-production-with-kubernetes-alexander-jung-lancaster-university
   video: https://www.youtube.com/watch?v=cV-xawN9_cg
-  speaker: Alexander Jung
-  affiliation: Lancaster University
+  thumbnail: "/thumbnails/kubecon21na-prod.png"
+  presenters:
+  - name: Alexander Jung
+    affiliation: Lancaster University
   venue: KubeCon + CloudNative North America 2021
 
-- title: "It's Time to Debloat the Cloud with Unikraft"
+- title: It's Time to Debloat the Cloud with Unikraft
   year: 2021
-  link: https://www.usenix.org/conference/lisa21/presentation/huici
+  url: https://www.usenix.org/conference/lisa21/presentation/huici
   video: https://www.youtube.com/watch?v=ixpsOhPtvR0
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  thumbnail: "/thumbnails/lisa21-debloat.png"
+  presenters:
+  - name: Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: USENIX LISA '21
 
-- title: "Unikraft Weather Report"
+- title: Cloning Unikernels on Xen
   year: 2021
-  link: https://xen2021.sched.com/event/jAEm/unikraft-weather-report-felipe-huici-nec-laboratories-europe-gmbh
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  url: https://xen2021.sched.com/event/jAME/cloning-unikernels-on-xen-costin-lupu-university-politehnica-of-bucharest
+  slides: https://static.sched.com/hosted_files/xen2021/75/Cloning-Unikernels-on-Xen.pdf
+  thumbnail: "/thumbnails/xen21-cloning.png"
+  presenters:
+  - name: Costin Lupu
+    affiliation: University Politehnica of Bucharest
   venue: XenSummit '21
 
-- title: "Cloning Unikernels on Xen"
+- title: It's Time to Debloat the Cloud with Unikraft
   year: 2021
-  link: https://xen2021.sched.com/event/jAME/cloning-unikernels-on-xen-costin-lupu-university-politehnica-of-bucharest
-  speaker: Costin Lupu
-  affiliation: University Politehnica of Bucharest
-  venue: XenSummit '21
-
-- title: "It's Time to Debloat the Cloud with Unikraft"
-  year: 2021
-  link: https://github.com/finopsfoundation/framework/blob/1b42bc9/resources/april-update.md#may-finops-mini-summit-agenda
+  url: https://github.com/finopsfoundation/framework/blob/1b42bc9/resources/april-update.md#may-finops-mini-summit-agenda
   video: https://youtu.be/meWi2xj1JGY?t=3994
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  thumbnail: "/thumbnails/finops21-debloat.png"
+  presenters:
+  - name: Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: FinOps Foundation May Mini Summit '21
 
-- title: "Unikraft: Fast, Specialized Unikernels the Easy Way"
+- title: 'Unikraft: Fast, Specialized Unikernels the Easy Way'
   year: 2021
-  link: https://eurosys21.sched.com/list/descriptions/type/Conference+Session/Session+1?iframe=no&amp;w=100%&amp;sidebar=no&amp;bg=no
+  url: https://eurosys21.sched.com/list/descriptions/type/Conference+Session/Session+1?iframe=no&amp;w=100%&amp;sidebar=no&amp;bg=no
   video: https://www.youtube.com/watch?v=74EXqOCt_Sw&amp;list=PLzDuHU-z7gNjuSbEYCFXZtWAl3nAdNF2f&amp;index=4
-  slides: /assets/files/eurosys2021-slides.pdf
-  speaker: Felipe Huici, NEC Laboratories Europe GmbH
+  slides: "/assets/files/eurosys2021-slides.pdf"
+  thumbnail: "/thumbnails/eurosys21.png"
+  presenters:
+  - name: Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: EuroSys '21
 
-- title: "Building extremely Fast, Specialized Unikernels the Easy Way"
+- title: Building extremely Fast, Specialized Unikernels the Easy Way
   year: 2021
-  link: https://fosdem.org/2021/schedule/event/microkernel_unikraft/
+  url: https://fosdem.org/2021/schedule/event/microkernel_unikraft/
   video: https://video.fosdem.org/2021/D.microkernel/microkernel_unikraft.webm
   slides: https://fosdem.org/2021/schedule/event/microkernel_unikraft/attachments/slides/4382/export/events/attachments/microkernel_unikraft/slides/4382/slides.pdf
-  speaker: Alexander Jung
-  affiliation: Lancaster University
+  thumbnail: "/thumbnails/fosdem21-unikraft.png"
+  presenters:
+  - name: Alexander Jung
+    affiliation: Lancaster University
   venue: FOSDEM '21
 
-- title: "Severely Debloating Cloud Images with Unikraft"
+- title: Severely Debloating Cloud Images with Unikraft
   year: 2021
-  link: https://fosdem.org/2021/schedule/event/vai_cloud_images_unikraft/
+  url: https://fosdem.org/2021/schedule/event/vai_cloud_images_unikraft/
   video: https://video.fosdem.org/2021/D.virtualization/vai_cloud_images_unikraft.webm
   slides: https://fosdem.org/2021/schedule/event/vai_cloud_images_unikraft/attachments/slides/4353/export/events/attachments/vai_cloud_images_unikraft/slides/4353/Severely_Debloating_Cloud_Images_with_Unikraft
-  speaker: Sharan Santhanam
-  affiliation: NEC Laboratories Europe GmbH
+  thumbnail: "/thumbnails/fosdem21-debloat.png"
+  presenters:
+  - name: Sharan Santhanam
+    affiliation: NEC Laboratories Europe GmbH
   venue: FOSDEM '21
 
-- title: "Extremely Fast and Efficient NFV with Unikraft"
+- title: Extremely Fast and Efficient NFV with Unikraft
   year: 2020
-  link: https://osseu2020.sched.com/event/eE18
+  url: https://osseu2020.sched.com/event/eE18
   slides: https://static.sched.com/hosted_files/osseu2020/a7/dpdk.pdf
-  speaker: Sharan Santhanam
-  affiliation: NEC Laboratories Europe GmbH
+  thumbnail: "/thumbnails/osseu2020-dpdk.png"
+  presenters:
+  - name: Sharan Santhanam
+    affiliation: NEC Laboratories Europe GmbH
   venue: Open Source Summit + Embedded Linux Conference Europe '20
 
-- title: "Specialized and Secure Unikernels with Unikraft"
+- title: Specialized and Secure Unikernels with Unikraft
   year: 2020
-  link: https://www.betriebssysteme.org/aktivitaeten/treffen/2020-aachen/programm/
+  url: https://www.betriebssysteme.org/aktivitaeten/treffen/2020-aachen/programm/
   slides: https://www.betriebssysteme.org/wp-content/uploads/2020/09/Kuenzer_NEC.pdf
-  speaker: Simon Kuenzer, Sharan Santhanam, Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Simon Kuenzer, Sharan Santhanam, Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: GI Fachgruppentreffen SYS Herbst '20
 
-- title: "Towards Highly Specialized, POSIX-compliant Software Stacks with Unikraft"
+- title: Towards Highly Specialized, POSIX-compliant Software Stacks with Unikraft
   year: 2020
-  link: https://connect.linaro.org/resources/lvc20/lvc20-107/
+  url: https://connect.linaro.org/resources/lvc20/lvc20-107/
   video: https://youtu.be/pq2HF-20gAs?t=7830
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: Linaro Virtual Connect '20
 
-- title: "Towards Highly Specialized, POSIX-compliant Software Stacks with Unikraft"
+- title: Towards Highly Specialized, POSIX-compliant Software Stacks with Unikraft
   year: 2020
-  link: https://whova.com/embedded/subsession/eswe_202009/1145794/1145805/?view=
+  url: https://whova.com/embedded/subsession/eswe_202009/1145794/1145805/?view=
   video: https://www.bilibili.com/video/BV1Bp4y1e7uy?p=11
-  speaker: Sharan Santhanam
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Sharan Santhanam
+    affiliation: NEC Laboratories Europe GmbH
   venue: ESWEEK'20
 
-- title: "XenSockets past, present and future with Unikraft"
+- title: XenSockets past, present and future with Unikraft
   year: 2020
-  link: https://design-sessions.xenproject.org/uid/discussion/disc_XDcFeEdVUkuj2EYDADLX/view
+  url: https://design-sessions.xenproject.org/uid/discussion/disc_XDcFeEdVUkuj2EYDADLX/view
   video: https://www.youtube.com/watch?v=GtocEKztfHY
   slides: https://pub.nderjung.net/presentations/unikraft-xendesignsummit20.pdf
-  speaker: Alexander Jung
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Alexander Jung
+    affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit Design Session '20
 
-- title: "Unikraft Weather Report"
+- title: Building a Specialized Wasm Operating System with Unikraft
   year: 2020
-  link: https://xen2020.sched.com/event/baWR?iframe=no
-  speaker: Simon Kuenzer, Sharan Santhanam & Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
-  venue: XenSummit'20
-
-- title: "Unikraft: A Unikernel Toolkit"
-  speaker: Simon Kuenzer
-  affiliation: NEC Laboratories Europe GmbH
-  venue: VHPC'20
-
-- title: "Building a Specialized Wasm Operating System with Unikraft"
-  year: 2020
-  link: https://www.meetup.com/wasmsf/events/268096535/
+  url: https://www.meetup.com/wasmsf/events/268096535/
   video: https://www.youtube.com/watch?v=RMffUqK2XQw
-  speaker: Sharan Santhanam
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Sharan Santhanam
+    affiliation: NEC Laboratories Europe GmbH
   venue: Web Assembly Meetup San Fransisco '20
 
-- title: "Making it easier to make Things: WebAssembly and the Internet of Things"
+- title: 'Making it easier to make Things: WebAssembly and the Internet of Things'
   year: 2020
-  link: https://webassembly-summit.org/speakers/6/
+  url: https://webassembly-summit.org/speakers/6/
   video: https://www.youtube.com/watch?list=PL6ed-L7Ni0yQ1pCKkw1g3QeN2BQxXvCPK&amp;v=oky3FdsTuUM&amp;feature=emb_title
-  speaker: Jonathan Beri
+  presenters:
+  - name: Jonathan Beri
   venue: WebAssembly Summit '20
 
-- title: "Unikraft: A Unikernel Toolkit"
+- title: 'Unikraft: A Unikernel Toolkit'
   year: 2020
-  link: https://archive.fosdem.org/2020/schedule/event/uk_unicraft/
+  url: https://archive.fosdem.org/2020/schedule/event/uk_unicraft/
   video: https://video.fosdem.org/2020/K.4.601/uk_unicraft.mp4
-  speaker: Simon Kuenzer
-  affiliation: NEC Laboratories Europe GmbH 
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: NEC Laboratories Europe GmbH
   venue: OSDEM '20
 
-- title: "DPDK Unikernels with Unikraft"
+- title: DPDK Unikernels with Unikraft
   year: 2019
-  link: https://dpdkchina2019.sched.com/event/OxcS/building-dpdk-unikernels-with-unikraft-sharan-santhanam-nec-laboratories-europe-gmbh
+  url: https://dpdkchina2019.sched.com/event/OxcS/building-dpdk-unikernels-with-unikraft-sharan-santhanam-nec-laboratories-europe-gmbh
   video: https://www.youtube.com/watch?v=xhqVz5I5uvo&amp;list=PLo97Rhbj4ceIepXNAw4pnTZkZdgmniU8D&amp;index=4&amp;t=0s
   slides: https://static.sched.com/hosted_files/dpdkna2019/b6/Unikraft_dpdk_NA.pdf
-  speaker: Sharan Santhanam
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Sharan Santhanam
+    affiliation: NEC Laboratories Europe GmbH
   venue: DPDK Summit'19
 
-- title: "Building Stub Domains with Unikraft"
+- title: Unikraft Weather Report
   year: 2019
-  link: https://xensummit19.sched.com/event/Pdzc/design-session-building-stub-domains-with-unikraft?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
-  speaker: Simon Kuenzer & Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
-  venue: XenSummit '19
-
-- title: "Unikraft Weather Report"
-  year: 2019
-  link: https://xensummit19.sched.com/event/PFVr/keynote-unikraft-weather-report-simon-kuenzer-senior-researcher-felipe-huici-chief-researcher-nec-laboratories-europe-gmbh?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
+  url: https://xensummit19.sched.com/event/PFVr/keynote-unikraft-weather-report-simon-kuenzer-senior-researcher-felipe-huici-chief-researcher-nec-laboratories-europe-gmbh?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
   video: https://www.youtube.com/watch?v=hn3Nna-GevY&amp;list=PLYyw7IQjL-zHmP6CuqwuqfXNK5QLmU7Ur&amp;index=29&amp;t=0s
-  speaker: Simon Kuenzer & Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Simon Kuenzer & Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit '19
 
-- title: "A Journey to Mirage OS as Xen PVH"
+- title: A Journey to Mirage OS as Xen PVH
   year: 2019
-  link: https://events19.linuxfoundation.org/events/xensummit-2019/program/schedule/
+  url: https://events19.linuxfoundation.org/events/xensummit-2019/program/schedule/
   slides: https://static.sched.com/hosted_files/xensummit19/0c/miragepvh.pdf
-  speaker: Marek Marczykowski-Górecki
-  affiliation: Invisible Things Lab
+  presenters:
+  - name: Marek Marczykowski-Górecki
+    affiliation: Invisible Things Lab
   venue: XenSummit '19
 
-- title: "When Unikraft Meets Arm64"
+- title: When Unikraft Meets Arm64
   year: 2019
-  link: https://xensummit19.sched.com/event/PFVW/when-unikraft-meets-arm64-jia-he-arm?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
+  url: https://xensummit19.sched.com/event/PFVW/when-unikraft-meets-arm64-jia-he-arm?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
   video: https://static.sched.com/hosted_files/xensummit19/cf/Chicago%202019%20Xen%20summit%20When%20Unikraft%20Meets%20%20Arm64.pdf
-  speaker: Jia He
-  affiliation: ARM
+  presenters:
+  - name: Jia He
+    affiliation: ARM
   venue: XenSummit '19
 
-- title: "Secure Unikraft Applications with Solo5"
+- title: Secure Unikraft Applications with Solo5
   year: 2019
-  link: https://xensummit19.sched.com/event/PFVi/secure-unikraft-applications-with-solo5-haibo-xu-arm?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
+  url: https://xensummit19.sched.com/event/PFVi/secure-unikraft-applications-with-solo5-haibo-xu-arm?iframe=no&amp;w=100%&amp;sidebar=yes&amp;bg=no
   slides: https://static.sched.com/hosted_files/xensummit19/13/Secure%20unikraft%20applications%20with%20Solo5.pptx
-  speaker: Haibo Xu
-  affiliation: ARM
+  presenters:
+  - name: Haibo Xu
+    affiliation: ARM
   venue: XenSummit '19
 
-- title: "Unikernels Made Easy"
+- title: Unikernels Made Easy
   year: 2019
-  link: https://archive.fosdem.org/2019/schedule/event/unikraft_made_easy/
+  url: https://archive.fosdem.org/2019/schedule/event/unikraft_made_easy/
   slides: https://archive.fosdem.org/2019/schedule/event/unikraft_made_easy/attachments/slides/3418/export/events/attachments/unikraft_made_easy/slides/3418/unikraft_fosdem19.pdf
-  speaker: Simon Kuenzer
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: NEC Laboratories Europe GmbH
   venue: FOSDEM '19
 
-- title: "Unikraft: Unikernels for Dummies"
-  year: 2019
-  link: http://uccbdcat18.cloudlab.zhaw.ch/ucc2018/speakers.html
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
-  venue: ACM/IEEE International Conference on Utility and Cloud Computing '19
-
-- title: "Unikraft: Unikernels Made Easy"
+- title: 'Unikraft: Unikernels Made Easy'
   year: 2018
-  link: https://www.usenix.org/conference/lisa18/presentation/kuenzer
+  url: https://www.usenix.org/conference/lisa18/presentation/kuenzer
   video: https://www.youtube.com/watch?v=9PRKBZHArhI
   slides: https://www.usenix.org/sites/default/files/conference/protected-files/lisa18_slides_kuenzer.pdf
-  speaker: Simon Kuenzer
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: NEC Laboratories Europe GmbH
   venue: USENIX LISA '18
 
-- title: "From Handcraft to Unikraft: Simpler Unikernelization of Your Application"
+- title: 'From Handcraft to Unikraft: Simpler Unikernelization of Your Application'
   year: 2018
-  link: https://osseu18.sched.com/event/FxXZ/from-handcraft-to-unikraft-simpler-unikernelization-of-your-application-florian-schmidt-nec-labs-europe
+  url: https://osseu18.sched.com/event/FxXZ/from-handcraft-to-unikraft-simpler-unikernelization-of-your-application-florian-schmidt-nec-labs-europe
   slides: https://static.sched.com/hosted_files/osseu18/53/unikraft_OSSEU18.pdf
-  speaker: Florian Schmidt
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Florian Schmidt
+    affiliation: NEC Laboratories Europe GmbH
   venue: Open Source Summit Europe '18
 
-- title: "Unleashing the Power of Unikernels with Unikraft"
+- title: Unleashing the Power of Unikernels with Unikraft
   year: 2018
-  link: https://xensummit18.sched.com/event/EeHn/unleashing-the-power-of-unikernels-with-unikraft-florian-schmidt-nec-laboratories-europe-gmbh
+  url: https://xensummit18.sched.com/event/EeHn/unleashing-the-power-of-unikernels-with-unikraft-florian-schmidt-nec-laboratories-europe-gmbh
   video: https://www.youtube.com/watch?v=OYgTWhYjD0o
   slides: https://www.slideshare.net/xen_com_mgr/xpdds18-unleashing-the-power-of-unikernels-with-unikraft-florian-schmidt-nec-laboratories-europe-gmbh
-  speaker: Florian Schmidt
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Florian Schmidt
+    affiliation: NEC Laboratories Europe GmbH
   venue: XenSummit Design Session '18
 
-- title: "Unikraft - Unleashing the Power of Unikernels"
+- title: Unikraft - Unleashing the Power of Unikernels
   year: 2018
-  link: https://qconlondon.com/london2018/london2018/presentation/unikraft-unleashing-power-unikernels.html
+  url: https://qconlondon.com/london2018/london2018/presentation/unikraft-unleashing-power-unikernels.html
   vdieo: https://www.infoq.com/presentations/unikraft-unikernels/
-  speaker: Felipe Huici
-  affiliation: NEC Laboratories Europe GmbH
-  venue: QCon London International Software Development Conference '18
+  presenters:
+  - name: Felipe Huici
+    affiliation: NEC Laboratories Europe GmbH
+  venue: QCon London 2018
 
-- title: "Unleashing the Power of Unikernels with Unikraft"
+- title: Unleashing the Power of Unikernels with Unikraft
   year: 2018
-  link: https://archive.fosdem.org/2018/schedule/event/vai_power_of_unikernels/
+  url: https://archive.fosdem.org/2018/schedule/event/vai_power_of_unikernels/
   slides: https://archive.fosdem.org/2018/schedule/event/vai_power_of_unikernels/attachments/slides/2642/export/events/attachments/vai_power_of_unikernels/slides/2642/unikraft_fosdem.pdf
-  speaker: Simon Kuenzer
-  affiliation: NEC Laboratories Europe GmbH
+  presenters:
+  - name: Simon Kuenzer
+    affiliation: NEC Laboratories Europe GmbH
   venue: FOSDEM '18

@@ -1,173 +1,173 @@
 - title: "Want More Unikernels? Inflate Them!"
   venue: ACM SoCC'22
   year: 2022
-  link: https://dl.acm.org/doi/abs/10.1145/3542929.3563473
+  url: https://dl.acm.org/doi/abs/10.1145/3542929.3563473
   pdf: https://dl.acm.org/doi/pdf/10.1145/3542929.3563473
   slides: https://unikraft.org/assets/files/socc2022-slides.pdf
   authors:
-    - name: Gain, G.
-    - name: Soldani, C.
-    - name: Huici, F.
-    - name: Mathy, L.
+    - Gain, G.
+    - Soldani, C.
+    - Huici, F.
+    - Mathy, L.
 
 - title: "FlexOS: Towards Flexible OS Isolation"
   venue: ACM ASPLOS'22
   year: 2022
-  link: https://dl.acm.org/doi/10.1145/3503222.3507759
+  url: https://dl.acm.org/doi/10.1145/3503222.3507759
   pdf: https://arxiv.org/pdf/2112.06566.pdf
   slides: https://unikraft.org/assets/files/asplos2022-slides.pdf
   authors:
-    - name: Lefeuvre, H.
-    - name: Bădoiu, V-A.
-    - name: Jung, A.
-    - name: Teodorescu, S.
-    - name: Rauch, S.
-    - name: Huici, F.
-    - name: Raiciu, C.
-    - name: Olivier, P.
+    - Lefeuvre, H.
+    - Bădoiu, V-A.
+    - Jung, A.
+    - Teodorescu, S.
+    - Rauch, S.
+    - Huici, F.
+    - Raiciu, C.
+    - Olivier, P.
 
 - title: "Wayfinder: Towards Automatically Deriving Optimal OS Configurations"
   venue: ACM APSys'21
   year: 2021
-  link: https://dl.acm.org/doi/abs/10.1145/3476886.3477506
+  url: https://dl.acm.org/doi/abs/10.1145/3476886.3477506
   pdf: https://dl.acm.org/doi/pdf/10.1145/3476886.3477506
   video: https://www.youtube.com/watch?v=YLf86gcHW4E
   authors:
-    - name: Jung, A.
-    - name: Lefeuvre, H.
-    - name: Charalampos, R.
-    - name: Olivier, P.
-    - name: Oñoro-Rubio, D.
-    - name: Niepert, M.
-    - name: Huici, F.
+    - Jung, A.
+    - Lefeuvre, H.
+    - Charalampos, R.
+    - Olivier, P.
+    - Oñoro-Rubio, D.
+    - Niepert, M.
+    - Huici, F.
 
 - title: "Unikraft: Fast, Specialized Unikernels the Easy Way"
   venue: ACM EuroSys'21
   year: 2021
-  link: https://dl.acm.org/doi/abs/10.1145/3447786.3456248
+  url: https://dl.acm.org/doi/abs/10.1145/3447786.3456248
   pdf: https://arxiv.org/pdf/2104.12721.pdf
   bestpaper: true
   slides: https://unikraft.org/assets/files/eurosys2021-slides.pdf
   video: https://www.youtube.com/watch?v=74EXqOCt_Sw&list=PLzDuHU-z7gNjuSbEYCFXZtWAl3nAdNF2f&index=4
   authors:
-    - name: Kuenzer, S.
-    - name: Bădoiu, V-A.
-    - name: Lefeuvre, H.
-    - name: Santhanam, S.
-    - name: Jung, A.
-    - name: Gain, G.
-    - name: Soldani, C.
-    - name: Lupu, C.
-    - name: Teodorescu, Ș.
-    - name: Răducanu, C.
-    - name: Banu, C.
-    - name: Mathy, L.
-    - name: Deaconescu, R.
-    - name: Raiciu, C.
-    - name: Huici, F.
+    - Kuenzer, S.
+    - Bădoiu, V-A.
+    - Lefeuvre, H.
+    - Santhanam, S.
+    - Jung, A.
+    - Gain, G.
+    - Soldani, C.
+    - Lupu, C.
+    - Teodorescu, Ș.
+    - Răducanu, C.
+    - Banu, C.
+    - Mathy, L.
+    - Deaconescu, R.
+    - Raiciu, C.
+    - Huici, F.
 
 - title: "CubicleOS: A Library OS with Software Componentisation for Practical Isolation"
   venue: ACM ASPLOS'21
   year: 2021
-  link: https://dl.acm.org/doi/10.1145/3445814.3446731
+  url: https://dl.acm.org/doi/10.1145/3445814.3446731
   pdf: https://debs10.doc.ic.ac.uk/sites/default/files/sartakov%4021cubicleos.pdf
   authors:
-    - name: Sartakov, V. A.
-    - name: Vilanova, L.
-    - name: Pietzuch, P.
+    - Sartakov, V. A.
+    - Vilanova, L.
+    - Pietzuch, P.
 
 - title: "FlexOS: Making OS Isolation Flexible"
   venue: USENIX HotOS'21
   year: 2021
-  link: https://dl.acm.org/doi/10.1145/3458336.3465292
+  url: https://dl.acm.org/doi/10.1145/3458336.3465292
   pdf: https://dl.acm.org/doi/pdf/10.1145/3458336.3465292
   video: https://www.youtube.com/watch?v=0abQORrJLS4
   slides: https://unikraft.org/assets/files/hotos2021-slides.pdf
   authors:
-    - name: Lefeuvre, H.
-    - name: Bădoiu, V-A.
-    - name: Teodorescu, S.
-    - name: Mosnoi, T.
-    - name: Raiciu, C.
-    - name: Olivier, P.
-    - name: Deaconescu, R.
-    - name: Huici., F.
+    - Lefeuvre, H.
+    - Bădoiu, V-A.
+    - Teodorescu, S.
+    - Mosnoi, T.
+    - Raiciu, C.
+    - Olivier, P.
+    - Deaconescu, R.
+    - Huici., F.
 
 - title: "Towards Highly Specialized, POSIX-compliant Software Stacks with Unikraft: Work-in-Progress"
   venue: IEEE EMSOFT’20
   year: 2020
-  link: https://ieeexplore.ieee.org/document/9244044/
+  url: https://ieeexplore.ieee.org/document/9244044/
   authors:
-    - name: Santhanam, S.
-    - name: Kuenzer, S.
-    - name: Lefeuvre, H.
-    - name: Huici, F.
-    - name: Jung, A.
-    - name: Pagani, S.
-    - name: Muraru, G.-C.
-    - name: Stabellini, S.
-    - name: He, J.
-    - name: Beri, J.
+    - Santhanam, S.
+    - Kuenzer, S.
+    - Lefeuvre, H.
+    - Huici, F.
+    - Jung, A.
+    - Pagani, S.
+    - Muraru, G.-C.
+    - Stabellini, S.
+    - He, J.
+    - Beri, J.
 
 - title: "Unleashing the Power of Unikernels with Unikraft"
   venue: ACM SYSTOR'19
   year: 2019
-  link: https://dl.acm.org/doi/10.1145/3319647.3325856
+  url: https://dl.acm.org/doi/10.1145/3319647.3325856
   pdf: https://www.5gcity.eu/wp-content/uploads/2020/04/3319647.3325856-5.pdf
   authors:
-    - name: Kuenzer, S.
-    - name: Santhanam, S.
-    - name: Volchkov, Y.
-    - name: Schmidt, F.
-    - name: Huici, F.
-    - name: Nider, J.
-    - name: Rapoport, M.
-    - name: Lupu, C.
+    - Kuenzer, S.
+    - Santhanam, S.
+    - Volchkov, Y.
+    - Schmidt, F.
+    - Huici, F.
+    - Nider, J.
+    - Rapoport, M.
+    - Lupu, C.
 
 - title: "Unikernels Everywhere: The Case for Elastic CDNs"
   venue: ACM VEE'17
   year: 2017
-  link: https://dl.acm.org/doi/10.1145/3050748.3050757
+  url: https://dl.acm.org/doi/10.1145/3050748.3050757
   pdf: https://dl.acm.org/doi/pdf/10.1145/3050748.3050757
   authors:
-    - name: Kuenzer, S.
-    - name: Ivanov, A.
-    - name: Manco, F.
-    - name: Mendes, J.
-    - name: Volchkov, Y.
-    - name: Schmidt, F.
-    - name: Yasukata, K.
-    - name: Honda, M.
-    - name: Huici, F.
+    - Kuenzer, S.
+    - Ivanov, A.
+    - Manco, F.
+    - Mendes, J.
+    - Volchkov, Y.
+    - Schmidt, F.
+    - Yasukata, K.
+    - Honda, M.
+    - Huici, F.
 
 - title: "My VM is Lighter (and Safer) than your Container"
   venue: ACM SOSP'17
   year: 2017
-  link: https://dl.acm.org/doi/10.1145/3132747.3132763
+  url: https://dl.acm.org/doi/10.1145/3132747.3132763
   pdf: https://dl.acm.org/doi/pdf/10.1145/3132747.3132763
   authors:
-    - name: Manco, F.
-    - name: Lupu, C.
-    - name: Schmidt, F.
-    - name: Mendes, J.
-    - name: Kuenzer, S.
-    - name: Sati, S.
-    - name: Yasukata, K.
-    - name: Raiciu, C.
-    - name: Huici, F.
+    - Manco, F.
+    - Lupu, C.
+    - Schmidt, F.
+    - Mendes, J.
+    - Kuenzer, S.
+    - Sati, S.
+    - Yasukata, K.
+    - Raiciu, C.
+    - Huici, F.
 
 - title: "The Case for the Superfluid Cloud"
   venue: USENIX HotCloud'15
   year: 2015
-  link: https://www.usenix.org/conference/hotcloud15/workshop-program/presentation/manco
+  url: https://www.usenix.org/conference/hotcloud15/workshop-program/presentation/manco
   pdf: https://www.usenix.org/system/files/conference/hotcloud15/hotcloud15-manco.pdf
   authors:
-    - name: Manco, F.
-    - name: Martins, J.
-    - name: Yasukata, K.
-    - name: Mendes, J.
-    - name: Kuenzer, S.
-    - name: Huici, F.
+    - Manco, F.
+    - Martins, J.
+    - Yasukata, K.
+    - Mendes, J.
+    - Kuenzer, S.
+    - Huici, F.
 
 - title: "ClickOS and the Art of Network Function Virtualization"
   venue: USENIX NSDI'14
@@ -177,10 +177,10 @@
   slides: https://www.usenix.org/sites/default/files/conference/protected-files/nsdi14_slides_martins.pdf
   video: https://www.youtube.com/watch?v=0HDxmLaW9EU
   authors:
-    - name: Martins, J.
-    - name: Ahmed, M.
-    - name: Raiciu, C.
-    - name: Bifulco, R.
-    - name: Olteanu, V.
-    - name: Honda, M.
-    - name: Huici F.
+    - Martins, J.
+    - Ahmed, M.
+    - Raiciu, C.
+    - Bifulco, R.
+    - Olteanu, V.
+    - Honda, M.
+    - Huici F.
