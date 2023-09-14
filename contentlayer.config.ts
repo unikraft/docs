@@ -26,7 +26,6 @@ const Guides = defineDocumentType(() => ({
     title: { type: 'string', required: true },
     description: { type: 'string', required: true },
     tags: { type: 'list', of: { type: 'string' } },
-    publishedDate: { type: 'string' },
     authors: { type: 'list', of: { type: 'string' } },
     category: { type: 'string' },
     image: { type: 'string' },
@@ -36,11 +35,6 @@ const Guides = defineDocumentType(() => ({
     frontMatter: {
       type: 'json',
       resolve: (doc) => ({
-        publishedDate: {
-          raw: doc.publishedDate,
-          iso: new Date(doc.publishedDate).toISOString(),
-          text: new Date(doc.publishedDate).toDateString(),
-        },
         title: doc.title,
         description: doc.description,
         tags: doc.tags,
