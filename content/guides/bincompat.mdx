@@ -1,0 +1,54 @@
+---
+title: Binary Compatibility
+description: |
+  We go through what the binary compatibility layer is, and how to use it to run applications that are build for Linux on top of Unikraft.
+  Expected time: 100 minutes
+---
+
+## Overview
+
+In this session we look into running applications using the binary compatibility layer as well as understanding the inner workings of the system call shim layer.
+
+One of the obstacles when trying to use Unikraft is the porting effort of new applications.
+This process can be made painless through the use of Unikraft's **binary compatibility layer**.
+Binary compatibility is the possibility to take pre-built Linux ELF binaries and run them on top of Unikraft.
+This is done without any porting effort while maintaining the benefits of Unikraft: reduced memory footprint, high degree of configurability of library components.
+
+For this, Unikraft must provide a similar ABI (*Application Binary Interface*) with the Linux kernel.
+This means that Unikraft has to provide a similar system call interface that Linux kernel provides, a [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/) compatible interface.
+For this, the [**system call shim layer**](https://github.com/unikraft/unikraft/tree/staging/lib/syscall_shim) (also called **syscall shim**) was created.
+The system call shim layer provides Linux-style mappings of system call numbers to actual system call handler functions.
+
+## The process of Loading and Running an Application with Binary Compatibility
+
+For Unikraft to achieve binary compatibility there are two main objectives that need to be met:
+
+1. The ability to pass the Linux ELF binary to Unikraft at boot time.
+1. The ability to load the passed ELF binary into memory and jump to its entry point.
+
+The dominant format for executables is the *Executable and Linkable File* format (ELF), so, in order to run executables we need an ELF loader.
+The job of the ELF Loader is to load the executable into the main memory.
+It does so by reading the program headers located in the ELF formatted executable and acting accordingly.
+
+As an overview of the whole process, when we want to run an application on Unikraft using binary compatibility, the first step is to pass the executable file to the unikernel as an initial ram disk.
+Once the unikernel gets the executable, it reads the executable segments and loads them accordingly.
+After the program is loaded, the last step is to jump to its entry point and start executing.
+
+The unikernel image is the [`app-elfloader` application](https://github.com/unikraft/app-elfloader).
+This application parses the ELF file and then loads it accordingly.
+It's a custom application developed for Unikraft.
+
+We require PIE (*position-independent executable*) ELFs.
+This is fine, as default Linux executables are built as PIE.
+
+We have collected PIE executables in:
+
+- the [`dynamic-apps`](https://github.com/unikraft/dynamic-apps) repository - storing dynamically-linked executables
+- the [`static-pie-apps`](https://github.com/unikraft/static-pie-apps) repository - storing statically-linked executables
+
+## Summary
+
+The binary compatibility layer is a very important part of the Unikraft unikernel.
+It helps us run applications that were not build for Unikraft while, at the same time, keeps the classic benefits of Unikraft: speed, security and small memory footprint.
+
+TODO: Add kraftkit bincompat instructions
