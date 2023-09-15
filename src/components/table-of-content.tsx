@@ -9,7 +9,6 @@ import {
 import { useScrollSpy } from 'hooks/use-scrollspy'
 import type { FrontmatterHeading } from 'src/types/frontmatter'
 import { t } from 'utils/i18n'
-// import { FigmaPluginAd } from './figma-plugin-ad'
 import TocNav from './toc-nav'
 
 interface TableOfContentProps extends BoxProps {
@@ -47,10 +46,6 @@ function TableOfContent(props: TableOfContentProps) {
           </ListItem>
         ))}
       </OrderedList>
-
-      {/* <Box my='10'>
-        <FigmaPluginAd medium='sidebar-ad' />
-      </Box> */}
     </TocNav>
   )
 }

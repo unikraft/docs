@@ -6,7 +6,6 @@ import conceptsSidebar from 'configs/concepts.sidebar.json'
 import internalsSidebar from 'configs/internals.sidebar.json'
 import guidesSidebar from 'configs/guides.sidebar.json'
 import communitySidebar from 'configs/community.sidebar.json'
-import figmaSidebar from 'configs/figma.sidebar.json'
 import semverRSort from 'semver/functions/rsort'
 import { ReactNode } from 'react'
 import { RouteItem } from 'utils/get-route-context'
@@ -43,7 +42,6 @@ export function getRoutes(slug: string): RouteItem[] {
     '/docs/cli': cliSidebar,
     '/guides': guidesSidebar,
     '/community': communitySidebar,
-    '/figma': figmaSidebar,
   }
 
   const [, sidebar] =

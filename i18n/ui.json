@@ -38,11 +38,6 @@
         "description": "We're a team of active maintainers ready to help you whenever you need."
       }
     },
-    "built-with-chakra-section": {
-      "title": "Built with Chakra UI ⚡️",
-      "description": "Your project can look as good as these! Check them out, get inspired!",
-      "see-showcase": "See showcase"
-    },
     "growing-section": {
       "title": "Chakra is growing quickly",
       "description": "We're dedicated to improving the experience and performance of Chakra UI.",
@@ -88,27 +83,6 @@
     "message": "You just found a really nasty issue. We are aware of it. Just hit 'Reload' and code on!",
     "submessage": "PS: Try to have no code selected in the sandbox before copying new code 😉",
     "reload": "Reload"
-  },
-  "resources": {
-    "title": "Community Resources",
-    "description": "A rich compilation of technical descriptions and detailed information of how Chakra UI works.",
-    "showcaseBannerTitle": "Visit the Showcase",
-    "showcaseBannerDescription": "See what other Devs made with Chakra UI. Those are community projects, websites, libraries, tools, articles and videos that you can use to get inspired, implement a feature, or learn Chakra UI.",
-    "message": "A rich compilation of technical descriptions and detailed information of how Chakra UI works.",
-    "searchFilter": {
-      "helperText": "Filter by resource title.",
-      "label": "Search",
-      "placeholder": "react"
-    },
-    "talks": {
-      "title": "Talks"
-    },
-    "videos": {
-      "title": "Videos"
-    },
-    "blogs": {
-      "title": "Blogs"
-    }
   },
   "talks": {
     "seo": {
@@ -240,13 +214,5 @@
     "vercel-callout": {
       "deployed-by": "Deployed by"
     }
-  },
-  "showcase": {
-    "seo": {
-      "title": "Showcase",
-      "description": "A collection of beautiful websites that are built in Chakra UI"
-    },
-    "title": "Showcase",
-    "message": "A collection of beautiful websites that are built in Chakra UI"
   }
 }
