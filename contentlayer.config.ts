@@ -28,6 +28,7 @@ const Guides = defineDocumentType(() => ({
     tags: { type: 'list', of: { type: 'string' } },
     authors: { type: 'list', of: { type: 'string' } },
     category: { type: 'string' },
+    publishedDate: { type: 'string' },
     image: { type: 'string' },
   },
   computedFields: {
