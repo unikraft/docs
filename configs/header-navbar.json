@@ -12,6 +12,10 @@
     "href": "/community"
   },
   {
+    "label": "Guides",
+    "href": "/guides"
+  },
+  {
     "label": "Blog",
     "href": "/blog"
   }
