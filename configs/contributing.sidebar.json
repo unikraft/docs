@@ -12,6 +12,18 @@
           "path": "/docs/contributing/unikraft"
         },
         {
+          "title": "Review Process",
+          "path": "/docs/contributing/review-process"
+        },
+        {
+          "title": "Testing Changes",
+          "path": "/docs/contributing/testing"
+        },
+        {
+          "title": "Licensing",
+          "path": "/docs/contributing/licensing"
+        },
+        {
           "title": "Coding Conventions",
           "path": "/docs/contributing/coding-conventions"
         }
