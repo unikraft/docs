@@ -1,0 +1,52 @@
+name: Linter
+
+on: [push, pull_request]
+
+jobs:
+  superlinter:
+    name: Super Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          # Don't check already existent files
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_GITHUB_ACTIONS: false
+          VALIDATE_MARKDOWN: false
+          LINTER_RULES_PATH: /.github/workflows/
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  markdownlint:
+    name: Markdown Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get Changed Files
+        uses: tj-actions/changed-files@v39
+        id: changed-files
+        with:
+          files: '**/*.mdx'
+          separator: " "
+
+      - name: Lint Code Base
+        uses: nosborn/github-action-markdown-cli@v3.3.0
+        if: steps.changed-files.outputs.any_changed == 'true'
+        with:
+          files: ${{ steps.changed-files.outputs.all_changed_files }}
+          config_file: .github/workflows/config/config.json
+          dot: true
+          rules: .github/workflows/rules/rules.js
