@@ -1,0 +1,87 @@
+---
+title: Hackathon Challenges
+description: "Listing of hackathon challenges, together with awarded points"
+---
+
+## Hackathon Challenges
+
+You've been part of a Unikraft hackathon and you've made it so far.
+Now the time has come to show the Unikraft world what you are really made of.
+A true Dragon Slayer!
+
+We've prepared quite a number of challenges for you.
+Prove your worthiness by passing them and, in doing so, adding your name to the list of hero contributors to the Unikraft project.
+Each challenge will get you points of valor, dubbed **HP** (_hackathon points_), that will be collected in the hackathon scoreboard of valor.
+
+See the items added in the [`Hackathons` GitHub project](https://github.com/orgs/unikraft/projects/29).
+
+You will get HP for submitting an issue or a solution that works.
+Solutions are submitted as pull requests.
+If a pull request is accepted upstream, you get double HP.
+After solving one challenge, pick another one.
+We recommend you start small, then move up to more difficult challenges.
+
+Please check the community guidelines on [submitting changes](https://github.com/unikraft/docs/blob/2ff2de59b4032fb6ebefc05c24ef832adacf7768/content/en/docs/contributing/submitting-changes.md) and [the review process](https://github.com/unikraft/docs/blob/2ff2de59b4032fb6ebefc05c24ef832adacf7768/content/en/docs/contributing/review-process.md).
+
+### Challenge Types
+
+Challenges generally fall into the categories below.
+You can venture beyond the challenges in the [`Hackathons` GitHub project](https://github.com/orgs/unikraft/projects/29).
+
+1. **Submit issues**
+
+   Test as many [Unikraft applications](https://github.com/search?q=topic%3Aunikraft-application+org%3Aunikraft&type=Repositories) as you can, with different configuration options (i.e. different architectures, different filesystems, etc.).
+   Use both [KraftKit](https://github.com/unikraft/kraftkit) and the Make-based system for building, and both KraftKit and `qemu-system` for running.
+   Submit any issue you bump into.
+
+   5 HP are awarded for each submitted issue.
+
+1. **Build or extract applications as dynamic PIE binaries** and add them to the [`dynamic-apps` repository](https://github.com/unikraft/dynamic-apps)
+
+   You need to submit a directory, representing the root filesystem of the application, consisting of:
+
+   - the application binary ELF
+   - required application dynamic libraries (shared objects)
+   - application-specific configuration, data or runtime files
+   - a `README.md` detailing how the application is to be built, configured and run on Linux and on Unikraft;
+    as an example, see the `README.md` for [Python](https://github.com/unikraft/dynamic-apps/tree/master/lang/python)
+
+   These applications aren't required to run on Unikraft in order to do a submission and get HP.
+   If something doesn't work, submit an issue and get HP for that.
+
+   30-50 HP are awarded for each submitted application, depending on its complexity.
+
+1. **Fix build warning messages**
+
+    Use different build environments (different operating systems, different compilers), different targets (different platforms, different architectures) and different configuration options (different filesystems, different library support, debugging options) to configure and build [Unikraft applications](https://github.com/search?q=topic%3Aunikraft-application+org%3Aunikraft&type=Repositories).
+    If there are build warnings, create a fix and submit a pull request.
+
+   5-10 HP are awarded for each fix.
+
+1. **Update library versions** (and make sure the new version builds and runs)
+
+   Unikraft uses multiple [external libraries](https://github.com/search?q=topic%3Aunikraft-library+org%3Aunikraft&type=Repositories) that are required by [Unikraft applications](https://github.com/search?q=topic%3Aunikraft-application+org%3Aunikraft&type=Repositories) to run.
+   These libraries are developed outside Unikraft by other open source communities.
+   Periodically, we want to update the versions used by Unikraft, to benefit from most recent features.
+
+   Steps are:
+
+   1. Choose an [external library repository](https://github.com/search?q=topic%3Aunikraft-library+org%3Aunikraft&type=Repositories).
+   1. Choose the upstream version you want to use, probably the most recent one.
+   1. Update the build, configuration and source code files inside it to the updated version.
+   1. Test with all Unikraft applications using that library.
+   1. Submit changes as a pull request in the library repository.
+   1. Get HP.
+
+   20-30 HP are usually awarded for each library update.
+
+1. **Fix issues**
+
+   Look for issues in the [core `unikraft` repository](https://github.com/unikraft/unikraft/) or [any other repository in the `unikraft` GitHub organization](https://github.com/orgs/unikraft/repositories).
+   Select an issue that intrigues you;
+   it's good to first ask for feedback from the hackathon mentors, to ensure it's feasible to solve the issue during the hackathon.
+   Proceed to work on the issue.
+   Once solved, test it as much as possible.
+   Submit solution as a pull request and get HP.
+
+   HP will be awarded according to the complexity of the fix.
