@@ -18,6 +18,14 @@
             {
               "title": "Coding Conventions",
               "path": "/docs/internals/coding-conventions"
+            },
+            {
+              "title": "Build System - Internals",
+              "path": "/docs/internals/build-system"
+            },
+            {
+              "title": "Syscall Shim Layer",
+              "path": "/docs/internals/syscall-shim"
             }
           ]
         }
