@@ -1,52 +1,651 @@
 ---
 title: Binary Compatibility
 description: |
-  We go through what the binary compatibility layer is, and how to use it to run applications that are build for Linux on top of Unikraft.
-  Expected time: 100 minutes
+  This guide presents the Unikraft binary compatibility layer.
+  The binary compatibility layer (bincompat) is used to run unmodified Linux binaries (ELFs) on top of Unikraft.
 ---
 
-## Overview
+## Intro
 
-In this session we look into running applications using the binary compatibility layer as well as understanding the inner workings of the system call shim layer.
-
-One of the obstacles when trying to use Unikraft is the porting effort of new applications.
+One of the obstacles when aiming to use Unikraft is the porting effort of new applications.
 This process can be made painless through the use of Unikraft's **binary compatibility layer**.
-Binary compatibility is the possibility to take pre-built Linux ELF binaries and run them on top of Unikraft.
-This is done without any porting effort while maintaining the benefits of Unikraft: reduced memory footprint, high degree of configurability of library components.
+Binary compatibility allows you to run pre-built Linux binaries (ELFs) on top of Unikraft.
+This is done without any porting effort while maintaining the benefits of Unikraft: reduced kernel memory footprint, high degree of configurability of library components.
 
-For this, Unikraft must provide a similar ABI (*Application Binary Interface*) with the Linux kernel.
-This means that Unikraft has to provide a similar system call interface that Linux kernel provides, a [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/) compatible interface.
-For this, the [**system call shim layer**](https://github.com/unikraft/unikraft/tree/staging/lib/syscall_shim) (also called **syscall shim**) was created.
+For this, Unikraft must provide a similar ABI (_Application Binary Interface_) with the Linux kernel.
+This means that Unikraft has to provide a similar system call interface that Linux kernel provides, a [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/)-compatible interface.
+For this, the [**system call shim layer**](docs/internals/syscall-shim) (also called **syscall shim**) was created.
 The system call shim layer provides Linux-style mappings of system call numbers to actual system call handler functions.
 
-## The process of Loading and Running an Application with Binary Compatibility
+<Info>
+Currently, binary compatibility is available on x86_64.
+Work is being carried out to make it work on AArch64 as well.
+Also, KVM is currently the only supported hypervisor.
+</Info>
 
-For Unikraft to achieve binary compatibility there are two main objectives that need to be met:
+<Info>
+Currently, binaries have to be built as PIE (*Position-Independent Executables*).
+This is the default build mode of the majority of Linux distributions, so it shouldn't cause any problems.
+</Info>
 
-1. The ability to pass the Linux ELF binary to Unikraft at boot time.
-1. The ability to load the passed ELF binary into memory and jump to its entry point.
+<Info>
+Note that, because Linux binaries are included, constructing new Linux binaries requires a Linux or Linux-compatible development environement (such as WSL - _Windows Subsystem for Linux_).
+This is only the case for building binaries.
+Prebuilt binaries and the ELF loader app itself can be built on multiple platforms (Linux, Windows, macOS).
+</Info>
 
-The dominant format for executables is the *Executable and Linkable File* format (ELF), so, in order to run executables we need an ELF loader.
-The job of the ELF Loader is to load the executable into the main memory.
-It does so by reading the program headers located in the ELF formatted executable and acting accordingly.
+## Setup
 
-As an overview of the whole process, when we want to run an application on Unikraft using binary compatibility, the first step is to pass the executable file to the unikernel as an initial ram disk.
-Once the unikernel gets the executable, it reads the executable segments and loads them accordingly.
-After the program is loaded, the last step is to jump to its entry point and start executing.
+To set up, build and run Linux ELFs with [`app-elfloader`](https://github.com/unikraft/app-elfloader), we recommend you use [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader).
+Along with the [`run-app-elfloader`](https://github.com/unikraft/run-app-elfloader) repository, we collected pre-built applications that you can use in binary compatibility mode.
+Those are located in the [`static-pie-apps`](https://github.com/unikraft/static-pie-apps/) and [`dynamic-apps`](https://github.com/unikraft/dynamic-apps/) repositories.
+These are pre-built applications, so no time must be spent on compiling them.
+They need to be cloned and then used.
 
-The unikernel image is the [`app-elfloader` application](https://github.com/unikraft/app-elfloader).
-This application parses the ELF file and then loads it accordingly.
-It's a custom application developed for Unikraft.
+The following repositories need to be cloned:
 
-We require PIE (*position-independent executable*) ELFs.
-This is fine, as default Linux executables are built as PIE.
+```console
+git clone https://github.com/unikraft/run-app-elfloader
+git clone https://github.com/unikraft/static-pie-apps
+git clone https://github.com/unikraft/dynamic-apps
+```
 
-We have collected PIE executables in:
+## Quick Runs
 
-- the [`dynamic-apps`](https://github.com/unikraft/dynamic-apps) repository - storing dynamically-linked executables
-- the [`static-pie-apps`](https://github.com/unikraft/static-pie-apps) repository - storing statically-linked executables
+### Hello World
 
-## Summary
+In order to quickly run a `helloworld` application in binray compatibility mode, you can use the `run.sh` script in the `run-app-elfloader` repository:
 
-The binary compatibility layer is a very important part of the Unikraft unikernel.
-It helps us run applications that were not build for Unikraft while, at the same time, keeps the classic benefits of Unikraft: speed, security and small memory footprint.
+```console
+cd run-app-elfloader/
+./run.sh -d -r ../dynamic-apps/lang/c/helloworld/ helloworld
+```
+
+You will see the following output:
+
+```text
+SeaBIOS (version rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org)
+Booting from ROM..TEST nofollow
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                  Atlas 0.13.1~d20aa7cb
+[...]
+Hello, World!
+```
+
+This will run a dynamically linked `helloworld` application.
+Currently, the unikernel doesn't shut down.
+To close the running instance use `Ctrl+c`;
+if that doesn't work use `Ctrl+a x`, that is press `Ctrl+a` and then, separately, press `x`.
+
+The `-r` option passed to the `run.sh` script (together with the `../dynamic-apps/lang/c/helloworld/`) is the root filesystem of the application.
+The root filesystem contains the binary ELF, the required dynamic libraries (shared objects) and any support files (configuration files, data files etc.)
+
+The `-d` option disables KVM support.
+We use it for portability, in case you run this on a virtual machine, or on a system that doesn't provide KVM support.
+
+### HTTP Server
+
+Networking support requires the `-n` option to be passed to the `run.sh` script.
+And it also requires admin privileges (to create the required network interface), so we use `sudo`.
+So, in order to run an HTTP server (let's go for the one written in Go), we use, while inside the `run-app-elfloader/` directory:
+
+```console
+sudo ./run.sh -d -n -r ../dynamic-apps/lang/go/http_server /http_server
+```
+
+You will see the following output:
+
+```text
+Booting from ROM..1: Set IPv4 address 172.44.0.2 mask 255.255.255.0 gw 172.44.0.1
+en1: Added
+en1: Interface is up
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+      Prometheus 0.14.0~4cce8306-custom
+```
+
+Note that the server listens for connections on the `172.44.0.2` IP address.
+And, by checkig the source code, we know it's using the `8080` port.
+So we query that address:
+
+```console
+curl 172.44.0.2:8080
+```
+
+This results in a simple `hello` message, signaling it works correctly:
+
+```text
+hello
+```
+
+### Nginx
+
+The same steps as those for the HTTP server are used for Nginx.
+
+To run Nginx in bincompat mode, we use the command below, while inside the `run-app-elfloader` directory:
+
+```console
+sudo ./run.sh -d -n -r ../dynamic-apps/nginx /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+```
+
+You will see the following output:
+
+```text
+Booting from ROM..1: Set IPv4 address 172.44.0.2 mask 255.255.255.0 gw 172.44.0.1
+en1: Added
+en1: Interface is up
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+      Prometheus 0.14.0~4cce8306-custom
+```
+
+Note that the server listens for connections on the `172.44.0.2` IP address, on the HTTP port (`80`).
+So we query that address:
+
+```console
+curl 172.44.0.2
+```
+
+This results in the standard Nginx HTML output:
+
+```text
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+### run_app.sh
+
+[The `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader) provides the `run_app.sh` directory for quickly running apps.
+It calls `run.sh` behind the scenes.
+
+To get a list of possible applications, run the script without arguments, while inside the `run-app-elfloader/` directory:
+
+```console
+./run_app.sh
+```
+
+It will generate the following output:
+
+```text
+Usage: ./run_app.sh [-l] <app>
+Possible apps:
+bc bc_static bzip2 client client_go client_go_static client_static echo ffmpeg 
+gnupg gzip gzip_static haproxy helloworld helloworld_cpp helloworld_cpp_static 
+helloworld_go helloworld_go_static helloworld_lua helloworld_perl 
+helloworld_python helloworld_rust helloworld_rust_static_gnu 
+helloworld_rust_static_musl helloworld_static http_server http_server_cpp 
+http_server_go http_server_python http_server_rust ls nginx nginx_static 
+openssl python redis redis7 redis_static server server_go server_go_static 
+server_static sqlite3 sqlite3_static 
+
+    -l - use dynamic loader explicitly
+```
+
+The list of apps are arguments to be passed to the script.
+
+Use the commands below to run, respectively, the helloworld, HTTP serverand Nginx apps:
+
+```console
+./run_app.sh helloworld
+./run_app.sh http_server
+./run_app.sh nginx
+```
+
+The behavior is identical to the above sections, given it runs the `run.sh` script behind the scenes.
+
+Take a look at the `run_app.sh` script;
+there is a function for each application run, that invokes `run.sh`.
+The three functions used for the helloworld, HTTP server and Nginx apps are:
+
+```bash
+run_helloworld()
+{
+    ./run.sh -d -r ../dynamic-apps/lang/c/helloworld "$extra_args" /helloworld
+}
+
+run_http_server()
+{
+    ./run.sh -d -n -r ../dynamic-apps/lang/c/http_server "$extra_args" /http_server
+}
+
+run_nginx()
+{
+    ./run.sh -d -n -r ../dynamic-apps/nginx/ "$extra_args" /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+}
+```
+
+You can see they use the same `run.sh` commands we used above.
+
+### Practice: Run Binary Applications
+
+Use the `run_app.sh` script to run all applications available.
+After each run, close the running instance with `Ctrl+c` or `Ctrl+a x`.
+Recall that applications that require networking support (i.e. those where the `-n` option is passed to the `run.sh` script) need be run with admin rights;
+use `sudo` in  fron the the `run_app.sh` commands.
+
+Use the `run.sh` script on as many applications as possible.
+Check the contents of the `run_app.sh` script and run the corresponding commands.
+
+## Entire Filesystem Runs
+
+As you've seen, running an application in binary compatibility mode requires a filesytem (storing the Linux binary, dynamic libraries and support files) and the command line used to start the application.
+To quickly test a new application, we can use the entire Linux filesystem, (i.e. passing `/` as the filesystem path).
+
+For example, to run the `/bin/ls` Linux executable with Unikraft, we would use the `run.sh` script such as below, in the `run-app-elfloader/` directory:
+
+```console
+./run.sh -r / /bin/ls
+```
+
+Similarly, to run `grep`, use the command below:
+
+```console
+./run.sh -r / /bin/grep "bash" /etc/passwd
+```
+
+The commands nount the entire host filesystem to Unikraft and, in doing so, make all executables available to be tested.
+
+### Practice: Run Filesystem Executables
+
+Run as many executables as possible from the host filesystem on top of Unikraft, using the binary compatibility layer.
+As potential items, use `/bin/head`, `/usr/bin/sort`, `/bin/zip`.
+A good option is Python;
+you need the path to the actual Linux executable, not a symbolic link.
+
+<Info>
+Note that certain executables will not work due to features not being supported by Unikraft:
+
+- Applications using multiple processes or forking are not supported.
+  For example, `gcc` spawns multiple processes, so it will not work.
+- Applications that make use of terminal features.
+  For example, terminal viewers (`less`) or editors (`nano`, `vi`) will not work.
+- Applications that use a GUI will not work.
+  For example Firefox or Gedit will not work.
+</Info>
+
+## Debugging Binary Compatibility
+
+It can happen that there are issues with Unikraft when running binary compatible apps.
+There may be missing system calls, unimplemented arguments, ABI incompatibilities.
+So we need debugging features.
+
+### System Call Tracing
+
+The most direct way to debug binary compatibility is via system call tracing (i.e. listing system calls and their arguments).
+To assist with that, the `run-app-elfloader` repository contains an `app-elfloader` image with tracing support: `app-elfloader_qemu-x86_64_strace`.
+To use that image, pass the `-k` option to the `run.sh` script.
+For example, to run the helloworld application with tracing we use:
+
+```console
+./run.sh -k app-elfloader_qemu-x86_64_strace -r ../dynamic-apps/lang/c/helloworld/ /helloworld
+```
+
+This results in the output below, consisting of system calls being made, along with the printing of the `Hello, World!` message:
+
+```text
+brk(NULL) = va:0x47f800000
+uname(<out>utsname:{sysname="Unikraft", nodename="unikraft", ...}) = OK
+access("/etc/ld.so.nohwcap", F_OK) = No such file or directory (-2)
+access("/etc/ld.so.preload", R_OK) = No such file or directory (-2)
+[...]
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, fd:-1, 0) = va:0x10003f3000
+arch_prctl(0x1002, 0x10003f3f00, ...) = 0x0
+mprotect(va:0x10003e9000, 16384, PROT_READ) = OK
+mprotect(va:0x400601000, 4096, PROT_READ) = OK
+mprotect(va:0x47f22a000, 4096, PROT_READ) = OK
+fstat(fd:1, <out>stat:{st_size=0, st_mode=020000, ...}) = OK
+ioctl(0x1, 0x5401, ...) = 0x0
+brk(NULL) = va:0x47f800000
+brk(va:0x47f821000) = va:0x47f821000
+Hello, World!
+write(fd:1, "Hello, World!\x0A", 14) = 14
+```
+
+### Full Debug Messages
+
+We can also use extensive debugging provided by Unikraft.
+Note that this will give **a lot** of output and will slow things down considerably.
+
+To assist with that, the `run-app-elfloader` repository contains an `app-elfloader` image with full debug message support: `app-elfloader_qemu-x86_64_full-debug`.
+To use that image, pass the `-k` option to the `run.sh` script.
+For example, to run the helloworld application with full debug support, use:
+
+```console
+./run.sh -k app-elfloader_qemu-x86_64_full-debug -r ../dynamic-apps/lang/c/helloworld/ /helloworld
+```
+
+This results in the output below, consisting of extensive debug messages, system calls being made, along with the printing of the `Hello, World!` message:
+
+```text
+[...]
+fstat(fd:1, <out>stat:{st_size=0, st_mode=020000, ...}) = OK
+[    5.045493] dbg:  [libsyscall_shim] <uk_syscall_binary.c @   89> Binary system call request "ioctl" (16) at ip:0x10001178e8 (arg0=0x1, arg1=0x5401, ...)
+[    5.048418] dbg:  [libvfscore] <main.c @  755> (int) uk_syscall_r_ioctl((int) 0x1, (unsigned long int) 0x5401, (void*) 0x40009fb80)
+ioctl(0x1, 0x5401, ...) = 0x0
+[    5.052490] dbg:  [libsyscall_shim] <uk_syscall_binary.c @   89> Binary system call request "brk" (12) at ip:0x10001180f9 (arg0=0x0, arg1=0x10003edc40, ...)
+[    5.055469] dbg:  [appelfloader] <brk.c @   57> (void *) uk_syscall_r_brk((void *) 0x0)
+[    5.057158] dbg:  [appelfloader] <brk.c @   80> Outside of brk range, return current brk 0x47f800000
+brk(NULL) = va:0x47f800000
+[    5.060265] dbg:  [libsyscall_shim] <uk_syscall_binary.c @   89> Binary system call request "brk" (12) at ip:0x10001180f9 (arg0=0x47f821000, arg1=0x10003edc40, ...)
+[    5.063398] dbg:  [appelfloader] <brk.c @   57> (void *) uk_syscall_r_brk((void *) 0x47f821000)
+[    5.065240] dbg:  [appelfloader] <brk.c @   87> zeroing 0x47f800000-0x47f821000...
+[    5.066905] dbg:  [appelfloader] <brk.c @   95> brk @ 0x47f821000 (brk heap region: 0x47f800000-0x47fa00000)
+brk(va:0x47f821000) = va:0x47f821000
+[    5.070504] dbg:  [libsyscall_shim] <uk_syscall_binary.c @   89> Binary system call request "write" (1) at ip:0x1000112104 (arg0=0x1, arg1=0x47f800260, ...)
+[    5.073497] dbg:  [libvfscore] <main.c @  732> (ssize_t) uk_syscall_r_write((int) 0x1, (const void *) 0x47f800260, (size_t) 0xe)
+[    5.076049] dbg:  [libvfscore] <main.c @  687> (ssize_t) uk_syscall_r_writev((int) 0x1, (const struct iovec *) 0x40009f730, (int) 0x1)
+Hello, World!
+write(fd:1, "Hello, World!\x0A", 14) = 14
+[    5.080710] dbg:  [libsyscall_shim] <uk_syscall_binary.c @   89> Binary system call request "exit_group" (231) at ip:0x10000e6ab6 (arg0=0x0, arg1=0x3c, ...)
+[    5.083937] dbg:  [libposix_process] <process.c @  565> (int) uk_syscall_r_exit_group((int) 0x0)
+[    5.085801] dbg:  [libposix_process] <process.c @  368> Terminating PID 1: Self-killing TID 1...
+[...]
+```
+
+When encountering problems with binary compatibility mode, use either system call tracing or full debug messages to assist in understanding what's wrong.
+
+### Using GDB
+
+Tracing and debug messages may not be enough to identify the cause of certain issues.
+For that you want to follow the application control flow, be able to step instructions, print variable values.
+In short, you require the use of a debugger, such as GDB.
+
+See instructions in [the `README.md` file of the `app-elfloader` repository](https://github.com/unikraft/app-elfloader) about the use of GDB for debugging.
+
+### Practice: Run Applications with Debugging Enabled
+
+Run as many applications as you can with debugging support in binary compatibility: both system call tracing and full debug messages.
+Run applications from [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps) and applications from the entire Linux filesystem.
+
+## Creating an Application-Specific Root Filesystem
+
+Applications in [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader) use a directory as their root filesystem.
+This contains:
+
+- The application binary
+- Required dynamic libraries (shared objects)
+- Support files: configuration files, data files, language-specific libraries
+
+Having such as a directory is important when packing an application.
+Only the required files are added to it, similar to a container making thre result image, as small as possible.
+
+Application binaries can be obtained in two ways:
+
+- Pre-built binaries extracted from a package, container or filesystem
+- Built from source code
+
+Supported binaries must be PIE (**Position-Independent Executables**), either static or dynamic.
+
+### Pre-built Binaries
+
+Once an application dynamic binary is obtained, we need to extract the required dynamic libraries.
+This step is only required for dynamic binaries;
+static binaries aren't using dynamic libraries.
+For this we use [the `extract.sh` script](https://github.com/unikraft/dynamic-apps/tree/master/extract.sh) in the `dynamic-apps` repository.
+
+To get the syntax of the script, run it without arguments:
+
+```console
+./extract.sh
+```
+
+It prints the output:
+
+```text
+Binary to extract not provided.
+
+Usage: ./extract.sh <binary> [<extract_path>]
+
+  Default extract path is current directory
+```
+
+The `extract.sh` script will take an `ELF` file as the argument and an optional directory that stores the root filesystem.
+If no directory is provided, the current directory is used as the root filesystem.
+The script will then populate the root directory with the binary and dynamic libraries.
+
+The command below uses the script to create the root filesystem directory for `grep`:
+
+```console
+./extract.sh /usr/bin/grep grep
+```
+
+The command output presents the copying of the binary and the required dynamic libraries:
+
+```text
+Copying /usr/bin/grep ...
+Copying /lib/x86_64-linux-gnu/libpcre.so.3 ...
+Copying /lib/x86_64-linux-gnu/libc.so.6 ...
+Copying /lib64/ld-linux-x86-64.so.2 ...
+```
+
+We'll also copy the `/etc/passwd` file as test file:
+
+```console
+cp --parents /etc/passwd grep/
+```
+
+The resulting directory consists the properly organized filesystem for the application:
+
+```text
+grep/
+|-- etc/
+|   `-- passwd
+|-- lib/
+|   `-- x86_64-linux-gnu/
+|       |-- libc.so.6*
+|       `-- libpcre.so.3
+|-- lib64/
+|   `-- ld-linux-x86-64.so.2*
+`-- usr/
+    `-- bin/
+        `-- grep*
+```
+
+After all this is done, we can go back to the `run-app-elfloader` repository and use the `run.sh` script to run the application we just prepared:
+
+```console
+./run.sh -r ../dynamic-apps/grep/ /usr/bin/grep bash /etc/passwd
+```
+
+The command will search for the `bash` string` in the `/etc/passwd` file.
+Not that paths are absolute in the application root filesystem.
+
+The command output will be similar to:
+
+```text
+SeaBIOS (version 1.15.0-1)
+Booting from ROM..Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+      Prometheus 0.14.0~4cce8306-custom
+root:x:0:0:root:/root:/bin/bash
+unikraft:x:1000:1000:Unikraft User,,,:/home/unikraft:/bin/bash
+```
+
+### Custom Applications
+
+The steps above assumed the existence of a pre-built binary.
+Let's consider custom applications that we have written.
+For example, we create a simple helloworld application in C++.
+
+We create the application as `helloworld.cpp`:
+
+```cpp
+#include <iostream>
+
+int main()
+{
+        std::cout << "Hello World!" << std::endl;
+        return 0;
+}
+```
+
+We then build the application:
+
+```console
+g++ -fPIC -pie -Wall -o helloworld helloworld.cpp
+```
+
+The `-fPIC` or `-pie` flags are typically default build flags.
+We added them just to be sure.
+
+We are now in possession of the binary executable `helloworld`, so we apply the steps laid out in section [Pre-built Binaries](/guides/bincompat/#pre-built-binaries).
+Namely, using the `extract.sh` script to extract the binary and the dynamic libraries in the application root filesystem, and running the resulting filesystem using `run.sh`.
+
+### Practice: Application Filesystems
+
+Create application root filesystems for application that are already part of your Linux host filesystem.
+Follow the steps in the section [Pre-built Binaries](/guides/bincompat/#pre-built-binaries).
+
+Recall to target binaries that don't use the GUI, nor the terminal screen, nor are multi-process.
+
+Aim to create pull requests with the new application filesystems in [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps).
+
+### Practice: Custom Applications in Interpreted Languages
+
+Create your own applications in your preferred interpreted language.
+Choose among the languages that are already part of [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps) (the `lang/` directory): Python, Lua, Perl, Ruby.
+
+Add your scripts in the application filesystem for the respective programming language.
+Then run it with the `run.sh` script.
+
+Aim to create pull requests with the new application filesystems in [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps), in the corresponding subdirectory of the `lang/` directory.
+
+### Practice: Custom Applications in Compiled Languages
+
+Create your own applications in your preferred compiled language (C, C++, Rust, Go, Objective-C).
+Build the source code into a dynamic PIE ELF.
+
+Then create application root filesystems for application that are already part of your Linux host filesytem.
+Aim to create pull requests with the new application filesystems in [the `dynamic-apps` repository](https://github.com/unikraft/dynamic-apps), in the corresponding subdirectory of the `lang/` directory.
+
+## Build `app-elfloader`
+
+Using `./run.sh`, we used the pre-built `app-elfloader` images from [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader):
+
+- `app-elfloader_qemu-x86_64`: the standard image
+- `app-elfloader_qemu-x86_64_strace`: the image with system call tracing
+- `app-elfloader_qemu-x86_64_full-debug`: the image with full debug messages.
+
+However, if new changes are added to Unikraft, or we want to test potential changes ourselves (pull requests, branches), we need to re-build the `app-elfloader` from [its repository](https://github.com/unikraft/app-elfloader).
+
+In order to build our own `app-elfloader` image, follow the instructions in the [`app-elfloader` README file](https://github.com/unikraft/app-elfloader#readme), the ["Set Up"](https://github.com/unikraft/app-elfloader#set-up) and the ["Scripted Building and Running"](https://github.com/unikraft/app-elfloader#scripted-building-and-running) sections.
+In short, the instructions present you with different ways to build, using the scripts in the `scripts/build/` directory:
+
+- 9pfs or initrd filesystem
+- KraftKit-based build or Make-based build
+- QEMU or Firecracker VMM
+- Building the standard, system call tracing or full debug message image
+
+Running the image is easiest to be don via the scripts in the `scripts/run/` directory.
+These scripts invoke KraftKit or Firecracker or QEMU behind the scenes.
+
+Note that the `run.sh` script in [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader) can only be used for QEMU and 9pfs filesystem.
+
+### Building and Running Nginx
+
+As an example, let's build `app-elfloader` and run Nginx in binary compatibility mode.
+Let's go for a 9pfs build, both with KraftKit and with Make.
+
+The steps are:
+
+1. Set up `app-elfloader` by following [the instructions in its documentation](https://github.com/unikraft/app-elfloader#set-up).
+
+1. Enter the repository clone (i.e. the `elfloader/` directory) and run the `./generate.py` script the generates the scripts in `scripts/build/` and `scripts/run/` directories:
+
+   ```console
+   ./scripts/generate.py
+   ls -R ./scripts
+   ```
+
+1. Build the ELF loader with KraftKit:
+
+   ```console
+   ./scripts/build/kraft-qemu-x86_64-9pfs.sh
+   ```
+
+1. Build the ELF Loader with Make:
+
+   ```console
+   ./scripts/build/make-qemu-x86_64-9pfs.sh
+   ```
+
+1. Run the resulting image with KraftKit:
+
+   ```console
+   ./scripts/run/kraft-qemu-x86_64-9pfs-nginx.sh
+   ```
+
+1. Rn the resulting image with QEMU:
+
+   ```console
+   ./scripts/run/qemu-x86_64-9pfs-nginx.sh
+   ```
+
+1. Test
+
+1. Run the resulting images from KraftKit and QEMU with `run.sh`:
+
+   ```console
+   sudo pkill -f firecracker
+   sudo pkill -f qemu
+   sudo ip link set dev virbr0 down
+   sudo ip link del dev virbr0 
+   sudo ./run.sh -n -k ../elfloader/.unikraft/build/elfloader-qemu-x86_64-9pfs_qemu-x86_64 -r ../dynamic-apps/nginx /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+
+   sudo pkill -f firecracker
+   sudo pkill -f qemu
+   sudo ip link set dev virbr0 down
+   sudo ip link del dev virbr0 
+   sudo ./run.sh -n -k ../elfloader/workdir/build/elfloader_qemu-x86_64 -r ../dynamic-apps/nginx /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+   ```
+
+1. Test all runs with `curl` on a different console:
+
+   ```console
+   curl http://172.44.0.2
+   ```
+
+### Practice: Build `app-elfloader` and Run Applications
+
+Build `app-elfloader` in different configurations (filesystem, VMMs, KraftKit / Make).
+Run different applications with it in different ways: KraftKit, QEMU, Firecracker, `run.sh`.
