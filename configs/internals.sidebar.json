@@ -26,6 +26,10 @@
             {
               "title": "Syscall Shim Layer",
               "path": "/docs/internals/syscall-shim"
+            },
+            {
+              "title": "Debugging a Unikernel",
+              "path": "/docs/internals/debugging"
             }
           ]
         }
