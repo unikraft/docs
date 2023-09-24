@@ -52,6 +52,30 @@ You can venture beyond the challenges in the [`Hackathons` GitHub project](https
 
    30-50 HP are awarded for each submitted application, depending on its complexity.
 
+1. **Add support for running application with [`app-elfloader`](https://github.com/unikraft/app-elfloader/)**
+
+   Update the [`run.yaml`](https://github.com/unikraft/app-elfloader/blob/stable/scripts/run.yaml) file inside [`app-elfloader`](https://github.com/unikraft/app-elfloader/) to add support for existing applications in [the `dynamic-apps` repository](://github.com/unikraft/dynamic-apps/).
+   Follow the already existing examples for `helloworld` and `nginx`.
+
+   Add a new section to the `run.yaml` file, that will look like this:
+
+   ```yaml
+   - name: app-name
+     rootfs: path-to-dynamic-apps-app-directory
+     command: run-command
+     memory: amount of memoty needed
+     networking: True / False depending on the application
+   ```
+
+   To test your changes, while inside the `app-elfloader` directory, first run the `generate.py` script (`./scripts/generate.py`).
+   If all went well, find scripts in the `scripts/run/` directory named `qemu-x86_64-9pfs-<appname>.sh`.
+   Build the elfloader by running `./scripts/build/make-qemu-x86_64-9pfs.sh`, then run `./scripts/run/qemu-x86_64-9pfs-<appname>.sh` to see if the application is working.
+   If the run fails, it might be because of an issue in Unikraft, unrelated to your changes.
+   Submit you pull request anyway to the [`app-elfloader` repository](https://github.com/unikraft/app-elfloader/).
+   Also submit an issue with the error to the [Unikraft core repository](https://github.com/unikraft/unikraft/), and get extra HP.
+
+   10 HP are awarded for every added application.
+
 1. **Fix build warning messages**
 
     Use different build environments (different operating systems, different compilers), different targets (different platforms, different architectures) and different configuration options (different filesystems, different library support, debugging options) to configure and build [Unikraft applications](https://github.com/search?q=topic%3Aunikraft-application+org%3Aunikraft&type=Repositories).
