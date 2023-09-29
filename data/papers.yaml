@@ -1,3 +1,18 @@
+- title: "Loupe: Driving the Development of OS Compatibility Layers"
+  venue: ACM ASPLOS'24
+  year: 2024
+  url: https://doi.org/10.1145/3617232.3624861
+  pdf: https://arxiv.org/pdf/2309.15996.pdf
+  authors:
+    - Lefeuvre, H.
+    - Gain, G.
+    - Bădoiu, V-A.
+    - Dinca, D.
+    - Schiller, V-R.
+    - Raiciu, C.
+    - Huici, F.
+    - Olivier, P.
+
 - title: "Want More Unikernels? Inflate Them!"
   venue: ACM SoCC'22
   year: 2022
