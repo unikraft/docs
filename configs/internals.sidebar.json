@@ -30,6 +30,10 @@
             {
               "title": "Debugging a Unikernel",
               "path": "/docs/internals/debugging"
+            },
+            {
+              "title": "Cross-compiling Unikraft",
+              "path": "/docs/internals/cross-compiling"
             }
           ]
         }

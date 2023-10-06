@@ -1,0 +1,56 @@
+---
+title: Cross-compilig Unikraft
+---
+
+## Cross-compiling `AArch64` apps
+
+The toolchain that should be used for `AArch64` is `aarch64-none-elf`, to be installed from [the official Arm development site](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf.tar.xz?rev=981d8f7e91864070a466d852589598e2&hash=8D5397D4E41C99A96989ED813E8E95F0).
+
+Similar with the command we'll present for cross-compiling with `clang`, we build the app using
+
+```console
+$ make -j $(nproc) CROSS_COMPILE=~/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+```
+
+## Cross-compiling Unikraft with `Clang`
+
+As `clang` becomes more and more used in the industry, we also provide a series of steps in order to compile your application with it.
+Besides coming up with cool sanitizers (SafeStack, ShadowStack and more), `clang` becomes a very interesting alternative to `gcc` when it comes to speed and memory[^1], so why not give it a try?!
+
+Firstly, we must consider what architecture we are working on, because the steps differ quite a bit.
+
+### `Clang` on `x86`
+
+Configure your application as you would usually do, then build it using:
+
+```console
+$ make CC=clang
+```
+
+### `Clang` on `AArch64`
+
+There are two ways of cross-compiling your app based off the toolchain you'll choose;
+there's either `aarch64-linux-gnu` or `aarch64-none-linux-gnu`.
+The first one can be installed via your default package manager (the `gcc-aarch64-linux-gnu` package on Ubuntu), while the second one should be fetched from the [official Arm development site](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu.tar.xz?rev=33c6e30e5ac64e6dba8f0431f2c35f1b&hash=AE0C3F32FC140B87A05846EBF9494722).
+
+To configure your app keep your regular configuartions and dissable all the `erratums` from the `Architecture Selection`.
+
+* If you choose to use `aarch64-linux-gnu`, build your application with:
+
+```console
+$ make -j $(ncpus) CC=clang
+```
+
+* If you choose to use `aarch64-none-linux-gnu`, build your application with:
+
+```console
+$ make -j $(ncpus) CROSS_COMPILE=~/toolchains/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- CC=clang
+```
+
+<Warning>
+The actual right way of building apps on `AArch64` is by cross-compiling with `aarch64-none-elf`, as the other toolchains expect `glibc` to be used, while that's not the case for unikraft.
+
+However, `aarch64-none-elf` clashes with our expectations regarding the `emutls` and becomes unusable together with `clang`.
+</Warning>
+
+[^1]: https://opensource.apple.com/source/clang/clang-23/clang/tools/clang/www/features.html#performance
