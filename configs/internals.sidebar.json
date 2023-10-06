@@ -16,10 +16,6 @@
               "path": "/docs/internals/build-process"
             },
             {
-              "title": "Coding Conventions",
-              "path": "/docs/internals/coding-conventions"
-            },
-            {
               "title": "Build System - Internals",
               "path": "/docs/internals/build-system"
             },
