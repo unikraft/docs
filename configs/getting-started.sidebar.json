@@ -30,6 +30,10 @@
             {
               "title": "GitHub Actions",
               "path": "/docs/getting-started/integrations/github-actions"
+            },
+            {
+              "title": "Container Runtimes",
+              "path": "/docs/getting-started/integrations/container-runtimes"
             }
           ]
         }
