@@ -1,0 +1,172 @@
+---
+title: Container Runtimes
+description: |
+  The `runu` OCI runtime enables container managers to run Unikraft unikernels
+  inside lightweight virtual machines as if they were Linux containers.
+---
+
+You can run Unikraft unikernels packaged by KraftKit through any OCI compliant
+container manager using `runu` as a drop-in replacement for the `runc`
+container runtime, thus enabling the usage of unikernels with familiar
+container tools and platforms such as Docker and Kubernetes.
+
+Examples of OCI compliant container managers include
+[containerd](https://containerd.io/) and [cri-o](https://cri-o.io/).
+
+## Pre-requisites
+
+- Familiarity with [packaging Unikraft unikernel binaries as OCI images](/docs/cli/packaging)
+- Linux host machine has [virtualization](https://www.linux-kvm.org/) enabled
+- Linux host machine has the [QEMU](https://qemu.org/) virtual machine manager installed
+
+## Installation
+
+The `runu` OCI runtime must be installed on the Linux host. It enables
+container managers to run Unikraft unikernels as if they were Linux containers.
+
+`runu` is open source and distributed under the umbrella of the
+[KraftKit](https://github.com/unikraft/kraftkit) project on GitHub. It can be
+installed in two different manners, which are detailed below.
+
+### Using pre-built binaries
+
+Select the latest release on the [release page for
+KraftKit](https://github.com/unikraft/kraftkit/releases), and download the
+`kraftkit_runu` tarball for your architecture.
+
+Extract the `runu` binary from this archive, and install it inside one of the
+directories listed in the host's `PATH` variable:
+
+```sh
+tar -xzvf kraftkit_runu_0.7.0_linux_amd64.tar.gz runu
+```
+
+```sh
+# PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+sudo install runu /usr/local/bin/
+```
+
+### Building from source
+
+Clone the KraftKit project's Git repository onto the Linux host:
+
+```sh
+git clone https://github.com/unikraft/kraftkit.git
+```
+
+Then, build the `runu` binary, and install it inside one of the directories
+listed in the host's `PATH` variable:
+
+```sh
+make runu
+```
+
+```sh
+# PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+sudo install runu /usr/local/bin/
+```
+
+<Info>
+By default, the build is performed inside a Docker container which has the [Go
+toolchain](https://go.dev/doc/) and other dependencies pre-installed. To
+disable this behaviour and perform the build on the host instead, simply append
+the `DOCKER=` parameter to the `make` command above.
+</Info>
+
+## Usage
+
+In this section, we provide examples of running a unikernel that was
+pre-packaged as an OCI image by KraftKit.
+
+All examples assume `unikraft.org/app-nginx:latest` as the unikernel image.
+
+### Docker
+
+Running Unikraft unikernels through Docker using the `runu` container runtime
+requires enabling the [containerd image
+store](https://docs.docker.com/storage/containerd/) inside the Docker Engine.
+This feature is currently still considered _experimental_
+
+Then, running a unikernel is as simple as specifying `runu` as the container
+runtime on the command line:
+
+```sh
+docker run --runtime runu unikraft.org/app-nginx
+```
+
+Docker should display the unikernel in a running state, like any other
+container:
+
+```console
+$ docker ps
+CONTAINER ID    IMAGE                     COMMAND    STATUS    NAMES
+1ecef1190a76    unikraft.org/app-nginx    "--"       Up        boring_wozniak
+```
+
+### Kubernetes
+
+Kubernetes requires alternative container runtimes like `runu` to be explicitly
+registered, both in Kubernetes and in the underlying container manager.
+
+#### Configuring the container manager
+
+- If the container manager is containerd, add the following section to the
+  containerd configuration file (default: `/etc/containerd/config.toml`), and
+  restart the `containerd` daemon to apply changes:
+
+   ```toml
+   [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runu]
+     runtime_type = "io.containerd.runc.v2"
+     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runu.options]
+       BinaryName = "runu"
+   ```
+
+- If the container manager is cri-o, create a new configuration file inside the
+  cri-o configuration directory (default: `/etc/crio/crio.conf.d/`), and
+  restart the `crio` daemon to apply changes:
+
+   ```toml
+   [crio.runtime.runtimes.runu]
+   ```
+
+#### Registering a Kubernetes runtime class
+
+Inside Kubernetes, register `runu` as a known runtime using a [Runtime
+Class](https://kubernetes.io/docs/concepts/containers/runtime-class/) API
+object. This can be achieved using the `kubectl create` command with the
+following manifest:
+
+```yaml
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: runu
+handler: runu
+```
+
+#### Running a unikernel Pod
+
+The following Pod definition runs a single-container Pod from our unikernel OCI
+image, using `runu` as runtime class. It can be created/started using the
+`kubectl command`:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-unikernel
+spec:
+  runtimeClassName: runu
+  containers:
+  - name: app
+    image: unikraft.org/app-nginx
+```
+
+Querying the Kubernetes API for running Pods should return the newly created
+unikernel Pod:
+
+```console
+$ kubectl get pods -o wide
+NAME           READY   STATUS    IP           NODE                
+my-unikernel   1/1     Running   10.42.0.10   node-1
+```
