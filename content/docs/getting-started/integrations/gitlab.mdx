@@ -1,0 +1,179 @@
+---
+title: GitLab CI
+description: |
+  Learn how to build and deploy your unikernel application via GitLab CI.
+---
+
+Using `kraft` inside the GitLab CI system is no different from any other command and can be used for all its use cases:
+
+* Build Unikraft unikernels;
+* Run Unikraft unikernels in emulation mode;
+* Package and push OCI images to compatible registries.
+
+<Info>
+Get started quickly and easily by using the [sample GitLab repository](https://gitlab.com/unikraft/gitlab-ci-example).
+</Info>
+
+### Workflow Steps
+
+We break up the resulting workflow into multiple steps to guide people through the sytax of GitLab, its specifics, and how they relate to using `kraft`.
+
+#### 1. Setting Variables
+
+The first and foremost thing we must do is set the general environmental variables.
+
+```yaml
+variables:
+  KRAFTKIT_LOG_LEVEL: debug
+  KRAFTKIT_LOG_TYPE: basic
+  KRAFTKIT_NO_CHECK_UPDATES: "true"
+```
+
+Logging we need to set to 'basic' to ensure that the output is not mangled and the level we can pick from the following list: `debug`/`info`/`warn`/`error`.
+We pick `debug` to make sure we do not miss anything important in our workflows.
+Finally, `KRAFTKIT_NO_CHECK_UPDATES` we set for redundancy, especially in the case where we might use an older version of KraftKit.
+
+#### 2. Using the Correct Image
+
+The default image for KraftKit in CI/CD is `kraftkit.sh/base:latest`, but this is not fully compatible with GitLab.
+This happens because it sets a custom entrypoint that is not `sh`.
+As such, we need to reset the entrypoint with this syntax: `entrypoint: [""]`.
+
+The resulting image block is:
+
+```yaml
+image:
+  name: "kraftkit.sh/base:latest"
+  entrypoint: [""]
+```
+
+#### 3. Setting up the Environment
+
+Because we can't use the GitHub Action we need to do the remaining steps manually.
+This includes cloning the repository we want to build.
+
+```sh
+mkdir /tmp/app-helloworld
+git clone https://github.com/unikraft/app-helloworld.git /tmp/app-helloworld
+cd /tmp/app-helloworld
+```
+
+#### 4. Building & Running the Application
+
+Building and running using `kraft` is identical to the CLI:
+
+```sh
+# Building app helloworld
+kraft build --no-cache --arch x86_64 --plat qemu
+
+# Running app helloworld
+kraft run -W -M 256M --arch x86_64 --plat qemu
+```
+
+Only argument to look out for is `-W`, which specifies we do not want acceleration.
+
+#### 5. Packaging the Application
+
+To package the built application we need to provide it with a name and other details.
+Here we must specify the full name of the image registry we want to use.
+We also create an initrd to demonstrate its usage.
+
+```sh
+mkdir fs0
+touch fs0/file.txt
+
+kraft pkg --name my.own.repository.com/helloworld:latest --as oci --initrd fs0/ --arch x86_64 --plat qemu
+```
+
+#### 6. Push the Application
+
+Finally, to push, we must first log in, and then we can just push to our registry.
+For this example, this part is skipped.
+
+```sh
+# Login to repository
+kraft login -u $MY_SECRET_USER -t $MY_SECRET_PASSWORD
+
+# Pushing app helloworld
+kraft pkg push --as oci my.own.repository.com/helloworld:latest
+```
+
+### Overview
+
+At last, we combine all steps above to obtain the final version of the file, which can be seen below:
+
+```yaml
+variables:
+  KRAFTKIT_LOG_LEVEL: debug
+  KRAFTKIT_LOG_TYPE: basic
+  KRAFTKIT_NO_CHECK_UPDATES: "true"
+
+build-run-job:
+  image:
+    name: "kraftkit.sh/base:latest"
+    entrypoint: [""]
+  script: |
+    set -xe
+    
+    # Printing version
+    kraft version
+
+    # Cloning repository
+    mkdir /tmp/app-helloworld
+    git clone https://github.com/unikraft/app-helloworld.git /tmp/app-helloworld
+    cd /tmp/app-helloworld
+
+    # Building app helloworld
+    kraft build --no-cache --arch x86_64 --plat qemu
+
+    # Running app helloworld
+    kraft run -W -M 256M --arch x86_64 --plat qemu
+
+    # Packaging app helloworld
+    mkdir fs0
+    touch fs0/file.txt
+    kraft pkg --name my.own.repository.com/helloworld:latest --as oci --initrd fs0/ --arch x86_64 --plat qemu
+
+    # Login to repository
+    # kraft login -u $MY_SECRET_USER -t $MY_SECRET_PASSWORD
+
+    # Pushing app helloworld
+    # kraft pkg push --as oci my.own.repository.com/helloworld:latest
+```
+
+Upon [running the simplified workflow](https://gitlab.com/unikraft/gitlab-ci-example/-/jobs/5261672369), we can see that all elements related to KraftKit executed correctly.
+
+```console
+[...]
+ i    SCSTRIP helloworld_qemu-x86_64
+ i    UKBI    helloworld_qemu-x86_64.bootinfo
+ i    GZ      helloworld_qemu-x86_64.gz
+++ kraft run -W -M 256M --arch x86_64 --plat qemu
+level=debug msg=detected platform=qemu
+level=debug msg="cannot run because: no arguments supplied" runner=linuxu
+level=debug msg="cannot run because: no arguments supplied" runner=kernel
+level=debug msg=using runner=project
+level=debug msg="qemu-system-x86_64 -version"
+level=debug msg="qemu-system-x86_64 -accel help"
+level=debug msg="qemu-system-x86_64 -cpu qemu64,+pdpe1gb,-vmx,-svm -daemonize -device pvpanic -device sga -display none -kernel /tmp/app-helloworld/.unikraft/build/helloworld_qemu-x86_64 -machine pc -m size=244M -monitor unix:/root/.local/share/kraftkit/runtime/0a8fa139-dc45-405b-be39-fb066768329c/qemu_mon.sock,server,nowait -name 0a8fa139-dc45-405b-be39-fb066768329c -nographic -no-reboot -S -parallel none -pidfile /root/.local/share/kraftkit/runtime/0a8fa139-dc45-405b-be39-fb066768329c/machine.pid -qmp unix:/root/.local/share/kraftkit/runtime/0a8fa139-dc45-405b-be39-fb066768329c/qemu_control.sock,server,nowait -qmp unix:/root/.local/share/kraftkit/runtime/0a8fa139-dc45-405b-be39-fb066768329c/qemu_events.sock,server,nowait -rtc base=utc -serial file:/root/.local/share/kraftkit/runtime/0a8fa139-dc45-405b-be39-fb066768329c/machine.log -smp cpus=1,threads=1,sockets=1 -vga none"
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+              Prometheus 0.14.0~86710f6
+Hello world!
+Arguments:  "/tmp/app-helloworld/.unikraft/build/helloworld_qemu-x86_64"
+++ mkdir fs0
+++ touch fs0/file.txt
+++ kraft pkg --name my.own.repository.com/helloworld:latest --as oci --initrd fs0/ --plat qemu --arch x86_64
+level=info msg="packaging helloworld (oci)"
+level=debug msg="oci: including kernel" dest="/unikraft/bin/kernel"
+level=debug msg="oci: including initrd"
+level=debug msg="oci: saving image" tag="my.own.repository.com/helloworld"
+Cleaning up project directory and file based variables
+Job succeeded
+```
+
+As we can see, running `kraft` commands in the GitLab CI is no different from a normal CLI.
+By integrating KraftKit in your CI system, you can easily test and validate all resulting Unikraft images.
