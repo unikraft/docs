@@ -32,6 +32,10 @@
               "path": "/docs/getting-started/integrations/github-actions"
             },
             {
+              "title": "GitLab CI",
+              "path": "/docs/getting-started/integrations/gitlab"
+            },
+            {
               "title": "Container Runtimes",
               "path": "/docs/getting-started/integrations/container-runtimes"
             }
