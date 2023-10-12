@@ -48,7 +48,7 @@ export const LanguageLinks = () => {
       }}
     >
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-cpp'
+        href='https://github.com/unikraft/app-helloworld-cpp'
         accentColor='#659AD2'
         name='C/C++'
       >
