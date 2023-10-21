@@ -483,7 +483,7 @@ After all this is done, we can go back to the `run-app-elfloader` repository and
 ./run.sh -r ../dynamic-apps/grep/ /usr/bin/grep bash /etc/passwd
 ```
 
-The command will search for the `bash` string` in the `/etc/passwd` file.
+The command will search for the `bash` string in the `/etc/passwd` file.
 Not that paths are absolute in the application root filesystem.
 
 The command output will be similar to:
@@ -576,7 +576,7 @@ In short, the instructions present you with different ways to build, using the s
 - QEMU or Firecracker VMM
 - Building the standard, system call tracing or full debug message image
 
-Running the image is easiest to be don via the scripts in the `scripts/run/` directory.
+Running the image is easiest to be done via the scripts in the `scripts/run/` directory.
 These scripts invoke KraftKit or Firecracker or QEMU behind the scenes.
 
 Note that the `run.sh` script in [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader) can only be used for QEMU and 9pfs filesystem.
