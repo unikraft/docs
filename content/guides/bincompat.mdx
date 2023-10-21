@@ -14,7 +14,7 @@ This is done without any porting effort while maintaining the benefits of Unikra
 
 For this, Unikraft must provide a similar ABI (_Application Binary Interface_) with the Linux kernel.
 This means that Unikraft has to provide a similar system call interface that Linux kernel provides, a [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799.2018edition/)-compatible interface.
-For this, the [**system call shim layer**](docs/internals/syscall-shim) (also called **syscall shim**) was created.
+For this, the [**system call shim layer**](/docs/internals/syscall-shim) (also called **syscall shim**) was created.
 The system call shim layer provides Linux-style mappings of system call numbers to actual system call handler functions.
 
 <Info>
