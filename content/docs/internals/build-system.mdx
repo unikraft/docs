@@ -251,7 +251,7 @@ config APPHELLOWORLD_DEPENDENCIES
 
 In this example, `LIB1` and `LIB2` would be enabled (the user can't unselect them).
 Additionally, if the user did not provide and select any `libc`, the Unikraft internal replacement `nolibc` would be selected.
-You can find a documentation of the syntax in the [Linux kernel tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/kbuild/kconfig-language.txt).
+You can find a documentation of the syntax in the [Linux kernel tree](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/plain/Documentation/kbuild/kconfig-language.rst).
 Of course, you could also directly define a dependency on a particular `libc` (e.g., `libmusl`), instead.
 You can also depend on feature flags (like `HAVE_LIBC`) to provide or hide options.
 The feature flag `HAVE_LIBC` in this example is set as soon as a proper and full-fledged `libc` was selected by the user.
