@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases v0.14.0 (Prometheus)
+                    Unikraft releases v0.15.0 (Pandora)
                   </Text>
                   <Box
                     display={{
@@ -240,19 +240,19 @@ export default function LandingHero() {
               }}
             >
               <Stat>
-                <StatNumber>v0.14.0</StatNumber>
+                <StatNumber>v0.15.0</StatNumber>
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1541</StatNumber>
+                <StatNumber>1642</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>70</StatNumber>
+                <StatNumber>89</StatNumber>
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1077</StatNumber>
+                <StatNumber>1184</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>

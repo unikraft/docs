@@ -1,0 +1,254 @@
+---
+title: "Unikraft releases v0.15.0 (Pandora)"
+description: |
+  This release is the result of extensive hard work during the last months in
+  the entire community.
+publishedDate: 2023-10-22
+authors:
+- Răzvan Deaconescu
+- Alexander Jung
+- Michalis Pappas
+- Simon Kuenzer
+- Rareș Miculescu
+- Andrei Tătar
+tags:
+- release
+- announcement
+---
+
+We are excited to announce the update version of Unikraft, v0.15.0.
+
+This release is the result of constant testing, debugging, fixing and improvements during the past couple of months.
+It comes packed with plenty of fixes that improve the stability and application support of Unikraft.
+
+In this blog post, we present the new features available in Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.14.0...RELEASE-0.15.0).
+
+### Improved Application Documentation and Support Scripts
+
+_This feature was championed by [Răzvan Deaconescu](https://github.com/razvand) and [Ștefan Jumărea](https://github.com/StefanJum)._
+
+Existing applications have been updated to build and run out of the box for a plethora of configurations: using KraftKit, using Make, using QEMU, using Firecracker, on ARM, on x86.
+All combinations have been tested and document.
+Ready-to-use scripts have been employed.
+
+Each application repository uses a `defconfigs/` directory consisting of default configuration files.
+Also, each application uses a `scripts/` directory for ready-to-use scripts.
+`kraft.yaml` configuration file has been updated for KraftKit use.
+`README.md` contains detailed information on setting up, configuring, building and running applications with Unikraft.
+
+Applications, together with examples, are to be collected into a singular app catalog repository.
+This is planned for the next release.
+
+### Improved Python Support
+
+_This feature was championed by [Andrei Tatar](https://github.com/razvand) with support from [Ștefan Jumărea](https://github.com/StefanJum), [Maria Sfîrăială](https://github.com/mariasfiraiala), [Eduard Vintilă](https://github.com/eduardvintila), [Radu Nichita](https://github.com/RaduNichita)._
+
+Python support has been improved by the introduction of Pillow support, together with new ported libraries with Unikraft.
+Selecting Pillow for Python will add its files to the Python rootfs build.
+
+Other fixes to Python libraries, together with fixes to the Unikraft core, result in an all over stable Python suppport.
+
+### Steps Towards Library Versioning (`Library.uk`)
+
+_This feature was championed by [Alexander Jung](https://github.com/nderjung) with feedback and support from [Simon Kuenzer](https://github.com/skuenzer), [Michalis Pappas](https://github.com/michpappas), [Marc Rittinghaus](https://github.com/marcrittinghaus), [Marco Schlumpp](https://github.com/mschlumpp), [Răzvan Deaconescu](https://github.com/razvand)._
+
+Unikraft aims to support multiple external library versions.
+Our goal is for external libraries to be easily upgradable or maintainable across their versions.
+Our approach is the introduction of `Library.uk` file for all libraries.
+The file needs to be parsable by machines and humans alike.
+
+This new file represents the first step towards proper versioning support of external microlibrary in Unikraft.
+The file itself acts as mechanism for holding metadata-only values about the microlibrary.
+This metadata is designed to be compatible with GNU Make whilst simultaneously being human-readable and readable by programs that are not GNU Make (e.g. tools such as KraftKit).
+
+An important feature of this file is the inclusion of microlibrary versions.
+In a later step, once relevant integrations have been made to Unikraft's core build system and to relevant tools such as KraftKit, the user will be able to see and select from different versions of the microlibrary.
+
+The relevant metadata is absorbed from both `Makefile.uk`, `Config.uk`, but also includes new information such as SPDX License identifier.
+
+### Re-arch IRQ Handling (part of "Platform Re-architecting")
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas) with feedback from [Sergiu Moga](https://github.com/mogasergiu), [Marco Schlumpp](https://github.com/mschlumpp) and [Simon Kuenzer](https://github.com/skuenzer)._
+
+Part of the "Platform Re-architecting" project, the feature removes all interrupt-related code from `plat/`, and moves it into `lib/ukintctlr/` and `drivers/ukintctlr`, as needed.
+Both new and existing functionality is collected under `libukintctlr` into a single, newly introduced `uk_intctlr` API. Among others, that also includes unified interrupt handling.
+
+The changes are summarized as:
+
+* All interrupt management, registration, and handling is moved to `lib/ukintctlr`.
+* The GIC driver is updated to implement the new `uk_intctlr` API.
+* The x86 IRQ controller drivers (PIC, x2APIC) are moved to the `drivers/ukintctlr` subsystem into a new driver `xPIC` and implement the `uk_intctlr` API.
+* Explicit IRQ acknowledgement is removed from individual handlers and moved into the unified handler of `lib/ukintctlr`.
+* Limits such as `MAX_IRQ` are defined by the individual drivers.
+* New features like unregistering IRQ handlers, and IRQ allocation are added into the `uk_intctlr` API.
+* All platforms, libraries, and drivers are adapted to the changes introduced by the `uk_intctlr` API.
+
+To minimize the scope of this work, changes to the implementation has been limited to the smallest possible.
+
+### Re-arch Drivers (part of "Platform Re-architecting")
+
+_This feature was championed by [Rareș Miculescu](https://github.com/rares-miculescu) and [Michalis Pappas](https://github.com/michpappas) with feedback from [Sergiu Moga](https://github.com/mogasergiu), [Simon Kuenzer](https://github.com/skuenzer) and [Xingjian Zhang](https://github.com/zhxj9823)._
+
+Part of the "Platform Re-architecting" project, the feature adds a drivers subsystem to Unikraft.
+Drivers are placed under the top-level `drivers/` directory.
+In `menuconfig` drivers appear at a top-level section called "Device Drivers".
+There is currently no external drivers support.
+That is due to additional changes required to support the `<subsystem>/<driver>` hierarchy.
+
+As part of this work, several drivers have been ported:
+
+* Migrate the PCI and platform drivers to `drivers/ukbus/`.
+* GIC (_Generic Interrupt Controller_) is moved into `drivers/ukintctlr/`, and the API for the interrupt controller into `llib/ukintctlr`.
+* Move virtio drivers into newly introduce drivers subsystem.
+  Virtio drivers should have been scattered around the `drivers/` filesystem, but an exception was made, to keep them altogether.
+* Ofw (_open firmware_) driver is moved from `plat/drivers` into `lib/ukofw`.
+
+### Extended Application Support
+
+_This feature was championed by [Andrei Tatar](https://github.com/andreittr), [Razvan Deaconescu](https://github.com/razvand), [Stefan Jumărea](https://github.com/StefanJum) and the greater Unikraft community._
+
+Both binary-compatibility and native mode applications and libraries have been added to Unikraft repositories.
+With the increasing maturity and stability of Unikraft, applications and libraries are now easier to port (i.e. to build) and then to run.
+
+New libraries have been ported natively and new dynamic PIE ELFs have been ported in binary-compatibility mode.
+
+Note that applications, together with examples, are to be collected into a singular app catalog repository.
+This is planned for the next release.
+
+### Firecracker Networking Support
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas), [Andrei Topală](https://github.com/Krechals), [Marco Schlumpp](https://github.com/mschlumpp) with support from [Sergiu Moga](https://github.com/mogasergiu), [Răzvan Vîrtan](https://github.com/razvanvirtan) and [Răzvan Deaconescu](https://github.com/razvand)._
+
+Firecracker networking support is now upstream.
+It allows running of images such as Nginx or Redis, that require networking, to work with Firecracker.
+
+Support for Firecracker networking equates to support for modern virtio support on Unikraft (as an alternative to legacy virtio support).
+
+The feature provides the changes required to pass virtio-mmio devices via the command line.
+A newly introduced config parameter controls compatibility with Linux. Specifically, when `VIRTIO_MMIO_LINUX_COMPAT_CMDLINE` is selected, the MMIO driver is configured to accept devices in the Linux format, ie:
+
+```
+virtio_mmio.device = <size>@<base>:<irq>[:<id>]
+```
+
+If this option is not enabled, use the default libukparam format for this library, ie:
+
+```
+libvirtio_mmio.device = <size>@<base>:<irq>[:<id>]
+```
+
+This is useful for VMMs like Firecracker, that automatically inject device descriptors the command line.
+
+To additionally support `x86_64`, various components are updated to make fdt-based discovery optional.
+These are the platform bus, `virtio-mmio`, and PCI ECAM.
+
+### Improved Build-system Support for macOS
+
+_This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with support from [Michalis Pappas](https://github.com/michpappas) and [Ștefan Jumărea](https://github.com/StefanJum)._
+
+Initial macOS support had been part of release 0.14.
+The current release improves the build system and general support scripts for macOS support.
+Given user feedback, we made updates to better serve those who aim to build applications on macOS.
+Note that running applications, particulary on Apple Sillicon Mac systems, can only happen with an emulated version (TCG) of QEMU.
+
+### Replace Internal Libraries (`E` build option)
+
+_This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with support from [Michalis Pappas](https://github.com/michpappas), [Maria Sfîrăială](https://github.com/mariasfiraiala) and [Cezar Crăciunoiu](https://github.com/craciunoiuc)._
+
+This feature PR introduces the build system parameter `E=` which expects a colon separated list of suffixes that are matched against any library path that the build system is including.
+This mechanism is intended to be used for replacing internal libraries.
+For example, to replace `uksched`, the replacing library (that has to match configuration name(s) and APIs) needs to be included with `L=` while at the same time, the Unikraft-internal library has to be excluded with `E=`:
+
+```
+make L=/path/to/external-uksched E=lib/uksched
+```
+
+This further increases the configurability of Unikraft, by allowing not only the exclusion of external libraries, but also internal ones.
+
+### Initial ARM64 Binary Compatibility
+
+_This feature was championed by [Tianyi Liu](https://github.com/i-Pear) with extensive support from [Simon Kuenzer](https://github.com/skuenzer)._
+
+Binary-compatibility mode has been targeted at x86_64.
+There is now initial support for ARM64 binary compatibility.
+This allows for binary ARM64 ELFs to be started by Unikraft, via the [ELF Loader app](https://github.com/unikraft/app-elfloader).
+
+Support is still incomplete, with several system calls not working properly, causing applications to crash.
+It is a target for improvement in the next release.
+
+## Community Activities
+
+### Aveiro Hackathon
+
+In collaboration with [University POLITEHNICA of Bucharest](https://upb.ro/en), [University of Aveiro](https://www.ua.pt/), [Grupo de Linux da Universidade de Aveiro (GLUA)](https://glua.ua.pt/) and [Associação Nacional para o Software Livre (ANSOL)](https://ansol.org/) we organized the **Aveiro Unikraft Hackathon**, on Friday and Saturday, September 15-16, 2023, as part of [Festa do Software Livre 2023](https://festa2023.softwarelivre.eu/).
+
+The hackathon took place as an in-person event at [DETI - Departamento de Electrónica, Telecomunicações e Informática](https://www.ua.pt/en/deti) in University of Aveiro.
+
+It was a good time to get the feeling of Unikraft updates from the previous release (0.14.0 - Prometheus) and the improved application support (and macOS support).
+The hackathon resulted in multiple issues and pull requests being submitted.
+Most issues dealt with KraftKit, macOS and ARM64 support.
+While most pull request were fixes to the Unikraft core and contributions to the binary compatible application catalog.
+
+<Image
+  border
+  maxW={'2xl'}
+  src="/images/hackathon-aveiro-2023-09-15.jpg"
+  description="Aveiro Hackathon, 2023"
+/>
+
+### Vancouver Unikraft Hackathon
+
+Together with [Systopia Lab](https://systopia.cs.ubc.ca/) at [University of British Columbia (UBC)](https://www.ubc.ca/), we organized the **Vancouver Unikraft Hackathon**, on Saturday and Sunday, September 23-24, 2023.
+
+The hackathon took place as an in-person event at **Room 2020, Fred Kaiser Building, Point Grey Campus** and online, on [Discord](http://bit.ly/UnikraftDiscord), on the `#hack-vancouver23` channel.
+
+From the Unikraft community, [Răzvan](https://github.com/razvand) and [Ștefan](https://github.com/StefanJum) were present.
+
+With more than 40 participants and more than 60 contributions, this was one of our most successful hackathons.
+We had a very exciting crowd who worked on mostly application compatibility items.
+It was our first time in North America and, as such, we were able to do larger scale testing on macOS systems.
+
+<Image
+  border
+  maxW={'2xl'}
+  src="/images/hackathon-vanceouver-2023-09-24.jpg"
+  description="Vancouver Hackathon, 2023"
+/>
+
+### Unikraft Romania Gathering 2023
+
+The soon-to-be traditional Unikraft Romania Gathering took place on October 5-8, 2023, in Romania, in Bucharest and Bușteni.
+It was an awesome event, where 30+ members of the Unikraft community were able to work together, socialize and discuss about the project.
+
+Apart from hikes, barbecues, dinners and other social events, we used the entire day of Friday, October 6, 2023, for a hackathon with all members of the community.
+In the hackathon we worked on application compatibility, 0.15 release items, KraftKit, plat re-architecting, documentation.
+Having everyone in the same place allowed us to more quickly sync and work on technical items.
+
+Looking forward for our next gathering in 2024.
+
+<Image
+  border
+  maxW={'2xl'}
+  src="/images/romania-gathering-2023-10-08.jpg"
+  description="Romania Gathering, 2023"
+/>
+
+### Unikraft Hacktoberfest
+
+As part of [Hacktoberfest 2023](https://hacktoberfest.com/) we organized a Unikraft Hackathon on Saturday, October 21, 2023.
+Newcomers got their first taste of Unikraft and were able to complete plenty of work items:
+
+The hackathon took place in hybrid format, both online, on [Discord](http://bit.ly/UnikraftDiscord), and in person, at [University POLITEHNICA of Bucharaest](https://upb.ro/).
+As Unikraft matures and stabilizes, it becomes easier for newcomers to jump in, use it and cotribute to it.
+
+From the Unikraft community, [Răzvan](https://github.com/razvand), [Ștefan](https://github.com/StefanJum) and [Luca](https://github.com/LucaSeri) were present.
+
+Looking forward for other Unikraft Hacktoberfests!
+
+<Image
+  border
+  maxW={'2xl'}
+  src="/images/hacktoberfest-2023-10-21.jpg"
+  description="Hacktoberfest, 2023"
+/>
