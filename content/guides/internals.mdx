@@ -50,7 +50,7 @@ Namely, for the examples that we will be going through in this session, our work
 
 ```console
 workdir                     ---> working directory containing applications
-`-- helloworld              ---> application directory
+`-- helloworld/              ---> application directory
     |
     |
     |-- main.c              ---> application code
@@ -59,14 +59,14 @@ workdir                     ---> working directory containing applications
     |-- Makefile.uk         ---> the application's compiler flags and source files to build
     |
     |
-    `-- .unikraft
-        |-- libs        ---> external libraries used by the application
-        `-- unikraft    ---> unikraft core kernel, containing all the internal libraries
-`-- nginx
+    `-- workdir/
+        |-- libs/        ---> external libraries used by the application
+        `-- unikraft/    ---> unikraft core kernel, containing all the internal libraries
+`-- nginx/
     |
     |
     |
-`-- python3
+`-- python3/
     |
     |
     |
@@ -90,13 +90,13 @@ $ ls -F
 [...]  Makefile  Makefile.uk  README.md  main.c  [...]
 ```
 
-Now, while inside the `helloworld/` directory, we create the `.unikraft/` folder, which will store the Unikraft core kernel from this [repository](https://github.com/unikraft/unikraft), along with the `libs/` directory which should store all of the external libraries the applications depends on, cloned from the `lib-` repos of the [Unikraft organization](https://github.com/unikraft/).
+Now, while inside the `helloworld/` directory, we create the `workdir/` folder, which will store the Unikraft core kernel from this [repository](https://github.com/unikraft/unikraft), along with the `libs/` directory which should store all of the external libraries the applications depends on, cloned from the `lib-` repos of the [Unikraft organization](https://github.com/unikraft/).
 Since the `helloworld` application is fairly simple, it does not use any external library, so we can leave the `libs/` directory empty.
 
 ```console
-$ mkdir .unikraft
+$ mkdir workdir/
 
-$ cd .unikraft/
+$ cd workdir/
 
 $ git clone https://github.com/unikraft/unikraft unikraft
 
@@ -154,7 +154,7 @@ The process should end with the following output:
   UKBI    helloworld_qemu-x86_64.dbg.bootinfo
   SCSTRIP helloworld_qemu-x86_64
   GZ      helloworld_qemu-x86_64.gz
-make[1]: Leaving directory '/home/X/workdir/helloworld/.unikraft/unikraft'
+make[1]: Leaving directory '/home/X/workdir/helloworld/workdir/unikraft'
 ```
 Notice that each line in `make`'s output consists of an operation in the build process (i.e compiling, linking, symbol striping etc.) and a corresponding generated file.
 
@@ -254,9 +254,9 @@ We can do this through the same `menuconfig` interface presented earlier, but fi
 ```console
 $ make properclean
 
-make[1]: Entering directory '/home/X/workdir/helloworld/.unikraft/unikraft'
+make[1]: Entering directory '/home/X/workdir/helloworld/workdir/unikraft'
   RM      build/
-make[1]: Leaving directory '/home/X/workdir/helloworld/.unikraft/unikraft'
+make[1]: Leaving directory '/home/X/workdir/helloworld/workdir/unikraft'
 
 $ make menuconfig
 ```
