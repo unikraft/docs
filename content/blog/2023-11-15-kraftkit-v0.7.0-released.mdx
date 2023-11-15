@@ -24,6 +24,14 @@ For the full changelog, check out [the release note on GitHub](https://github.co
 </Info>
 
 With a whole slew of new features and improvements, KraftKit v0.7.0 is a game-changer for unikernel development.
+
+The highlights of this KraftKit release:
+
+* Adds support for building via Dockerfiles: the building power of Docker meets the deployment power of unikernels!
+* Powers up a [catalog of application and languages](https://github.com/unikraft/catalog), to significantly simplify build/run workflows.
+* Introduces a new Kraftfile with clear, simple to use syntax for specifying builds.
+* Introduction of the `kraft cloud` command, for deployments via [KraftCloud](https://kraft.cloud).
+
 Let's dive into the exciting new features and improvements in this release:
 
 
@@ -97,13 +105,15 @@ These adjustments are subsequently implemented through the release.
 The `cmd` is array or string element which can be used for setting default arguments to be used during the instantiation of a new unikernel instance:
 
 1. Specified as an in-line array:
+
    ```yaml
    spec: v0.6
 
    cmd: ["-c", "/nginx/conf/nginx.conf"]
    ```
 
-2. Specified as a multi-line array:
+1. Specified as a multi-line array:
+
    ```yaml
    spec: v0.6
 
@@ -112,7 +122,8 @@ The `cmd` is array or string element which can be used for setting default argum
    - /nginx/conf/nginx.conf
    ```
 
-3. Specified as a string:
+1. Specified as a string:
+
    ```yaml
    spec: v0.6
 
@@ -390,10 +401,10 @@ Using `Dockerfile` via BuildKit to build root filesystems offers several advanta
    - A `Dockerfile` enables you to specify the exact steps needed to build your filesystem, making the build process reproducible.
    - BuildKit's caching mechanisms enhance build efficiency by reusing layers when the dependencies and source code haven't changed, which speeds up the build process.
 
-2. **Portability**
+1. **Portability**
    - BuildKit supports multi-platform builds, enabling you to create filesystems for different architectures without changing the `Dockerfile`.
 
-3. **Ease of Use**
+1. **Ease of Use**
    - A `Dockerfile` provides a user-friendly, human-readable format for defining the build steps, making it accessible to developers with varying levels of expertise.
    - Leveraging the extensive Docker ecosystem and allowing the re-usse of many existing filesystems which speed up using unikernels 
 
