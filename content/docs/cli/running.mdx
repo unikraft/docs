@@ -6,93 +6,71 @@ description: |
 ---
 
 <Info>
-At present, `kraft` only supports running instances that target the KVM
-hypervisor either through QEMU or Firecracker.  We plan on adding support for
-additional hypervisors including Xen, VMWare and HyperV.  For more information
-the progress of these hypervisors, you can [track the relevant GitHub issue](#).
+At present, `kraft` only supports running instances that target the KVM hypervisor either through QEMU or Firecracker.
+We plan on adding support for additional hypervisors including Xen, VMware and Hyper-V.  For more information the progress of these hypervisors, you can [track the relevant GitHub issue](#).
 </Info>
 
-There are multiple ways to instantiate a unikernel with `kraft`.  The subcommand
-`kraft run` has been designed to be context-aware and can be used in different
-ways to launch unikernels depending on what is provided to it.
+There are multiple ways to instantiate a unikernel with `kraft`.
+The subcommand `kraft run` has been designed to be context-aware and can be used in different ways to launch unikernels depending on what is provided to it.
 
-With the `kraft run` command, you are able to launch an instance using an
-underlying hypervisor solution.  For example, `kraft run` will interface with
-QEMU directly to instantiate a unikernel.
+With the `kraft run` command, you are able to launch an instance using an underlying hypervisor solution.
+For example, `kraft run` will interface with QEMU directly to instantiate a unikernel.
 
-In some circumstances, for example in nested virtualization environments, it may
-not be possible to access hardware-level instruction sets (ISAs) to execute the
-unikernel.  In this scenario, hardware emulation will be used and it should be
-noted that this has a significant penalty on runtime performance of the
-application.
+In some circumstances, for example in nested virtualization environments, it may not be possible to access hardware-level instruction sets (ISAs) to execute the unikernel.
+In this scenario, hardware emulation will be used and it should be noted that this has a significant penalty on runtime performance of the application.
 
 
 ## Running after building a project
 
-[Following a successful build of a unikernel](/docs/cli/building), you can
-simply invoke the following without any additional flags when `cd`'d within a
-project directory to preview the unikernel instance in action:
+[Following a successful build of a unikernel](/docs/cli/building), you can simply invoke the following without any additional flags when `cd`'d within a project directory to preview the unikernel instance in action:
 
-```bash
+```console
 kraft run
 ```
 
 <AsciinemaPlayer rows={12} src="/asciinema/kraft-run-project.cast" />
 
 <Warning>
-For long-running applications, typing <Kbd>Ctrl</Kbd> + <Kbd>C</Kbd> will only
-detach you from the application's stdout.  See more about [stopping and removing
-the unikernel instance](#stopping-and-removing-unikernel-instances).
+For long-running applications, typing <Kbd>Ctrl</Kbd> + <Kbd>C</Kbd> will only detach you from the application's stdout.
+See more about [stopping and removing the unikernel instance](#stopping-and-removing-unikernel-instances).
 </Warning>
 
-In the above example, the [offical "Hello, world"
-application](https://github.com/unikraft/app-helloworld) was run.  It has
-multiple targets with varying platforms and architecture tuples.  When `kraft
-run` was invoked, it intelligently detected information about the host system
-and suggested two possible targets based on the availability of QEMU on the
-system.
+In the above example, the [offical "Hello, world" application](https://github.com/unikraft/app-helloworld) was run.
+It has multiple targets with varying platforms and architecture tuples.
+When `kraft run` was invoked, it intelligently detected information about the host system and suggested two possible targets based on the availability of QEMU on the system.
 
 
 ## Running a Unikraft kernel binary image
 
-It is possible to pass directly to `kraft run` in its first positional argument
-the path to a binary image.  In the example below, we execute a pre-built
-unikernel binary:
+It is possible to pass directly to `kraft run` in its first positional argument the path to a binary image.
+In the example below, we execute a pre-built unikernel binary:
 
-```bash
+```console
 kraft run KERNEL
 ```
 
 <AsciinemaPlayer rows={12} src="/asciinema/kraft-run-kernel.cast" />
 
 In the above example, the provided kernel matched the host's architecture.
-`kraft` will attempt to intelligently determine whether it can run the supplied
-unikernel binary and select the appropriate hypervisor.
+`kraft` will attempt to intelligently determine whether it can run the supplied unikernel binary and select the appropriate hypervisor.
 
 
 ## Running a Linux userspace application (via a loader)
 
-Given a pre-built Linux userspace application, it is possible to execute this on
-top of Unikraft's [ELF Loader
-Application](https://github.com/unikraft/app-elfloader) in [binary compatibility
-mode](/docs/concepts/compatibility).
+Given a pre-built Linux userspace application, it is possible to execute this on top of Unikraft's [ELF Loader Application](https://github.com/unikraft/app-elfloader) in [binary compatibility mode](/docs/concepts/compatibility).
 
-```bash
+```console
 kraft run BINARY
 ```
 
 <AsciinemaPlayer src="/asciinema/kraft-run-elfloader.cast" />
 
-In the above example, a pre-built ELF Loader application was dynamically
-downloaded and used to launch the pre-built `helloworld` binary.
+In the above example, a pre-built ELF Loader application was dynamically downloaded and used to launch the pre-built `helloworld` binary.
 
-You can set the path to the ELF Loader application, either as [an OCI Image
-reference](/docs/cli/packaging#oci-based-package) or to a path on disk to a
-kernel image via the `--elfloader` flag.  For example, we provide an
-`strace`-like image which is packaged as an OCI image and available publicly at
-`loaders.unikraft.org/strace:latest` which is useful for debugging:
+You can set the path to the ELF Loader application, either as [an OCI Image reference](/docs/cli/packaging#oci-based-package) or to a path on disk to a kernel image via the `--elfloader` flag.
+For example, we provide an `strace`-like image which is packaged as an OCI image and available publicly at `loaders.unikraft.org/strace:latest` which is useful for debugging:
 
-```bash
+```console
 kraft run --elfloader loaders.unikraft.org/strace:latest BINARY
 ```
 
@@ -101,13 +79,9 @@ kraft run --elfloader loaders.unikraft.org/strace:latest BINARY
 
 ## Running pre-built OCI-packaged images
 
-You can reference an [OCI image
-unikernel](/docs/cli/packaging#oci-based-package) as a positional argument with
-`kraft run` which, if not present on the host machine, will be downloaded before
-it is executed. For example, to build an execute the official "Hello, world!"
-application from Unikraft, you can run:
+You can reference an [OCI image unikernel](/docs/cli/packaging#oci-based-package) as a positional argument with `kraft run` which, if not present on the host machine, will be downloaded before it is executed. For example, to build an execute the official "Hello, world!" application from Unikraft, you can run:
 
-```bash
+```console
 kraft run unikraft.org/helloworld:latest
 ```
 
@@ -117,8 +91,7 @@ kraft run unikraft.org/helloworld:latest
 ## Connecting a unikernel instance to a network
 
 In most cases, applications are intended to be accessible over a network.
-Built-in to `kraft` is a network manager which allows you to create, modify and
-remove networks of varying implementation types.
+Built-in to `kraft` is a network manager which allows you to create, modify and remove networks of varying implementation types.
 
 <Info>
 At present, `kraft` only supports networks on Linux based on bridge networking.
@@ -126,115 +99,92 @@ At present, `kraft` only supports networks on Linux based on bridge networking.
 
 To view existing networks, simply run:
 
-```
+```console
 kraft net ls
 ```
 
 <AsciinemaPlayer rows={10} src="/asciinema/kraft-net-ls.cast" />
 
-To create a new network, specify the address and range in CIDR notation with the
-`-n` flag and a first positional argument representing the new network name:
+To create a new network, specify the address and range in CIDR notation with the `-n` flag and a first positional argument representing the new network name:
 
-```
+```console
 kraft net create -n 172.88.0.1/24 kraft0
 ```
 
-The first address in the CIDR network will become the gateway.  Once a network
-has been identified, you can attach this network to the unikernel instance with
-the `-n|--network` flag:
+The first address in the CIDR network will become the gateway.
+Once a network has been identified, you can attach this network to the unikernel instance with the `-n|--network` flag:
 
-```
+```console
 kraft run --network bridge:kraft0 unikraft.org/nginx:latest
 ```
 
 <AsciinemaPlayer src="/asciinema/kraft-run-network.cast" />
 
-In the above command, the `--network` flag requires both the underlying driver
-implementation name, `driver`, as well as the name of the network supported by
-the driver, in this case `kraft0`, separated by a colon `:`.
+In the above command, the `--network` flag requires both the underlying driver implementation name, `driver`, as well as the name of the network supported by the driver, in this case `kraft0`, separated by a colon `:`.
 
 
 ## Forwarding exposed ports to your host
 
-Whilst `-n|--network` allows you to connect multiple unikernels to the same
-network, it can be also useful to simply port-forward from your host to a
-unikernel instance.
+Whilst `-n|--network` allows you to connect multiple unikernels to the same network, it can be also useful to simply port-forward from your host to a unikernel instance.
 
-For example, when an NGINX unikernel exposes port `80` and you wish to map port
-`8080` on your localhost.  You can use the `-p` flag to achieve this affect as
-follows:
+For example, when an NGINX unikernel exposes port `80` and you wish to map port `8080` on your localhost.
+You can use the `-p` flag to achieve this affect as follows:
 
-```
+```console
 kraft run -p 8080:80 unikraft.org/nginx:latest
 ```
 
 <AsciinemaPlayer src="/asciinema/kraft-run-port.cast" />
 
-In the above example, the NGINX instance will be available at
-http://localhost:8080/.
+In the above example, the NGINX instance will be available at http://localhost:8080/.
 
 ## Rootfs and mounting volumes
 
-Learn more about mounting filesystems to the unikernel instance in our [related
-rootfs documentation](/docs/cli/rootfs).
+Learn more about mounting filesystems to the unikernel instance in our [related rootfs documentation](/docs/cli/rootfs).
 
 
 ## Supplying command-line arguments
 
 The unikernel instance essentially has two types of command-lines:
 
-1. Arguments which are supplied directly to Unikraft's core.  These manipulate
-   Unikraft itself and are used by kernel subsystems.  For example, these
-   include: environmental variables; statically defined networking parameters
-   such as IP address and gateway; and, named volumes and their intended mount
-   paths.
-2. Application-level command line arguments.  These are intended for the
-   application which is built as a unikernel, for example with NGINX this could
-   be the `-c` flag which sets the path in the root filesystem to the
-   configuration file.
+1. Arguments which are supplied directly to Unikraft's core.
+   These manipulate Unikraft itself and are used by kernel subsystems.
+   For example, these include: environmental variables; statically defined networking parameters such as IP address and gateway; and, named volumes and their intended mount paths.
+2. Application-level command line arguments.
+   These are intended for the application which is built as a unikernel, for example with NGINX this could be the `-c` flag which sets the path in the root filesystem to the configuration file.
 
+To set command-line arguments for either Unikraft or the application is done as the second positional argument to `kraft run` or via the `-a` flag:
 
-To set command-line arguments for either Unikraft or the application is done as
-the second positional argument to `kraft run` or via the `-a` flag:
-
-```bash
+```console
 kraft run unikraft.org/nginx:latest -c /nginx/conf/nginx.conf
 ```
 
-To set command-line arguments for Unikraft, you simply need to separate with two
-dashes as a delimeter `--`, for example:
+To set command-line arguments for Unikraft, you simply need to separate with two dashes as a delimeter `--`, for example:
 
-```bash
+```console
 kraft run unikraft.org/nginx:latest netdev.ipv4_addr=172.88.0.2 -- -c /nginx/conf/nginx.conf
 ```
 
 
 ## Viewing unikernel instances
 
-To view the state of previously instantiated unikernel instances you can use the
-following:
+To view the state of previously instantiated unikernel instances you can use the following:
 
-```bash
+```console
 kraft ps
 ```
-```txt nocopy=true
+
+```text nocopy=true
 NAME                KERNEL                           ARGS  CREATED      STATUS   MEM  PLAT
 beautiful_bintijua  project://helloworld                   1 hour ago   exited   64M  qemu/x86_64
 elastic_guy         oci://unikraft.org/nginx:latest        2 hours ago  running  64M  qemu/x86_64
 ```
 
-The above command will display a `ps`-like output which displays the name, the
-"source" of the unikernel (whether from [a project
-context](#running-after-building-a-project), a [binary
-context](#running-a-unikraft-kernel-binary-image), an [ELF Loader
-context](#running-a-linux-userspace-application-via-a-loader) or an [OCI image
-context](#running-pre-built-oci-packaged-images)), any command-line arguments
-supplied to it, when it was created, its state, how much memory was assigned to
-the instance, and which platform/architecture it is.
+The above command will display a `ps`-like output which displays the name, the "source" of the unikernel (whether from [a project context](#running-after-building-a-project), a [binary context](#running-a-unikraft-kernel-binary-image), an [ELF Loader context](#running-a-linux-userspace-application-via-a-loader) or an [OCI image context](#running-pre-built-oci-packaged-images)), any command-line arguments supplied to it, when it was created, its state, how much memory was assigned to the instance, and which platform/architecture it is.
 
 To view more detailed information about all instances, supply the `--long` flag:
 
-```bash
+```console
 kraft ps --long
 ```
 
@@ -254,28 +204,27 @@ Possible states of a unikernel instance are:
 
 ## Stopping and removing unikernel instances
 
-To stop an instance that is actively executing, you simply need to reference its
-name which was either automatically generated or set via the `-n|--name` flag:
+To stop an instance that is actively executing, you simply need to reference its name which was either automatically generated or set via the `-n|--name` flag:
 
-```bash
+```console
 kraft stop NAME
 ```
 
 To stop all actively executing instances, you can simply pass the `--all` flag:
 
-```bash
+```console
 kraft stop --all
 ```
 
 To remove a specific instance:
 
-```bash
+```console
 kraft rm NAME
 ```
 
 And to remove all instances, similarly pass the `--all` flag:
 
-```bash
+```console
 kraft rm --all
 ```
 

@@ -6,17 +6,14 @@ description:
   possible values and best practices.
 ---
 
-When you install `kraft`, it will create a number of directories and files on
-your host that are used for configuraiton purposes and to store cache
-information.
+When you install `kraft`, it will create a number of directories and files on your host that are used for configuration purposes and to store cache information.
 
 
 ## Overview of configuration options
 
-The default location for user configuration for `kraft` is stored
-at: `~/.config/kraftkit/config.yaml`.  This file can be edited to your
-liking or to suite your needs.  Below is an overview of each configuration
-option, how to set its value, their default value and purpose.
+The default location for user configuration for `kraft` is stored at: `~/.config/kraftkit/config.yaml`.
+This file can be edited to your liking or to suite your needs.
+Below is an overview of each configuration option, how to set its value, their default value and purpose.
 
 <Table>
   <thead>
@@ -169,14 +166,12 @@ option, how to set its value, their default value and purpose.
 
 ## Additional influential environmental variables
 
-To increase compatibility across systems and to respect to pre-defined user
-environments, `kraft` recognizes the following additional environmental
-variables:
+To increase compatibility across systems and to respect to pre-defined user environments, `kraft` recognizes the following additional environmental variables:
 
 | Variable          | Affects                                                                                            |
 |-------------------|----------------------------------------------------------------------------------------------------|
 | `PAGER`           | How the output is rendered in some commands. Can be set to `cat` or `less`.                        |
-| `NO_COLOR`        | Do not use any ANSI or truecolor output in any log messaging.                                      |
+| `NO_COLOR`        | Do not use any ANSI or true color output in any log messaging.                                     |
 | `CLICOLOR`        | Same as `NO_COLOR`.                                                                                |
 | `XDG_CONFIG_HOME` | Path to the general configuration directory. Affects the default value of `paths.config`.          |
 | `XDG_STATE_HOME`  | Path to the generate state directory.                                                              |
@@ -185,13 +180,8 @@ variables:
 
 ## Best practice recommendations
 
-The following are a few additional recommendations for global configuration
-values given certain contexts, environments or scenarios:
+The following are a few additional recommendations for global configuration values given certain contexts, environments or scenarios:
 
-* In CI/CD contexts, it is best to switch the log type from its default option
-  of `fancy` to either `basic` or `json` to allow for better readability. 
+* In CI/CD contexts, it is best to switch the log type from its default option of `fancy` to either `basic` or `json` to allow for better readability.
   KraftKit _should_ recognize pseudo TTY environments and dynamically adjust.
-* If you are experiencing a build error from Unikraft's build system, it is best
-  to switch to `basic` log type and to set the log level to `debug` to get a
-  better understanding of what's being run underneath by KraftKit.
-
+* If you are experiencing a build error from Unikraft's build system, it is best to switch to `basic` log type and to set the log level to `debug` to get a better understanding of what's being run underneath by KraftKit.

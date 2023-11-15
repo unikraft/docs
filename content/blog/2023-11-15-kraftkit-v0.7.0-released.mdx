@@ -37,8 +37,8 @@ At a high-level, the following adjustments are made to the specification:
 - Abbreviations of the `specification`, `architecture` and `platform` element names such that can be used in short-hand syntax as `spec`, `arch` and `plat`, respectively.
 - Top-level `volumes` element which is used for defining user-specified paths which are to be used during runtime of a unikernel.
 - Top-level `rootfs` element which is used for defining the root filesystem of the user.
-  The provided implementation allows a user to serialize a filesystem from three new contexts: an existing CPIO archive (passthrough), a path to a directory, and a `Dockerfile` which is constructed via [BuildKit](https://github.com/moby/buildkit).
-- Top-level `cmd` which is a string or list which represents the command-line argument to execute for the unikernel as a way to porclain the Kraftfile and the intended application usecase.
+  The provided implementation allows a user to serialize a filesystem from three new contexts: an existing CPIO archive (pass-through), a path to a directory, and a `Dockerfile` which is constructed via [BuildKit](https://github.com/moby/buildkit).
+- Top-level `cmd` which is a string or list which represents the command-line argument to execute for the unikernel as a way to porcelain the Kraftfile and the intended application use case.
 
 Aside from these introductions to the v0.6 specification, the underlying parser is adjusted to handle reading both the specifications and defaulting to v0.6 as the latest.
 These adjustments are subsequently implemented through the release.
@@ -128,67 +128,79 @@ Instead, the goal is to leverage pre-built unikernel images which are distribute
 Similar to the top-level `unikraft` and `template` elements (see below), the `runtime` element can be specified using a short-hand syntax or a long-hand syntax for greater control or preference.
 
 1. In short-hand syntax, simply referencing the pre-built unikernel image is possible by declaring:
+
    ```yaml
    spec: v0.6
-   
+
    runtime: unikraft.org/nginx:latest
    ```
-   In the above example, the `runtime` element refers to an OCI archive for NGINX.
+
+   In the above example, the `runtime` element refers to an OCI archive for Nginx.
    In a `kraft run` scenario, this is simply pulled and executed verbatim.
    Paired with the ability to customize the `rootfs` element or `volumes` elemen, the `runtime` element becomes more pragmatic:
+
    ```yaml
    spec: v0.6
-   
+
    runtime: unikraft.org/nginx:latest
-   
+
    rootfs: ./
    ```
-   Or with a volume, which simply "overwrites" an existing directory already located within NGINX's root filesystem that is distributed as part of the OCI image:
+
+   Or with a volume, which simply "overwrites" an existing directory already located within Nginx's root filesystem that is distributed as part of the OCI image:
+
    ```yaml
    spec: v0.6
-   
+
    runtime: unikraft.org/nginx:latest
-   
+
    volumes:
    - ./html:/nginx/html
    ```
+
    In the above snippet, the user customizes only the directory which serves HTML with a path `./html` which is located on their host.
-   
+
    Note that this usecase is not limited to a single application and applies to the ELF Loader application and customizing the loaded application which is part of a root filesystem:
+
    ```yaml
    spec: v0.6
-   
+
    # Default ELF Loader application
    runtime: loaders.unikraft.org/default:latest 
-   
+
    # Path must contain the Linux ELF binary, e.g. at ./rootfs/helloworld
    rootfs: ./rootfs
-   
+
    cmd: ["/helloworld"]
    ```
+
    or a high-level programming language such as python3:
+
    ```yaml
    spec: v0.6
-   
+
    runtime: unikraft.org/python3:latest
-   
+
    rootfs: ./Dockerfile
-   
+
    cmd: ["/main.py"]
    ```
+
    In the above snippet, the user has created a `Dockerfile` which contains the necessary root filesystem and included their application at `/main.py`.
 
-2. The long-hand syntax allows specifically setting `source`, `version` and `kconfig` options which are requirements of the runtime:
+1. The long-hand syntax allows specifically setting `source`, `version` and `kconfig` options which are requirements of the runtime:
+
    ```yaml
    spec: v0.6
-   
+
    runtime:
      source: unikraft.org/nginx
      version: latest
      kconfig:
        CONFIG_LIB9PFS: 'y'
     ```
-    In the above example, the a pre-built NGINX unikernel has been requested as the runtime with the explicit option of having the 9P Filesystem enabled.
+
+    In the above example, the pre-built Nginx unikernel has been requested as the runtime with the explicit option of having the 9P Filesystem enabled.
 
 #### D. Fully realizing the `template` element
 
@@ -196,11 +208,12 @@ There were several issues related to the `template` element, including the fact 
 This has now been tested end-to-end and enables:
 
 1. Workflows where a user may wish to reference an existing application repository and make customizations, for example, with the [ELF Loader](https://github.com/unikraft/app-elfloader.git) application, making changes to the core configuration and adding additional targets:
+
    ```yaml
    spec: v0.6
-   
+
    template: https://github.com/unikraft/app-elfloader.git
-   
+
    unikraft:
      version: stable
      kconfig:
@@ -234,10 +247,11 @@ This has now been tested end-to-end and enables:
      arch: x86_64
    ```
 
-3. Similar to other component elements (e.g. `unikraft` and `libraries`), the `template` element can be expressed in a longer format:
+1. Similar to other component elements (e.g. `unikraft` and `libraries`), the `template` element can be expressed in a longer format:
+
    ```yaml
    spec: v0.6
-   
+
    template:
      source: https://github.com/unikraft/app-elfloader.git
      version: stable
@@ -252,6 +266,7 @@ The following workflow scenarios were used during testing.
 Customizing the whole root filesystem is now possible by supplying either:
 
 1. A path representing a prebuilt CPIO archive file:
+
    ```yaml
    spec: v0.6
 
@@ -260,7 +275,8 @@ Customizing the whole root filesystem is now possible by supplying either:
    rootfs: ./initramfs.cpio
    ```
 
-4. A directory which will be dynamically serialized into a CPIO archive:
+1. A directory which will be dynamically serialized into a CPIO archive:
+
    ```yaml
    spec: v0.6
 
@@ -269,7 +285,8 @@ Customizing the whole root filesystem is now possible by supplying either:
    rootfs: ./rootfs/
    ```
 
-5. Or, a `Dockerfile` which will be built via BuildKit and then serialized into a new CPIO archive:
+1. Or, a `Dockerfile` which will be built via BuildKit and then serialized into a new CPIO archive:
+
    ```yaml
    spec: v0.6
 
@@ -277,6 +294,7 @@ Customizing the whole root filesystem is now possible by supplying either:
 
    rootfs: ./Dockerfile
    ```
+
    To use BuildKit, set the address within the new `buildkit_host` user setting, the new environmental variable `KRAFTKIT_BUILDKIT_HOST` or the command-line flag `--buildkit-host`.
    This defaults to `unix:///run/buildkit/buildkitd.sock`.
 
@@ -284,6 +302,7 @@ Customizing the whole root filesystem is now possible by supplying either:
 #### B. Using a pre-built unikernel and mounting a path within the root filesystem
 
 1. Specifying via short-hand syntax a map between a directory on the host and a path within the instance:
+
    ```yaml
    spec: v0.6
 
@@ -293,7 +312,8 @@ Customizing the whole root filesystem is now possible by supplying either:
    - ./src:/nginx/html
    ```
 
-2. Using a more verbose (long-hand) syntax and mapping between the mount on the host and a path within the instance:
+1. Using a more verbose (long-hand) syntax and mapping between the mount on the host and a path within the instance:
+
    ```yaml
    spec: v0.6
 
@@ -333,6 +353,7 @@ app   helloworld  latest   oci     a6802f4  qemu/arm64
 Use cases include selecting appropriately based on the host's architecture as well as feature selection via embedded KConfig options.
 
 Notable additional improvements which are incorporated in this pull request include:
+
 - Better offline mode in each package manager: all internal package managers were optimized to reduce instantiation time which makes a noticeable impact when using `kraft` in offline mode;
 - Better outputs in `kraft pkg ls` which now has dynamic column data information;
 - Better prompts in `kraft pkg` for selecting and packaging individual targets from an application project;
@@ -345,7 +366,7 @@ Notable additional improvements which are incorporated in this pull request incl
 
 Following the ability to package multiple platform/architecture combinations now
 using a single canonical OCI image reference, and to help ease using pre-built
-unikernel applications, we're ecited to release a new community catalog of
+unikernel applications, we're excited to release a new community catalog of
 pre-built unikernel images, ready to use.
 
 <Info>

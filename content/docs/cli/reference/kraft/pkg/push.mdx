@@ -5,14 +5,13 @@ description: Push a Unikraft unikernel package to registry
 
 Push a Unikraft unikernel, component microlibrary to a remote location
 
-
-```
+```console
 kraft pkg push [FLAGS] [PACKAGE]
 ```
 
 ### Examples
 
-```
+```console
 # Push the image for a project in the current directory
 $ kraft pkg push
 
@@ -25,7 +24,7 @@ $ kraft pkg push unikraft.org/helloworld:latest
 
 ## Options
 
-```
+```text
   -M, --as string          Force the packaging despite possible conflicts (default "auto")
   -h, --help               help for push
   -K, --kraftfile string   Set an alternative path of the Kraftfile
@@ -34,4 +33,3 @@ $ kraft pkg push unikraft.org/helloworld:latest
 ## See Also
 
 * [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
-

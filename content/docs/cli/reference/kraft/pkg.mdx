@@ -5,29 +5,26 @@ description: Package and distribute Unikraft unikernels and their dependencies
 
 Package and distribute Unikraft unikernels and their dependencies.
 
-With `kraft pkg` you are able to turn output artifacts from `kraft build`
-into a distributable archive ready for deployment.  At the same time,
-`kraft pkg` allows you to manage these archives: pulling, pushing, or
-adding them to a project.
+With `kraft pkg` you are able to turn output artifacts from `kraft build` into a distributable archive ready for deployment.
+At the same time, `kraft pkg` allows you to manage these archives: pulling, pushing, or adding them to a project.
 
-The default behaviour of `kraft pkg` is to package a project.  Given no
-arguments, you will be guided through interactive mode.
+The default behaviour of `kraft pkg` is to package a project.
+Given no arguments, you will be guided through interactive mode.
 
-
-```
+```console
 kraft pkg [FLAGS] [SUBCOMMAND|DIR]
 ```
 
 ### Examples
 
-```
+```console
 # Package a project as an OCI archive and embed the target's KConfig.
 $ kraft pkg --as oci --name unikraft.org/nginx:latest
 ```
 
 ## Options
 
-```
+```text
   -m, --arch string        Filter the creation of the package by architecture of known targets
   -a, --args strings       Pass arguments that will be part of the running kernel's command line
   -M, --as string          Force the packaging despite possible conflicts (default "oci")
