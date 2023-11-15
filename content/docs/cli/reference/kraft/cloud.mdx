@@ -1,0 +1,62 @@
+---
+title: "kraft cloud"
+description: KraftCloud
+---
+
+Manage resources on KraftCloud: The Millisecond Platform.
+
+Learn more & sign up for the beta at https://kraft.cloud
+	
+Quickly switch between metros using the `--metro` flag or use the
+`KRAFTCLOUD_METRO` environmental variable.
+
+Set authentication by using `kraft login` or set
+`KRAFTCLOUD_TOKEN` environmental variable.
+
+```
+kraft cloud [FLAGS] [SUBCOMMAND|DIR]
+```
+
+### Examples
+
+```
+# List all images in your account
+$ kraft cloud img ls
+
+# List all instances in Frankfurt
+$ kraft cloud --metro fra0 instance ls
+
+# Create a new NGINX instance in Frankfurt and start it immediately
+$ kraft cloud --metro fra0 instance create \
+	--start \
+	--port 80:443 \
+	unikraft.io/$KRAFTCLOUD_USER/nginx:latest -- nginx -c /usr/local/nginx/conf/nginx.conf
+
+# Get the status of an instance based on its UUID and output as JSON
+$ kraft cloud --metro fra0 instance status -o json UUID
+
+# Stop an instance based on its UUID
+$ kraft cloud instance stop UUID
+
+# Start an instance based on its UUID
+$ kraft cloud instance start UUID
+
+# Get logs of an instance based on its UUID
+$ kraft cloud instance logs UUID
+
+# Delete an instance based on its UUID
+$ kraft cloud instance rm UUID
+```
+
+## Options
+
+```
+  -h, --help           help for cloud
+      --metro string   Set the KraftCloud metro.
+```
+
+## See Also
+
+* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [kraft cloud deploy](/docs/cli/reference/kraft/cloud/deploy)	 - Deploy your application
+

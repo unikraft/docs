@@ -68,7 +68,7 @@ async function redirect() {
     },
     {
       source: '/docs/cli/reference/kraftfile/latest',
-      destination: '/docs/cli/reference/kraftfile/v0.5',
+      destination: '/docs/cli/reference/kraftfile/v0.6',
       permanent: false,
     },
     {

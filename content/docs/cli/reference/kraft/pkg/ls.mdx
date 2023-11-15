@@ -1,5 +1,5 @@
 ---
-title: "kraft pkg list"
+title: "kraft pkg ls"
 description: List installed Unikraft component packages
 ---
 
@@ -7,7 +7,7 @@ List installed Unikraft component packages.
 
 
 ```
-kraft pkg list [FLAGS] [DIR]
+kraft pkg ls [FLAGS] [DIR]
 ```
 
 ### Examples
@@ -19,15 +19,18 @@ $ kraft pkg list
 ## Options
 
 ```
+      --all                Show everything
       --apps               Show applications
+      --arch string        Set a specific arhitecture to list for
   -M, --archs              Show architectures
   -C, --core               Show Unikraft core versions
-  -h, --help               help for list
-      --kraftfile string   Set an alternative path of the Kraftfile
+  -h, --help               help for ls
+  -K, --kraftfile string   Set an alternative path of the Kraftfile
   -L, --libs               Show libraries
   -l, --limit int          Set the maximum number of results (default 50)
       --no-limit           Do not limit the number of items to print
   -o, --output string      Set output format (default "table")
+      --plat string        Set a specific platform to list for
   -P, --plats              Show platforms
   -u, --update             Get latest information about components before listing results
 ```

@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/releases/latest'} passHref>
+              <NextLink href={'/blog/2023-11-15-kraftkit-v0.7.0-released'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases v0.15.0 (Pandora)
+                    KraftKit release v0.7.0
                   </Text>
                   <Box
                     display={{
