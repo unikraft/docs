@@ -3,13 +3,13 @@ title: "kraft pkg source"
 description: Add Unikraft component manifests
 ---
 
-```
+```console
 kraft pkg source [FLAGS] [SOURCE]
 ```
 
 ### Examples
 
-```
+```console
 # Add a single component as a Git repository
 $ kraft pkg source https://github.com/unikraft/unikraft.git
 
@@ -22,18 +22,17 @@ $ kraft pkg source unikraft.org
 
 ## Options
 
-```
+```text
   -F, --force   Do not run a compatibility test before sourcing.
   -h, --help    help for source
 ```
 
 ## Options inherited from parent commands
 
-```
+```text
   -K, --kraftfile string   Set an alternative path of the Kraftfile
 ```
 
 ## See Also
 
 * [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
-

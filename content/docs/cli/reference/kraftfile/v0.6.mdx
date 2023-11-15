@@ -160,7 +160,6 @@ The provided path to the `rootfs` element can be one of the following:
 
 When invoking `kraft build` or `kraft run` and the provided path of the `rootfs` is either a directory or a `Dockerfile`, the resulting filesystem will be dynamically serialized and stored in `.unikraft/build/initramfs.cpio`.
 
-
 ### Specifying an existing CPIO archive (initramfs file)
 
 ```yaml ln={3}
@@ -312,7 +311,8 @@ unikraft:
 
 <Info>
 To use Git authentication over SSH, you must start an SSH agent before invoking `kraft`, for example:
-```shell
+
+```console
 eval `ssh-agent`
 ssh-add ~/.ssh/id_ed25519
 ```
@@ -382,16 +382,19 @@ If no `runtime` element is specified, one of either [`template`](#top-level-temp
 
 The `runtime` attribute is a powerful primitive for re-using pre-built unikernel images.
 Whilst the `unikraft` element allows for ultimate customization of the unikernel binary, this is not always necessary for new projects.
-For example, you may wish to simply program a Python3 application and not wish to a). build the unikernel representing the python3 runtime for all projects and b). care not for making customizations to the kernel at all.
+For example, you may wish to simply program a Python3 application and not wish to
 
-The Unikraft Open-Source Project hosts a public access unikernel registry of images which can be viewed directly in your terminal.  Simply call the following to see the latest applications:
+a) build the unikernel representing the python3 runtime for all projects
+b) care not for making customizations to the kernel at all
+
+The Unikraft Open-Source Project hosts a public access unikernel registry of images which can be viewed directly in your terminal.
+Simply call the following to see the latest applications:
 
 ```bash
 kraft pkg ls --apps --update
 ```
 
-To view applications for different platforms and architecture which do not match
-your host:
+To view applications for different platforms and architecture which do not match your host:
 
 ```bash
 kraft pkg ls --apps --update --all
@@ -435,7 +438,7 @@ This offers a convenient mechanism for customizing or re-using configuration or 
 If no `template` element is specified, one of either [`runtime`](#top-level-runtime-attribute) or [`unikraft`](#top-level-unikraft-attribute) MUST otherwise be specified.
 </Warning>
 
-When using a template, the source of the template can be qualified by either specifying [a component of type-application](/docs/cli/packaging#package-component-types) or as a path to a repository repsenting an application (whether on disk or remotely via Git).
+When using a template, the source of the template can be qualified by either specifying [a component of type-application](/docs/cli/packaging#package-component-types) or as a path to a repository representing an application (whether on disk or remotely via Git).
 
 Just like libraries and the `unikraft` element, the template is a component which can be expressed using different different syntaxes.
 If an application has been previously [sourced via `kraft pkg source`](/docs/cli/packaging#sourcing-additional-packages) then the template can be specified as simply as:
@@ -487,7 +490,7 @@ targets:
 - qemu/x86_64
 ```
 
-This template can be referenced as `app/template:stable` when sourced as a comoonent via the package manager.
+This template can be referenced as `app/template:stable` when sourced as a component via the package manager.
 When using a new top-level `Kraftfile` which references said template, we can make adjustments to the `unikraft` attribute, for example:
 
 ```yaml
@@ -636,7 +639,7 @@ targets:
 When left without any flags, `kraft build` will prompt you for the intended target to build.
 
 It is possible to define targets simply based on different runtime properties or requirements.
-This is possible by setting both a `name` sub-attribute and a set of `kconfig` options, for example the following two targets both target `qemu/x86_64` platform/architecture tuple but initialize the rootfs either based on 9pfs or initrd, respectively:
+This is possible by setting both a `name` sub-attribute and a set of `Kconfig` options, for example the following two targets both target `qemu/x86_64` platform/architecture tuple but initialize the rootfs either based on 9pfs or initrd, respectively:
 
 
 ```yaml ln={8-15,17-24}

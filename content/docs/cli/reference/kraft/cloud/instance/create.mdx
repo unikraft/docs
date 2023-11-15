@@ -3,13 +3,13 @@ title: "kraft cloud instance create"
 description: Create an instance
 ---
 
-```
+```console
 kraft cloud instance create [FLAGS] IMAGE [-- ARGS]
 ```
 
 ### Examples
 
-```
+```console
 # Create a hello world instance
 $ kraft cloud instance create -M 64 unikraft.org/helloworld:latest
 
@@ -29,12 +29,11 @@ $ kraft cloud --metro fra0 instance create \
 	--port 443:80/http+tls \
 	--port 80:443/http+redirect \
 	unikraft.io/official/nginx:latest
-
 ```
 
 ## Options
 
-```
+```text
   -e, --env strings     Environmental variables
   -h, --help            help for create
   -M, --memory int      Specify the amount of memory to allocate
@@ -47,11 +46,10 @@ $ kraft cloud --metro fra0 instance create \
 
 ## Options inherited from parent commands
 
-```
+```text
       --metro string   Set the KraftCloud metro.
 ```
 
 ## See Also
 
 * [kraft cloud instance](kraft_cloud_instance.md)	 - Manage KraftCloud instances
-

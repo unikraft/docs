@@ -5,14 +5,13 @@ description: Pull a Unikraft unikernel and/or its dependencies
 
 Pull a Unikraft unikernel, component microlibrary from a remote location
 
-
-```
+```console
 kraft pkg pull [FLAGS] [PACKAGE|DIR]
 ```
 
 ### Examples
 
-```
+```console
 # Pull the dependencies for a project in the current working directory
 $ kraft pkg pull
 
@@ -27,12 +26,11 @@ $ kraft pkg pull nginx:1.21.6
 
 # Pull from a registry
 $ kraft pkg pull unikraft.org/nginx:1.21.6
-
 ```
 
 ## Options
 
-```
+```text
   -A, --all                Pull all versions
   -m, --arch string        Specify the desired architecture
   -M, --as string          Force the handler type (Omitting it will attempt auto-detect) (default "auto")

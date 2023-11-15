@@ -6,20 +6,18 @@ description: KraftCloud
 Manage resources on KraftCloud: The Millisecond Platform.
 
 Learn more & sign up for the beta at https://kraft.cloud
-	
-Quickly switch between metros using the `--metro` flag or use the
-`KRAFTCLOUD_METRO` environmental variable.
 
-Set authentication by using `kraft login` or set
-`KRAFTCLOUD_TOKEN` environmental variable.
+Quickly switch between metros using the `--metro` flag or use the `KRAFTCLOUD_METRO` environmental variable.
 
-```
+Set authentication by using `kraft login` or set `KRAFTCLOUD_TOKEN` environmental variable.
+
+```console
 kraft cloud [FLAGS] [SUBCOMMAND|DIR]
 ```
 
 ### Examples
 
-```
+```console
 # List all images in your account
 $ kraft cloud img ls
 
@@ -50,7 +48,7 @@ $ kraft cloud instance rm UUID
 
 ## Options
 
-```
+```text
   -h, --help           help for cloud
       --metro string   Set the KraftCloud metro.
 ```

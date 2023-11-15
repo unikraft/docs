@@ -5,13 +5,13 @@ description: Run a unikernel
 
 Run a unikernel virtual machine
 
-```
+```console
 kraft run [FLAGS] PROJECT|PACKAGE|BINARY -- [APP ARGS]
 ```
 
 ### Examples
 
-```
+```console
 Run a built target in the current working directory project:
 $ kraft run
 
@@ -50,12 +50,11 @@ $ kraft run --rootfs ./initramfs.cpio --volume ./path/to/dir:/dir
 
 Customize the default content directory of the official Unikraft NGINX OCI-compatible unikernel and map port 8080 to localhost:
 $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
-
 ```
 
 ## Options
 
-```
+```text
   -m, --arch string            Set the architecture
       --as string              Force a specific runner
   -d, --detach                 Run unikernel in background
@@ -80,4 +79,3 @@ $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
 ## See Also
 
 * [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
-
