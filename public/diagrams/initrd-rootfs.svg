@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 447.87 136.06" style="enable-background:new 0 0 447.87 136.06;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;}
+	.st2{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:4,4;}
+	.st3{fill:#99D5F1;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+	.st4{fill:none;}
+	.st5{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
+	.st6{font-size:9px;}
+	.st7{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
+	.st8{fill:#56C1A7;stroke:#337061;stroke-width:0.75;stroke-miterlimit:10;}
+	.st9{fill:#3EC6F0;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
+</style>
+<g id="Lines">
+	<g class="st0">
+		<g class="st1">
+			<line class="st2" x1="79.37" y1="277.8" x2="224.89" y2="59.52"/>
+			<g>
+				<path d="M226.77,56.69c-0.39,1.66-0.65,3.87-0.44,5.48l-1.69-2.29l-2.76-0.68C223.45,58.78,225.39,57.69,226.77,56.69z"/>
+			</g>
+		</g>
+	</g>
+</g>
+<g id="Blur_bg">
+</g>
+<g id="Platform_Code">
+</g>
+<g id="Text">
+</g>
+<g id="Blur_Text">
+</g>
+<g id="Kernel_Code">
+</g>
+<g id="HLL">
+	<rect x="345.83" y="59.53" class="st3" width="93.54" height="22.68"/>
+	<rect x="345.83" y="59.53" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 364.2561 74.1384)" class="st5 st6">Initrd Archive</text>
+	<rect x="2.83" y="99.21" class="st4" width="104.88" height="34.02"/>
+	<text transform="matrix(1 0 0 1 18.8799 105.7572)"><tspan x="0" y="0" class="st5 st6">(a) Unikernel and </tspan><tspan x="-11.06" y="10.8" class="st5 st6">external initrd archive,</tspan><tspan x="-2.75" y="21.6" class="st5 st6">accessed as a file.</tspan></text>
+	<rect x="345.83" y="8.5" class="st7" width="93.54" height="45.35"/>
+	<rect x="345.83" y="8.5" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 357.8829 23.1156)" class="st5 st6">Unikernel Binary</text>
+	<rect x="8.5" y="31.18" class="st7" width="93.54" height="22.68"/>
+	<rect x="8.5" y="31.18" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 20.561 45.7928)" class="st5 st6">Unikernel Binary</text>
+	<rect x="235.28" y="36.85" class="st7" width="93.54" height="45.35"/>
+	<rect x="235.28" y="36.85" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 247.3318 51.462)" class="st5 st6">Unikernel Binary</text>
+	<rect x="252.28" y="59.53" class="st8" width="76.54" height="22.68"/>
+	<rect x="252.28" y="59.53" class="st4" width="76.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 260.5663 74.1392)" class="st5 st6">Volume Driver</text>
+	<rect x="124.72" y="36.85" class="st7" width="93.54" height="45.35"/>
+	<rect x="124.72" y="36.85" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 136.7808 51.462)" class="st5 st6">Unikernel Binary</text>
+	<rect x="141.73" y="59.53" class="st9" width="76.54" height="22.68"/>
+	<rect x="141.73" y="59.53" class="st4" width="76.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 144.7228 74.1392)" class="st5 st6">Embedded Initrd</text>
+	<rect x="8.5" y="59.53" class="st3" width="93.54" height="22.68"/>
+	<rect x="8.5" y="59.53" class="st4" width="93.54" height="22.68"/>
+	<text transform="matrix(1 0 0 1 26.9338 74.1384)" class="st5 st6">Initrd Archive</text>
+	<rect x="119.06" y="99.21" class="st4" width="104.88" height="34.02"/>
+	<text transform="matrix(1 0 0 1 136.3409 105.7572)"><tspan x="0" y="0" class="st5 st6">(b) Initrd archive </tspan><tspan x="-0.94" y="10.8" class="st5 st6">embedded in the </tspan><tspan x="0.06" y="21.6" class="st5 st6">unikernel binary.</tspan></text>
+	<rect x="229.61" y="99.21" class="st4" width="104.88" height="34.02"/>
+	<text transform="matrix(1 0 0 1 244.6228 105.7572)"><tspan x="0" y="0" class="st5 st6">(c) Unikernel with </tspan><tspan x="-7.8" y="10.8" class="st5 st6">built-in volume driver </tspan><tspan x="-14.09" y="21.6" class="st5 st6">reading external source.</tspan></text>
+	<rect x="340.16" y="99.21" class="st4" width="104.88" height="34.02"/>
+	<text transform="matrix(1 0 0 1 352.4189 105.7572)"><tspan x="0" y="0" class="st5 st6">(d) Mix-and-match </tspan><tspan x="3.81" y="10.8" class="st5 st6">different sources </tspan><tspan x="20.67" y="21.6" class="st5 st6">together.</tspan></text>
+	<rect x="362.83" y="31.18" class="st9" width="36.85" height="22.68"/>
+	<rect x="399.69" y="31.18" class="st8" width="39.69" height="22.68"/>
+	<rect x="363.4" y="31.18" class="st4" width="36.29" height="22.68"/>
+	<text transform="matrix(1 0 0 1 367.977 45.7926)" class="st5 st6">Einitrd</text>
+	<rect x="399.69" y="31.18" class="st4" width="39.69" height="22.68"/>
+	<text transform="matrix(1 0 0 1 402.8129 45.7926)" class="st5 st6">Vol Drv.</text>
+</g>
+<g id="Diagram">
+</g>
+<g id="Models__x26__Services">
+</g>
+<g id="Layer_3">
+</g>
+</svg>

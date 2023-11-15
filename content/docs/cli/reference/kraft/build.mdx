@@ -31,16 +31,17 @@ $ kraft build path/to/app
       --build-log string   Use the specified file to save the output from the build
   -c, --config string      Override the path to the KConfig .config file
       --dbg                Build the debuggable (symbolic) kernel image instead of the stripped image
+      --force-pull         Force pulling packages before building
   -h, --help               help for build
   -j, --jobs int           Allow N jobs at once
-      --kraftfile string   Set an alternative path of the Kraftfile
+  -K, --kraftfile string   Set an alternative path of the Kraftfile
   -F, --no-cache           Force a rebuild even if existing intermediate artifacts already exist
       --no-configure       Do not run Unikraft's configure step before building
       --no-fast            Do not use maximum parallelization when performing the build
       --no-fetch           Do not run Unikraft's fetch step before building
-      --no-pull            Do not pull packages before invoking Unikraft's build system
       --no-update          Do not update package index before running the build
   -p, --plat string        Filter the creation of the build by platform of known targets
+      --rootfs string      Specify a path to use as root file system (can be volume or initramfs)
   -t, --target string      Build a particular known target
 ```
 

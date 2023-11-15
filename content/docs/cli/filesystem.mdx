@@ -1,0 +1,358 @@
+---
+title: "Filesystems"
+description: |
+  One important aspect of the lifecycle of a unikernel is access to a
+  filesystem, which provides the necessary files and resources required for your
+  application.
+---
+
+A filesystem serves as the underlying structure that allows an operating system to store, retrieve, and organize files on storage mediums.
+Whether it's a traditional server or virtual machine, or a more specialized environment like a unikernel, the role of a filesystem remains the same: to enable the reading and writing of data.
+
+
+## The Role of Filesystems in Unikernels
+
+At its core, the primary purpose of a filesystem in a unikernel is to provide a structured and efficient means of organizing and accessing data.
+Unikernels, as single-address-space machine images tailored for specific applications, operate in highly specialized environments where resource constraints and performance optimization are paramount.
+The filesystem in a unikernel must strike a delicate balance between providing necessary storage functionality and minimizing the footprint to adhere to the lightweight philosophy of unikernels.
+
+In addition to storage, filesystems in unikernels play a vital role in facilitating I/O operations, ensuring that applications can seamlessly interact with external data, network resources, and other system components.
+As unikernels are designed for specific use cases, their filesystems often incorporate optimizations to cater to the unique requirements of the targeted applications, whether they be microservices, network appliances, or other specialized workloads.
+
+The choice and design of a filesystem for unikernels necessitates a thoughtful approach to address the distinct challenges posed by this model.
+Considerations such as minimalism, performance, security, and compatibility with the unikernel's targeted application as well as the environment in which will operate are crucial in shaping the filesystem architecture.
+The goal of this documentation is to explore these design considerations in depth, providing insights into how developers can tailor filesystem solutions in Unikraft to enhance the efficiency and functionality of unikernel-based applications.
+
+In this documentation, you will be guided in different approaches to building support for a filesystems, the different ways in which filesystems are used throughout the lifecycle of a unikernel (both at compile-time and at runtime), the ways for realising those filesystems, using them and populating (or seeding) filesystems to the unikernel application.
+Ultimately, this will enable you to design and use one or many filesystems for your unikernel application appropriately.
+
+
+## Root Filesystems
+
+The first consideration to make when approaching the customisation of the filesystem in general is to start with the root filesystem.
+A root filesystem is a filesystem tree mounted at the root (`/`) directory and is a fundamental component of any operating system which provides the essential files, subdirectories, and resources required for the system to function.
+Typically, it serves as the foundation upon which the operating system operates and runs applications.
+For Unikraft, however, the use of a root filesystem is totally optional and depends on the specific requirements of your application.
+
+Thanks to Unikraft's highly modular structure, building a unikernel with root filesystem support is both trivial and left up to the application developer and ultimately the application use case.
+Some unikernels may not require a filesystem at all if the application does not read or write any files.
+In this case, neither the underlying filesystem subsystem (`vfscore`) or a root filesystem can are compiled into the unikernel binary.
+For example, this may be use in lambda-type usecases.
+However, many applications do need access to files, configuration data, a temporary file directory scratch pad (e.g. `/tmp`) or other have file-based resource needs.
+In such cases, a root filesystem is essential.
+
+
+### Classes of Root Filesystems
+
+Unikraft supports essentially two classes of root filesystems: initial ramdisks ("initrd" or "initram" for short) and external volumes.
+Both classes can be implemented using different underlying driver formats depending on preference or requirements.
+Additionally, their use of either is not mutually exclusive, making for highly versatile unikernel configurations.
+These different configurations are shown in Figure 1 and are discussed in depth in the following sections:
+
+a. [Initial Ramdisk Filesystem (initramfs)](#initial-ramdisk-filesystem-initramfs)
+
+b. [Embedded Initial Ramdisk Filesystems (einitrds)](#embedded-initial-ramdisk-filesystems-einitrds)
+
+c. [External Volumes](#external-volumes)
+
+d. [Mixing and Matching Filesystems](#mixing-and-matching-filesystems)
+
+<Image
+  border
+  ratio={17/5}
+  src="/diagrams/initrd-rootfs.svg"
+  title="Figure 1"
+  description="High-level overview of different approaches to combining a
+  unikernel binary application with a root filesystem."
+/>
+
+
+#### Initial Ramdisk Filesystem (initramfs)
+
+Traditionally, initramfs is a temporary root filesystem used during the initial stages of the boot sequence of an operating system to to set up the environment before transitioning to the real root filesystem.
+The initram is loaded into volatile memory (RAM) making it both ephemeral but also performant.
+With Unikraft, however, it can be used as the permenant (though non-persistent) root filesystem during the lifecycle of a unikernel application.
+This is a common approach with unikernels, and can be compared to the resulting filesystem which is generated after building a `Dockerfile` (see later [how to use a `Dockerfile` to generate a rootfs](#building-and-packaging-a-static-initram-root-filesystem)).
+
+Traditionally, the initram filesystem is provided as an external archive file and virtual machine monitors have specific options to allow setting the path to this archive file.
+For example, with QEMU this is handled via the `-initrd` flag.  This root filesystem configuration can be seen in [Figure 1 (a)](#classes-of-root-filesystems).
+
+<Warning title="Memory Requirements">
+When instantiating a unikernel image with an external initramfs and when specifying an amount of memory, you must supply at least the size of the initramfs as minimum amount of memory because this file will be loaded directly into memory during boot time.
+`kraft` will warn you if specify an amount of memory less than the size of the external initram archive.
+If you do not specify an amount of memory, `kraft` will attempt to intelligently determine the minimum amount of memory necessary for instantiating the unikernel.
+</ Warning>
+
+Initram is a simple and effective way of populating an initial tree of data as the root filesystem (also known as "seeding the root filesystem") to the unikernel during boottime and giving the application access to essential files for use during its runtime.
+Throughout the lifecycle of the application, this root filesystem is held in memory (via [Unikraft's internal library `ramfs`](https://github.com/unikraft/unikraft/tree/staging/lib/ramfs)) and therefore it is not persistent.
+A good example of use cases for such filesystems are static configuration files; e.g `/etc/resolv.conf` for dynamic name resolution (used in most standard libc's) or static configuration files used by your application (such as [NGINX's config files](https://github.com/unikraft/catalog/blob/main/library/nginx/1.15/rootfs/nginx/conf/nginx.conf)).
+These files do not change often (or at all) once they are initially written and therefore make for good candidates to be placed within initramfs (or as embedded initramfs as you'll discover in the next section).
+
+Towards optimizing against a performance-oriented KPI, initramfs is a good choice since its underlying hardware implementation is backed by RAM.
+The trade-off however is that this filesystem is delivered statically and will not change following the end-of-life of a unikernel (i.e. after a restart).
+The contents of such a filesystem is often created and updated during the process of Continious Integration / Continious Delivery (CI/CD) wherein the files required by an application are built and packaged together (see how this is done in a [GitHub Actions workflow](/docs/getting-started/integrations/github-actions)) but requires the unikernel to be redeployed in order for those filesystem changes to be realized.
+
+<Info title="How to enable in a build">
+To use an initramfs in your unikernel, you must ensure it is built with the following additional KConfig options set in your `Kraftfile`:
+```yaml
+unikraft:
+  kconfig:
+    # For using an external initrd archive you will need
+    # to enable Unikraft's VFS subsystem:
+    CONFIG_LIBVFSCORE: 'y'
+
+    # For any use of initrd you will need to enable:
+    CONFIG_LIBRAMFS: 'y'
+
+    # For automatic mounting of the initramfs during boot.
+    # Note this configuration prevents the unikernel from
+    # using anything else other than initrd as the rootfs.
+    CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: 'y'
+    CONFIG_LIBVFSCORE_ROOTFS_INITRD: 'y'
+    CONFIG_LIBVFSCORE_ROOTFS: "initrd"
+
+    # Alternatively, for dynamic mounting, wherein you
+    # configure mounting options at boot time via
+    # kernel command-line arguments:
+    CONFIG_LIBVFSCORE_FSTAB: 'y'
+```
+</Info>
+
+<Info colorScheme="purple" title="Supported Initramfs Formats">
+See below the list of supported initramfs archive formats.
+In addition to the KConfig specified above, the relevant format's KConfig option will also need to be set.
+
+| Format | KConfig Option   | Description |
+|--------|------------------|-------------|
+| `cpio` | `CONFIG_LIBCPIO` | CPIO (Copy-In, Copy-Out) archives are uncompressed or minimally compressed to keep them simple and efficient.  This format is seamlessly integrated into KraftKit, meaning unless you specifically wish to use an alternative format, you need not worry about alternatives. |
+
+More formats, such as tarballs, are planned: [follow the GitHub Project board](https://github.com/orgs/unikraft/projects/24/views/13).
+</Info>
+
+
+#### Embedded Initial Ramdisk Filesystems (einitrds)
+
+Unikraft supports embedding the initram archive file within the kernel binary directly as shown in [Figure 1 (b)](#classes-of-root-filesystems).
+This is often used when the coupling between the application and the initial root filesystem is particularly strong.
+Naturally, the caveat of this approach is that if this filesystem requires updating, then the unikernel image needs to be re-built and redeployed.
+However, in embedding an initial root filesystem into the kernel binary image, it frees up the original initram parameter which is typically supplied to a virtual machine monitor (e.g. QEMU's `-initrd` flag has become free to be used by another initramfs file).
+This allows for a new possibility of mounting an external initram archive file to a subdirectory within this root filesystem.
+This provides some degree of on-the-fly customization, where a second initramfs can be used to change the a portion of the unikernel's filesystem and therefore operation, without having to re-compile the unikernel binary image.
+Since initramfs is intended for high-performance applications, both the einitrd and the dynamically supplied initrd will be stored in volatile RAM.
+
+There are several additional reasons why one may wish to embed the initram into the unikernel, including:
+
+- Wishing to enforce strict and static application required files are always present such that the unikernel binary can act in a standalone manner and is guaranteed runtime operation;
+- Similarly, to prevent corruption or malicious intent by reducing the attack surface by removing the possibility of injecting a different initrd at boot time and embedding these into a single binary as opposed to a binary and an external initramfs archive file; or,
+- To enforce strict performance guarantees when accessing certain files within the root filesystem which are non-persistent.
+
+<Info title="How to enable in a build">
+To use embedded initramfs in your unikernel, you must ensure it is built with the following additional KConfig options set in your `Kraftfile`:
+```yaml
+unikraft:
+  kconfig:
+    # For using embedded initrd you will need to enable
+    # Unikraft's VFS subsystem:
+    CONFIG_LIBVFSCORE: 'y'
+
+    # For any use of einitrd you will need to enable:
+    CONFIG_LIBRAMFS: 'y'
+    CONFIG_LIBCPIO: 'y'
+    CONFIG_LIBVFSCORE_ROOTFS_EINITRD: 'y'
+
+    # To force using the embedded initrd persistently
+    # you can set the automount flag:
+    CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: 'y'
+
+    # Alternatively, for dynamic mounting, wherein you
+    # configure mounting options at boot time via
+    # kernel command-line arguments:
+    CONFIG_LIBVFSCORE_FSTAB: 'y'
+
+    # If you've set `rootfs` to a directory or a Dockerfile,
+    # this will be the default location of its output.
+    CONFIG_LIBVFSCORE_ROOTFS_EINITRD_PATH: .unikraft/build/initramfs.cpio
+```
+</Info>
+
+
+#### External Volumes
+
+In contrast, the longevitiy of the initram makes it unsuitable for applications which rely on persistent storage, i.e. having made changes to a filesystem to be persisted after restarting the unikernel which is often necessary for database applications like Postgres or MongoDB, but great for stateless memory instensive systems like Redis or NGINX.
+
+In the context of storage and file systems, a volume typically refers to a partition or logical storage unit on a physical or virtual disk.
+Volumes are usually formatted with a file system (e.g., NTFS, ext4) and can contain directories and files.
+Unikraft also considers the use of a host path mapping as a type of volume (e.g. the use of [the 9P filesystem](https://github.com/unikraft/unikraft/tree/staging/lib/9pfs)).
+
+Traditionally, volumes are typically associated with long-term data storage, not just for boottime operations.
+However, Unikraft supports using volumes as the root filesystem and supports different volume drivers, which are included at compile-time, shown in [Figure 1 (c)](#classes-of-root-filesystems), which enable you to attach external resources to the unikernel application at runtime.
+Because of this ability, it is possible to mount a volume to the root path of the unikernel.
+
+There are number of reasons why you may wish to or not to mount an external volume as the root filesystem:
+
+- **Decreasing package size**:
+  Using a persistent volume to store larger files can be used to mitigate against packaging a unikernel with such files and reducing the transport and storage cost of the image.
+  Instead, the volume gets access to larger, locally stored artifacts which intended to be used.
+- **Initialization (boot-time) performance**:
+  Loading artifacts into memory at boot can incur a performance penality.
+  Instead, the initialization of a volume driver to access an external filesystem can be faster.
+- **Shared file resources**:
+  Multiple unikernel instances can utilize the same external volume.
+  Typically these volumes are read-only and the unikernel instances represent replicas where one unikernel instance may have read-write privileges.
+- **When reading and writing to the volume is not performance critical**:
+  Whilst it is possible to use high-performance volume drivers with Unikraft, you cannot guarantee their performance (since they represent an external system) whereas you can with embedded initramfs since it is the same encapsulated system.
+- **For bi-directional communication between host and the unikernel instance**:
+  This is often used during development of a unikernel when the filesystem is under-going rapid changes which require real-time reflection in the unikernel.
+
+<Info title="How to enable in a build">
+Configuration options per driver will vary, including their microlibrary name.
+Regardless, to facilitate the use of a root filesystem you will need to at least enable`vfscore`:
+```yaml
+unikraft:
+  kconfig:
+    # For using volumes you will need to enable Unikraft's
+    # VFS subsystem:
+    CONFIG_LIBVFSCORE: 'y'
+
+    # For automatic mounting of a specific volume
+    # driver during boot.  Note this configuration
+    # prevents the unikernel from using anything else
+    # other than the selected driver.  You must
+    # also set appropriate ROOTFS KConfig options.
+    # Refer to the driver's and vfscore's Config.uk
+    # for more information.
+    CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: 'y'
+
+    # Alternatively, for dynamic mounting, wherein you
+    # configure mounting options at boot time via
+    # kernel command-line arguments:
+    CONFIG_LIBVFSCORE_FSTAB: 'y'
+```
+</Info>
+
+<Info colorScheme="purple" title="Available volume drivers">
+See below the list of supported volume drivers.
+In addition to the KConfig specified above, the relevant driver's KConfig option will also need to be set.
+
+| Driver | KConfig option   | Use case |
+|--------|------------------|----------|
+| `9pfs` | `CONFIG_LIBUK9P` | Bi-directional communication between a path on the host and a directory within the unikernel.  Learn more about [the 9P (protocol)](https://en.wikipedia.org/wiki/9P_(protocol)). |
+
+More drivers are planned: [follow the GitHub Project board](https://github.com/orgs/unikraft/projects/24/views/13).
+</Info>
+
+To use volume mounts in your unikernel, the `-v|--volume` flag accepts the source directory mapped to a path in the unikernel separated by a colon `:` delimiter, like so:
+
+```bash
+kraft run -v ./rootfs:/ unikraft.org/nginx:latest
+```
+
+In the above example, relative directory `./rootfs` is mapped to the root of the unikernel instance located at `/`.
+
+Alternatively, for a reproducible setup, it is also possible to [set the list of volumes in the `Kraftfile`](/docs/cli/reference/kraftfile/latest#top-level-volumes-attribute).
+
+
+#### Mixing and Matching Filesystems
+
+It is possible to mix-and-match or provide sub-paths by using multiple volumes, which is shown in [Figure 1 (d)](#classes-of-root-filesystems).
+For example, supplying an initial root filesystem as a CPIO archive and then mounting only a sub-directory where you would like to see changes at runtime:
+
+```bash
+kraft run --rootfs ./rootfs.cpio -v ./html:/nginx/html unikraft.org/nginx:latest
+```
+
+In the above example, an initial ramdisk is provided which supplies the unikernel with a root filesystem provided by the CPIO archive in the relative path `./rootfs.cpio` and we "overwrite" the contents in this filesystem at `/nginx/html` with the contents on the host at the relative directory at `./html`.
+This allows you to dynamically change the served content by the NGINX instance.
+
+<Warning title="Packaged Initram Archives">
+Using pre-built unikernels [which are packaged as OCI images](/docs/cli/packaging#oci-based-packages) may come with a ready made initramfs which will automatically set a root filesystem.
+This means that you may wish to only set a volume to "overwrite" a particular directory with the contents you wish to modify.
+For example, with the NGINX image example supplied above, you need simply to run the following to incur dynamic changes to the served content:
+
+```bash
+kraft run -v ./html:/nginx/html unikraft.org/nginx:latest
+```
+</Warning>
+
+
+## Building and packaging a static initram root filesystem
+
+After enabling and building the support for [non-persistent root filesystem via initramfs](#initial-ramdisk-filesystem-initramfs) in your unikernel application, seeding this initial root filesystem can also be done in a number of ways with `kraft` and again depends on use case.
+It can take on different underlying forms and serve distinct purposes in various computing environments.
+
+To supply a static initram archive as your root filesystem you can either use the `--rootfs` flag when packaging or running unikernels via `kraft`, e.g.:
+
+```bash
+# Packaging a unikernel with static root filesystem archive
+kraft pkg --rootfs ./rootfs.cpio --name unikraft.org/nginx:latest .
+
+# Running a unikernel with the supplied root filesystem archive
+kraft run --rootfs ./rootfs.cpio unikraft.org/nginx:latest
+```
+
+Or you can set this in the [`Kraftfile` element for `rootfs`](/docs/cli/reference/kraftfile/latest#top-level-rootfs-attribute):
+
+```yaml ln={5}
+spec: v0.6
+
+runtime: unikraft.org/nginx:latest
+
+rootfs: ./rootfs
+```
+
+In the examples above, the supplied argument to "`rootfs`" (whether at the CLI or in a `Kraftfile`) can have an argument which is of three possible types which are intelligently determined by `kraft`:
+
+- A [`Dockerfile` which is built via BuildKit](#using-a-dockerfile-as-a-static-root-filesystem);
+- A [path to a directory](#using-a-path-to-a-directory); or,
+- A [path to an existing CPIO archive file](#using-an-existing-cpio-archive).
+
+<Warning>
+In all cases, the initram is delivered as a CPIO archive as this the native integration with KraftKit.
+This means you must enable CPIO as an initramfs format when building your unikernel.
+</Warning>
+
+
+### Using a `Dockerfile` as a static root filesystem
+
+A common and versatile approach is to use a `Dockerfile` which can be dynamically built to generate a static root filesystem.
+To use a `Dockerfile` with `kraft` you must have a working installation of [BuildKit](https://github.com/moby/buildkit).
+
+
+#### Starting BuildKit in a container
+
+We recommend running BuildKit in a container if you have Docker or any other container runtime already present.
+Starting BuildKit can be done like so:
+
+```bash
+docker run -d --privileged --name buildkitd moby/buidlkitd:latest
+```
+
+The above command will run BuildKit in the background with the name `buildkitd`.
+You can tell `kraft` to use this by either setting [the `buildkitd_host` attribute in your configuration file](/docs/cli/options#overview-of-configuration-options) or by using the following environmental variable:
+
+```bash
+export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+```
+
+See also [BuildKit's documentation for other container runtimes](https://github.com/moby/buildkit#containerizing-buildkit).
+
+
+#### BuildKit over SSH, or UNIX or TCP socket
+
+It is possible to access BuildKit over SSH or via a UNIX or TCP socket.
+Simply set [the `buildkitd_host` attribute in your configuration file](/docs/cli/options#overview-of-configuration-options) or by using the environmental variable `KRAFTKIT_BUILDKIT_HOST`.
+
+Refer to BuildKit's documentation for [TCP socket activation](https://github.com/moby/buildkit#expose-buildkit-as-a-tcp-service), [systemd activation](https://github.com/moby/buildkit#systemd-socket-activation) and [UNIX socket activation](https://github.com/moby/buildkit#quick-start) for more details.
+
+
+### Using a path to a directory
+
+Another approach is simply to pass a path to directory on your host with which you wish to serialize into a static root filesystem.
+This makes sense for simpler root filesystems when there are not many files.
+See [Unikraft's community catalog entry for NGINX as an example](https://github.com/unikraft/catalog/tree/main/library/nginx/1.15).
+
+
+### Using an existing CPIO archive
+
+Finally, you may use a path to an existing CPIO archive.
+This is a distinct file type and can be generated using [Unikraft's `mkcpio` script](https://github.com/unikraft/unikraft/blob/staging/support/scripts/mkcpio).
