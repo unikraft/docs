@@ -57,10 +57,10 @@ export const KraftCloudBanner = ({ title, url, children }: {
           {t('component.kraftcloud-strip.learn-more')}
         </chakra.button>
       </Flex>
-      <Heading size='md' mt={2}>
+      <Heading size='md' mt={0}>
         {title || t('component.kraftcloud-strip.heading')}
       </Heading>
-      <Box opacity={0.7} pt={0}>
+      <Box opacity={0.7} pt={3}>
         {children || t('component.kraftcloud-strip.description')}
       </Box>
     </Box>
