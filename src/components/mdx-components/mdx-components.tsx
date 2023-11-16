@@ -11,6 +11,7 @@ import CodeBlock from './codeblock/codeblock'
 import ComponentLinks from './component-links'
 import { VideoPlayer } from './video-player'
 import AsciinemaPlayer from 'components/asciinema-player'
+import { KraftCloudBanner } from './kraftcloud-banner'
 
 const {
   Accordion,
@@ -179,6 +180,7 @@ export const MDXComponents = {
   LanguageLinks,
   VideoPlayer,
   AspectRatio,
+  KraftCloudBanner,
   JoinCommunityCards,
   FaqList: ({children, ...props}) => {
     return (
