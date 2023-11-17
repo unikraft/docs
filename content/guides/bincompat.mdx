@@ -37,9 +37,9 @@ Prebuilt binaries and the ELF loader app itself can be built on multiple platfor
 ## Setup
 
 To set up, build and run Linux ELFs with [`app-elfloader`](https://github.com/unikraft/app-elfloader), we recommend you use [the `run-app-elfloader` repository](https://github.com/unikraft/run-app-elfloader).
-Along with the [`run-app-elfloader`](https://github.com/unikraft/run-app-elfloader) repository, we collected pre-built applications that you can use in binary compatibility mode.
+Along with the [`run-app-elfloader`](https://github.com/unikraft/run-app-elfloader) repository, we have collected pre-built applications that you can use in binary compatibility mode.
 Those are located in the [`static-pie-apps`](https://github.com/unikraft/static-pie-apps/) and [`dynamic-apps`](https://github.com/unikraft/dynamic-apps/) repositories.
-These are pre-built applications, so no time must be spent on compiling them.
+These are pre-built applications, eliminating the need for compilation.
 They need to be cloned and then used.
 
 The following repositories need to be cloned:
@@ -256,15 +256,15 @@ You can see they use the same `run.sh` commands we used above.
 
 Use the `run_app.sh` script to run all applications available.
 After each run, close the running instance with `Ctrl+c` or `Ctrl+a x`.
-Recall that applications that require networking support (i.e. those where the `-n` option is passed to the `run.sh` script) need be run with admin rights;
-use `sudo` in  fron the the `run_app.sh` commands.
+Recall that applications that require networking support (i.e. those where the `-n` option is passed to the `run.sh` script) need to be run with admin rights;
+use `sudo` in front of the the `run_app.sh` commands.
 
 Use the `run.sh` script on as many applications as possible.
 Check the contents of the `run_app.sh` script and run the corresponding commands.
 
 ## Entire Filesystem Runs
 
-As you've seen, running an application in binary compatibility mode requires a filesytem (storing the Linux binary, dynamic libraries and support files) and the command line used to start the application.
+As you've seen, running an application in binary compatibility mode requires a filesystem (storing the Linux binary, dynamic libraries and support files) and the command line used to start the application.
 To quickly test a new application, we can use the entire Linux filesystem, (i.e. passing `/` as the filesystem path).
 
 For example, to run the `/bin/ls` Linux executable with Unikraft, we would use the `run.sh` script such as below, in the `run-app-elfloader/` directory:
@@ -403,7 +403,7 @@ This contains:
 - Support files: configuration files, data files, language-specific libraries
 
 Having such as a directory is important when packing an application.
-Only the required files are added to it, similar to a container making thre result image, as small as possible.
+Only the required files are added to it, similar to a container, making the resulting image as small as possible.
 
 Application binaries can be obtained in two ways:
 
