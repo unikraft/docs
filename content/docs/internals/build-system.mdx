@@ -4,11 +4,11 @@ title: Internals of the Build Process
 
 ## Internals of the Unikraft Build System
 
-As we saw in the [Build Process section](/internals/build-process), Unikraft uses a set of files as part of the configuration and build steps.
+As we saw in the [Build Process section](https://unikraft.org/docs/concepts/build-process), Unikraft uses a set of files as part of the configuration and build steps.
 When porting an application, you want to be aware of these files and tune them to your needs.
 This section delves into the internals of the Unikraft build system and how they are useful for porting an application.
 
-In order for an application or library to work with the [Unikraft `Make`-based build system](/internal/build-process), you need to provide some specific files:
+In order for an application or library to work with the [Unikraft `Make`-based build system](https://unikraft.org/docs/concepts/build-process), you need to provide some specific files:
 
 1. **Makefile**:
    Used to specify where the main Unikraft repository is with respect to the application's repository, as well as repositories for any external libraries the application needs to use.

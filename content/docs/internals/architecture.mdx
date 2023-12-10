@@ -28,7 +28,7 @@ components:
   [Protobuf](https://github.com/unikraft/lib-protobuf), etc.), applications
   ([SQLite](https://github.com/unikraft/lib-sqlite),
   [Redis](https://github.com/unikraft/lib-redis), etc.), or even platforms
-  (e.g., [Solo5](https://github.com/unikrat/plat-solo5), Firecracker, Raspberry
+  (e.g., [Solo5](https://github.com/unikraft/plat-solo5), Firecracker, Raspberry
   Pi 3).
 
 * **Build system** which provides a [Kconfig-based
@@ -71,7 +71,7 @@ The ability to easily swap components in and out, and to plug applications in at
 different levels presents application developers with a wide range of
 optimization possibilities.  To begin with, unmodified applications (e.g. "Hello
 World" and NGINX) can use the posix-compatibility layer with
-[`musl`](https://github.com/unikrarft/lib-musl) (1️ in the figure above) or
+[`musl`](https://github.com/unikraft/lib-musl) (1️ in the figure above) or
 [`nolibc`](https://github.com/unikraft/unikraft/tree/staging/lib/nolibc),
 transparently getting low boot times, lower memory consumption and improved
 throughput because of the lack of syscall overheads, as Unikraft syscalls are
