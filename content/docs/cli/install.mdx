@@ -94,13 +94,35 @@ sudo apt-get install kraftkit
 ## Fedora/RHEL
 
 We recommend installing KraftKit using the interactive method described above.
-However, 
+However, you can also directly add our remote RPM package registry entry.
+
+First add new entry for `kraftkit` in `/etc/yum.repos.d/kraftkit.repo`:
+
+```toml
+[kraftkit]
+name=KraftKit Repo
+baseurl=https://rpm.pkg.kraftkit.sh
+enabled=1
+gpgcheck=0
+```
+
+Then run:
+```bash
+yum makecache
+yum install -y kraftkit
+```
 
 
 ## Arch Linux
 
 We recommend installing KraftKit using the interactive method described above.
-However, 
+However, if you wish to install this directly from AUR, you can:
+
+```bash
+git clone https://aur.archlinux.org/kraftkit-bin.git
+cd kraftkit-bin
+makepkg -si
+```
 
 
 ## Windows
