@@ -1,0 +1,210 @@
+---
+title: Deploying a unikernel to KraftCloud with Crossplane
+description: |
+  KraftCloud exposes an API that can be used to deploy unikraft targets easily.
+  The process can be made even easier by using the KraftCloud crossplane provider.
+---
+
+## Overview of Crossplane and Its Relation to Kubernetes
+
+Crossplane is a powerful open-source platform that revolutionizes the way developers and system administrators interact with cloud resources and services.
+
+At its core, Crossplane extends Kubernetes, the widely adopted container orchestration platform, allowing for a more unified and simplified approach to deploying and managing applications and their dependencies across multiple cloud environments.
+
+### What is Crossplane?
+
+[Crossplane](https://www.crossplane.io/) operates as a Kubernetes add-on, turning it into a universal control plane that manages both cloud services and infrastructure.
+
+It introduces the concept of 'Infrastructure as Code,' enabling users to define and provision cloud resources using Kubernetes-style manifest files.
+
+This approach brings a high degree of automation, consistency, and repeatability to the deployment process.
+
+## Installation and Configuration of the Crossplane Provider
+
+**Before You Begin:**
+
+- Confirm administrative access to a Kubernetes cluster.
+- Secure a token for the KraftCloud platform.
+- Choose a unikraft unikernel image, like nginx.
+- Ensure Crossplane and its CLI are installed in the cluster.
+
+**Installation Steps:**
+
+- Install the provider: Deploy the KraftCloud provider using the command:
+
+```console
+crossplane xpkg install provider ghcr.io/kraftcloud/crossplane-provider-kraftcloud:0.2.0 --wait=1m
+```
+
+- Authenticate the provider against KraftCloud:
+
+Create a base64 encoded Secret in crossplane-system and apply a ProviderConfig that refers to this secret.
+
+Paste a base64 encoded token into the credentials field in the YAML below.
+
+Save them to a file named secret.yaml
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: crossplane-system
+  name: example-provider-secret
+type: Opaque
+data:
+  credentials: #base64 encoded kraftcloud token
+---
+apiVersion: kraftcloud.crossplane.io/v1alpha1
+kind: ProviderConfig
+metadata:
+  name: example
+spec:
+  credentials:
+    source: Secret
+    secretRef:
+      namespace: crossplane-system
+      name: example-provider-secret
+      key: credentials
+```
+
+Then, simply run:
+
+```console
+kubectl apply -f secret.yaml
+```
+
+Done!
+Your provider is now running and will be able to communicate with KraftCloud's API.
+
+<Info>
+**Important:** The KraftCloud token must be base64 encoded twice to align with Crossplane's way of handling secrets.
+
+The token you receive is already base64 encoded, but you have to encode it again.
+</Info>
+
+## Deploying a Unikernel Instance
+
+Deploying a unikernel instance is now more straightforward than ever on KraftCloud.
+If you're eager to get started quickly, you can utilize our official nginx image, readily available for all users.
+
+For those interested in custom solutions, you can still build and use your own images.
+See [this guide](https://docs.kraft.cloud/102-deploy.html) for detailed instructions.
+
+To deploy an nginx instance, ensure the provider is installed and running, then use the following YAML configuration:
+
+```yaml
+apiVersion: compute.kraftcloud.crossplane.io/v1alpha1
+kind: Instance
+metadata:
+  name: example
+spec:
+  forProvider:
+    metro: fra0 # Here you control which metro the instance should be scheduled at
+    image: nginx:latest
+    memory: "64Mi"
+    args:
+    - "-c"
+    - "/nginx/conf/nginx.conf"
+    internalPort: 8080
+    port: 443
+    desiredState: running # It's possible to create "stopped" instances.
+  providerConfigRef:
+    name: example # Reference to pre-applied crossplane config containing your token
+```
+
+After applying this YAML, you will be able to list the instance via:
+
+```console
+kubectl get instance
+```
+
+This will result in:
+
+```console
+NAME      READY   SYNCED   EXTERNAL-NAME                          AGE
+example   True    True     ced7f992-5feb-4fb7-9d3e-e92886d8859f   27m
+```
+
+To get even more information, run:
+
+```console
+kubectl describe instance example
+```
+
+The output of this command will contain various additional data, such as:
+
+```console
+Status:
+  At Provider:
+    Boot Time:   7080
+    Created At:  2023-11-22T07:50:24Z
+    Dns:         little-frost-y209h46o.dal0.kraft.cloud.
+    Private IP:  172.16.16.1
+  Conditions:
+    Last Transition Time:  2023-11-22T07:50:25Z
+    Reason:                Available
+    Status:                True
+    Type:                  Ready
+    Last Transition Time:  2023-11-22T07:50:24Z
+    Reason:                ReconcileSuccess
+    Status:                True
+    Type:                  Synced
+Events:
+  Type    Reason                   Age                From                                               Message
+  ----    ------                   ----               ----                                               -------
+  Normal  CreatedExternalResource  28m                managed/instance.compute.kraftcloud.crossplane.io  Successfully requested creation of external resource
+  Normal  UpdatedExternalResource  11m (x4 over 14m)  managed/instance.compute.kraftcloud.crossplane.io  Successfully requested update of external resource
+```
+
+As you can see, one of the outputs is the DNS of the created instance.
+You can take that address and query it to confirm your instance is working properly:
+
+```console
+curl https://little-frost-y209h46o.dal0.kraft.cloud
+```
+
+To delete the instance, simply delete the kubernetes object.
+The crossplane provider will reconcile the state in KraftCloud and remove the instance for you:
+
+```console
+kubectl delete instance example
+```
+
+## Troubleshooting and FAQs
+
+### How to debug issues with the provider?
+
+The first place to start is the log output of the running provider pod.
+Locate the pod and inspect its logs via:
+
+```console
+kubectl logs -f kraftcloud-provider-pod-name -n crossplane-system
+```
+
+Create, delete or update the instance definition in the kubernetes cluster and look for errors in the log.
+
+This workflow is also possible locally.
+If you are authenticated against a cluster with crossplane installed,
+check out [the repo](https://github.com/kraftcloud/crossplane-provider-kraftcloud) and run:
+
+```console
+make submodules
+make run
+```
+
+Before attempting the above, make sure the KraftCloud connection token has been applied to the cluster.
+
+#### Which actions does the provider support?
+
+In its present state (0.2.0), the provider allows creating, deleting, starting and stopping running unikernel instances.
+
+#### How can I see the state of my deployments?
+
+KraftCloud integrates with our kraftkit CLI.
+You will be able to see the instances created with crossplane by running:
+
+```console
+KRAFTCLOUD_METRO=fra0 kraft cloud instance ls
+```
+
+For more information, please refer to [kraftkit's documentation](https://unikraft.org/docs/cli/reference/kraft/cloud/instance/ls).
