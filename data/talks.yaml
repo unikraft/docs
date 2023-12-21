@@ -1,5 +1,15 @@
 - title: 'Introducing Unikraft: An SDK for fast, secure, and highly-specialized unikernels'
   year: 2023
+  video: https://www.youtube.com/watch?v=n4wOyAuNhl0
+  slides: https://docs.google.com/presentation/d/1xRm2Z1LYAYvu903g86aL3nTKUthWepwkOJaqj4dqWkg/edit?usp=sharing
+  thumbnail: "/thumbnails/coscup23.png"
+  presenters:
+  - name: Michalis Pappas
+    affiliation: Unikraft GmbH
+  venue: COSCUP'23
+
+- title: 'Introducing Unikraft: An SDK for fast, secure, and highly-specialized unikernels'
+  year: 2023
   video: https://www.facebook.com/hkoscon/videos/775282717602140
   slides: https://docs.google.com/presentation/d/1ALQ83_JcoCaeMHtqv9nq8LgBotBQ1Yhub2ycvVXpV24/edit?usp=sharing
   thumbnail: "/thumbnails/hkoscon2023.png"
