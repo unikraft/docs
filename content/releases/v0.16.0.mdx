@@ -1,0 +1,146 @@
+---
+version: 0.16.0
+releaseDate: 2024-01-02
+codename: Telesto
+commit: df6126446305cfc6f3db4fc207fc5e8a8dfa8845
+blogPost: /blog/2024-01-02-unikraft-releases-telesto
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.15.0...RELEASE-0.16.0
+---
+
+We are proud to announce the latest version update of Unikraft, v0.16.0!
+This release brings important new features and further improvements and stabilizing to the previous release (0.15.0 - Pandora).
+It adds new features, a healthy number of fixes and it enhances application support.
+
+Here is the full updates list:
+
+### 🚀 New Features
+
+* `lib/posix-socket`: Socket events ([#1224](https://github.com/unikraft/unikraft/pull/1224)) by @skuenzer
+* `.github/workflows`: Add workflow to merge approved PRs  ([#1223](https://github.com/unikraft/unikraft/pull/1223)) by @craciunoiuc
+* Limit visibility of fdt libraries to fdt-capable platforms ([#1219](https://github.com/unikraft/unikraft/pull/1219)) by @michpappas
+* `arch`: Introduce dedicated CPU Exception stack configuration ([#1214](https://github.com/unikraft/unikraft/pull/1214)) by @mogasergiu
+* `.github/workflows`: Add workflow to merge approved PRs ([#1209](https://github.com/unikraft/unikraft/pull/1209)) by @craciunoiuc
+* Add `lib/posix-fdtab` and `lib/vfscore` destructors ([#1205](https://github.com/unikraft/unikraft/pull/1205)) by @mogasergiu
+* `lib/posix-{fdio,socket}`: Add stat support to socket files ([#1203](https://github.com/unikraft/unikraft/pull/1203)) by @andreittr
+* `lib/vfscore`: initrd: `extract` option ([#1201](https://github.com/unikraft/unikraft/pull/1201)) by @skuenzer
+* `lib/ramfs`: Implement copying of directories ([#1190](https://github.com/unikraft/unikraft/pull/1190)) by @mschlumpp
+* `lib/posix-environ`: Add `README.md` file for posix-environ ([#1185](https://github.com/unikraft/unikraft/pull/1185)) by @DeliaPavel
+* `lib/posix-environ`: Add comments for posix-environ ([#1184](https://github.com/unikraft/unikraft/pull/1184)) by @DeliaPavel
+* `lib/*`: Introduce support for `AF_UNIX` sockets ([#1183](https://github.com/unikraft/unikraft/pull/1183)) by @andreittr
+* `lib/posix-socket`: Port from vfscore to new `uk_file` ([#1182](https://github.com/unikraft/unikraft/pull/1182)) by @andreittr
+* `lib/ukcpio`: Refactor and improve CPIO extraction ([#1181](https://github.com/unikraft/unikraft/pull/1181)) by @andreittr
+* `lib/posix-timerfd`: Introduce timerfd support ([#1179](https://github.com/unikraft/unikraft/pull/1179)) by @andreittr
+* `lib/posix-sysinfo`: Add documentation ([#1178](https://github.com/unikraft/unikraft/pull/1178)) by @StefanJum
+* `lib/posix-user`: Add README.md file for posix-user ([#1177](https://github.com/unikraft/unikraft/pull/1177)) by @DeliaPavel
+* `lib/posix-time`: Add README.md ([#1176](https://github.com/unikraft/unikraft/pull/1176)) by @RaduNichita
+* Introduce `UK_LLSYSCALL_R_U_DEFINE` and register `clone` with it ([#1175](https://github.com/unikraft/unikraft/pull/1175)) by @mogasergiu
+* Implement stack switching on system call entries and on ARM traps/IRQ's ([#1174](https://github.com/unikraft/unikraft/pull/1174)) by @mogasergiu
+* `lib/*`: Move POSIX pipes out of vfscore ([#1172](https://github.com/unikraft/unikraft/pull/1172)) by @andreittr
+* `lib/*`: Replace `posix-event` with independent libraries ([#1171](https://github.com/unikraft/unikraft/pull/1171)) by @andreittr
+* `lib/*`: Introduce posix-fdio ([#1170](https://github.com/unikraft/unikraft/pull/1170)) by @andreittr
+* `build`: Introduce `UK_IMAGE_NAME_OVERWRITE` make var ([#1169](https://github.com/unikraft/unikraft/pull/1169)) by @nderjung
+* `lib/*`: Introduce posix-fdtab ([#1168](https://github.com/unikraft/unikraft/pull/1168)) by @andreittr
+* `lib/uknetdev`: Add `ipv4_dns0_addr` configuration ([#1167](https://github.com/unikraft/unikraft/pull/1167)) by @mschlumpp
+* `lib/ukfile`: Introduce the ukfile library ([#1165](https://github.com/unikraft/unikraft/pull/1165)) by @andreittr
+* `lib/posix-user`: Add code comments ([#1164](https://github.com/unikraft/unikraft/pull/1164)) by @DeliaPavel
+* `lib/uktimeconv`: Add conversion functions for common timestamp structs ([#1162](https://github.com/unikraft/unikraft/pull/1162)) by @andreittr
+* `include`: Add strong/weak reference counting ([#1160](https://github.com/unikraft/unikraft/pull/1160)) by @andreittr
+* `plat/common/arm` + `lib/posix-process`: Various fixes for Golang ARM64 support ([#1158](https://github.com/unikraft/unikraft/pull/1158)) by @eduardvintila
+* `lib/ukboot`: Shutdown feature ([#1148](https://github.com/unikraft/unikraft/pull/1148)) by @skuenzer
+* `lib/vfscore`: Introduce `ukopts`, a new `vfs.fstab` option and `mkmp`, a `ukopts` option ([#1145](https://github.com/unikraft/unikraft/pull/1145)) by @mogasergiu
+* `lib/vfscore`: Re-enable the mounting of `initrd`'s through `fstab` ([#1144](https://github.com/unikraft/unikraft/pull/1144)) by @mogasergiu
+* `.github/workflows`: Add PR auto-labelling ([#1142](https://github.com/unikraft/unikraft/pull/1142)) by @craciunoiuc
+* `.github/workflows`: Add checkpatch checks for commits ([#1141](https://github.com/unikraft/unikraft/pull/1141)) by @craciunoiuc
+* `.github`: Enable dependabot for action bumping ([#1140](https://github.com/unikraft/unikraft/pull/1140)) by @craciunoiuc
+* `.github/workflows`: Add commit and PR format checks ([#1139](https://github.com/unikraft/unikraft/pull/1139)) by @craciunoiuc
+* `.github/workflows`: Add github workflows checks ([#1137](https://github.com/unikraft/unikraft/pull/1137)) by @craciunoiuc
+* `.github/workflows`: Add python checks for support scripts ([#1134](https://github.com/unikraft/unikraft/pull/1134)) by @craciunoiuc
+* `.github/workflows`: Add shellcheck for scripts ([#1133](https://github.com/unikraft/unikraft/pull/1133)) by @craciunoiuc
+* `{include/, lib/uksched, lib/uklock}`: Add static initializers ([#1126](https://github.com/unikraft/unikraft/pull/1126)) by @andreittr
+* `include/arch`: Add atomic fetch & AND operation ([#1125](https://github.com/unikraft/unikraft/pull/1125)) by @andreittr
+* `plat/kvm/efi.c`: Obtain MemoryMap again and retry when ExitBootService fails ([#1105](https://github.com/unikraft/unikraft/pull/1105)) by @kha-dinh
+* `lib/nolibc`: Introduce 'FILE' object APIs ([#1043](https://github.com/unikraft/unikraft/pull/1043)) by @Starnox
+* `plat`: Migrate ns16550 to drivers/uktty ([#1026](https://github.com/unikraft/unikraft/pull/1026)) by @michpappas
+* `plat`: Migrate pl011 to drivers/uktty ([#1025](https://github.com/unikraft/unikraft/pull/1025)) by @michpappas
+* `include/uk`: Move compiler definitions from `essentials.h` to `compiler.h` ([#960](https://github.com/unikraft/unikraft/pull/960)) by @rares-miculescu
+* `lib`: Move `atomic.h` arhitecture specific code to new `ukatomic` ([#950](https://github.com/unikraft/unikraft/pull/950)) by @Starnox
+* `plat`: Move register definitions into arch ([#937](https://github.com/unikraft/unikraft/pull/937)) by @rares-miculescu
+* `lib/ukgcov`: Introduce library for code coverage ([#906](https://github.com/unikraft/unikraft/pull/906)) by @Starnox
+* `lib/devfs`: Add Doxygen-style comments ([#714](https://github.com/unikraft/unikraft/pull/714)) by @calex257
+* `[dynamic-apps]`: Couchdb src ([#56](https://github.com/unikraft/dynamic-apps/pull/56)) by @mtimaN
+* `[app-elfloader]`: Namespace VDSO config option ([#68](https://github.com/unikraft/app-elfloader/pull/68)) by @skuenzer
+* `[app-elfloader]`: build: Upgrade `Kraftfile` to v0.6 specification ([#66](https://github.com/unikraft/app-elfloader/pull/66)) by @nderjung
+* `[app-elfloader]`: Register `arch_prctl` through `UK_LLSYSCALL_R_U_DEFINE` ([#65](https://github.com/unikraft/app-elfloader/pull/65)) by @mogasergiu
+* `[app-python3]`: README.md: Fix typo and update kraft run ([#25](https://github.com/unikraft/app-elfloader/pull/25)) by @gabrielpitic
+* `[app-uwebsockets]`: Pull uSockets and uWebSockets from Unikraft repos ([#1](https://github.com/unikraft/app-elfloader/pull/1)) by @jviotti
+* `[lib-libgo]`: Add support for AArch64 ([#9](https://github.com/unikraft/lib-libgo/pull/9)) by @eduardvintila
+* `[lib-lwip]`: Adapt to new auxiliary stack argument of `libuksched` API ([#41](https://github.com/unikraft/lib-lwip/pull/41)) by @mogasergiu
+* `[lib-lwip]`: Update to latest inittab changes ([#40](https://github.com/unikraft/lib-lwip/pull/40)) by @skuenzer
+* `[lib-lwip]`: socket.c: Port to the new posix-socket API ([#39](https://github.com/unikraft/lib-lwip/pull/39)) by @andreittr
+* `[lib-lwip]`: Modify `atomic.h` import line to accomodate plat re-arch ([#36](https://github.com/unikraft/lib-lwip/pull/36)) by @Starnox
+* `[lib-lwip]`: Add RAW socket type to LwIP ([#2](https://github.com/unikraft/lib-lwip/pull/2)) by @flapjack321
+* `[lib-musl]`: patches: Prefault page tables used in stacks allocated for threads ([#73](https://github.com/unikraft/lib-musl/pull/73)) by @eduardvintila
+* `[catalog]`: feat(library): Introduce Node 18 as library ([#22](https://github.com/unikraft/catalog/pull/22)) by @razvand
+* `[catalog]`: feat(library): Update base configuration ([#21](https://github.com/unikraft/catalog/pull/21)) by @razvand
+* `[catalog]`: feat: add "Hello, world!" Rust-based example ([#16](https://github.com/unikraft/catalog/pull/16)) by @mkroening
+* `[catalog]`: feat(base): Introduce base (ELFLoader) to library ([#11](https://github.com/unikraft/catalog/pull/11)) by @razvand
+* `[catalog]`: feat(library): Introduce Lua ([#6](https://github.com/unikraft/catalog/pull/6)) by @razvand
+* `[catalog]`: feat(workflows): Add linting GitHub Actions ([#5](https://github.com/unikraft/catalog/pull/5)) by @gabrielmocanu
+* `[catalog]`: feat(library): Introduce SQLite ([#4](https://github.com/unikraft/catalog/pull/4)) by @razvand
+* `[catalog]`: feat(examples): Introduce HTTP C application ([#3](https://github.com/unikraft/catalog/pull/3)) by @razvand
+
+### 🐛 Bug Fixes & Improvements
+
+* `lib/posix-fdtab`: Fix fdtab cleanup w/o asserts ([#1239](https://github.com/unikraft/unikraft/pull/1239)) by @andreittr
+* `lib/fdtab`: Fix compiler warnings ([#1237](https://github.com/unikraft/unikraft/pull/1237)) by @michpappas
+* `lib/posix-unixsocket`: Silence unused variable warnings ([#1236](https://github.com/unikraft/unikraft/pull/1236)) by @michpappas
+* `lib/vfscore`: Fix compiler warnings on mismatched bound ([#1235](https://github.com/unikraft/unikraft/pull/1235)) by @michpappas
+* `drivers/virtio/9p`: Fix warning on unused `vq` parameter ([#1234](https://github.com/unikraft/unikraft/pull/1234)) by @michpappas
+* `lib/posix-fdtab`: Export fdtab init priority ([#1231](https://github.com/unikraft/unikraft/pull/1231)) by @StefanJum
+* `lib/posix-pipe`: Fix stack overflow on struct init ([#1228](https://github.com/unikraft/unikraft/pull/1228)) by @andreittr
+* `lib/posix-fdio`: Handle ioctl(FIOCLEX|FIONCLEX) ([#1227](https://github.com/unikraft/unikraft/pull/1227)) by @andreittr
+* `lib/uknetdev`: Include `semaphore.h` conditionally to DISPATCHERTHREADS ([#1220](https://github.com/unikraft/unikraft/pull/1220)) by @michpappas
+* `plat/kvm/arm`: Fix implicit declaration of `enforce_w_xor_x()` ([#1217](https://github.com/unikraft/unikraft/pull/1217)) by @michpappas
+* `lib/ukboot`: Fix warning on undefined variable ([#1216](https://github.com/unikraft/unikraft/pull/1216)) by @michpappas
+* `lib/vfscore`: Use `unsigned long` for `fcntl`'s third argument's type ([#1213](https://github.com/unikraft/unikraft/pull/1213)) by @mogasergiu
+* `lib/posix-fdtab`: Reprioritize fdtab init & cleanup ([#1210](https://github.com/unikraft/unikraft/pull/1210)) by @andreittr
+* `.github/workflows`: Do not run checkpatch on pushes ([#1206](https://github.com/unikraft/unikraft/pull/1206)) by @craciunoiuc
+* `lib/ramfs`: Return proper errors on `ioctl` calls ([#1202](https://github.com/unikraft/unikraft/pull/1202)) by @StefanJum
+* `lib/posix-{pipe,unixsocket}`: Fix event delivery on closing ([#1208](https://github.com/unikraft/unikraft/pull/1208)) by @andreittr
+* `lib/posix-fdio`: Handle `FD_CLOEXEC` flag in fcntl correctly ([#1200](https://github.com/unikraft/unikraft/pull/1200)) by @andreittr
+* `lib/posix-poll`: Make `epoll_ctl` identify files by (fd + file description) ([#1198](https://github.com/unikraft/unikraft/pull/1198)) by @andreittr
+* `build`: Do not run integration tests on markdown-only changes ([#1197](https://github.com/unikraft/unikraft/pull/1197)) by @nderjung
+* `lib/uklock`: Fix recursive mutex static inititializer ([#1195](https://github.com/unikraft/unikraft/pull/1195)) by @StefanJum
+* `lib/uklock`: Fix static initializer for recursive mutexes ([#1194](https://github.com/unikraft/unikraft/pull/1194)) by @skuenzer
+* VFS re-arch fixes ([#1193](https://github.com/unikraft/unikraft/pull/1193)) by @skuenzer
+* `lib/ukfile`: Ignore `MSG_NOSIGNAL` flags for UNIX sockets ([#1189](https://github.com/unikraft/unikraft/pull/1189)) by @mschlumpp
+* `lib/vfscore`: Use recursive mutexes for vnodes ([#1192](https://github.com/unikraft/unikraft/pull/1192)) by @mschlumpp
+* `lib/posix-fdio`: Remove pointer dereference from fcntl ([#1191](https://github.com/unikraft/unikraft/pull/1191)) by @mschlumpp
+* `lib/syscall_shim`: Fix `arch_prctl`'s `ARCH_SET_FS` handling ([#1173](https://github.com/unikraft/unikraft/pull/1173)) by @mogasergiu
+* `plat/xen/x86_64`: Add missing segment alignment for `xen` ([#1166](https://github.com/unikraft/unikraft/pull/1166)) by @andreistan26
+* `include/arch`: Make time constants signed ([#1157](https://github.com/unikraft/unikraft/pull/1157)) by @andreittr
+* `include/arch`: Add raw compare-exchange operation ([#1156](https://github.com/unikraft/unikraft/pull/1156)) by @andreittr
+* `lib/vfscore`: Fix crash in fstatat on `NULL` args ([#1155](https://github.com/unikraft/unikraft/pull/1155)) by @andreittr
+* `lib/posix-time`: Allow `NULL` arg in `clock_getres` ([#1154](https://github.com/unikraft/unikraft/pull/1154)) by @andreittr
+* `ukboot`: Remove explicit `PLAT_KVM` dependency ([#1153](https://github.com/unikraft/unikraft/pull/1153)) by @kubanrob
+* `plat/common`: Fix missing chosen node handling ([#1151](https://github.com/unikraft/unikraft/pull/1151)) by @kubanrob
+* `arch/arm64`: Fix `ukarch_tlb_flush_entry` ([#1149](https://github.com/unikraft/unikraft/pull/1149)) by @kubanrob
+* `lib/devfs`: Remove dependency on `LIBVFSCORE_AUTOMOUNT_ROOTFS` ([#1146](https://github.com/unikraft/unikraft/pull/1146)) by @mogasergiu
+* `lib/nolibc,lib/isrlib`: Fix strncpy ([#973](https://github.com/unikraft/unikraft/pull/973)) by @haesbaert
+* `[app-elfloader]`: Silence warning on unused `err_unload_vaimg` label ([#70](https://github.com/unikraft/app-elfloader/pull/70)) by @michpappas
+* `[lib-libunwind]`: Fix unwinding ([#11](https://github.com/unikraft/lib-libunwind/pull/11)) by @mschlumpp
+* `[lib-lwip]`: Silence warning on arithmetic operation on socket flags (corrected) ([#44](https://github.com/unikraft/lib-lwip/pull/44)) by @michpappas
+* `[lib-lwip]`: Silence warning on arithmetic operation on socket flags ([#43](https://github.com/unikraft/lib-lwip/pull/43)) by @michpappas
+* `[lib-rust]`: lang/rust: Change cargo flag ([#4](https://github.com/unikraft/lib-rust/pull/4)) by @fabianpatras
+* `[lib-uwebsockets]`: Upgrade uWebSockets to `v20.49.0` ([#2](https://github.com/unikraft/lib-uwebsockets/pull/2)) by @jviotti
+* `[lib-uwebsockets]`: Upgrade to uWebSockets `v20.48.0` ([#1](https://github.com/unikraft/lib-uwebsockets/pull/1)) by @jviotti
+* `[catalog]`: fix(nginx/1.15): Fix missing file (`error.log`) ([#18](https://github.com/unikraft/catalog/pull/18)) by @nderjung
+* `[catalog]`: refactor: Application versions to their own directory ([#9](https://github.com/unikraft/catalog/pull/9)) by @nderjung
+* `[catalog]`: fix(README): Correct paths to actions and library directories ([#13](https://github.com/unikraft/catalog/pull/13)) by @nderjung
+* `[catalog]`: fix(merge-oci-digests): Show `--all` packages ([#8](https://github.com/unikraft/catalog/pull/8)) by @nderjung
+* `[catalog]`: `library/*`: Use short form for target definitions ([#2](https://github.com/unikraft/catalog/pull/2)) by @razvand
+* `[app-elfloader]`: Fix typo in README ([#67](https://github.com/unikraft/app-elfloader/pull/67)) by @RaduNichita
+* `[app-elfloader]`: Correctly set `Program Header` offset used for aux vector's `AT_PHDR` ([#64](https://github.com/unikraft/app-elfloader/pull/64)) by @mogasergiu
+* `[app-elfloader]`: Do not change real `fs_base` register in `arch_prctl` ([#63](https://github.com/unikraft/app-elfloader/pull/63)) by @mogasergiu
+
+A big thank you also to all those who helped in the [review process](unikraft.org/docs/contributing/review-process/): [Alexander Jung](https://github.com/nderjung), [Cezar Crăciunoiu](https://github.com/craciunoiuc), [Eduard Mihăilescu](https://github.com/Starnox), [Teodor Țeugea](https://github.com/John-Ted), [Marco Schlumpp](https://github.com/mschlumpp), [Maria Sfîrăială](https://github.com/mariasfiraiala), [Michalis Pappas](https://github.com/michpappas), [Radu Nichita](https://github.com/RaduNichita), [Răzvan Deaconescu](https://github.com/razvand), [Răzvan Vîrtan](https://github.com/razvanvirtan), [Sergiu Moga](https://github.com/mogasergiu), [Simon Kuenzer](https://github.com/skuenzer), [Stefan Jumarea](https://github.com/StefanJum).
