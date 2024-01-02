@@ -1,0 +1,237 @@
+---
+title: "Unikraft releases v0.16.0 (Telesto)"
+description: |
+  This release is the result of extensive hard work during the last months in
+  the entire community.
+publishedDate: 2024-01-02
+authors:
+- Răzvan Deaconescu
+- Andrei Tătar
+- Simon Kuenzer
+- Sergiu Moga
+tags:
+- release
+- announcement
+---
+
+We are excited to announce the update version of Unikraft, `v0.16.0`.
+
+This release is the result of constant testing, debugging, fixing and improvements during the past couple of months.
+It comes packed with plenty of fixes that improve the stability and application support of Unikraft.
+
+In this blog post, we present the new features available in Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.15.0...RELEASE-0.16.0).
+
+### VFS Redesign
+
+_This feature was championed by [Andrei Tătar](https://github.com/andreittr), with great support from [Simon Kuenzer](https://github.com/skuenzer)._
+
+Existing VFS design (`vfscore`) suffered from a lack of modularity with structures and methods located in different source code files, affecting maintainibility.
+
+The new design splits the implementation into multiple libraries that provide separation of concerns. The new libraries are:
+
+* `ukfile` ([#1165](https://github.com/unikraft/unikraft/pull/1165))
+* `posix-fdio` ([#1170](https://github.com/unikraft/unikraft/pull/1170))
+* `posix-fdtab` ([#1168](https://github.com/unikraft/unikraft/pull/1168))
+* `posix-poll` and `posix-eventfd` moved from `posix-event` ([#1171](https://github.com/unikraft/unikraft/pull/1171))
+* `posix-timerfd` ([#1179](https://github.com/unikraft/unikraft/pull/1179))
+* `posix-pipe` moved from `vfscore` ([#1172](https://github.com/unikraft/unikraft/pull/1172/files))
+
+### initrd Extraction ([#1201](https://github.com/unikraft/unikraft/pull/1201))
+
+_This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with support and feedback from [Sergiu Moga](https://github.com/mogasergiu) and [Alexander Jung](https://github.com/nderjung)._
+
+In conjunction with the embedded initrd support, this feature allows a secondary filesystem to add and potentially overwrite items in the primary (root) filesystem.
+This is implemented by passing the `extract` option to the `vfstab` command line argument, e.g. `vfs.fstab="initrd:/:initrd::extract:"`.
+
+With this in place, user can customize their own application on top of an existing application / language frameworks.
+A user would pull the base application from the registry and then run it with a secondary filesystem, that adds / overwrites required files.
+
+### Shutdown Mechanism ([#1148](https://github.com/unikraft/unikraft/pull/1148))
+
+_This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with great support from [Sergiu Moga](https://github.com/mogasergiu)._
+
+The shutdown mechanism permits the closing of the Unikraft virtual machine.
+Up until now, the virtual machine was left in a no-operation state, but didn't fully stop.
+
+The change consists of an extension of `inittab`.
+Each entry is extended to two function pointers: an initialization function pointer and a termination function pointer, which are handled in pairs and share the same priority.
+
+While initialization means iterating over the inittab and calling the initialization functions, termination is done by iterating over the inittab in reverse order.
+
+Initialization and termination are handled by the "init" thread of `lib/ukboot`.
+With scheduling, there is an option to start the `main()` of the application in a separate "main" thread.
+This allows shutdown requests to be handled independently of the state of `main()`.
+A shutdown request driver (e.g., ACPI button) or any other application thread can send a request to the "init" thread to initiate a shutdown.
+
+### GCOV Support (`ukgcov`) ([#906](https://github.com/unikraft/unikraft/pull/906))
+
+_This feature was championed by [Eduard Mihăilescu](https://github.com/Starnox) and [Michalis Pappas](https://github.com/michpappas)._
+
+This `ukgcov` library introduces initial setup with config options for console, binary file, and memory output.
+It takes advantage of GCC's Profiling and Test Coverage in Freestanding Environments.
+This feature was introduced in `GCC-13`, as such, this library won't work with any version lower than that.
+
+To utilize this library, you will need to select and configure some options:
+
+* Select `ukgcov` from `Library Configuration` KConfig menu.
+* Choose the way you want to extract the `gcov` information from the kernel.
+
+To extract the coverage file, you will need external filesystem support (9pfs):
+
+* In `plat` -> `kvm` -> `virtio`, select:
+  * `virtio PCI device support`
+  * `virtio 9P device`
+* In `lib` -> `vfscore`, select:
+  * `Default root filesystem (9PFS)`
+* Create a directory `fs0/` where the resulting filename with the name provided in `KConfig` will reside.
+
+To extract the coverage information, you can call the `gcov_dump_info()` function at the end of the program
+
+### Application Catalog
+
+_This feature was championed by [Alexander Jung](https://github.com/nderjung) and [Razvan Deaconescu](https://github.com/razvand) with feedback from [Ștefan Jumărea](https://github.com/StefanJum)._
+
+A new repository for building, running and deploying application is available, as the [`catalog`](https://github.com/unikraft/catalog) repository.
+This is a replacement for the application repositories (`app-*`) and for the repositories for binary compatible applications ([`static-pie-apps`](https://github.com/unikraft/static-pie-apps), [`dynamic-apps`](https://github.com/unikraft/dynamic-apps)).
+
+Applications and examples are to be aggregated in the catalog.
+The user will use [`kraft`](https://github.com/unikraft/kraftkit) commands to build, run and deploy applications, without other steps required.
+
+The catalog will be the focus of CI-based testing and, generally, any testing of submitted features and fixes in the Unikraft core and library repositories.
+
+### UNIX Socket Support ([#1183](https://github.com/unikraft/unikraft/pull/1183))
+
+_This feature was championed by [Andrei Tatar](https://github.com/andreittr) with great support from [Simon Kuenzer](https://github.com/skuenzer)._
+
+This feature adds UNIX socket support (i.e. local domain sockets), up until now not-supported in Unikraft.
+It adds `posix-unixsocket`, a library implementing `AF_UNIX` sockets on top of `posix-socket` using new VFS design, along with prerequisite changes:
+
+* minor API extension for `posix-socket`
+* addition of `<sys/un.h>` in `nolibc`
+
+This work is part of the VFS redesign work, relying on the newly introduced `ukfile`, `posix-fdio`, `posix-fdtab` libraries.
+
+### GitHub Workflows
+
+_This feature was championed by [Cezar Crăciunoiu](https://github.com/craciunoiuc) with greate support from [Alexander Jung](https://github.com/nderjung)._
+
+New GitHub workflows have been added to the [Unikraft core repository](https://github.com/unikraft/unikraft/tree/staging/.github/workflows).
+These perform various checks on submitted work to ensure consistency and compliance.
+They affect C, YAML, Python, shell code and Git commits.
+
+### Plat Re-Arch Updates
+
+_This work was championed by [Rareș Miculescu](https://github.com/rares-miculescu) and [Michalis Pappas](https://github.com/michpappas)._
+
+The plat re-arch track continued with three new items:
+
+* Move register definitions from `plat/` to `arch/` ([#937](https://github.com/unikraft/unikraft/pull/937))
+* Introduce new `ukatomic` library and move atomic code to it ([#950](https://github.com/unikraft/unikraft/pull/950)
+* Move compiler definitions from `essentials.h` to `compiler.h` ([#960](https://github.com/unikraft/unikraft/pull/960))
+
+These further assist in the overall improved design of the Unikraft source code and a better separation between platform and architecture code.
+
+### Internal Code Documentation Updates
+
+_This feature was championed by [Ștefan Jumărea](https://github.com/StefanJum), [Radu Nichita](https://github.com/RaduNichita), [Delia Pavel](https://github.com/DeliaPavel) with support from [Răzvan Deaconescu](https://github.com/razvand)._
+
+Further updates to the internal documentation, in the form of code comments and library `README` files, have been integrated.
+This is part of the ongoing effort to have up-to-date documentation of the interfaces and inner workings of Unikraft internal libraries.
+
+### Go on ARM64 ([#1158](https://github.com/unikraft/unikraft/pull/1158), [`lib-libgo#9`](https://github.com/unikraft/lib-libgo/pull/9))
+
+_This feature was championed by [Eduard Vintilă](https://github.com/eduardvintila) with support from [Michalis Pappas](https://github.com/michpappas) and [Ștefan Jumărea](https://github.com/StefanJum)._
+
+Previously updated Go support was only available for x86_64.
+This feature enables it for ARM64.
+
+This now makes it possible to run native Go applications on ARM64 with `lib-libgo`.
+
+### Stack Switching for System Calls and ARM Exceptions
+
+_This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with support from [Michalis Pappas](https://github.com/michpappas)._
+
+Before, whenever a system call would be invoked throgh the `syscall` instruction on `x86_64`, Unikraft would continue using the application's stack to save context state, which would end up sometimes contaminating the Red Zone of the trapped application or even write past it in cases such as those of `Goroutines` that have a very [small stack size](https://go.dev/doc/go1.4#runtime).
+
+In order to solve this, a [per-thread](https://github.com/unikraft/unikraft/pull/1174/commits/35d1dd1cfd599f679ec82ab9949cda18113ab09b) and [per-LCPU](https://github.com/unikraft/unikraft/pull/1174/commits/b04b64f3823fa3bb6ad095cc154ad7fc5feb325b) (logical CPU) auxiliary stack pointer has been introduced that we switch to on binary system call entry through the `swapgs` instruction.
+
+Furthermore, ARM64 was suffering from the same thing, but worse: on every Asynchronous or Synchronous Exception, we were using the same application stack, since ARM64 does not have `Interrupt Stack Tables` like `x86_64`.
+To fix this, similarly to how we [store LCPU data into the `GS_BASE`/`KERNEL_GSB_BASE`](https://github.com/unikraft/unikraft/pull/1174/commits/065147b7c7a24727c2ab69dcb42ae1cbd2358e32) MSR's on `x86_64`, we use [`TPIDR_EL1`](https://github.com/unikraft/unikraft/pull/1174/commits/820c9ab8bad10c4fd12b3a029210f812e3d55ed0) to store this structure on ARM64 and [`TPIDRRO_EL0`](https://github.com/unikraft/unikraft/pull/1174/commits/014d637c65da22d8afd082877b58190fd4dd76a9#diff-6f06ae093526114b31051e5aa5326e75555b6bc10688515d75634b28426d5b76R77) as a scratch register used to switch to the auxiliary stack without touching anything from the current context.
+The auxiliary stack pointer is mainly used for system calls, but for IRQ's/traps the unused [`SP_EL0`](https://github.com/unikraft/unikraft/pull/1174/commits/014d637c65da22d8afd082877b58190fd4dd76a9#diff-9b388adc5acf113b253e52c68de2b5076e254c92fc27eb0a457f9c0da93d262aR74) register will be used to hold a double buffer: a stack for IRQ's and a stack for traps.
+
+### Introduce `UK_LLSYSCALL_R_U_DEFINE`
+
+_This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with support from [Michalis Pappas](https://github.com/michpappas)._
+
+On some rare cases, some application runtimes would prefer that after a `clone` system call the child's context will be the exact same as the parent's before the call, except of course for the scratch registers or the return value registers.
+In our case we would not do this and instead have the child's context zeroed out.
+Therefore, we would need to give access to the caller's context to both native and binary system calls.
+
+To make tracking of this context across system calls easier, two new context structures have been added: [`ukarch_sysregs`](https://github.com/unikraft/unikraft/pull/1175/commits/0994de5e681b52ee6de9a3646802eca419242a4b) (TLS and, for `x86_64`, `GS_BASE`) and [`uk_syscall_ctx`](https://github.com/unikraft/unikraft/pull/1175/commits/976fbc53e12dea9717c55ac46abc8390714dec4c) (for `ukarch_sysregs`, extended context and general purpose registers).
+
+While in the case of binary system calls we had the generic `syscall` instruction entry, for the native ones system calls are just a function call so in order to also be able to store this context on native system calls, a new system call registration macro has been introduced: [`UK_LLSYSCALL_R_U_DEFINE`](https://github.com/unikraft/unikraft/pull/1175/commits/886dcc7c2b7ff1fc0461062e7ce6146dfbf6d563).
+This new macro would append a context saving prologue for both [`x86_64`](https://github.com/unikraft/unikraft/pull/1175/commits/bd0e24660a98b928fe759bb39c27d966b97d9533) and [`ARM64`](https://github.com/unikraft/unikraft/pull/1175/commits/c7064c83eedf7182e92e0c182ec1723daccc69dc) to the actual function call of native system calls as well as define a hidden additional argument, `usc` (`struct uk_syscall_ctx`), to registered system calls.
+An example on how this system call registration macro can be used is the new [`clone`](https://github.com/unikraft/unikraft/pull/1175/commits/f1d17db16f30447a27dcffcbd2bcda7c314bdf23) system call registration, as well as the documentation in the [commit message](https://github.com/unikraft/unikraft/pull/1175/commits/886dcc7c2b7ff1fc0461062e7ce6146dfbf6d563) itself.
+
+## Community Activities
+
+### GSoC Mentors Summit 2023
+
+Unikraft was part of [GSoC Mentors Summit 2023](https://summerofcode.withgoogle.com/programs/2023) taking place in Sunnyvale, California, US.
+[Răzvan Deaconescu](https://github.com/razvand) represented the Unikraft community and its taking part in Google Summer of Code during the past two years.
+
+It was a great time to interact with representatives from other open source projects and share ideas and experiences related to Google Summer of Code and beyond.
+
+As part of the un-conference at the summit, Răzvan hosted the "Balancing Acts in Open Source Projects", engaging the participants in sharing their own views on potentially conflicting actions in open source communities, and best practicies in handling them.
+
+There is now an ongoing discussion on Zulip channel to further strenghten the collaboration between open source communities.
+And to increase the quality of future GSoC projects.
+
+### SOSP'23 Tutorial
+
+We organized the [Unikraft SOSP Tutorial](https://unikraft.org/hackathons/2023-10-sosp) hackathon as part of the [SOSP 2023](https://sosp2023.mpi-sws.org/) conference.
+The tutorial was focused on recent updates to the Unikraft ecosystem, particularly application support and usability via KraftKit.
+
+Paricipants were mostly researchers and academia staff, interested in using Unikraft as part of their research and teaching work.
+
+### Monthly Hackathon
+
+We continue organizing monthly hackathons, generally taking place in the last Saturday of each month.
+Hackathons take place both online and in person, generally at the National University of Science and Technology POLITEHNICA of Bucharest.
+
+We organized a monthly hackathon on Sunday, December 17, 2023.
+It was targeted on the `0.16` release, application support, CI improvements and fixes.
+It featured an extensive participation of 16 members of the community.
+
+The next monthly hackathon is scheduled to take place on Saturday, January 27, 2024, ahead of a scheduled new release.
+
+### Unikernel Alliance
+
+As part of the Unikernel Alliance community, we now have a brand new [website](https://unikernelalliance.org/), created from a [repository](https://github.com/unikernelalliance/unikernelalliance.github.io).
+The website presents information about member projects in the community, topics of interest and further information.
+
+We continue organizing meetings in the community, generally taking place in the last Thursday of each month.
+The next meeting is scheduled for Thursday, January 25, 2024, 6pm CET.
+
+Current discussions focus on unikernel specifics and challenges in topics such as usability, performance, security, efficiency.
+
+### Taking Part of FOSDEM
+
+Unikraft will be part of [FOSDEM'24](https://fosdem.org/2024/), taking place on February 3 & 4, 2024, at the [Microkernel and Component-based OS devroom](https://fosdem.org/2024/schedule/track/microkernel/).
+There will be two talks featured:
+
+* "Linux Binary Compatible Unikernels with Unikraft", by [Simon Kuenzer](https://github.com/skuenzer)
+* "Unikernels Are Here: Building, Running and Deploying Application Unikernels With One Command" by [Răzvan Deaconescu](https://github.com/razvand)
+
+It will be a great time to meet in person with other members of the unikernel community and the larger open source community.
+
+See you in Brussels!
+
+### Getting Ready for GSoC'24
+
+[Google Summer of Code 2024 (GSoC'24)](https://summerofcode.withgoogle.com/) has been announced.
+We are making preparations for the future GSoC'24 submission period.
+The aim is to get future applicants involved in the community such that they would be able to make consistent contributions as part of the application portfolio.
+
+If you are interested in taking part in GSoC'24, and work on operating-systems, cloud and tooling items, join [Unikraft Discord](http://bit.ly/UnikraftDiscord), take part in discussions, make contributions and ask for support.
