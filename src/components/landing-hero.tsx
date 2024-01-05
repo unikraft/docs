@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2023-11-15-kraftkit-v0.7.0-released'} passHref>
+              <NextLink href={'/blog/2024-01-02-unikraft-releases-telesto'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    KraftKit release v0.7.0
+                    Unikraft releases v0.16.0 (Telesto)
                   </Text>
                   <Box
                     display={{
