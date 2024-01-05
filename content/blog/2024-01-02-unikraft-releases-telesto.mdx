@@ -14,52 +14,124 @@ tags:
 - announcement
 ---
 
-We are excited to announce the update version of Unikraft, `v0.16.0`.
+We are excited to announce the update version of Unikraft, v0.16.0 (Telesto).
 
-This release is the result of constant testing, debugging, fixing and improvements during the past couple of months.
-It comes packed with plenty of fixes that improve the stability and application support of Unikraft.
+This release is the result of constant testing, debugging, fixing and improvements during the past three months.
+It comes packed with plenty of fixes that improve the stability and application support of Unikraft as well as new features we're excited to show off.
 
-In this blog post, we present the new features available in Unikraft.
-For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.15.0...RELEASE-0.16.0).
+For a full breakdown, please [check out the full changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.15.0...RELEASE-0.16.0).
 
-### VFS Redesign
+### Virtual Filesystem Interface Redesign
 
 _This feature was championed by [Andrei Tătar](https://github.com/andreittr), with great support from [Simon Kuenzer](https://github.com/skuenzer)._
 
-Existing VFS design (`vfscore`) suffered from a lack of modularity with structures and methods located in different source code files, affecting maintainibility.
+Unikraft's `vfscore`, a key element of the Unikraft project since its inception, [has historically excelled in virtualizing file systems](https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore) but faced limitations in terms of modularity and addressing new constraints made possible via the unikernel model.
+Acknowledging these challenges, the Unikraft team has completely redesigned and reimplemented the virtual filesystem abstractions which has previously represented `vfscore`.
+The goal is to enhance modularity, scalability, and overall adaptability, addressing existing limitations and ensuring Unikraft remains a pioneering force in lightweight, specialized operating systems.
+This effort aims to create a more flexible and extensible VFS system, forming a solid foundation for continued innovation within the Unikraft ecosystem.
 
-The new design splits the implementation into multiple libraries that provide separation of concerns. The new libraries are:
+<Info>
+These new-style VFS changes are fully compatible with existing KConfig and Unikraft internal APIs.
+</Info>
 
-* `ukfile` ([#1165](https://github.com/unikraft/unikraft/pull/1165))
-* `posix-fdio` ([#1170](https://github.com/unikraft/unikraft/pull/1170))
-* `posix-fdtab` ([#1168](https://github.com/unikraft/unikraft/pull/1168))
-* `posix-poll` and `posix-eventfd` moved from `posix-event` ([#1171](https://github.com/unikraft/unikraft/pull/1171))
-* `posix-timerfd` ([#1179](https://github.com/unikraft/unikraft/pull/1179))
-* `posix-pipe` moved from `vfscore` ([#1172](https://github.com/unikraft/unikraft/pull/1172/files))
 
-### initrd Extraction ([#1201](https://github.com/unikraft/unikraft/pull/1201))
+To address the challenge of modularity, `vfscore` has been radically re-imagined and broken down into more primitive interfaces representing individually bespoke microlibraries which are testament to the Unikraft philosophy of "one library one purpose" model.
+Such compensation facilitates the construction of even more bespoke unikernel images.
+
+These new libraries are:
+
+| New Library                                                                            | PR                                                      | Purpose                                                                                                                                                                                                                                      |
+|----------------------------------------------------------------------------------------|---------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`ukfile`](https://github.com/unikraft/unikraft/tree/staging/lib/ukfile)               | [#1165](https://github.com/unikraft/unikraft/pull/1165) | A new low-level abstraction for "file descriptors" and "open file descriptors".                                                                                                                                                              |
+| [`posix-fdio`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-fdio)       | [#1170](https://github.com/unikraft/unikraft/pull/1170) | Offers POSIX-compatible file I/O, metadata, and control functions for files and the POSIX syscalls for `(p)read(v)*`, `(p)write(v)*`, `lseek`, `fstat`, `fcntl`, `ioctl`.                                                                    |
+| [`posix-fdtab`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-fdtab)     | [#1168](https://github.com/unikraft/unikraft/pull/1168) | A file descriptor table and POSIX compatibility for [Unix file types](https://en.wikipedia.org/wiki/Unix_file_types) (and registration macros for new-style file types) as well as the POSIX syscalls for `close`, `dup`, `dup2` and `dup3`. |
+| [`posix-poll`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-poll)       | [#1171](https://github.com/unikraft/unikraft/pull/1171) |  Support for polling files and POSIX syscalls for `(p)poll`, `(p)select(6)` and `epoll_*`.                                                                                                                                                   |
+| [`posix-eventfd`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-eventfd) | [#1171](https://github.com/unikraft/unikraft/pull/1171) | Support for event file descriptors, `eventfd` files, and the POSIX syscalls for `eventfd` and `eventfd`.                                                                                                                                     |
+| [`posix-timerfd`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-timerfd) | [#1179](https://github.com/unikraft/unikraft/pull/1179) | Support for timer file descriptors, `timerfd` files, and the POSIX syscalls for `timerfd_create`, `timerfd_settime` and `timerfd_gettime`.                                                                                                   |
+| [`posix-pipe`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-pipe)       | [#1172](https://github.com/unikraft/unikraft/pull/1172) | Support for pipe files and the POSIX syscalls for `pipe` and `pipe2`.                                                                                                                                                                        |
+
+To understand the challenge of modularity we must start with an introduction of a new fundamental internal library, `ukfile`, which contains basic primitives for Unikraft abstractions of a "file" as well as an "open file" (a.k.a. "open file descriptions").
+These are low-level internals which do not have direct correspondents in any userspace-facing API.
+Not to be confused with "file descriptors" or other similar POSIX-y concepts; these are later introduced via `posix-fd*` and others.
+
+### So, what is a _file_?
+
+To overuse a classical *NIX idiom, ["everything is a file"](https://en.wikipedia.org/wiki/Everything_is_a_file).
+In the context of Unikraft, however, a file is considered an abstraction for any resource that offers a combination of input, output, and/or control operations.
+A file in Unikraft is a combination of an _immutable identity_ coupled with _mutable state_.
+
+Files are now represented in Unikraft by the [`struct uk_file`](https://github.com/unikraft/unikraft/blob/RELEASE-0.16.0/lib/ukfile/include/uk/file.h#L121-L132) type, referenced in APIs as `const struct uk_file *` to enforce immutability.  Identity consists of:
+- **A volume identifier**: driver-specific field, used to identify the file type as well as its originating driver instance;
+- **A file node**: reference to driver-specific data associated with the file; and,
+- **Table of file operations**: implementations of well-defined file operations ([see below](#file-operations)).
+
+File state is used for bookkeeping purposes and includes: reference counting (strong & weak references); locks for synchronization; and, event set and queue for polling operations.
+
+#### File Operations
+
+Files allow for a defined set of operations, some of which are driver-implemented, while others are common across all files.
+
+Driver-specific operations have a well-defined interface and are implemented by
+file drivers.  These are:
+- **I/O**: manipulating an array of unstructured bytes, e.g. `read` and `write`.
+- **Metadata**: manipulating a defined structure of metadata related to the
+  file, e.g. `getstat` and `setstat`.
+- **Control**: requests for special operations to be performed by the file, e.g. `ctl`.
+- (Internal) **Cleanup/destructor**: what happens, if anything, when we no longer need the file
+
+Common operations are implemented centrally for all file objects:
+
+- **Reference counting**: acquire/release of regular (strong) or weak references;
+- **Event polling & notification**: via a _Driver API_ which can set and clear
+  what event flags are active on the file; and/or via _User API_ which can check
+  whether specific events are set on a file, and to wait and be awoken when an
+  event becomes set on a file;
+- **Voluntary kernel-space synchronization mechanisms**:
+  - Driver operations provide no synchronization or atomicity guarantees themselves in the general case
+  - Drivers are free to implement these operations as efficiently as their internal data model allows
+  - Higher-level APIs that want to provide atomicity guarantees (e.g. POSIX read vs. write serialization) can and should use these mechanisms to achieve their goal
+
+
+### What is an _open file_?
+
+Open files are stateful and mutable references to a file that is "in use".  The precise definition of "in use" is intentionally left vague and up to client code.  Open file state consists of:
+- Reference count, allowing multiple independent shared references
+- Open "mode", a client-defined bitmask of open file options
+- Current position for I/O (i.e. what one sets with `lseek()`)
+- Lock for synchronizing changes to the above
+
+Open files are represented in Unikraft by the `struct uk_ofile` type.  A single `struct uk_file` may be referenced by an arbitrary number of ofiles, each of which acts independently from the others.
+
+Open files do not expose any operations themselves, instead providing only a base data structure for higher-level abstractions, such as file descriptor tables and POSIX I/O syscalls.
+
+### Initial Embedded Initrd Overwrite ([#1201](https://github.com/unikraft/unikraft/pull/1201))
 
 _This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with support and feedback from [Sergiu Moga](https://github.com/mogasergiu) and [Alexander Jung](https://github.com/nderjung)._
 
 In conjunction with the embedded initrd support, this feature allows a secondary filesystem to add and potentially overwrite items in the primary (root) filesystem.
-This is implemented by passing the `extract` option to the `vfstab` command line argument, e.g. `vfs.fstab="initrd:/:initrd::extract:"`.
+This is implemented by passing the `extract` option to the `vfstab` command line
+argument, e.g.:
+
+```
+vfs.fstab="initrd:/:initrd::extract:"
+```
 
 With this in place, user can customize their own application on top of an existing application / language frameworks.
 A user would pull the base application from the registry and then run it with a secondary filesystem, that adds / overwrites required files.
 
-### Shutdown Mechanism ([#1148](https://github.com/unikraft/unikraft/pull/1148))
+### Graceful Shutdowns ([#1148](https://github.com/unikraft/unikraft/pull/1148))
 
 _This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with great support from [Sergiu Moga](https://github.com/mogasergiu)._
 
-The shutdown mechanism permits the closing of the Unikraft virtual machine.
-Up until now, the virtual machine was left in a no-operation state, but didn't fully stop.
+This release introduces support for safely and gracefully shutting down Unikraft via the introduction of system-wide destructors via an extension to `inittab`.
+Up until now, Unikraft VMs were left in a no-operation state, but didn't fully stop, when a shutdown signal received.
 
-The change consists of an extension of `inittab`.
+The `inittab` serves as a section of entries which are executed at different lifecycle moments in Unikraft's boot process and offers a convenient callback mechanism.
 Each entry is extended to two function pointers: an initialization function pointer and a termination function pointer, which are handled in pairs and share the same priority.
 
-While initialization means iterating over the inittab and calling the initialization functions, termination is done by iterating over the inittab in reverse order.
+While initialization means iterating over the inittab and calling the initialization functions, termination is done by iterating over the `inittab` in reverse order.
 
-Initialization and termination are handled by the "init" thread of `lib/ukboot`.
+Initialization and termination are handled by the "init" thread of `ukboot`.
 With scheduling, there is an option to start the `main()` of the application in a separate "main" thread.
 This allows shutdown requests to be handled independently of the state of `main()`.
 A shutdown request driver (e.g., ACPI button) or any other application thread can send a request to the "init" thread to initiate a shutdown.
@@ -152,7 +224,7 @@ This now makes it possible to run native Go applications on ARM64 with `lib-libg
 
 _This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with support from [Michalis Pappas](https://github.com/michpappas)._
 
-Before, whenever a system call would be invoked throgh the `syscall` instruction on `x86_64`, Unikraft would continue using the application's stack to save context state, which would end up sometimes contaminating the Red Zone of the trapped application or even write past it in cases such as those of `Goroutines` that have a very [small stack size](https://go.dev/doc/go1.4#runtime).
+Before, whenever a system call would be invoked through the `syscall` instruction on `x86_64`, Unikraft would continue using the application's stack to save context state, which would end up sometimes contaminating the Red Zone of the trapped application or even write past it in cases such as those of `Goroutines` that have a very [small stack size](https://go.dev/doc/go1.4#runtime).
 
 In order to solve this, a [per-thread](https://github.com/unikraft/unikraft/pull/1174/commits/35d1dd1cfd599f679ec82ab9949cda18113ab09b) and [per-LCPU](https://github.com/unikraft/unikraft/pull/1174/commits/b04b64f3823fa3bb6ad095cc154ad7fc5feb325b) (logical CPU) auxiliary stack pointer has been introduced that we switch to on binary system call entry through the `swapgs` instruction.
 
@@ -160,7 +232,7 @@ Furthermore, ARM64 was suffering from the same thing, but worse: on every Asynch
 To fix this, similarly to how we [store LCPU data into the `GS_BASE`/`KERNEL_GSB_BASE`](https://github.com/unikraft/unikraft/pull/1174/commits/065147b7c7a24727c2ab69dcb42ae1cbd2358e32) MSR's on `x86_64`, we use [`TPIDR_EL1`](https://github.com/unikraft/unikraft/pull/1174/commits/820c9ab8bad10c4fd12b3a029210f812e3d55ed0) to store this structure on ARM64 and [`TPIDRRO_EL0`](https://github.com/unikraft/unikraft/pull/1174/commits/014d637c65da22d8afd082877b58190fd4dd76a9#diff-6f06ae093526114b31051e5aa5326e75555b6bc10688515d75634b28426d5b76R77) as a scratch register used to switch to the auxiliary stack without touching anything from the current context.
 The auxiliary stack pointer is mainly used for system calls, but for IRQ's/traps the unused [`SP_EL0`](https://github.com/unikraft/unikraft/pull/1174/commits/014d637c65da22d8afd082877b58190fd4dd76a9#diff-9b388adc5acf113b253e52c68de2b5076e254c92fc27eb0a457f9c0da93d262aR74) register will be used to hold a double buffer: a stack for IRQ's and a stack for traps.
 
-### Introduce `UK_LLSYSCALL_R_U_DEFINE`
+### Introduce `clone(5)` and `UK_LLSYSCALL_R_U_DEFINE`
 
 _This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with support from [Michalis Pappas](https://github.com/michpappas)._
 
@@ -185,7 +257,7 @@ It was a great time to interact with representatives from other open source proj
 
 As part of the un-conference at the summit, Răzvan hosted the "Balancing Acts in Open Source Projects", engaging the participants in sharing their own views on potentially conflicting actions in open source communities, and best practicies in handling them.
 
-There is now an ongoing discussion on Zulip channel to further strenghten the collaboration between open source communities.
+There is now an ongoing discussion on Zulip channel to further strengthen the collaboration between open source communities.
 And to increase the quality of future GSoC projects.
 
 ### SOSP'23 Tutorial
@@ -193,7 +265,7 @@ And to increase the quality of future GSoC projects.
 We organized the [Unikraft SOSP Tutorial](https://unikraft.org/hackathons/2023-10-sosp) hackathon as part of the [SOSP 2023](https://sosp2023.mpi-sws.org/) conference.
 The tutorial was focused on recent updates to the Unikraft ecosystem, particularly application support and usability via KraftKit.
 
-Paricipants were mostly researchers and academia staff, interested in using Unikraft as part of their research and teaching work.
+Participants were mostly researchers and academia staff, interested in using Unikraft as part of their research and teaching work.
 
 ### Monthly Hackathon
 
