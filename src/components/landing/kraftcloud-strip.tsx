@@ -1,33 +1,13 @@
 import {
-  Stack,
   Flex,
   Box,
   Heading,
   Text,
-  Button,
   BoxProps,
-  Image,
-  Icon,
-  IconButton,
   chakra,
-  SimpleGrid,
-  createIcon,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  StatGroup,
-  IconProps,
-  useColorModeValue,
 } from '@chakra-ui/react';
-import { FaArrowRight } from 'react-icons/fa'
-import { DiGithubBadge } from 'react-icons/di'
-import NextLink from 'next/link'
 import { CompanyKraftCloud } from 'components/logos'
 import Container from 'components/container'
-import CodeContainer from 'components/mdx-components/codeblock/code-container'
-import CopyButton from 'components/mdx-components/codeblock/copy-button'
 import { t } from 'utils/i18n'
 
 export function KraftCloudStrip(props: BoxProps) {
