@@ -32,12 +32,6 @@ type FooterLinkProps = {
   label?: string
 }
 
-const FooterLink = ({ icon, href, label }: FooterLinkProps) => (
-  <Link display='inline-block' href={href} aria-label={label} isExternal>
-    <Icon as={icon} fontSize='xl' color='gray.400' />
-  </Link>
-)
-
 const socials = [
   {
     icon: BsGithub,
@@ -109,8 +103,9 @@ export const Footer = (props: StackProps) => (
           <XenProject />
         </Stack>
         <Box></Box>
-        {Object.entries(footerLinks).map((f) => (
+        {Object.entries(footerLinks).map((f, i) => (
           <Stack
+            key={i}
             align={{
               base: 'flex-start',
               sm: 'flex-end'
@@ -154,8 +149,9 @@ export const Footer = (props: StackProps) => (
             sm: 'right'
           }}
         >
-          {socials.map((social) => (
+          {socials.map((social, i) => (
             <Link
+              key={i}
               isExternal
               aria-label={social.label}
               href={social.href}
