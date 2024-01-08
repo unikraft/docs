@@ -9,7 +9,7 @@
 	.st3{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
 	.st4{fill:#99D5F1;stroke:#008BC7;stroke-width:0.75;stroke-miterlimit:10;}
 	.st5{fill:none;}
-	.st6{font-family:'Inter-Regular';}
+	.st6{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st7{font-size:9px;}
 	.st8{fill:#F8B9C7;stroke:#AF64A2;stroke-width:0.75;stroke-miterlimit:10;}
 	.st9{fill:#56C1A7;stroke:#337061;stroke-width:0.75;stroke-miterlimit:10;}
