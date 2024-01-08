@@ -1,7 +1,30 @@
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a code {
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+blockquote.chakra-alert {
+  align-items: start;
+}
+
+blockquote.chakra-alert span.chakra-alert__icon {
+  margin-top: 1px;
+}
+
 blockquote #codeblock > div {
   margin-top: 14px;
   margin-bottom: 5px;
   border-radius: 3px;
+}
+
+blockquote div table:first-child {
+  margin-top: 15px;
+  margin-bottom: 5px;
 }
 
 .codeblock-good > div {
