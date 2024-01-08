@@ -1,4 +1,4 @@
-import { Box, Link as ChakraLink, Image, SimpleGrid, Text } from '@chakra-ui/react'
+import { Box, Link as ChakraLink, Image, SimpleGrid, Text, useColorModeValue } from '@chakra-ui/react'
 import Link from 'next/link'
 
 const LanguageLink = (props) => {
@@ -6,25 +6,20 @@ const LanguageLink = (props) => {
   return (
     <Link passHref href={href}>
       <ChakraLink
-        bg='white'
+        bg='transparent'
         display='block'
-        shadow='xl'
-        border='solid 1px'
-        borderColor='slate.200'
+        border='solid 2px'
+        borderColor={accentColor}
         textDecoration='none'
-        borderRadius='xl'
+        borderRadius='lg'
         overflow='hidden'
         transform='auto'
         transition='all 0.1s ease-in-out'
-        _dark={{
-          borderColor: 'ukblue.600',
-          bg: 'ukblue.900'
-        }}
         _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'md' }}
       >
         <Box pt='4'>
           {children}
-          <Box bg={accentColor} mt='4' py='1' color='white'>
+          <Box bg={accentColor} mt='4' py='1' color={accentColor == 'white' ? 'black' : 'white'}>
             <Text textAlign='center' fontSize='sm' fontWeight='bold'>
               {name}
             </Text>
@@ -36,6 +31,8 @@ const LanguageLink = (props) => {
 }
 
 export const LanguageLinks = () => {
+  const theme = useColorModeValue('dark', 'light');
+
   return (
     <SimpleGrid
       mt='6'
@@ -48,33 +45,40 @@ export const LanguageLinks = () => {
       }}
     >
       <LanguageLink
-        href='https://github.com/unikraft/app-helloworld-cpp'
-        accentColor='#659AD2'
-        name='C/C++'
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-c'
+        accentColor='#A9BACD'
+        name='C'
       >
-        <Image alt='C/C++' src='/logos/lang-cpp.svg' maxW='20' minH='24' mx='auto' />
+        <Image alt='C' src='/logos/lang-c.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
-      {/* <LanguageLink
-        href='/getting-started/lang-go'
-        accentColor='#05A8D3'
-        name='Go'
-      >
-        <Image alt='Go' src='/logos/lang-go.svg' maxW='20' minH='24' mx='auto' />
-      </LanguageLink> */}
       <LanguageLink
-        href='https://github.com/unikraft/app-python3'
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-cpp'
+        accentColor='#659AD2'
+        name='C++'
+      >
+        <Image alt='C++' src='/logos/lang-cpp.svg' maxW='20' minH='24' mx='auto' />
+      </LanguageLink>
+      <LanguageLink
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-rs'
+        accentColor={theme == 'dark' ? 'black' : 'white'}
+        name='Rust'
+      >
+        <Image alt='Rust' src={`/logos/lang-rust-${theme}.svg`} maxW='20' minH='24' mx='auto' />
+      </LanguageLink>
+      <LanguageLink
+        href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10'
         accentColor='#3772A4'
         name='Python3'
       >
         <Image alt='Python 3' src='/logos/lang-python3.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
-      {/* <LanguageLink
-        href='/getting-started/runtime-node-guide'
-        accentColor='#74AB63'
-        name='Node'
+      <LanguageLink
+        href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10-flask3.0'
+        accentColor='#37A7BD'
+        name='Flask'
       >
-        <Image alt='Node' src='/logos/runtime-node.svg' maxW='20' minH='24' mx='auto' />
-      </LanguageLink> */}
+        <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
+      </LanguageLink>
     </SimpleGrid>
   )
 }
