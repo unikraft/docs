@@ -152,7 +152,7 @@ function PageContainer(props: PageContainerProps) {
                   }}
                   p={{ base: '4', sm: '6', xl: '8' }}
                 >
-                  <Box>
+                  <Box className="prose">
                     {image && (
                       <Image
                         src={image}
@@ -167,18 +167,18 @@ function PageContainer(props: PageContainerProps) {
                       {convertBackticksToInlineCode(description)}
                     </chakra.h3>
                     {children}
-                    <Box
-                      mt='40px'
-                      pt='30px'
-                      borderTop={'solid 1px'}
-                      borderColor={'slate.300'}
-                      _dark={{
-                        borderColor: 'gray.700',
-                      }}
-                    >
-                      <Box>{editUrl && <EditPageLink href={editUrl} />}</Box>
-                      {pagination || null}
-                    </Box>
+                  </Box>
+                  <Box
+                    mt='40px'
+                    pt='30px'
+                    borderTop={'solid 1px'}
+                    borderColor={'slate.300'}
+                    _dark={{
+                      borderColor: 'gray.700',
+                    }}
+                  >
+                    <Box>{editUrl && <EditPageLink href={editUrl} />}</Box>
+                    {pagination || null}
                   </Box>
                 </Box>
                 {!hideToc && (
