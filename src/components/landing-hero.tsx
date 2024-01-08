@@ -280,19 +280,3 @@ export default function LandingHero() {
     </Box>
   );
 }
-
-
-
-// <Button
-// as='a'
-// size='lg'
-// shadow='md'
-// h='4rem'
-// px='40px'
-// fontSize='1.2rem'
-// href='https://github.com/unikraft/unikraft'
-// target='__blank'
-// leftIcon={<DiGithubBadge size='1.5em' />}
-// >
-// View on GitHub
-// </Button>
