@@ -66,6 +66,13 @@ export const LanguageLinks = () => {
         <Image alt='Rust' src={`/logos/lang-rust-${theme}.svg`} maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
+        href='https://github.com/unikraft/catalog/tree/main/examples/http-go1.21'
+        accentColor='#01ADD7'
+        name='Go'
+      >
+        <Image alt='Go' src={`/logos/lang-go.svg`} maxW='20' minH='24' mx='auto' />
+      </LanguageLink>
+      <LanguageLink
         href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10'
         accentColor='#3772A4'
         name='Python3'
