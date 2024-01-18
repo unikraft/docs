@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases v0.16.0 (Telesto)
+                    Unikraft releases v0.16.1 (Telesto)
                   </Text>
                   <Box
                     display={{

@@ -2,8 +2,33 @@
 version: 0.16.1
 releaseDate: 2024-01-18
 codename: Telesto
-commit: 
+commit: 30540358f1d4f9ae5203fd08f89bb98bf0b09dab
 blogPost: /blog/2024-01-18-unikraft-releases-v0.16.1
 changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.16.0...RELEASE-0.16.1
 ---
 
+<Warning>
+We strongly advise upgrading to this latest version of Unikraft in order to
+continue to be compatible with future versions.
+In our accompanying blog post we include necessary [migration steps](https://unikraft.org/blog/2024-01-17-unikraft-releases-v0.16.1).
+Additionally, we have released [a new version of KraftKit (v0.7.2)](https://github.com/unikraft/kraftkit/releases/tag/v0.7.2) which already incorporates an understanding these changes and have upgraded all images in the [Unikraft Community Catalog](https://github.com/unikraft/catalog) of pre-built unikernel images.
+</Warning>
+
+## Changelog
+
+* lib/vfscore: Auto-mounting scheme with 3 tables ([#1262](https://github.com/unikraft/unikraft/pull/1262)) by [Simon Kuenzer](https://github.com/unikraft/skuenzer)
+* lib/vfscore: Fix `getcwd` to use the kernel API ([#1268](https://github.com/unikraft/unikraft/pull/1268)) by [Andrei Tatar](https://github.com/unikraft/andreittr)
+* .github/workflows: Do not rerun checks on pushes ([#1267](https://github.com/unikraft/unikraft/pull/1267)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* lib/\{uksched, ukboot\}: Use `uk_memalign` for auxstack allocation ([#1266](https://github.com/unikraft/unikraft/pull/1266)) by [Sergiu Moga](https://github.com/unikraft/mogasergiu)
+* lib/vfscore: Stub `F_GETLK` to always return `F_UNLCK` ([#1260](https://github.com/unikraft/unikraft/pull/1260)) by [Sergiu Moga](https://github.com/unikraft/mogasergiu)
+* plat/common/lcpu: Fix re-def warnings of `LCPU_AUXSP_OFFSET` ([#1257](https://github.com/unikraft/unikraft/pull/1257)) by [Sergiu Moga](https://github.com/unikraft/mogasergiu)
+* plat/kvm/arm: Ensure restoration of `x0` on binary system calls ([#1256](https://github.com/unikraft/unikraft/pull/1256)) by [Sergiu Moga](https://github.com/unikraft/mogasergiu)
+* .github/workflows: Add bot mail/name and use other target ([#1252](https://github.com/unikraft/unikraft/pull/1252)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* .github/workflows: Several more fixes to ensure functionality ([#1251](https://github.com/unikraft/unikraft/pull/1251)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* support/scripts: Implement python and bash suggestions ([#1246](https://github.com/unikraft/unikraft/pull/1246)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* .github/workflows: Bump governctl and fix lint issues ([#1243](https://github.com/unikraft/unikraft/pull/1243)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* .github/workflows: Correctly fetch the PR number ([#1242](https://github.com/unikraft/unikraft/pull/1242)) by [Cezar Craciunoiu](https://github.com/unikraft/craciunoiuc)
+* .github/workflows: Bump actions/checkout from 3 to 4 ([#1232](https://github.com/unikraft/unikraft/pull/1232)) by @dependabot
+* .github/workflows: Bump actions/checkout from 3 to 4 ([#1254](https://github.com/unikraft/unikraft/pull/1254)) by @dependabot
+* .github/workflows: Bump actions/checkout from 3 to 4 ([#1253](https://github.com/unikraft/unikraft/pull/1253)) by @dependabot
+* lib/uknetdev: New `netdev.ip` kernel parameter ([#1211](https://github.com/unikraft/unikraft/pull/1211)) by [Simon Kuenzer](https://github.com/unikraft/skuenzer)
