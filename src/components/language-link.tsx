@@ -86,6 +86,13 @@ export const LanguageLinks = () => {
       >
         <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
+      <LanguageLink
+        href='https://github.com/unikraft/catalog/tree/main/examples/http-node18'
+        accentColor='#74AB63'
+        name='Node'
+      >
+        <Image alt='Node' src={`/logos/runtime-node-${theme}.svg`} maxW='20' minH='24' mx='auto' />
+      </LanguageLink>
     </SimpleGrid>
   )
 }
