@@ -1,0 +1,191 @@
+---
+title: "Unikraft releases v0.16.1 (Telesto)"
+description: |
+  This release contains both **important and breaking changes** related to the KConfig and syntax when statically specifying network interface information as well as the list of fstab (automount) entries at the kernel command-line.
+publishedDate: 2024-01-18
+authors:
+- Alexander Jung
+- Simon Kuenzer
+tags:
+- release
+- announcement
+---
+
+<Warning>
+We strongly advise upgrading to this latest version of Unikraft in order to continue to be compatible with future versions.
+Additionally, we have released [a new version of KraftKit v0.7.2](https://github.com/unikraft/kraftkit/releases/tag/v0.7.2) which already incorporates understanding these changes and have upgraded all images in the [Unikraft Community Catalog](https://github.com/unikraft/catalog) of pre-built unikernel images.
+</Warning
+
+In this blog post, we discuss these chanages in Unikraft and why they were necessary and how to migrate from old KConfig settings and syntaxes to these latest changes.
+For a full breakdown of additional changes, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.16.0...RELEASE-0.16.1).
+
+
+### New KConfig and syntax for specifying network interface information
+
+This release reintroduces the ability to override netdev einfo fields via kernel command line as an enhancement to the parameters exposed by `uknetdev`.
+The `netdev.ip` is a new parameter which replaces `netdev.ipv4_*` and can be used to override IPv4 address information for multiple devices.
+
+For each device the following colon-separated format is introduced:
+
+```
+cidr[:gw[:dns0[:dns1[:hostname[:domain]]]]]
+```
+
+Any of the fields can be left blank and fewer fields can be passed by omitting fields from the right.
+This also ensures that more fields can be appended in the future while maintaining backwards compatibility.
+
+The new KConfig option to enable this is `CONFIG_LIBUKNETDEV_EINFO_LIBPARAM`.
+
+#### Example 1
+
+ - IPv4 address: `192.168.0.123`
+ - IPv4 mask: `255.255.255.0`
+ - IPv4 default gateway: `192.168.0.1`
+ - Primary DNS server (IPv4): `192.168.0.1`
+
+This converts to:
+```
+netdev.ip=192.168.0.123/24:192.168.0.1:192.168.0.1
+```
+
+#### Example 2
+
+Additionally to example 1, we add the following fields:
+ - We do not hand-over a secondary DNS server
+ - Hostname: `example`
+ - Domain suffix: `unikraft.org`
+
+This converts to:
+
+```
+netdev.ip=192.168.0.123/24:192.168.0.1:192.168.0.1::example:unikraft.org
+```
+
+
+#### Migration guide
+
+If you have been using `kraft` to execute unikernels, please simply [upgrade to the latest version](https://github.com/unikraft/kraftkit/releases/tag/v0.7.2).
+If, however, you have been manually using `netdev.ipv4_addr`, `netdev.ipv4_gw_addr` and `netdev.ipv4_subnet_mask`, then simply change the syntax from:
+
+```
+netdev.ipv4_addr=192.168.0.123 netdev.ipv4_gw_addr=192.168.0.1 netdev.ipv4_subnet_mask=255.255.255.0
+```
+
+To:
+
+```
+netdev.ip=192.168.0.123/24:192.168.0.1
+```
+
+[Where `24` is the IPv4 mask for `255.255.255.0` in CIDR notation](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing#IPv4_CIDR_blocks).
+
+### New KConfig and syntax for specifying fstab (automount) entries
+
+This release introduces a new and flexible mounting mechanism by using three filesystem tables (fstabs):
+
+1. **Compiled-in (CI) entries**:  This is a statically defined filesystem table which allows you to always use a set of entries persistently as part of the unikernel build, in addition to user-provided (UP) entries or fallback (FB) entries.
+   This can be useful in situations where you always know what you wish to mount to the unikernel, e.g. for security and hardening reasons or for using an embedded filesystem (more on this latter usecase below).
+
+2. **Fallback (FB) entries**:  These are entries to the filesystem which are supplied only when _no_ user-provided (UP) entries are given (see 3.).
+
+4. **User-provided (UP) entries**:  These are dynamic entries which can be provided at runtime as kernel argument in command-line in the format:
+   ```
+   vfs.fstab=[
+     "<dev>:<mntpoint>:<fsdriver>[:<flags>[:<opts>[:<ukopt>]]]"
+     "<dev>:<mntpoint>:<fsdriver>[:<flags>[:<opts>[:<ukopt>]]]"
+     ...
+   ]
+   ```
+
+As part of this release, major improvements in the use of statically compiled filesystem tables have been due to the on-going efforts of building and maintaining [Unikraft's Community Catalog](https://github.com/unikraft/catalog) of pre-built unikernel images which make heavy use of the [ELF Loader](https://github.com/unikraft/app-elfloader) application.
+The ELF Loader acts, in some ways, as a general-purpose unikernel and uses the provided filesystem as its mechanic for making the unikernel unique.
+_The filesystem (largely) represents the operation of the unikernel._
+
+Firstly, it is possible to enable the use of statically compiled-in (CI) entries by first setting the following KConfig option as part of your build:
+
+```KConfig
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI=y
+```
+
+The use of a compiled-in (CI) filesystem table makes it possible to persist the automount procedure regardless of user-provided (UP) entries which reduces risk of user-error or by hardening the unikernel's runtime filesystem and therefore providing stronger operation execution guarantees.
+This is useful when kernel images are required to be hardened for security reasons or _the filesystem represents the operation of the unikernel._ 
+
+The most practical use case is when the set of files are essential for the operation of a unikernel and relieves the need to use of an external initramfs or external volume to enable operation.
+This is true for applications which utilize the [ELF Loader unikernel](https://github.com/unikraft/app-elfloader).
+Furthermore, the compiled-in (CI) filesystem does not need to be automatically mounted either and it can be left up to the user-provided (UP) filesystem table to do this on-demand at runtime.
+Finally, if the user does not supply any `fstab` entries as command-line arguments, a fallback (FB) set of entries can be automatically mounted as a "default" replacement.
+This makes it possible to either a). always use an embedded filesystem; b). to use an embedded or external filesystem as per the request of the user; or c). to provide one if an alternative (external) one is _not_ supplied by the user.
+
+It is possible to statically define the use of the embedded filesystem, and this is done by simply setting:
+
+```KConfig
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI_EINITRD=y
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI_EINITRD_PATH="path/to/initramfs.cpio"
+```
+
+<Info>
+If you are using `kraft`, you do not need to set `CONFIG_LIBVFSCORE_AUTOMOUNT_CI_EINITRD_PATH`, as this will be derived from the [`rootfs` element](https://unikraft.org/docs/cli/reference/kraftfile/v0.6#top-level-rootfs-attribute).
+</Info>
+
+When the embedded filesystem is provided, this particular KConfig option expands into two entries into the compiled-in table, and looks like following set of options after a `defconfig` expansion:
+
+```KConfig
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI0=y
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI0_MP_ARG="/"
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI0_DRIVER_ARG="ramfs"
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI0_FLAGS_ARG=0x0
+
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI1=y
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI1_DEV_ARG="embedded"
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI1_MP_ARG="/"
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI1_DRIVER_ARG="extract"
+CONFIG_LIBVFSCORE_AUTOMOUNT_CI1_FLAGS_ARG=0x0
+```
+
+The first, `CI0`, is a "blank" ramfs which is mounted at the `/` mountpoint (MP) and the second, `CI1`, takes the embedded filesystem and performs a specific driver opereation called "`extract`".
+
+Extraction is a mechanism used by `vfscore`'s automount procedure which reads the supported filesystem archives (such as CPIO) and iterates and applies all entries to the target mount point.
+Such a procedure makes it possible to apply a naiive overlay system when two or more archives are supplied.
+This latter case is important in the context of [Unikraft Community Catalog](https://github.com/unikraft/catalog) and allows us to build images based on the [ELF Loader unikernel application](https://github.com/unikraft/app-elfloader) with an embedded filesystem representing the target application.
+A user (UP) can then supply an external filesystem which is either mounted directly into the embedded filesystem (e.g. via 9PFS) or as an external initramfs file, which is extracted on-top of the embedded filesystem.
+
+The user-provided (UP) filesystem table is the most dynamic and allows users to supply any number of entries dynamically at runtime.
+Simply set:
+
+```KConfig
+CONFIG_LIBVFSCORE_AUTOMOUNT_UP=y
+```
+
+We use the fallback (FB) mechanism with our general-purpose `base` image which is based on the [ELF Loader unikernel](https://github.com/unikraft/app-elfloader) and now include a minimal and statically compiled Linux userspace binary which emits a helpful message when no filesystem is provided.
+Since the `base` image is intended to have a filesystem supplied to it always, this fallback mechanism allows a safety catch for misconfiguration when no filesystem is supplied.
+This is done by supplying the following KConfig options:
+
+```KConfig
+CONFIG_LIBVFSCORE_AUTOMOUNT_FB=y
+CONFIG_LIBVFSCORE_AUTOMOUNT_FB0_DEV="embedded"
+CONFIG_LIBVFSCORE_AUTOMOUNT_FB0_DRIVER="extract"
+CONFIG_LIBVFSCORE_AUTOMOUNT_FB0_MP="/"
+```
+
+<Info>
+Note that up to four entries can be supplied in the compiled-in (`CI{0,1,2,3}`) and the fallback (`FB{0,1,2,3}`) filesystem tables.
+</Info>
+
+
+#### Migration guide
+
+If you have previously only run a unikernel with `kraft`, please simply [upgrade to the latest version](https://github.com/unikraft/kraftkit/releases/tag/v0.7.2).
+If you are building unikernels with `kraft` and setting KConfig options related to the filesystem table (fstab), the diff for embedded filesystems is usually similar to:
+
+```diff
+  unikraft:
+    kconfig:
+-     CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS: 'y'
+-     CONFIG_LIBVFSCORE_FSTAB: 'y'
+-     CONFIG_LIBVFSCORE_ROOTFS_INITRD: 'y'
++     CONFIG_LIBVFSCORE_AUTOMOUNT_CI_EINITRD: 'y'
++     CONFIG_LIBVFSCORE_AUTOMOUNT_CI: 'y'
++     CONFIG_LIBVFSCORE_AUTOMOUNT_UP: 'y'
++     CONFIG_LIBVFSCORE_AUTOMOUNT: 'y'
+      CONFIG_LIBVFSCORE: 'y'
+```
