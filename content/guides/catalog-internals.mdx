@@ -1,0 +1,335 @@
+---
+title: "Application Catalog: Behind the Scenes"
+description: |
+  This guide presents internal technical information about the application catalog.
+  It shows what is happening behind the scenes and how you can get more control on the build and run phases.
+---
+
+The [guide on using the application catalog](/guides/catalog) provides the user-friendly information on using the Unikraft application registry and the [`catalog` repository](https://github.com/unikraft/catalog).
+It presents some hints into what's happening behind the scenes, but it aims to keep the user away for this.
+This guide takes a deep dive into the internals of configuring, building and running Unikernel applications from the catalog.
+It is aimed for those more technically inclined who would be interested in understanding what's happening behind the scenes and maybe [contribute to the application catalog](/guides/catalog-add).
+
+Similar to the [guide on using the application catalog](/guides/catalog), we will use two applications:
+
+- [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
+- [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
+
+## Nginx
+
+For the [`nginx/1.25` bincompat application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25), there is a build phase and a run phase.
+The build phase creates the output kernel, and the run phase launches a Unikraft virtual machine instance from the kernel.
+
+The kernel is a join of the actual Unikraft kernel and the application filesystem, packed as an initial ramdisk.
+We call the packed initial ramdisk the **embedded initial ramdisk** or **embedded initrd**.
+
+### Configuration
+
+The build and run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/library/nginx/1.25/Kraftfile).
+
+The `Kraftfile` defines the:
+
+- resulting image name: `nginx`
+- the command line to start the application: `/usr/bin/nginx`
+- path to the template `app-elfloader`
+- paths and versions of repositories (`unikraft`, `lwip`, `libelf`)
+- configuration options: i.e. the `CONFIG_...` option enables the emdedded initrd build
+- build and run targets: currently only x86_64-based builds are available, and only KVM-based builds, using QEMU or Firecracker
+- root filesystem used to build the (embedded) initrd
+
+The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
+The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
+
+```Dockerfile
+FROM --platform=linux/x86_64 nginx:1.25.3-bookworm AS build
+
+# These are normally syminks to /dev/stdout and /dev/stderr, which don't
+# (currently) work with Unikraft. We remove them, such that Nginx will create
+# them by hand.
+RUN rm /var/log/nginx/error.log
+RUN rm /var/log/nginx/access.log
+
+FROM scratch
+
+# Nginx binaries, modules, configuration, log and runtime files
+COPY --from=build /usr/sbin/nginx /usr/bin/nginx
+COPY --from=build /usr/lib/nginx /usr/lib/nginx
+COPY --from=build /etc/nginx /etc/nginx
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
+COPY --from=build /var/log/nginx /var/log/nginx
+COPY --from=build /var/cache/nginx /var/cache/nginx
+COPY --from=build /var/run /var/run
+
+# Libraries
+COPY --from=build /lib/x86_64-linux-gnu/libcrypt.so.1 /lib/x86_64-linux-gnu/libcrypt.so.1
+COPY --from=build /lib/x86_64-linux-gnu/libpcre2-8.so.0 /lib/x86_64-linux-gnu/libpcre2-8.so.0
+COPY --from=build /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libz.so.1 /lib/x86_64-linux-gnu/libz.so.1
+COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+COPY --from=build /etc/ld.so.cache /etc/ld.so.cache
+
+# Custom configuration files, including using a single process for Nginx
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./conf/unikraft.local.crt /etc/nginx/unikraft.local.crt
+COPY ./conf/unikraft.local.key /etc/nginx/unikraft.local.key
+
+# Web root
+COPY ./wwwroot /wwwroot
+```
+
+The Dockerfile is being interpreted via [`BuildKit`](https://docs.docker.com/build/buildkit/), hence the need to set up the `BuildKit` container.
+
+### Build Phase
+
+The build command requires the `BuildKit` container to be configured beforehand:
+
+```console
+docker run -d --name buildkitd --privileged moby/buildkit:latest
+export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+```
+
+The build command is:
+
+```console
+kraft build --plat qemu --arch x86_64
+```
+
+`kraft build` goes through the following steps:
+
+1. It generates the root filesystem, via BuildKit from the `Dockerfile` specification.
+1. It packs the root filsystem in an initial ramdisk (initrd).
+1. It builds the kernel, using the configuration in the `Kraftfile`.
+1. It embeds the initrd in the output kernel file.
+
+The resulting embedded kernel image is `.unikraft/build/nginx_qemu-x86_64`:
+
+```console
+$ ls -lh .unikraft/build/nginx_qemu-x86_64
+-rwxr-xr-x 2 razvand docker 15M Jan  2 21:23 .unikraft/build/nginx_qemu-x86_64
+```
+
+### Run Phase
+
+This image is run with a command such as:
+
+```console
+kraft run -W -p 8080:80 .
+```
+
+It can also be run manually with `qemu-system-x86_64`:
+
+```console
+qemu-system-x86_64 \
+    -kernel .unikraft/build/nginx_qemu-x86_64 \
+    -nographic \
+    -m 128M \
+    -device virtio-net-pci,mac=02:b0:b0:d3:d2:01,netdev=hostnet0 \
+    -netdev user,id=hostnet0,hostfwd=tcp::8080-:80 \
+    -append "/usr/bin/nginx" \
+    -cpu max
+```
+
+This starts a QEMU virtual machine instance.
+Query it using:
+
+```console
+curl http://localhost:8080
+```
+
+If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
+
+```console
+kraft net create -n 172.44.0.1/24 virbr0
+```
+
+An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
+
+```console
+qemu-system-x86_64 \
+    -kernel .unikraft/build/nginx_qemu-x86_64 \
+    -nographic \
+    -m 128M \
+    -netdev bridge,id=en0,br=virbr0 -device virtio-net-pci,netdev=en0 \
+    -append "netdev.ip=172.44.0.2/24:172.44.0.1 -- /usr/bin/nginx" \
+    -cpu max
+```
+
+This starts a QEMU virtual machine instance.
+Query it using:
+
+```console
+curl http://172.44.0.2
+```
+
+To close the running QEMU instance, use `Ctrl+a x` in the QEMU console.
+
+## HTTP Go Server
+
+For the [`http-go1.21` bincompat example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21), there is no build phase, only a run phase.
+The example it's using a prebuilt kernel image.
+The prebuilt [`base` kernel image](https://github.com/unikraft/catalog/tree/main/library/base) is pulled from the registry, from `unikraft.org/base`.
+This happens during the run phase.
+
+### Configuration
+
+The run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/examples/http-go1.21/Kraftfile):
+
+```yaml
+spec: v0.6
+
+runtime: base:latest
+
+rootfs: ./Dockerfile
+
+cmd: ["/server"]
+```
+
+The `Kraftfile` defines:
+
+- the runtime image to use, containing the kernel: `unikraft.org/base:latest' (it can be summarized as just `base:latest`)
+- the root filesystem used, defined in a `Dockerfile`
+- the command line to start the application: `/server`
+- the available run targets: currently only x86_64-based builds are available, and only KVM-based builds, using QEMU or Firecracker
+
+The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
+The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
+
+```Dockerfile
+FROM golang:1.21.3-bookworm AS build
+
+WORKDIR /src
+
+COPY ./server.go /src/server.go
+
+RUN set -xe; \
+    CGO_ENABLED=1 \
+    go build \
+      -buildmode=pie \
+      -ldflags "-linkmode external -extldflags '-static-pie'" \
+      -tags netgo \
+      -o /server server.go \
+    ;
+
+FROM scratch
+
+COPY --from=build /server /server
+COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/
+```
+
+The Dockerfile is being interpreted via [BuildKit](https://docs.docker.com/build/buildkit/), hence the need to set up the BuildKit container.
+
+### Run Phase
+
+The run command requires the `BuildKit` container to be configured beforehand:
+
+```console
+docker run -d --name buildkitd --privileged moby/buildkit:latest
+export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+```
+
+The run command is:
+
+```console
+kraft run -W -p 8080:8080 .
+```
+
+`kraft run` goes through the following steps:
+
+1. It pulls the kernel package from the registry, from `unikraft.org/base:latest`.
+1. It generates the root filesystem, via BuildKit from the `Dockerfile` specification.
+   The generation of the root filesystem implies the building the Go source code files into a binary executable (`ELF`).
+   The executable, together with the depending libraries is then extracted into the root filesystem.
+1. It packs the root filesystem in an initial ramdisk (initrd).
+1. It runs the kernel attaching the initrd and using the command line in the specification: `/http_server`.
+
+The resulting initrd image is `.unikraft/build/initramfs.cpio`.
+
+```console
+$ ls -lh .unikraft/build/initramfs.cpio
+-rw-r--r-- 1 root root 8.9M Jan  4 18:16 .unikraft/build/initramfs-x86_64.cpio
+
+$ cpio -itv < .unikraft/build/initramfs.cpio
+d---------   0 root     root            0 Jan  1  1970 /lib
+d---------   0 root     root            0 Jan  1  1970 /lib/x86_64-linux-gnu
+-rwxr-xr-x   1 root     root      1922136 Sep 30 11:31 /lib/x86_64-linux-gnu/libc.so.6
+d---------   0 root     root            0 Jan  1  1970 /lib64
+-rwxr-xr-x   1 root     root       210968 Sep 30 11:31 /lib64/ld-linux-x86-64.so.2
+-rwxr-xr-x   1 root     root      7151306 Jan  4 18:16 /server
+18136 blocks
+```
+
+The kernel image is pulled into a temporary directory.
+
+To run the application manually, first pull the kernel image from `unikraft.org/base:latest`:
+
+```console
+kraft pkg pull -w base unikraft.org/base:latest
+```
+
+The kernel image is `base/unikraft/bin/kernel`:
+
+```console
+$ tree
+base/
+`-- unikraft/
+    `-- bin/
+        `-- kernel
+
+3 directories, 1 file
+
+$ ls -lh base/unikraft/bin/kernel
+-rw-rw-r-- 1 razvand razvand 1.6M Jan 25 14:48 base/unikraft/bin/kernel
+```
+
+You can run the application manually with `qemu-system-x86_64` and the passing of the `-kernel`, `-initrd` and `-append` arguments:
+
+```console
+qemu-system-x86_64 \
+    -kernel base/unikraft/bin/kernel \
+    -nographic \
+    -m 128M \
+    -device virtio-net-pci,mac=02:b0:b0:d3:d2:01,netdev=hostnet0 \
+    -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 \
+    -append "vfs.fstab=[ \"initrd0:/:extract:::\" ] -- /server" \
+    -initrd .unikraft/build/initramfs-x86_64.cpio \
+    -cpu max
+```
+
+This starts a QEMU virtual machine instance.
+Query it using:
+
+```console
+curl http://localhost:8080
+```
+
+If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
+
+```console
+kraft net create -n 172.44.0.1/24 virbr0
+```
+
+An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
+
+```console
+qemu-system-x86_64 \
+    -kernel base/unikraft/bin/kernel \
+    -nographic \
+    -m 128M \
+    -netdev bridge,id=en0,br=virbr0 -device virtio-net-pci,netdev=en0 \
+    -append "netdev.ip=172.44.0.2/24:172.44.0.1 vfs.fstab=[ \"initrd0:/:extract:::\" ] -- /server" \
+    -initrd .unikraft/build/initramfs-x86_64.cpio \
+    -cpu max
+```
+
+This starts a QEMU virtual machine instance.
+Query it using:
+
+```console
+curl http://172.44.0.2:8080
+```
+
+To close the running QEMU instance, use `Ctrl+a x` in the QEMU console.
