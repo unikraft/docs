@@ -44,6 +44,10 @@
             {
               "title": "Compatibility",
               "path": "/docs/concepts/compatibility"
+            },
+            {
+              "title": "Binary Compatibility",
+              "path": "/docs/concepts/bincompat"
             }
           ]
         }
