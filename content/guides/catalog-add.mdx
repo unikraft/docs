@@ -1,0 +1,1191 @@
+---
+title: Adding Applications to the Catalog
+description: |
+  This guide presents the steps to add application to the catalog.
+  It is primarily focused on binary-compatible applications.
+  It is meant to be used by contributors and application developers who want to have a particular application or example featured in the catalog.
+---
+
+New application should make their way in the [`catalog` repository](https://github.com/unikraft/catalog).
+If porting an actual end-user application, that should be part of the `library/` subdirectory, in a directory titled `<app-name>/<app-version>` (e.g. `nginx/1.25`, `lua/5.4.4`).
+Example applications, generally those demonstrating a given feature of a framework or of a programming language go to the `examples/` directory.
+
+Adding a new application requires the creation of:
+
+- [optional] Source code files of the application.
+  The application may be built from source code files provided in the app directory.
+  Or the source code files may be scripts (in scripted / interpreted programming languages) that implement the application.
+- [optional] Configuration and data files used by the application.
+- A `Dockerfile` to generate the filesystem for the application.
+  The filesystem consists of the application binary executable (`ELF`) or scripts, depending libraries, configuration files, data files.
+  These files may either be pulled from an existing Docker image, or they may be build / copied from (source code) files provided by the user.
+- A `Kraftfile` that details the build and run specification of the application.
+- A `README.md` files that documents the steps required to build, run and test the application.
+
+We demonstrate these steps for three apps:
+
+- Redis, built as a binary-compatible app
+- an asynchronous web server in Rust using Tokio, packaged and run as a binary-compatible app that uses the `base` kernel in the registry
+- a Python Flask application, that is packaged on top of a native Python 3.10 environment
+
+The rough steps for adding a new application to the catalog are:
+
+1. Build, configure and run the application in a Docker environment.
+   Potentially create a `Dockerfile`.
+1. Determine the minimal set of components required to run the application: executable, libraries, configuration files.
+1. Use a `Dockerfile` to build and configure the application, and then extract the minimal set of components in a minimized Docker environment.
+   Run the application in the minimized Docker environment.
+1. Construct the application `Kraftfile` and build, configure and run the application with Unikraft.
+1. Contribute the application to the [`catalog` repository](https://github.com/unikraft/catalog).
+
+## Redis
+
+Redis is an end-user application, so it goes in the `library/` subdirectory of the [`catalog` repository](https://github.com/unikraft/catalog).
+We add the latest version of Redis available as a [DockerHub image](https://hub.docker.com/_/redis) image, namely `7.2.4` at the time of this writing.
+
+Our first step is to run Redis in a Docker environment.
+Afterward we move ro run it with Unikraft.
+
+Using a Docker environment is a two step process:
+
+1. Run Redis as it is in the Docker environment.
+1. Run Redis in a minimized Docker environment.
+
+### Run Redis As It Is in Docker
+
+To Run Redis as it is, use the command:
+
+```console
+docker run --rm redis:7.2-bookworm
+```
+
+This will pull the Redis Debian Bookworm image from DockerHub and run it:
+
+```text
+Unable to find image 'redis:7.2-bookworm' locally
+7.2-bookworm: Pulling from library/redis
+2f44b7a888fa: Already exists
+c55535369ffc: Pull complete
+3622841bf0aa: Pull complete
+91a62ca7377a: Pull complete
+fdd219d1f4ab: Pull complete
+fdf07fe2fb4c: Pull complete
+4f4fb700ef54: Pull complete
+fba604e70bfe: Pull complete
+Digest: sha256:b5ddcd52d425a8e354696c022f392fe45fca928f68d6289e6bb4a709c3a74668
+Status: Downloaded newer image for redis:7.2-bookworm
+1:C 25 Jan 2024 10:47:59.385 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:C 25 Jan 2024 10:47:59.385 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 25 Jan 2024 10:47:59.385 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 25 Jan 2024 10:47:59.385 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+1:M 25 Jan 2024 10:47:59.385 * monotonic clock: POSIX clock_gettime
+1:M 25 Jan 2024 10:47:59.386 * Running mode=standalone, port=6379.
+1:M 25 Jan 2024 10:47:59.386 * Server initialized
+1:M 25 Jan 2024 10:47:59.386 * Ready to accept connections tcp
+```
+
+From the message above we derive some information:
+
+- The `vm.overcommit_memory=1` option should be enabled.
+  This is Linux kernel configuration for certain use-cases.
+  Since we only care about a Unikraft run, we ignore it.
+
+- There should be a configuration file passed as a runtime argument.
+  Otherwise, it uses a default one.
+  We'll get to that later.
+
+- Redis accepts connections on port 6379, so networking support should be enabled.
+
+For the latter, let's run Redis with networking support from Docker:
+
+```console
+docker run --rm -p 6379:6379 redis:7.2-bookworm
+```
+
+The Redis server is now available on port `6379` on `localhost`.
+
+To test it, use the Redis client, `redis-cli`.
+If not available, install it.
+On a Debian/Ubuntu system the install command is, as `root` (prefix with `sudo` if required):
+
+```console
+apt install redis-tools
+```
+
+Now test the Redis server inside Docker:
+
+```console
+$ redis-cli -h localhost
+localhost:6379> ping
+PONG
+localhost:6379> set a 1
+OK
+localhost:6379> get a
+"1"
+localhost:6379>
+```
+
+Everything works OK.
+
+### Getting Redis Dependencies
+
+To get Redis dependencies, we have to inspect the Docker environment.
+Firstly we inspect the Docker image:
+
+```console
+docker inspect redis:7.2-bookworm
+```
+
+We filter out relevant information from the output:
+
+```text
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.17",
+                "REDIS_VERSION=7.2.4",
+                "REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.2.4.tar.gz",
+                "REDIS_DOWNLOAD_SHA=8d104c26a154b29fd67d6568b4f375212212ad41e0c2caa3d66480e78dbd3b59"
+            ],
+            "Cmd": [
+                "redis-server"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": {
+                "/data": {}
+            },
+            "WorkingDir": "/data",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+```
+
+Then we run a Docker instance and start a shell:
+
+```console
+docker run --rm -p 6379:6379 -it redis:7.2-bookworm /bin/bash
+```
+
+We get a console / shell of running inside Docker, in the `WorkingDir` option above (`/data`):
+
+```console
+root@8b346198f54d:/data#
+```
+
+Our goal is to know the path to the executable, the library dependencies, other required files.
+We use the commands below to locate the executable and get the library dependencies:
+
+```console
+root@8b346198f54d:/data# which redis-server
+/usr/local/bin/redis-server
+root@8b346198f54d:/data# ldd /usr/local/bin/redis-server
+        linux-vdso.so.1 (0x00007fffb7d39000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007ff32f07d000)
+        libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007ff32efd3000)
+        libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007ff32eb51000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ff32e970000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007ff32f6f5000)
+```
+
+We also start Redis to ensure everything works OK:
+
+```console
+root@8b346198f54d:/data# /usr/local/bin/redis-server
+17:C 25 Jan 2024 11:07:55.418 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+17:C 25 Jan 2024 11:07:55.419 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+17:C 25 Jan 2024 11:07:55.419 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=17, just started
+17:C 25 Jan 2024 11:07:55.419 # Warning: no config file specified, using the default config. In order to specify a config file use /usr/local/bin/redis-server /path/to/redis.conf
+17:M 25 Jan 2024 11:07:55.420 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 7.2.4 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 17
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           https://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+17:M 25 Jan 2024 11:07:55.436 * Server initialized
+17:M 25 Jan 2024 11:07:55.436 * Ready to accept connections tcp
+```
+
+Redis starts OK.
+
+A crude way to determine other dependencies is to trace the opened files, with `strace`.
+First install `strace` in the container:
+
+```console
+apt update
+apt install -y strace
+```
+
+Now trace the `openat` system call:
+
+```console
+root@8b346198f54d:/data# strace -e openat /usr/local/bin/redis-server > /dev/null
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libssl.so.3", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libcrypto.so.3", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/etc/localtime", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/dev/urandom", O_RDONLY) = 3
+openat(AT_FDCWD, "/usr/lib/ssl/openssl.cnf", O_RDONLY) = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/proc/sys/vm/overcommit_memory", O_RDONLY) = 5
+openat(AT_FDCWD, "/sys/kernel/mm/transparent_hugepage/enabled", O_RDONLY) = 5
+openat(AT_FDCWD, "/sys/devices/system/clocksource/clocksource0/current_clocksource", O_RDONLY) = 5
+openat(AT_FDCWD, "/proc/sys/net/core/somaxconn", O_RDONLY) = 6
+openat(AT_FDCWD, "dump.rdb", O_RDONLY)  = 8
+openat(AT_FDCWD, "dump.rdb", O_RDONLY)  = 8
+openat(AT_FDCWD, "/proc/self/stat", O_RDONLY) = 8
+```
+
+Apart from the library files, Redis requires the `/etc/localtime`, `/dev/unrandom` and some `/sys` and `/proc` files.
+The `dump.rdb` file is probably a dump of the previous run.
+`/sys` and `/proc` files are usually not mandatory.
+`/etc/localtime` and `/dev/urandom` may also not be strictly required.
+
+So we have a list of dependencies.
+
+### Constructing the Minimized Docker Environment
+
+With the information above we construct a minimized Docker environment in a `Dockerfile`:
+
+```Dockerfile
+FROM redis:7.2-bookworm as build
+
+FROM scratch
+
+# Redis binary
+COPY --from=build /usr/local/bin/redis-server /usr/bin/redis-server
+
+# Redis libraries
+COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+COPY --from=build /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+COPY --from=build /etc/ld.so.cache /etc/ld.so.cache
+```
+
+We then build an image from the `Dockerfile`:
+
+```console
+$ docker build --tag minimal-redis .
+[+] Building 1.3s (12/12) FINISHED                                                                                                                                                                                              docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.3s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.5s
+ => => transferring dockerfile: 689B                                                                                                                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/redis:7.2-bookworm                                                                                                                                                                     0.0s
+ => [build 1/1] FROM docker.io/library/redis:7.2-bookworm                                                                                                                                                                                 0.0s
+ => CACHED [stage-1 1/7] COPY --from=build /usr/local/bin/redis-server /usr/bin/redis-server                                                                                                                                        0.0s
+ => CACHED [stage-1 2/7] COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6                                                                                                                                0.0s
+ => CACHED [stage-1 3/7] COPY --from=build /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3                                                                                                                            0.0s
+ => CACHED [stage-1 4/7] COPY --from=build /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3                                                                                                                      0.0s
+ => CACHED [stage-1 5/7] COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6                                                                                                                                0.0s  => CACHED [stage-1 6/7] COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2                                                                                                                                        0.0s
+ => CACHED [stage-1 7/7] COPY --from=build /etc/ld.so.cache /etc/ld.so.cache                                                                                                                                                              0.0s
+ => exporting to image                                                                                                                                                                                                                    0.1s
+ => => exporting layers                                                                                                                                                                                                                   0.0s
+ => => writing image sha256:9e95efccc19fc473a6718741ad5e70398a345361fef2f03187b8fe37a2573bab                                                                                                                                              0.0s
+ => => naming to docker.io/library/minimal-redis
+```
+
+We verify the creation of the image:
+
+```console
+$ docker image ls minimal-redis
+REPOSITORY      TAG       IMAGE ID       CREATED              SIZE
+minimal-redis   latest    4d857719dd2c   About a minute ago   24.3MB
+```
+
+And now we can start Redis inside the minimal image:
+
+```console
+$ docker run --rm -p 6379:6379 minimal-redis /usr/bin/redis-server
+1:C 25 Jan 2024 11:28:55.083 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+1:C 25 Jan 2024 11:28:55.083 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 25 Jan 2024 11:28:55.083 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 25 Jan 2024 11:28:55.083 # Warning: no config file specified, using the default config. In order to specify a config file use /usr/bin/redis-server /path/to/redis.conf
+1:M 25 Jan 2024 11:28:55.083 * monotonic clock: POSIX clock_gettime
+1:M 25 Jan 2024 11:28:55.084 * Running mode=standalone, port=6379.
+1:M 25 Jan 2024 11:28:55.084 * Server initialized
+1:M 25 Jan 2024 11:28:55.084 * Ready to accept connections tcp
+```
+
+It started, we also check it works correctly via `redis-cli`:
+
+```console
+$ redis-cli -h localhost
+localhost:6379> ping
+PONG
+localhost:6379> set a 1
+OK
+localhost:6379> get a
+"1"
+localhost:6379>
+```
+
+Everything is OK.
+We created a minimized Docker image for Redis inside a `Dockerfile`.
+
+### Setting Redis with Unikraft
+
+With the `Dockerfile` now available, we require a `Kraftfile` to run Redis with Unikraft.
+Since we are adding a new application, we will create an embedded initrd configuration.
+For that, we copy-paste [the `Kraftfile` from Node](https://github.com/unikraft/catalog/blob/main/library/node/18/Kraftfile) and update the `name` and `cmd` configuration.
+The `Kraftfile` will have the following contents:
+
+```yaml
+spec: v0.6
+
+name: redis
+
+rootfs: ./Dockerfile
+
+cmd: ["/usr/bin/redis-server"]
+[...]
+```
+
+Next we build the Unikraft kernel image:
+
+```console
+kraft build --no-cache --no-update --log-type basic --log-level debug --plat qemu --arch x86_64
+```
+
+Next we run the image:
+
+```console
+kraft run --log-type basic --log-level debug -p 6379:6379
+```
+
+We get the output:
+
+```text
+ D  kraftkit 0.7.3
+ D  using platform=qemu
+ D  cannot run because: no arguments supplied runner=linuxu
+ D  cannot run because: no arguments supplied runner=kernel
+ D  using runner=kraftfile-unikraft
+ D  qemu-system-x86_64 -version
+ D  qemu-system-x86_64 -accel help
+ D  qemu-system-x86_64 -append /usr/bin/redis-server  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:ab:80:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -kernel /home/razvand/unikraft/catal
+og/library/redis/7.2/.unikraft/build/redis_qemu-x86_64 -machine pc,accel=kvm -m size=64M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/qemu_mon.sock,server,nowait -name 6a798339-4157-4708-80
+30-8ec9c40ec390 -netdev user,id=hostnet0,hostfwd=tcp::6379-:6379 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/machine.pid -qmp unix:/home/razvand/.local/s
+hare/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/qemu_events.sock,server,nowait -rtc base=utc -serial file
+:/home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+ E  could not start qemu instance: dial unix /home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/qemu_control.sock: connect: no such file or directory
+```
+
+The error message lets us know there is a problem with running the application, so we check the debug file:
+
+```console
+$ cat /home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/machine.log
+[...]
+en1: Added
+en1: Interface is up
+Powered by Unikraft Telesto (0.16.1~644821db)
+[    0.138996] ERR:  [appelfloader] redis-server: Failed to initialize ELF parser
+[    0.140238] ERR:  [appelfloader] : Resource exhaustion (10)
+```
+
+The message `Resource exhaustion` lets us know that maybe we not running with enough memory, so we go for `256M` of memory:
+
+```console
+kraft run --log-type basic --log-level debug -M 256M -p 6379:6379
+```
+
+This indeed is the issue and the output message confirms the starting of the server:
+
+```text
+ D  kraftkit 0.7.3
+ D  using platform=qemu
+ D  cannot run because: no arguments supplied runner=linuxu
+ D  cannot run because: no arguments supplied runner=kernel
+ D  using runner=kraftfile-unikraft
+ D  qemu-system-x86_64 -version
+ D  qemu-system-x86_64 -accel help
+ D  qemu-system-x86_64 -append /usr/bin/redis-server  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:01:cd:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -kernel /home/razvand/unikraft/catalog/library/redis/7.2/.unikraft/build/redis_qemu-x86_64 -machine pc,accel=kvm -m size=244M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/a97b85de-91b2-4745-8104-625e870aea65/qemu_mon.sock,server,nowait -name a97b85de-91b2-4745-8104-625e870aea65 -netdev user,id=hostnet0,hostfwd=tcp::6379-:6379 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/a97b85de-91b2-4745-8104-625e870aea65/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/a97b85de-91b2-4745-8104-625e870aea65/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/a97b85de-91b2-4745-8104-625e870aea65/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/a97b85de-91b2-4745-8104-625e870aea65/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+en1: Interface is up
+Powered by Unikraft Telesto (0.16.1~644821db)
+1:C 25 Jan 2024 12:06:06.081 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 25 Jan 2024 12:06:06.082 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 25 Jan 2024 12:06:06.084 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+[    0.187817] ERR:  [libposix_process] Ignore updating resource 7: cur = 10032, max = 10032
+1:M 25 Jan 2024 12:06:06.089 * Increased maximum number of open files to 10032 (it was originally set to 1024).
+1:M 25 Jan 2024 12:06:06.091 * monotonic clock: POSIX clock_gettime
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 7.2.4 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           https://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+1:M 25 Jan 2024 12:06:06.111 # Warning: Could not create server TCP listening socket ::*:6379: unable to bind socket, errno: 97
+1:M 25 Jan 2024 12:06:06.114 * Server initialized
+1:M 25 Jan 2024 12:06:06.115 * Ready to accept connections tcp
+en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
+```
+
+However, the warning of being unable to bind the socket is problematic.
+Using `redis-cli` lets us know, there is a problem with Redis:
+
+```console
+$ redis-cli -h localhost
+Could not connect to Redis at localhost:6379: Connection refused
+not connected>
+```
+
+The error is due to a likely absence of full IPv6 support.
+We require a configuration file that binds directly to IPv4.
+
+### Configure Redis for Unikraft
+
+To fix the above issue we use the [existing Redis 7.0 configuration for Unikraft](https://github.com/unikraft/catalog/blob/main/library/redis/7.0/rootfs/redis.conf).
+This is for a native (i.e. non-bincompat) configuration, but it doesn't matter.
+
+This requires an update to the `Dockerfile`, that needs to include the configuration file.
+The new `Dockerfile` is:
+
+```Dockerfile
+FROM redis:7.2-bookworm as build
+
+FROM scratch
+
+# Redis binary
+COPY --from=build /usr/local/bin/redis-server /usr/bin/redis-server
+
+# Redis libraries
+COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+COPY --from=build /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3
+COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+COPY --from=build /etc/ld.so.cache /etc/ld.so.cache
+
+# Redis configuration
+COPY ./redis.conf /etc/redis.conf
+```
+
+We also update the `cmd` option in the `Kraftfile`:
+
+```yaml
+cmd: ["/usr/bin/redis-server", "/etc/redis.conf"]
+```
+
+We rebuild the image:
+
+```console
+rm -fr .config* .unikraft*
+kraft build --no-cache --no-update --log-type basic --log-level debug --plat qemu --arch x86_64
+```
+
+And we rerun it:
+
+```console
+kraft rm --all
+kraft run --log-type basic --log-level debug -M 256M -p 6379:6379
+```
+
+Everything seems to be OK, according to the output:
+
+```console
+                _._
+           _.-``__ ''-._
+      _.-``    `.  `_.  ''-._           Redis 7.2.4 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._
+ (    '      ,       .-`  | `,    )     Running in standalone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 1
+  `-._    `-._  `-./  _.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |           https://redis.io
+  `-._    `-._`-.__.-'_.-'    _.-'
+ |`-._`-._    `-.__.-'    _.-'_.-'|
+ |    `-._`-._        _.-'_.-'    |
+  `-._    `-._`-.__.-'_.-'    _.-'
+      `-._    `-.__.-'    _.-'
+          `-._        _.-'
+              `-.__.-'
+
+1:M 25 Jan 2024 12:15:36.099 * Server initialized
+1:M 25 Jan 2024 12:15:36.100 * Ready to accept connections tcp
+en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
+```
+
+We use `redis-cli` to query the server:
+
+```console
+redis-cli -h localhost
+```
+
+This currently doesn't work because of an issue with Unikraft.
+But everything we did on the application side is OK.
+
+### Contributing to the Application Catalog
+
+With the Redis application now set, we can make a contribution to the [`catalog` repository](https://github.com/unikraft/catalog).
+For that three additional steps need to be taken:
+
+1. Create a `README.md` file.
+1. Create a GitHub workflow for the application, following the [existing workflow files](https://github.com/unikraft/catalog/tree/main/.github/workflows).
+1. Update the badge listing in the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+
+Then create a commit with the `Dockerfile`, `Kraftfile`, `README.md`, the new GitHub workflow file and updates to the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+And submit a pull request.
+
+## Rust Tokio Web Server
+
+A Rust web server is not an end-user application, so we consider it an example, and it goes in the `examples/` subdirectory of the [`catalog` repository](https://github.com/unikraft/catalog).
+It will make use of the [`base` image](https://github.com/unikraft/catalog/tree/main/library/base) in the Unikraft registry.
+
+For this we follow the steps:
+
+We first create the required source code and build files for a Tokio web server.
+That is, the items required for a native build and run.
+
+The source code file is `src/main.rs` as below:
+
+```Rust
+use std::net::SocketAddr;
+use tokio::net::TcpListener;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
+    let listener = TcpListener::bind(&addr).await?;
+
+    println!("Listening on: http://{}", addr);
+
+    loop {
+        let (mut stream, _) = listener.accept().await?;
+
+        tokio::spawn(async move {
+            loop {
+                let mut buffer = [0; 1024];
+                let _ = stream.read(&mut buffer).await;
+
+                let contents = "Hello, world!\r\n";
+                let content_length = contents.len();
+                let response = format!("HTTP/1.1 200 OK\r\nContent-Length: {content_length}\r\n\r\n{contents}");
+                let _ = stream.write_all(response.as_bytes()).await;
+            }
+        });
+    }
+}
+```
+
+The build file is `Cargo.toml` as below:
+
+```toml
+[package]
+name = "http-tokio"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+tokio = {version = "1",  features = ["rt-multi-thread", "net", "time", "macros", "io-util"] }
+```
+
+### Build and Run in a Docker Environment
+
+Both for the eventual Unikraft run, but also to have an environment with everything set, it's easier to build and run the Rust Tokio web server in a Docker environment.
+We start from the [Rust Docker image on DockerHub](https://hub.docker.com/_/rust).
+We use version `1.73.0-bookworm`.
+
+For this, we create the following `Dockerfile`:
+
+```Dockerfile
+FROM rust:1.73.0-bookworm AS build
+
+WORKDIR /src
+
+COPY ./src /src/src
+COPY ./Cargo.toml /src/Cargo.toml
+
+RUN cargo build
+```
+
+We then build an image from the `Dockerfile`:
+
+```console
+$ docker build -t http-tokio .
+[+] Building 36.9s (10/10) FINISHED                                                                                                                                                                                             docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.6s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.9s
+ => => transferring dockerfile: 158B                                                                                                                                                                                                      0.2s
+ => [internal] load metadata for docker.io/library/rust:1.73.0-bookworm                                                                                                                                                                   2.8s
+ => [1/5] FROM docker.io/library/rust:1.73.0-bookworm@sha256:25fa7a9aa4dadf6a466373822009b5361685604dbe151b030182301f1a3c2f58                                                                                                             0.0s
+ => [internal] load build context                                                                                                                                                                                                         0.3s
+ => => transferring context: 1.16kB                                                                                                                                                                                                       0.0s
+ => CACHED [2/5] WORKDIR /src                                                                                                                                                                                                             0.0s
+ => [3/5] COPY ./src /src/src                                                                                                                                                                                                             1.6s
+ => [4/5] COPY ./Cargo.toml /src/Cargo.toml                                                                                                                                                                                               1.3s
+ => [5/5] RUN cargo build                                                                                                                                                                                                                24.0s
+ => exporting to image                                                                                                                                                                                                                    4.2s
+ => => exporting layers                                                                                                                                                                                                                   4.0s
+ => => writing image sha256:63d718eb15b0a8c2f07c3daa6686542555ae41738872cdc6873b407101d7f9ad                                                                                                                                              0.1s
+ => => naming to docker.io/library/http-tokio
+```
+
+We verify the creation of the image:
+
+```console
+$ docker image ls http-tokio
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+http-tokio   latest    63d718eb15b0   About a minute ago   1.63GB
+```
+
+It's a pretty large image.
+The Rust environment and the Tokio dependencies occupy quite a bit of space.
+
+And now we can start the Tokio web server from the Docker image:
+
+```console
+$ docker run --rm -p 8080:8080 http-tokio /src/target/debug/http-tokio
+Listening on: http://0.0.0.0:8080
+```
+
+The server starts and waits for connections on TCP port `8080`.
+
+To test it, we query the server:
+
+```console
+$ curl localhost:8080
+Hello, world!
+```
+
+A `Hello, world!` message is printed, so everything works OK.
+
+### Getting Dependencies
+
+To get the dependencies, we have to inspect the Docker environment.
+We run a Docker instance and start a shell:
+
+```console
+docker run --rm -p 8080:8080 -it http-tokio /bin/bash
+```
+
+We get a console / shell of running inside Docker:
+
+```console
+root@8b346198f54d:/data#
+```
+
+Our goal is to know the path to the executable, the library dependencies, other required files.
+We use the commands below to locate the executable and get the library dependencies:
+
+```console
+root@66e910817179:/src# ls -F --color=auto target/debug/
+build/  deps/  examples/  http-tokio*  http-tokio.d  incremental/
+root@66e910817179:/src# ldd target/debug/http-tokio
+        linux-vdso.so.1 (0x00007fffa8331000)
+        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f35fd805000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f35fd726000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f35fd545000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f35fd97d000)
+```
+
+We also start the server to ensure everything works OK:
+
+```console
+$ docker run --rm -p 8080:8080 -it http-tokio /bin/bash
+root@66e910817179:/src#
+```
+
+It starts OK.
+
+A crude way to determine other dependencies is to trace the opened files, with `strace`.
+First install `strace` in the container:
+
+```console
+apt update
+apt install -y strace
+```
+
+Now trace the `openat` system call:
+
+```console
+root@8fbdd8d1010d:/src# strace -e openat ./target/debug/http-tokio
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/proc/self/cgroup", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/proc/self/mountinfo", O_RDONLY|O_CLOEXEC) = 3
+openat(AT_FDCWD, "/sys/fs/cgroup/cpu.max", O_RDONLY|O_CLOEXEC) = 3
+Listening on: http://0.0.0.0:8080
+```
+
+Apart from the library files, the server requires some `/proc` files, that are typically not required.
+So we have a list of dependencies comprised of the shared libraries.
+
+### Constructing the Minimized Docker Environment
+
+With the information above we construct a minimized Docker environment in the `Dockerfile`:
+
+```Dockerfile
+FROM rust:1.73.0-bookworm AS build
+
+WORKDIR /src
+
+COPY ./src /src/src
+COPY ./Cargo.toml /src/Cargo.toml
+
+RUN cargo build
+
+FROM scratch
+
+# Server binary
+COPY --from=build /src/target/debug/http-tokio /server
+
+# System libraries
+COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6
+COPY --from=build /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so.1
+COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
+```
+
+We then build an image from the `Dockerfile`:
+
+```console
+$ docker build --tag minimal-http-tokio .
+[+] Building 1.3s (12/12) FINISHED                                                                                                                                                                                              docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.3s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.5s
+ => => transferring dockerfile: 689B                                                                                                                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/redis:7.2-bookworm                                                                                                                                                                     0.0s
+ => [build 1/1] FROM docker.io/library/redis:7.2-bookworm                                                                                                                                                                                 0.0s
+ => CACHED [stage-1 1/7] COPY --from=build /usr/local/bin/redis-server /usr/bin/redis-server                                                                                                                                        0.0s
+ => CACHED [stage-1 2/7] COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6                                                                                                                                0.0s
+ => CACHED [stage-1 3/7] COPY --from=build /lib/x86_64-linux-gnu/libssl.so.3 /lib/x86_64-linux-gnu/libssl.so.3                                                                                                                            0.0s
+ => CACHED [stage-1 4/7] COPY --from=build /lib/x86_64-linux-gnu/libcrypto.so.3 /lib/x86_64-linux-gnu/libcrypto.so.3                                                                                                                      0.0s
+ => CACHED [stage-1 5/7] COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6                                                                                                                                0.0s  => CACHED [stage-1 6/7] COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2                                                                                                                                        0.0s
+ => CACHED [stage-1 7/7] COPY --from=build /etc/ld.so.cache /etc/ld.so.cache                                                                                                                                                              0.0s
+ => exporting to image                                                                                                                                                                                                                    0.1s
+ => => exporting layers                                                                                                                                                                                                                   0.0s
+ => => writing image sha256:9e95efccc19fc473a6718741ad5e70398a345361fef2f03187b8fe37a2573bab                                                                                                                                              0.0s
+ => => naming to docker.io/library/minimal-redis
+```
+
+We verify the creation of the image:
+
+```console
+$ docker build -t minimal-http-tokio .
+[+] Building 19.8s (15/15) FINISHED                                                                                                                                                                                             docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.6s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.3s
+ => => transferring dockerfile: 594B                                                                                                                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/rust:1.73.0-bookworm                                                                                                                                                                   1.5s
+ => [build 1/5] FROM docker.io/library/rust:1.73.0-bookworm@sha256:25fa7a9aa4dadf6a466373822009b5361685604dbe151b030182301f1a3c2f58                                                                                                       0.0s
+ => [internal] load build context                                                                                                                                                                                                         0.2s
+ => => transferring context: 1.16kB                                                                                                                                                                                                       0.0s
+ => CACHED [build 2/5] WORKDIR /src                                                                                                                                                                                                       0.0s
+ => CACHED [build 3/5] COPY ./src /src/src                                                                                                                                                                                                0.0s
+ => CACHED [build 4/5] COPY ./Cargo.toml /src/Cargo.toml                                                                                                                                                                                  0.0s
+ => CACHED [build 5/5] RUN cargo build                                                                                                                                                                                                    0.0s
+ => [stage-1 1/5] COPY --from=build /src/target/debug/http-tokio /server                                                                                                                                                                  3.0s
+ => [stage-1 2/5] COPY --from=build /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6                                                                                                                                       2.3s
+ => [stage-1 3/5] COPY --from=build /lib/x86_64-linux-gnu/libm.so.6 /lib/x86_64-linux-gnu/libm.so.6                                                                                                                                       2.2s
+ => [stage-1 4/5] COPY --from=build /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so.1                                                                                                                               2.4s
+ => [stage-1 5/5] COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2                                                                                                                                               2.3s
+ => exporting to image                                                                                                                                                                                                                    1.6s
+ => => exporting layers                                                                                                                                                                                                                   1.5s
+ => => writing image sha256:33190a2c1ddeee8b0a4cef83f691717e4ae85af4834a8a7518ba0948b27de12e                                                                                                                                              0.1s
+ => => naming to docker.io/library/minimal-http-tokio
+```
+
+And now we can start the server inside the minimal image:
+
+```console
+$ docker run --rm -p 8080:8080 minimal-http-tokio /server
+Listening on: http://0.0.0.0:8080
+```
+
+It started, we also check it works correctly by querying it:
+
+```console
+$ curl localhost:8080
+Hello, world!
+```
+
+Everything is OK.
+We created a minimized Tokio Rust image inside a `Dockerfile`.
+
+### Using Unikraft
+
+With the `Dockerfile` now available, we require a `Kraftfile` to run the Rust Tokio server with Unikraft.
+Since we are adding an example, we will use the [`base` image](https://github.com/unikraft/catalog/tree/main/library/base) part of the Unikraft registry.
+The `Kraftfile` will have the following contents:
+
+```yaml
+spec: v0.6
+
+runtime: base:latest
+
+rootfs: ./Dockerfile
+
+cmd: ["/server"]
+```
+
+Next we use `kraft run` to pull the `base` image, pack the Rust Tokio filesystem application and run it with `base`:
+
+```console
+kraft run --log-type basic --log-level debug -p 8080:8080
+```
+
+We get the output:
+
+```console
+ D  kraftkit 0.7.3
+ D  using platform=qemu
+ D  cannot run because: no arguments supplied runner=linuxu
+ D  cannot run because: no arguments supplied runner=kernel
+ D  cannot run because: cannot run project build without unikraft runner=kraftfile-unikraft
+ D  using runner=kraftfile-runtime
+ D  querying oci catalog name=base plat=qemu update=false version=latest
+ D  querying manifest catalog name=base plat=qemu update=false version=latest
+ i  pulling unikraft.org/base:latest
+[...]
+ D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:a5:d6:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd /h
+ome/razvand/unikraft/catalog/examples/tmp/http-tokio/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-1911975420/unikraft/bin/kernel -machine pc,accel=kvm -m size=64M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/ef
+6a273d-f066-4674-8d06-b85a10068f13/qemu_mon.sock,server,nowait -name ef6a273d-f066-4674-8d06-b85a10068f13 -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit
+/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/ef6a
+273d-f066-4674-8d06-b85a10068f13/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+ E  could not start qemu instance: dial unix /home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/qemu_control.sock: connect: no such file or directory
+```
+
+The error message lets us know there is a problem with running the application, so we check the debug file:
+
+```console
+$ cat /home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.log
+[...]
+en1: Added
+en1: Interface is up
+[    0.107061] ERR:  [libukcpio] /./server: Failed to load content: Input/output error (5)
+[    0.108430] CRIT: [libvfscore] Failed to extract cpio archive to /: -3
+[    0.109524] ERR:  [libukboot] Init function at 0x14a230 returned error -5
+```
+
+The failure to extract contents can be an issue related to the amount of memory used, so we go for `256M` of memory:
+
+```console
+kraft run --log-type basic --log-level debug -M 256M -p 8080:8080
+```
+
+This, indeed works, with the output:
+
+```console
+ D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:79:ab:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd /home/razvand/unikraft/catalog/examples/tmp/http-tokio/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-4233433423/unikraft/bin/kernel -machine pc,accel=kvm -m size=244M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_mon.sock,server,nowait -name 0fb3fe09-4a1b-4545-9e7d-0c38f0da2335 -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+en1: Interface is up
+Powered by Unikraft Telesto (0.16.1~b1fa7c5)
+Listening on: http://0.0.0.0:8080
+en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
+```
+
+We also check it works correctly by querying it:
+
+```console
+$ curl localhost:8080
+Hello, world!
+```
+
+Everything is OK.
+We create the setup for running a minimized Rust Tokio image with Unikraft.
+
+### Contributing to the Application Catalog
+
+With the Rust Tokio example now set, we can make a contribution to the [`catalog` repository](https://github.com/unikraft/catalog).
+For that three additional steps need to be taken:
+
+1. Create a `README.md` file.
+1. Update the examples listing in the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+
+Then create a commit with the `Dockerfile`, `Kraftfile`, `README.md`, and updates to the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+And submit a pull request.
+
+## Python Flask
+
+A Python Flask program is not an end-user application, so we consider it an example, and it goes in the `examples/` subdirectory of the [`catalog` repository](https://github.com/unikraft/catalog).
+It will make use of the [`python` image](https://github.com/unikraft/catalog/tree/main/library/python/3.10) in the Unikraft registry.
+
+We first create the required source code and build files for a simple Python Flask web server.
+That is, the items required for a native build and run.
+
+The source code file is `server.py` as below:
+
+```Python
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return "Hello, World!\n"
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+```
+
+We also define a `requirements.txt` file:
+
+```requirements
+flask
+```
+
+### Build and Run in a Docker Environment
+
+Both for the eventual Unikraft run, but also to have an environment with everything set, it's easier to build and run the Python Flask server in a Docker environment.
+We start from the [Python Docker image on DockerHub](https://hub.docker.com/_/python).
+We use version `3.10.11` since it's the one used by the [Python `library/` entry in the `catalog` repository](https://github.com/unikraft/catalog/tree/main/library/python/3.10).
+
+For this, we create the following `Dockerfile`:
+
+```Dockerfile
+FROM python:3.10.11 AS build
+
+WORKDIR /src
+
+COPY ./server.py /src/server.py
+COPY ./requirements.txt /src/requirements.txt
+
+RUN pip install -r requirements.txt
+```
+
+We then build an image from the `Dockerfile`:
+
+```console
+$ docker build -t http-python-flask .
+[+] Building 20.7s (10/10) FINISHED                                                                                                                                                                                             docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.4s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.6s
+ => => transferring dockerfile: 198B                                                                                                                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/python:3.10.11                                                                                                                                                                         2.0s
+ => CACHED [1/5] FROM docker.io/library/python:3.10.11@sha256:f5ef86211c0ef0db2e3059787088221602cad7e11b238246e406aa7bbd7edc41                                                                                                            0.0s
+ => [internal] load build context                                                                                                                                                                                                         0.4s
+ => => transferring context: 66B                                                                                                                                                                                                          0.0s
+ => [2/5] WORKDIR /src                                                                                                                                                                                                                    2.5s
+ => [3/5] COPY ./server.py /src/server.py                                                                                                                                                                                                 1.8s
+ => [4/5] COPY ./requirements.txt /src/requirements.txt                                                                                                                                                                                   1.7s
+ => [5/5] RUN pip install -r requirements.txt                                                                                                                                                                                             9.0s
+ => exporting to image                                                                                                                                                                                                                    1.8s
+ => => exporting layers                                                                                                                                                                                                                   1.7s
+ => => writing image sha256:963165fda5d969860361401757a53e2544a597b84ace1ab2142aaf0e7247fb88                                                                                                                                              0.1s
+ => => naming to docker.io/library/http-python-flask
+```
+
+We verify the creation of the image:
+
+```console
+$ docker image ls http-python-flask
+REPOSITORY          TAG       IMAGE ID       CREATED          SIZE
+http-python-flask   latest    963165fda5d9   43 seconds ago   923MB
+```
+
+It's a pretty large image.
+The Python environment and the Flask dependencies occupy quite a bit of space.
+
+And now we can start the Python Flask web server from the Docker image:
+
+```console
+$ docker run --rm -p 8080:8080 http-python-flask /usr/local/bin/python3.10 /src/server.py
+ * Serving Flask app 'server'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://172.17.0.5:8080
+Press CTRL+C to quit
+```
+
+The server starts and waits for connections on TCP port `8080`.
+
+To test it, we query the server:
+
+```console
+$ curl localhost:8080
+Hello, World!
+```
+
+A `Hello, World!` message is printed, so everything works OK.
+
+### Constructing the Minimized Docker Environment
+
+With the information above we construct a minimized Docker environment in the `Dockerfile`:
+
+```Dockerfile
+FROM python:3.10.11 AS base
+
+WORKDIR /app
+
+COPY requirements.txt /app
+
+RUN pip3 install -r requirements.txt --no-cache-dir
+
+FROM scratch
+
+COPY --from=base /usr/local/lib/python3.10 /usr/local/lib/python3.10
+COPY ./server.py /app/server.py
+```
+
+We then build an image from the `Dockerfile`:
+
+```console
+$ docker build -t minimal-http-python-flask .
+[+] Building 18.1s (11/11) FINISHED                                                                                                                                                                                             docker:default
+ => [internal] load .dockerignore                                                                                                                                                                                                         0.5s
+ => => transferring context: 2B                                                                                                                                                                                                           0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                      0.3s
+ => => transferring dockerfile: 319B                                                                                                                                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/python:3.10.11                                                                                                                                                                         0.8s
+ => [build 1/4] FROM docker.io/library/python:3.10.11@sha256:f5ef86211c0ef0db2e3059787088221602cad7e11b238246e406aa7bbd7edc41                                                                                                             0.0s
+ => [internal] load build context                                                                                                                                                                                                         0.2s
+ => => transferring context: 66B                                                                                                                                                                                                          0.0s
+ => CACHED [build 2/4] WORKDIR /src                                                                                                                                                                                                       0.0s
+ => CACHED [build 3/4] COPY ./requirements.txt /src/requirements.txt                                                                                                                                                                      0.0s
+ => CACHED [stage-1 1/2] COPY ./server.py /server.py                                                                                                                                                                                      0.0s
+ => [build 4/4] RUN pip install -r requirements.txt                                                                                                                                                                                       7.0s
+ => [stage-1 2/2] COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10                                                                                                                                                   3.4s
+ => exporting to image                                                                                                                                                                                                                    1.4s
+ => => exporting layers                                                                                                                                                                                                                   1.2s
+ => => writing image sha256:76f8451f95098275585836b03e06a16dd905734097d6a3ff90762e39a480bd8b                                                                                                                                              0.0s
+ => => naming to docker.io/library/minimal-http-python-flask                                                                                                                                                                              0.1s
+```
+
+We verify the creation of the image:
+
+```console
+$ docker image ls minimal-http-python-flask
+REPOSITORY                  TAG       IMAGE ID       CREATED          SIZE
+minimal-http-python-flask   latest    76f8451f9509   10 seconds ago   51MB
+```
+
+This image doesn't possess a Python interpreter.
+We rely on the Unikraft registry image to provide tha.
+
+### Using Unikraft
+
+With the `Dockerfile` now available, we require a `Kraftfile` to run the Python Flask server with Unikraft.
+Since we are adding an example, we will use the [`python:3.10` image](https://github.com/unikraft/catalog/tree/main/library/python/3.10) part of the Unikraft registry.
+The `Kraftfile` will have the following contents:
+
+```yaml
+spec: v0.6
+
+runtime: unikraft.org/python:3.10
+
+rootfs: ./Dockerfile
+
+cmd: ["/server.py"]
+```
+
+Next we use `kraft run` to pull the `python` image, pack the Python Flask filesystem application and run it with `python`:
+
+```console
+kraft run --log-type basic --log-level debug -p 8080:8080
+```
+
+We get the output:
+
+```console
+ D  kraftkit 0.7.3
+ D  using platform=qemu
+ D  cannot run because: no arguments supplied runner=linuxu
+ D  cannot run because: no arguments supplied runner=kernel
+ D  cannot run because: cannot run project build without unikraft runner=kraftfile-unikraft
+ D  using runner=kraftfile-runtime
+ D  querying oci catalog name=unikraft.org/python plat=qemu update=false version=3.10
+ D  querying manifest catalog name=unikraft.org/python plat=qemu update=false version=3.10
+ D  querying oci catalog name=unikraft.org/python plat=qemu update=true version=3.10
+ D  querying manifest catalog name=unikraft.org/python plat=qemu update=true version=3.10
+ i  pulling unikraft.org/python:3.10
+[...]
+ D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server.py  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:ba:2c:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd
+ /home/razvand/unikraft/catalog/examples/tmp/http-python3.12-flask/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-3997990667/unikraft/bin/kernel -machine pc,accel=kvm -m size=64M -monitor unix:/home/razvand/.local/share/kraft
+kit/runtime/4667ae02-d991-4135-af68-ba22698ecd72/qemu_mon.sock,server,nowait -name 4667ae02-d991-4135-af68-ba22698ecd72 -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/
+share/kraftkit/runtime/4667ae02-d991-4135-af68-ba22698ecd72/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/4667ae02-d991-4135-af68-ba22698ecd72/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftki
+t/runtime/4667ae02-d991-4135-af68-ba22698ecd72/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/4667ae02-d991-4135-af68-ba22698ecd72/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+ E  could not start qemu instance: dial unix /home/razvand/.local/share/kraftkit/runtime/4667ae02-d991-4135-af68-ba22698ecd72/qemu_control.sock: connect: no such file or directory
+```
+
+The error message lets us know there is a problem with running the application, so we check the debug file:
+
+```console
+$ cat /home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.log
+[...]
+Booting from ROM...
+[    0.000000] CRIT: [libkvmplat] <memory.c @  359> Assertion failure: mr_prio == 0 || ml_prio == 0
+```
+
+The failure to extract contents can be an issue related to the amount of memory used, so we go for `512M` of memory:
+
+```console
+kraft run --log-type basic --log-level debug -M 512M -p 8080:8080
+```
+
+This, indeed works, with the output:
+
+```console
+ D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server.py  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:7e:03:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd /home/razvand/unikraft/catalog/examples/tmp/http-python3.12-flask/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-3035028343/unikraft/bin/kernel -machine pc,accel=kvm -m size=488M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_mon.sock,server,nowait -name 355437d0-52d6-443f-9906-f12be299a9cb -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                 Telesto 0.16.1~b1fa7c5
+ * Serving Flask app 'server'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8080
+ * Running on http://0.0.0.0:8080
+Press CTRL+C to quit
+```
+
+We also check it works correctly by querying it:
+
+```console
+$ curl localhost:8080
+Hello, World!
+```
+
+Everything is OK.
+We create the setup for running a minimized Python Flask image with Unikraft.
+
+### Contributing to the Application Catalog
+
+With the Python Flask example now set, we can make a contribution to the [`catalog` repository](https://github.com/unikraft/catalog).
+For that three additional steps need to be taken:
+
+1. Create a `README.md` file.
+1. Update the examples listing in the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+
+Then create a commit with the `Dockerfile`, `Kraftfile`, `README.md`, and updates to the [top-level `README.md` file](https://github.com/unikraft/catalog/blob/main/README.md).
+And submit a pull request.
