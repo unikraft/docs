@@ -1,0 +1,242 @@
+---
+title: "Application Catalog: Using Firecracker"
+description: |
+  This guide presents internal technical information about using Firecracker with the application catalog.
+---
+
+This guide is a companion to the ["Application Catalog: Behind the Scenes" guide](/guides/catalog-internals).
+It details how to use [Firecracker](https://firecracker-microvm.github.io/) to run Unikraft applications.
+Firecracker is not yet fully support by KraftKit:
+building can be done with KraftKit, but running is to be done manually.
+
+<Info>
+Note that Firecracker requires hardware virtualization support (KVM).
+Because of that, it can't be used in a virtual machine to run Unikraft applications.
+You have to run in a native Linux install.
+</Info>
+
+## Installing Firecracker
+
+To use Firecraker, you need to download a [Firecracker release](https://github.com/firecracker-microvm/firecracker/releases).
+For this guide we use the `1.4.0` release:
+
+```console
+cd /tmp
+wget https://github.com/firecracker-microvm/firecracker/releases/download/v1.4.0/firecracker-v1.4.0-x86_64.tgz
+tar xzf firecracker-v1.4.0-x86_64.tgz
+```
+
+You can use the command below to make the `firecracker-x86_64` executable available globally in the command line:
+
+```console
+sudo cp release-v1.4.0-x86_64/firecracker-v1.4.0-x86_64 /usr/local/bin/firecracker-x86_64
+```
+
+Similar to the ["Application Catalog: Behind the Scenes" guide](/guides/catalog-internals), we will use two applications:
+
+- [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
+- [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
+
+## Nginx
+
+Use the steps below to build and run the Nginx binary-compatible application:
+
+1. If not already configured, configure the BuildKit container:
+
+   ```console
+   docker run -d --name buildkitd --privileged moby/buildkit:latest
+   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   ```
+
+1. Enter the Nginx binary-compatible directory:
+
+   ```console
+   cd catalog/library/nginx/1.25
+   ```
+
+1. Build the application for the Firecracker (`fc`) platform:
+
+   ```console
+   kraft build --plat fc --arch x86_64
+   ```
+
+   The resulting kernel file is `.unikraft/build/nginx_fc-x86_64`.
+
+1. As `root` (prefix with `sudo` if required), create a network tap interface:
+
+   ```console
+   ip tuntap add dev tap0 mode tap
+   ip address add 172.45.0.1/24 dev tap0
+   ip link set dev tap0 up
+   ```
+
+1. Create the Firecracker JSON configuration file `fc-x86_64.json`:
+
+   ```json
+   {
+     "boot-source": {
+       "kernel_image_path": ".unikraft/build/nginx_fc-x86_64",
+       "boot_args": ".unikraft/build/nginx_fc-x86_64 netdev.ip=172.45.0.2/24:172.45.0.1 -- /usr/bin/nginx"
+     },
+     "drives": [],
+     "machine-config": {
+       "vcpu_count": 1,
+       "mem_size_mib": 128,
+       "smt": false,
+       "track_dirty_pages": false
+     },
+     "cpu-config": null,
+     "balloon": null,
+     "network-interfaces": [
+       {
+         "iface_id": "net1",
+         "guest_mac":  "06:00:ac:10:00:02",
+         "host_dev_name": "tap0"
+       }
+     ],
+     "vsock": null,
+     "logger": {
+       "log_path": "/tmp/firecracker.log",
+       "level": "Debug",
+       "show_level": true,
+       "show_log_origin": true
+     },
+     "metrics": null,
+     "mmds-config": null,
+     "entropy": null
+   }
+   ```
+
+1. Run as `root` (prefix with `sudo` if required):
+
+   ```console
+   rm -f /tmp/firecracker.log
+   touch /tmp/firecracker.log
+   rm -f /tmp/firecracker.socket
+   firecracker-x86_64 --api-sock /tmp/firecracker.socket --config-file fc-x86_64.json
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://172.45.0.2
+   ```
+
+To close the running Firecracker instance, kill the corresponding process.
+In another console, run as `root` (prefix with `sudo` if required):
+
+```console
+pkill -f firecracker
+```
+
+## HTTP Go Server
+
+Use the steps below to build and run the HTTP Go server as a binary-compatible application.
+
+1. If not already configured, configure the BuildKit container:
+
+   ```console
+   docker run -d --name buildkitd --privileged moby/buildkit:latest
+   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   ```
+
+1. Enter the HTTP Go server example directory:
+
+   ```console
+   cd catalog/examples/http-go1.21/
+   ```
+
+1. Pull the unikernel `base` image for the Firecracker (`fc`) platform:
+
+   ```console
+   kraft pkg pull -w base unikraft.org/base:latest --plat fc --arch x86_64
+   ```
+
+1. Use `kraft run` to trigger the build the root filesystem as an initrd:
+
+   ```console
+   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --plat fc --arch x86_64 .
+   ```
+
+   Note that this will cause an error similar to the one below, as KraftKit does not yet support running Firecracker:
+
+   ```text
+    E  [PUT /actions][400] createSyncActionBadRequest  &{FaultMessage:The requested operation is not supported after starting the microVM.}
+   ```
+
+   However, the filesystem initird is created in `.unikraft/build/initramfs-x86_64.cpio`:
+
+   ```console
+   $ ls -lh .unikraft/build/initramfs-x86_64.cpio
+   -rw-r--r-- 1 razvand razvand 9.7M Jan 26 18:50 .unikraft/build/initramfs-x86_64.cpio
+   ```
+
+   We will use the initrd for a manual run of Firecracker.
+
+1. As `root` (prefix with `sudo` if required), create a network tap interface:
+
+   ```console
+   ip tuntap add dev tap0 mode tap
+   ip address add 172.45.0.1/24 dev tap0
+   ip link set dev tap0 up
+   ```
+
+1. Create the Firecracker JSON configuration file `fc-x86_64.json`:
+
+   ```json
+   {
+     "boot-source": {
+       "kernel_image_path": "base/unikraft/bin/kernel",
+       "boot_args": "kernel netdev.ip=172.45.0.2/24:172.45.0.1 vfs.fstab=[ \"initrd0:/:extract:::\" ] -- /server",
+       "initrd_path": ".unikraft/build/initramfs-x86_64.cpio"
+     },
+     "drives": [],
+     "machine-config": {
+       "vcpu_count": 1,
+       "mem_size_mib": 512,
+       "smt": false,
+       "track_dirty_pages": false
+     },
+     "cpu-config": null,
+     "balloon": null,
+     "network-interfaces": [
+       {
+         "iface_id": "net1",
+         "guest_mac":  "06:00:ac:10:00:02",
+         "host_dev_name": "tap0"
+       }
+     ],
+     "vsock": null,
+     "logger": {
+       "log_path": "/tmp/firecracker.log",
+       "level": "Debug",
+       "show_level": true,
+       "show_log_origin": true
+     },
+     "metrics": null,
+     "mmds-config": null,
+     "entropy": null
+   }
+   ```
+
+1. Run as `root` (prefix with `sudo` if required):
+
+   ```console
+   rm -f /tmp/firecracker.log
+   touch /tmp/firecracker.log
+   rm -f /tmp/firecracker.socket
+   firecracker-x86_64 --api-sock /tmp/firecracker.socket --config-file fc-x86_64.json
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://172.45.0.2:8080
+   ```
+
+To close the running Firecracker instance, kill the corresponding process.
+In another console, run as `root` (prefix with `sudo` if required):
+
+```console
+pkill -f firecracker
+```
