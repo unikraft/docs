@@ -1,0 +1,309 @@
+---
+title: Using the Application Catalog
+description: |
+  This guide presents the Unikraft application catalog and how to use it: build and run applications.
+  It is meant for anyone interested in using Unikraft and benefiting from technical advantages of unikernels.
+---
+
+The Unikraft application catalog is a collection of applications and examples that are built and packaged to run with Unikraft.
+The application packages are stored in the Unikraft Application Registry, typically identified by a name similar to those used by [DockerHub](https://hub.docker.com/): `unikraft.org/node:18`, `unikraft.org/python:3.10`.
+
+The catalog stores both native builds and [binary-compatible](/docs/concepts/bincompat) builds of Unikraft applications.
+As a user it shouldn't matter to you.
+[KraftKit](https://github.com/unikraft/kraftkit) is used to provide the same build and run interface for both native and binary-compatible apps.
+
+## Running Applications from the Registry
+
+You can list the applications in the registry by using:
+
+```console
+$ kraft pkg ls --apps --all --update
+TYPE  NAME                     VERSION  FORMAT  MANIFEST  INDEX    PLAT
+app   unikraft.org/base        latest   oci     18cd70e   af5c5ed  qemu/x86_64
+app   unikraft.org/base        latest   oci     ac5efa1   af5c5ed  fc/x86_64
+app   unikraft.org/helloworld  latest   oci     8f6c8ff   01f213a  fc/x86_64
+app   unikraft.org/helloworld  latest   oci     6686724   01f213a  xen/x86_64
+app   unikraft.org/helloworld  latest   oci     225f853   01f213a  linuxu/arm64
+app   unikraft.org/helloworld  latest   oci     45782c1   01f213a  qemu/arm64
+app   unikraft.org/helloworld  latest   oci     603e401   01f213a  qemu/x86_64
+app   unikraft.org/helloworld  latest   oci     c156b11   01f213a  linuxu/x86_64
+app   unikraft.org/lua         5.4      oci     5aa7cae   22b92ef  qemu/x86_64
+app   unikraft.org/lua         5.4      oci     4910f7f   22b92ef  fc/x86_64
+app   unikraft.org/lua         5.4      oci     bb9f1bb   22b92ef  fc/arm64
+app   unikraft.org/lua         5.4      oci     a0e36f4   22b92ef  qemu/arm64
+app   unikraft.org/nginx       1.15     oci     11012dd   05c88f3  qemu/arm64
+app   unikraft.org/nginx       1.15     oci     789628a   05c88f3  qemu/x86_64
+app   unikraft.org/nginx       1.15     oci     c6934f4   05c88f3  fc/x86_64
+app   unikraft.org/nginx       1.15     oci     2c70788   05c88f3  fc/arm64
+app   unikraft.org/python      3.10     oci     ecb5863   1f0939e  fc/x86_64
+app   unikraft.org/python      3.10     oci     2d74e1b   1f0939e  qemu/x86_64
+app   unikraft.org/redis       7.0      oci     ee39581   1661b08  qemu/arm64
+app   unikraft.org/redis       7.0      oci     a87f72f   1661b08  qemu/x86_64
+app   unikraft.org/redis       7.0      oci     9c726bc   1661b08  fc/arm64
+app   unikraft.org/redis       7.0      oci     77d88f3   1661b08  fc/x86_64
+```
+
+The `base` entry is a meta-application that is being used in [binary-compatibility mode](/docs/concepts/bincompat) to run other applications and examples.
+The other entries may be binary-compatible or native builds.
+
+To pull and run `helloworld`, for example, use:
+
+```console
+kraft run -W unikraft.org/helloworld
+```
+
+This will default to the `x86_64` architecture and to the `qemu` platform.
+It will pull and run run the application from the registry:
+
+```text
+ i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/helloworld
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                 Telesto 0.16.1~b1fa7c5
+Hello from Unikraft!
+
+This message shows that your installation appears to be working correctly.
+
+For more examples and ideas, visit: https://unikraft.org/docs/
+```
+
+<Info>
+The `-W` option for `kraft run` is used to disable hardware virtualization (KVM).
+This is useful if you are running Unikraft applications inside a virtual machine.
+If you are running natively (for maximum performance), and if you likely have hardware virtualization support, you can remove the `-W` option.
+</Info>
+
+Similarly, we can pull and run Nginx:
+
+```console
+$ kraft run -W unikraft.org/nginx
+ i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/nginx
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                 Telesto 0.16.1~b1fa7c5
+```
+
+Note that the Nginx server starts but waits for a connection.
+In order to connect to it, we need to pass a port mapping, similar to [`docker` commands](https://docs.docker.com/network/#published-ports):
+
+```console
+$ kraft run -W -p 8080:80 unikraft.org/nginx
+ i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/nginx
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                 Telesto 0.16.1~b1fa7c5
+```
+
+With the command above we mapped the local port `8080` to the internal Nginx Unikraft port `80`:
+Query the server to get the index page:
+
+```console
+$ curl localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, world!</title>
+</head>
+<body>
+  <h1>Hello from Unikraft!</h1>
+
+  <p>This message shows that your installation appears to be working correctly.</p>
+
+  <p></p>For more examples and ideas, visit <a href="https://unikraft.org/docs/">Unikraft's Documentation</a>.</p>
+</body>
+</html>
+```
+
+This a local port mapping, running on `localhost`.
+For an IP-based network connection, you can use a bridged interface.
+First create a bridge interface, as `root` (prefix with `sudo` if required):
+
+```console
+$ sudo kraft run --network bridge:virbr0 unikraft.org/nginx
+ i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/nginx
+en1: Interface is up
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                 Telesto 0.16.1~b1fa7c5
+```
+
+The IP address used is typically the first available address (`172.44.0.2`, if that doesn't work try `172.44.0.3`) so we query the server using that address:
+
+```
+$ curl 172.44.0.2
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, world!</title>
+</head>
+<body>
+  <h1>Hello from Unikraft!</h1>
+
+  <p>This message shows that your installation appears to be working correctly.</p>
+
+  <p></p>For more examples and ideas, visit <a href="https://unikraft.org/docs/">Unikraft's Documentation</a>.</p>
+</body>
+</html>
+```
+
+## The Application Catalog Repository
+
+Application in the registry are built and packaged using the recipes and source code files in the [`catalog` repository](https://github.com/unikraft/catalog).
+The `catalog` repository contains two types of entries:
+
+- end-user applications in the [`library/` directory](https://github.com/unikraft/catalog/tree/main/library)
+- examples in the [`examples/` directory](https://github.com/unikraft/catalog/tree/main/examples)
+
+The end-user appplications are built, packaged and published periodically in the registry.
+
+We present the steps to building application and running them locally for:
+
+- [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
+- [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
+
+Both are running in binary-compatibility mode.
+
+For building and running binary-compatible applications, [KraftKit](https://github.com/unikraft/kraftkit) and [Docker](https://docs.docker.com/engine/install/) are required.
+
+### Nginx
+
+Follow the steps below to build and run the Nginx binary-compatible application:
+
+1. Set up the BuildKit container, if not already running:
+
+   ```console
+   docker run -d --name buildkitd --privileged moby/buildkit:latest
+   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   ```
+
+1. Clone the `catalog` repository:
+
+   ```console
+   git clone https://github.com/unikraft/catalog
+   ```
+
+1. Enter the application directory:
+
+   ```console
+   cd catalog/library/nginx/1.25
+   ```
+
+1. Build the application:
+
+   ```console
+   kraft build --plat qemu --arch x86_64
+   ```
+
+1. Run the application with `8080:80` port mapping.:
+
+   ```console
+   kraft run -W -p 8080:80 .
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://localhost:8080
+   ```
+
+If, instead of port mapping, you want to use bridge networking, follow the steps:
+
+1. As `root` (prefix with `sudo` if required), create a network interface bridge:
+
+   ```console
+   kraft net create -n 172.44.0.1/24 virbr0
+   ```
+
+1. Run as `root` (prefix with `sudo` if required):
+
+   ```console
+   kraft run --network bridge:virbr0 .
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://172.44.0.2
+   ```
+
+To close the running `kraft` instance, remove the corresponding `kraft` process.
+Run, as `root` (prefix with `sudo` if required):
+
+```console
+kraft rm --all
+```
+
+### HTTP Go Server
+
+The Nginx build / run uses a feature called "embedded initrd", that embeds and initial ramdisk with the kernel.
+The initial ramdisk contains with the Nginx application binary and depending libraries.
+This is generally the case for end-user applications, located in the [`library/` directory](https://github.com/unikraft/catalog/tree/main/library).
+
+Another approach is to use a `base` image that is not embedding an actual application.
+This is the case for examples, located in the [`examples/` directory](https://github.com/unikraft/catalog/tree/main/examples).
+The application / example is then passed via an initial ramdisk.
+One such example is the [`http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21).
+Follow the steps below to build and run the example:
+
+1. Enter the example directory:
+
+   ```console
+   cd catalog/examples/http-go1.21
+   ```
+
+1. Run:
+
+   ```console
+   kraft run -W -p 8080:8080 .
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://localhost:8080
+   ```
+
+If, instead of port mapping, you want to use bridge networking, follow the steps:
+
+1. As `root` (prefix with `sudo` if required), create a network interface bridge:
+
+   ```console
+   kraft net create -n 172.44.0.1/24 virbr0
+   ```
+
+1. Run as `root` (prefix with `sudo` if required):
+
+   ```console
+   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --network bridge:virbr0 .
+   ```
+
+1. Query the unikernel instance:
+
+   ```console
+   curl http://172.44.0.2:8080
+   ```
+
+To close the running `kraft` instance, remove the corresponding `kraft` process.
+Run, as `root` (prefix with `sudo` if required):
+
+```console
+kraft rm --all
+```
