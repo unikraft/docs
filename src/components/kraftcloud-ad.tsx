@@ -3,11 +3,7 @@ import { Box, VStack, Heading, Flex, chakra } from '@chakra-ui/react';
 import { CompanyKraftCloud } from 'components/logos';
 import { t } from 'utils/i18n';
 
-export const KraftCloudAd = ({ title, url, children }: {
-  title: { string }
-  url: { string }
-  children: React.ReactNode
-}) => {
+export const KraftCloudAd = () => {
   return (
     <VStack
       w='full'
@@ -33,10 +29,10 @@ export const KraftCloudAd = ({ title, url, children }: {
         </Box>
       </Flex>
       <Heading size='md'>
-        {title || t('component.kraftcloud-strip.heading')}
+        {t('component.kraftcloud-strip.heading')}
       </Heading>
       <Box opacity={0.7}>
-        {children || t('component.kraftcloud-strip.description')}
+        {t('component.kraftcloud-strip.description')}
       </Box>
       <chakra.button
         mt={{ base: '6', md: 0 }}
