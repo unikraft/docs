@@ -19,6 +19,10 @@ import 'prismjs/components/prism-clike'
 import 'prismjs/components/prism-docker'
 import 'prismjs/components/prism-yaml'
 import 'prismjs/components/prism-diff'
+import 'prismjs/components/prism-rust'
+import 'prismjs/components/prism-python'
+import 'prismjs/components/prism-toml'
+import 'prismjs/components/prism-json'
 
 const RE = /{([\d,-]+)}/
 
