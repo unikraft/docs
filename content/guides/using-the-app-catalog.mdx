@@ -8,7 +8,7 @@ description: |
 The Unikraft application catalog is a collection of applications and examples that are built and packaged to run with Unikraft.
 The application packages are stored in the Unikraft Application Registry, typically identified by a name similar to those used by [DockerHub](https://hub.docker.com/): `unikraft.org/node:18`, `unikraft.org/python:3.10`.
 
-The catalog stores both native builds and [binary-compatible](/docs/concepts/bincompat) builds of Unikraft applications.
+The catalog stores both native builds and [binary-compatible](/docs/concepts/compatibility) builds of Unikraft applications.
 As a user it shouldn't matter to you.
 [KraftKit](https://github.com/unikraft/kraftkit) is used to provide the same build and run interface for both native and binary-compatible apps.
 
@@ -16,8 +16,10 @@ As a user it shouldn't matter to you.
 
 You can list the applications in the registry by using:
 
-```console
+```bash
 $ kraft pkg ls --apps --all --update
+```
+```
 TYPE  NAME                     VERSION  FORMAT  MANIFEST  INDEX    PLAT
 app   unikraft.org/base        latest   oci     18cd70e   af5c5ed  qemu/x86_64
 app   unikraft.org/base        latest   oci     ac5efa1   af5c5ed  fc/x86_64
@@ -43,19 +45,19 @@ app   unikraft.org/redis       7.0      oci     9c726bc   1661b08  fc/arm64
 app   unikraft.org/redis       7.0      oci     77d88f3   1661b08  fc/x86_64
 ```
 
-The `base` entry is a meta-application that is being used in [binary-compatibility mode](/docs/concepts/bincompat) to run other applications and examples.
+The `base` entry is a meta-application that is being used in [binary-compatibility mode](/docs/concepts/compatibility) to run other applications and examples.
 The other entries may be binary-compatible or native builds.
 
 To pull and run `helloworld`, for example, use:
 
-```console
+```bash
 kraft run -W unikraft.org/helloworld
 ```
 
 This will default to the `x86_64` architecture and to the `qemu` platform.
 It will pull and run run the application from the registry:
 
-```text
+```
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/helloworld
 o.   .o       _ _               __ _
@@ -79,8 +81,10 @@ If you are running natively (for maximum performance), and if you likely have ha
 
 Similarly, we can pull and run Nginx:
 
-```console
-$ kraft run -W unikraft.org/nginx
+```bash
+kraft run -W unikraft.org/nginx
+```
+```
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 o.   .o       _ _               __ _
@@ -94,8 +98,10 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 Note that the Nginx server starts but waits for a connection.
 In order to connect to it, we need to pass a port mapping, similar to [`docker` commands](https://docs.docker.com/network/#published-ports):
 
-```console
-$ kraft run -W -p 8080:80 unikraft.org/nginx
+```bash
+kraft run -W -p 8080:80 unikraft.org/nginx
+```
+```
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 Powered by
@@ -110,8 +116,10 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 With the command above we mapped the local port `8080` to the internal Nginx Unikraft port `80`:
 Query the server to get the index page:
 
-```console
-$ curl localhost:8080
+```bash
+curl localhost:8080
+```
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -131,8 +139,10 @@ This a local port mapping, running on `localhost`.
 For an IP-based network connection, you can use a bridged interface.
 First create a bridge interface, as `root` (prefix with `sudo` if required):
 
-```console
-$ sudo kraft run --network bridge:virbr0 unikraft.org/nginx
+```bash
+sudo kraft run --network bridge:virbr0 unikraft.org/nginx
+```
+```
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 en1: Interface is up
@@ -147,8 +157,10 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 
 The IP address used is typically the first available address (`172.44.0.2`, if that doesn't work try `172.44.0.3`) so we query the server using that address:
 
+```bash
+curl 172.44.0.2
 ```
-$ curl 172.44.0.2
+```
 <!DOCTYPE html>
 <html>
 <head>
@@ -183,44 +195,44 @@ Both are running in binary-compatibility mode.
 
 For building and running binary-compatible applications, [KraftKit](https://github.com/unikraft/kraftkit) and [Docker](https://docs.docker.com/engine/install/) are required.
 
-### Nginx
+### NGINX
 
-Follow the steps below to build and run the Nginx binary-compatible application:
+Follow the steps below to build and run the NGINX binary-compatible application:
 
 1. Set up the BuildKit container, if not already running:
 
-   ```console
+   ```bash
    docker run -d --name buildkitd --privileged moby/buildkit:latest
    export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
    ```
 
 1. Clone the `catalog` repository:
 
-   ```console
+   ```bash
    git clone https://github.com/unikraft/catalog
    ```
 
 1. Enter the application directory:
 
-   ```console
+   ```bash
    cd catalog/library/nginx/1.25
    ```
 
 1. Build the application:
 
-   ```console
+   ```bash
    kraft build --plat qemu --arch x86_64
    ```
 
 1. Run the application with `8080:80` port mapping.:
 
-   ```console
+   ```bash
    kraft run -W -p 8080:80 .
    ```
 
 1. Query the unikernel instance:
 
-   ```console
+   ```bash
    curl http://localhost:8080
    ```
 
@@ -228,33 +240,33 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 
 1. As `root` (prefix with `sudo` if required), create a network interface bridge:
 
-   ```console
+   ```bash
    kraft net create -n 172.44.0.1/24 virbr0
    ```
 
 1. Run as `root` (prefix with `sudo` if required):
 
-   ```console
+   ```bash
    kraft run --network bridge:virbr0 .
    ```
 
 1. Query the unikernel instance:
 
-   ```console
+   ```bash
    curl http://172.44.0.2
    ```
 
 To close the running `kraft` instance, remove the corresponding `kraft` process.
 Run, as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 kraft rm --all
 ```
 
 ### HTTP Go Server
 
-The Nginx build / run uses a feature called "embedded initrd", that embeds and initial ramdisk with the kernel.
-The initial ramdisk contains with the Nginx application binary and depending libraries.
+The NGINX build / run uses a feature called "embedded initrd", that embeds and initial ramdisk with the kernel.
+The initial ramdisk contains with the NGINX application binary and depending libraries.
 This is generally the case for end-user applications, located in the [`library/` directory](https://github.com/unikraft/catalog/tree/main/library).
 
 Another approach is to use a `base` image that is not embedding an actual application.
@@ -265,19 +277,19 @@ Follow the steps below to build and run the example:
 
 1. Enter the example directory:
 
-   ```console
+   ```bash
    cd catalog/examples/http-go1.21
    ```
 
 1. Run:
 
-   ```console
+   ```bash
    kraft run -W -p 8080:8080 .
    ```
 
 1. Query the unikernel instance:
 
-   ```console
+   ```bash
    curl http://localhost:8080
    ```
 
@@ -285,25 +297,25 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 
 1. As `root` (prefix with `sudo` if required), create a network interface bridge:
 
-   ```console
+   ```bash
    kraft net create -n 172.44.0.1/24 virbr0
    ```
 
 1. Run as `root` (prefix with `sudo` if required):
 
-   ```console
+   ```bash
    sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --network bridge:virbr0 .
    ```
 
 1. Query the unikernel instance:
 
-   ```console
+   ```bash
    curl http://172.44.0.2:8080
    ```
 
 To close the running `kraft` instance, remove the corresponding `kraft` process.
 Run, as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 kraft rm --all
 ```

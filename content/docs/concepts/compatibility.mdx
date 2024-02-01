@@ -6,10 +6,39 @@ description: |
 ---
 
 <Info>
-This page contains extracts from [an article published to **USENIX
+Parts of this document contains extracts from [an article published to **USENIX
 ;login**](https://www.usenix.org/publications/loginonline/unikraft-and-coming-age-unikernels)
 about Unikraft.
 </Info>
+
+One challenge with Unikraft is the potential porting effort required for new applications.
+To address this, Unikraft includes a **binary-compatibility layer** which allows the running of Linux binaries (ELFs) on top of Unikraft.
+
+For such a layer to work, Unikraft has the explicit goal to comply, as much as possible, with Linux's ABI (_Application Binary Interface_), providing a large range of its system call interface.
+Concretely, in Unikraft this is handled through its [**system call shim layer**](/docs/internals/syscall-shim) (also called **syscall shim**), which provides Linux-style mappings of system call numbers to actual system call handler functions.
+
+<Info>
+Currently, binary-compatibility is available on x86_64, with work ongoing to make this available for AArch64.
+Also note that KVM is currently the only supported hypervisor, with QEMU and Firecracker as VMMs (_Virtual Machine Monitors_).
+</Info>
+
+<Warning>
+Currently, binaries have to be built as PIE (*Position-Independent Executables*).
+This is the default build mode for the majority of Linux distributions, so it shouldn't cause any problems.
+</Warning>
+
+<Info>
+Note that, because Linux binaries are included, constructing new Linux binaries requires a Linux or Linux-compatible development environement (such as WSL - _Windows Subsystem for Linux_).
+This is only the case for building binaries -- prebuilt binaries can be used and the ELF loader app itself can be built on multiple platforms (Linux, Windows, macOS).
+</Info>
+
+Binary-compatible apps are located in the Unikraft [application `catalog` repository](https://github.com/unikraft/catalog).
+Follow the guides below to know how to use and develop for the application catalog:
+
+- [Using the Application Catalog](/guides/using-the-app-catalog)
+- [Behind the Scenes with the Application Catalog](/guides/catalog-behind-the-scenes)
+- [Using Firecracker in the Application Catalog](/guides/catalog-using-firecracker)
+- [Adding Applications to the Catalog](/docs/contributing/adding-to-the-app-catalog)
 
 While Linux has over 350 system calls, previous
 [studies](https://dl.acm.org/doi/10.1145/2901318.2901341) have shown through

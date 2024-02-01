@@ -1,7 +1,7 @@
 ---
 title: Adding Applications to the Catalog
 description: |
-  This guide presents the steps to add application to the catalog.
+  This document presents the steps to add application to the catalog.
   It is primarily focused on binary-compatible applications.
   It is meant to be used by contributors and application developers who want to have a particular application or example featured in the catalog.
 ---
@@ -55,7 +55,7 @@ Using a Docker environment is a two step process:
 
 To Run Redis as it is, use the command:
 
-```console
+```bash
 docker run --rm redis:7.2-bookworm
 ```
 
@@ -98,7 +98,7 @@ From the message above we derive some information:
 
 For the latter, let's run Redis with networking support from Docker:
 
-```console
+```bash
 docker run --rm -p 6379:6379 redis:7.2-bookworm
 ```
 
@@ -108,14 +108,16 @@ To test it, use the Redis client, `redis-cli`.
 If not available, install it.
 On a Debian/Ubuntu system the install command is, as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 apt install redis-tools
 ```
 
 Now test the Redis server inside Docker:
 
-```console
+```bash
 $ redis-cli -h localhost
+```
+```
 localhost:6379> ping
 PONG
 localhost:6379> set a 1
@@ -132,65 +134,67 @@ Everything works OK.
 To get Redis dependencies, we have to inspect the Docker environment.
 Firstly we inspect the Docker image:
 
-```console
+```bash
 docker inspect redis:7.2-bookworm
 ```
 
 We filter out relevant information from the output:
 
-```text
-            "Env": [
-                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-                "GOSU_VERSION=1.17",
-                "REDIS_VERSION=7.2.4",
-                "REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.2.4.tar.gz",
-                "REDIS_DOWNLOAD_SHA=8d104c26a154b29fd67d6568b4f375212212ad41e0c2caa3d66480e78dbd3b59"
-            ],
-            "Cmd": [
-                "redis-server"
-            ],
-            "ArgsEscaped": true,
-            "Image": "",
-            "Volumes": {
-                "/data": {}
-            },
-            "WorkingDir": "/data",
-            "Entrypoint": [
-                "docker-entrypoint.sh"
-            ],
+```json
+"Env": [
+    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "GOSU_VERSION=1.17",
+    "REDIS_VERSION=7.2.4",
+    "REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-7.2.4.tar.gz",
+    "REDIS_DOWNLOAD_SHA=8d104c26a154b29fd67d6568b4f375212212ad41e0c2caa3d66480e78dbd3b59"
+],
+"Cmd": [
+    "redis-server"
+],
+"ArgsEscaped": true,
+"Image": "",
+"Volumes": {
+    "/data": {}
+},
+"WorkingDir": "/data",
+"Entrypoint": [
+    "docker-entrypoint.sh"
+],
 ```
 
 Then we run a Docker instance and start a shell:
 
-```console
+```bash
 docker run --rm -p 6379:6379 -it redis:7.2-bookworm /bin/bash
 ```
 
 We get a console / shell of running inside Docker, in the `WorkingDir` option above (`/data`):
 
-```console
+```bash
 root@8b346198f54d:/data#
 ```
 
 Our goal is to know the path to the executable, the library dependencies, other required files.
 We use the commands below to locate the executable and get the library dependencies:
 
-```console
-root@8b346198f54d:/data# which redis-server
-/usr/local/bin/redis-server
-root@8b346198f54d:/data# ldd /usr/local/bin/redis-server
-        linux-vdso.so.1 (0x00007fffb7d39000)
-        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007ff32f07d000)
-        libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007ff32efd3000)
-        libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007ff32eb51000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ff32e970000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007ff32f6f5000)
+```bash
+root@8b346198f54d:/data# ldd $(which redis-server)
+```
+```
+linux-vdso.so.1 (0x00007fffb7d39000)
+libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007ff32f07d000)
+libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007ff32efd3000)
+libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007ff32eb51000)
+libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ff32e970000)
+/lib64/ld-linux-x86-64.so.2 (0x00007ff32f6f5000)
 ```
 
 We also start Redis to ensure everything works OK:
 
-```console
+```bash
 root@8b346198f54d:/data# /usr/local/bin/redis-server
+```
+```
 17:C 25 Jan 2024 11:07:55.418 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
 17:C 25 Jan 2024 11:07:55.419 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
 17:C 25 Jan 2024 11:07:55.419 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=17, just started
@@ -223,15 +227,17 @@ Redis starts OK.
 A crude way to determine other dependencies is to trace the opened files, with `strace`.
 First install `strace` in the container:
 
-```console
+```bash
 apt update
 apt install -y strace
 ```
 
 Now trace the `openat` system call:
 
-```console
+```bash
 root@8b346198f54d:/data# strace -e openat /usr/local/bin/redis-server > /dev/null
+```
+```
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libssl.so.3", O_RDONLY|O_CLOEXEC) = 3
@@ -260,7 +266,7 @@ So we have a list of dependencies.
 
 With the information above we construct a minimized Docker environment in a `Dockerfile`:
 
-```Dockerfile
+```dockerfile
 FROM redis:7.2-bookworm as build
 
 FROM scratch
@@ -279,8 +285,10 @@ COPY --from=build /etc/ld.so.cache /etc/ld.so.cache
 
 We then build an image from the `Dockerfile`:
 
-```console
+```bash
 $ docker build --tag minimal-redis .
+```
+```
 [+] Building 1.3s (12/12) FINISHED                                                                                                                                                                                              docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.3s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -302,16 +310,20 @@ $ docker build --tag minimal-redis .
 
 We verify the creation of the image:
 
-```console
+```bash
 $ docker image ls minimal-redis
+```
+```
 REPOSITORY      TAG       IMAGE ID       CREATED              SIZE
 minimal-redis   latest    4d857719dd2c   About a minute ago   24.3MB
 ```
 
 And now we can start Redis inside the minimal image:
 
-```console
+```bash
 $ docker run --rm -p 6379:6379 minimal-redis /usr/bin/redis-server
+```
+```
 1:C 25 Jan 2024 11:28:55.083 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
 1:C 25 Jan 2024 11:28:55.083 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
 1:C 25 Jan 2024 11:28:55.083 * Redis version=7.2.4, bits=64, commit=00000000, modified=0, pid=1, just started
@@ -324,8 +336,10 @@ $ docker run --rm -p 6379:6379 minimal-redis /usr/bin/redis-server
 
 It started, we also check it works correctly via `redis-cli`:
 
-```console
+```bash
 $ redis-cli -h localhost
+```
+```
 localhost:6379> ping
 PONG
 localhost:6379> set a 1
@@ -353,24 +367,22 @@ name: redis
 rootfs: ./Dockerfile
 
 cmd: ["/usr/bin/redis-server"]
+
 [...]
 ```
 
 Next we build the Unikraft kernel image:
 
-```console
+```bash
 kraft build --no-cache --no-update --log-type basic --log-level debug --plat qemu --arch x86_64
 ```
 
 Next we run the image:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -p 6379:6379
 ```
-
-We get the output:
-
-```text
+```
  D  kraftkit 0.7.3
  D  using platform=qemu
  D  cannot run because: no arguments supplied runner=linuxu
@@ -388,8 +400,10 @@ hare/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/qemu_control.sock,ser
 
 The error message lets us know there is a problem with running the application, so we check the debug file:
 
-```console
+```bash
 $ cat /home/razvand/.local/share/kraftkit/runtime/6a798339-4157-4708-8030-8ec9c40ec390/machine.log
+```
+```
 [...]
 en1: Added
 en1: Interface is up
@@ -400,13 +414,13 @@ Powered by Unikraft Telesto (0.16.1~644821db)
 
 The message `Resource exhaustion` lets us know that maybe we not running with enough memory, so we go for `256M` of memory:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -M 256M -p 6379:6379
 ```
 
 This indeed is the issue and the output message confirms the starting of the server:
 
-```text
+```
  D  kraftkit 0.7.3
  D  using platform=qemu
  D  cannot run because: no arguments supplied runner=linuxu
@@ -450,8 +464,10 @@ en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
 However, the warning of being unable to bind the socket is problematic.
 Using `redis-cli` lets us know, there is a problem with Redis:
 
-```console
+```bash
 $ redis-cli -h localhost
+```
+```
 Could not connect to Redis at localhost:6379: Connection refused
 not connected>
 ```
@@ -467,7 +483,7 @@ This is for a native (i.e. non-bincompat) configuration, but it doesn't matter.
 This requires an update to the `Dockerfile`, that needs to include the configuration file.
 The new `Dockerfile` is:
 
-```Dockerfile
+```dockerfile
 FROM redis:7.2-bookworm as build
 
 FROM scratch
@@ -495,21 +511,21 @@ cmd: ["/usr/bin/redis-server", "/etc/redis.conf"]
 
 We rebuild the image:
 
-```console
+```bash
 rm -fr .config* .unikraft*
 kraft build --no-cache --no-update --log-type basic --log-level debug --plat qemu --arch x86_64
 ```
 
 And we rerun it:
 
-```console
+```bash
 kraft rm --all
 kraft run --log-type basic --log-level debug -M 256M -p 6379:6379
 ```
 
 Everything seems to be OK, according to the output:
 
-```console
+```
                 _._
            _.-``__ ''-._
       _.-``    `.  `_.  ''-._           Redis 7.2.4 (00000000/0) 64 bit
@@ -535,7 +551,7 @@ en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
 
 We use `redis-cli` to query the server:
 
-```console
+```bash
 redis-cli -h localhost
 ```
 
@@ -566,7 +582,7 @@ That is, the items required for a native build and run.
 
 The source code file is `src/main.rs` as below:
 
-```Rust
+```rust
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -604,7 +620,6 @@ name = "http-tokio"
 version = "0.1.0"
 edition = "2021"
 
-
 [dependencies]
 tokio = {version = "1",  features = ["rt-multi-thread", "net", "time", "macros", "io-util"] }
 ```
@@ -617,7 +632,7 @@ We use version `1.73.0-bookworm`.
 
 For this, we create the following `Dockerfile`:
 
-```Dockerfile
+```dockerfile
 FROM rust:1.73.0-bookworm AS build
 
 WORKDIR /src
@@ -630,8 +645,10 @@ RUN cargo build
 
 We then build an image from the `Dockerfile`:
 
-```console
+```bash
 $ docker build -t http-tokio .
+```
+```
 [+] Building 36.9s (10/10) FINISHED                                                                                                                                                                                             docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.6s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -653,8 +670,10 @@ $ docker build -t http-tokio .
 
 We verify the creation of the image:
 
-```console
+```bash
 $ docker image ls http-tokio
+```
+```
 REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
 http-tokio   latest    63d718eb15b0   About a minute ago   1.63GB
 ```
@@ -664,8 +683,10 @@ The Rust environment and the Tokio dependencies occupy quite a bit of space.
 
 And now we can start the Tokio web server from the Docker image:
 
-```console
+```bash
 $ docker run --rm -p 8080:8080 http-tokio /src/target/debug/http-tokio
+```
+```
 Listening on: http://0.0.0.0:8080
 ```
 
@@ -673,8 +694,10 @@ The server starts and waits for connections on TCP port `8080`.
 
 To test it, we query the server:
 
-```console
+```bash
 $ curl localhost:8080
+```
+```
 Hello, world!
 ```
 
@@ -685,34 +708,45 @@ A `Hello, world!` message is printed, so everything works OK.
 To get the dependencies, we have to inspect the Docker environment.
 We run a Docker instance and start a shell:
 
-```console
+```bash
 docker run --rm -p 8080:8080 -it http-tokio /bin/bash
 ```
 
 We get a console / shell of running inside Docker:
 
-```console
+```bash
 root@8b346198f54d:/data#
 ```
 
 Our goal is to know the path to the executable, the library dependencies, other required files.
 We use the commands below to locate the executable and get the library dependencies:
 
-```console
+```bash
 root@66e910817179:/src# ls -F --color=auto target/debug/
+```
+```
 build/  deps/  examples/  http-tokio*  http-tokio.d  incremental/
+```
+
+And then `ldd` to find the dynamically linked shared objects which the application depends:
+
+```bash
 root@66e910817179:/src# ldd target/debug/http-tokio
-        linux-vdso.so.1 (0x00007fffa8331000)
-        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f35fd805000)
-        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f35fd726000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f35fd545000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f35fd97d000)
+```
+```
+linux-vdso.so.1 (0x00007fffa8331000)
+libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f35fd805000)
+libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f35fd726000)
+libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f35fd545000)
+/lib64/ld-linux-x86-64.so.2 (0x00007f35fd97d000)
 ```
 
 We also start the server to ensure everything works OK:
 
-```console
+```bash
 $ docker run --rm -p 8080:8080 -it http-tokio /bin/bash
+```
+```
 root@66e910817179:/src#
 ```
 
@@ -721,15 +755,17 @@ It starts OK.
 A crude way to determine other dependencies is to trace the opened files, with `strace`.
 First install `strace` in the container:
 
-```console
+```bash
 apt update
 apt install -y strace
 ```
 
 Now trace the `openat` system call:
 
-```console
+```bash
 root@8fbdd8d1010d:/src# strace -e openat ./target/debug/http-tokio
+```
+```
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libgcc_s.so.1", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libm.so.6", O_RDONLY|O_CLOEXEC) = 3
@@ -748,7 +784,7 @@ So we have a list of dependencies comprised of the shared libraries.
 
 With the information above we construct a minimized Docker environment in the `Dockerfile`:
 
-```Dockerfile
+```dockerfile
 FROM rust:1.73.0-bookworm AS build
 
 WORKDIR /src
@@ -772,8 +808,10 @@ COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2
 
 We then build an image from the `Dockerfile`:
 
-```console
+```bash
 $ docker build --tag minimal-http-tokio .
+```
+```
 [+] Building 1.3s (12/12) FINISHED                                                                                                                                                                                              docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.3s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -795,8 +833,10 @@ $ docker build --tag minimal-http-tokio .
 
 We verify the creation of the image:
 
-```console
+```bash
 $ docker build -t minimal-http-tokio .
+```
+```
 [+] Building 19.8s (15/15) FINISHED                                                                                                                                                                                             docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.6s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -823,15 +863,19 @@ $ docker build -t minimal-http-tokio .
 
 And now we can start the server inside the minimal image:
 
-```console
+```bash
 $ docker run --rm -p 8080:8080 minimal-http-tokio /server
+```
+```
 Listening on: http://0.0.0.0:8080
 ```
 
 It started, we also check it works correctly by querying it:
 
-```console
+```bash
 $ curl localhost:8080
+```
+```
 Hello, world!
 ```
 
@@ -856,13 +900,13 @@ cmd: ["/server"]
 
 Next we use `kraft run` to pull the `base` image, pack the Rust Tokio filesystem application and run it with `base`:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -p 8080:8080
 ```
 
 We get the output:
 
-```console
+```
  D  kraftkit 0.7.3
  D  using platform=qemu
  D  cannot run because: no arguments supplied runner=linuxu
@@ -883,8 +927,10 @@ ome/razvand/unikraft/catalog/examples/tmp/http-tokio/.unikraft/build/initramfs-x
 
 The error message lets us know there is a problem with running the application, so we check the debug file:
 
-```console
+```bash
 $ cat /home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.log
+```
+```
 [...]
 en1: Added
 en1: Interface is up
@@ -895,13 +941,13 @@ en1: Interface is up
 
 The failure to extract contents can be an issue related to the amount of memory used, so we go for `256M` of memory:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -M 256M -p 8080:8080
 ```
 
 This, indeed works, with the output:
 
-```console
+```
  D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:79:ab:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd /home/razvand/unikraft/catalog/examples/tmp/http-tokio/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-4233433423/unikraft/bin/kernel -machine pc,accel=kvm -m size=244M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_mon.sock,server,nowait -name 0fb3fe09-4a1b-4545-9e7d-0c38f0da2335 -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/0fb3fe09-4a1b-4545-9e7d-0c38f0da2335/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
 en1: Interface is up
 Powered by Unikraft Telesto (0.16.1~b1fa7c5)
@@ -911,8 +957,10 @@ en1: Set IPv4 address 10.0.2.15 mask 255.255.255.0 gw 10.0.2.2
 
 We also check it works correctly by querying it:
 
-```console
+```bash
 $ curl localhost:8080
+```
+```
 Hello, world!
 ```
 
@@ -940,7 +988,7 @@ That is, the items required for a native build and run.
 
 The source code file is `server.py` as below:
 
-```Python
+```python
 from flask import Flask
 app = Flask(__name__)
 
@@ -966,7 +1014,7 @@ We use version `3.10.11` since it's the one used by the [Python `library/` entry
 
 For this, we create the following `Dockerfile`:
 
-```Dockerfile
+```dockerfile
 FROM python:3.10.11 AS build
 
 WORKDIR /src
@@ -979,8 +1027,10 @@ RUN pip install -r requirements.txt
 
 We then build an image from the `Dockerfile`:
 
-```console
+```bash
 $ docker build -t http-python-flask .
+```
+```
 [+] Building 20.7s (10/10) FINISHED                                                                                                                                                                                             docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.4s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -1002,8 +1052,10 @@ $ docker build -t http-python-flask .
 
 We verify the creation of the image:
 
-```console
+```bash
 $ docker image ls http-python-flask
+```
+```
 REPOSITORY          TAG       IMAGE ID       CREATED          SIZE
 http-python-flask   latest    963165fda5d9   43 seconds ago   923MB
 ```
@@ -1013,7 +1065,7 @@ The Python environment and the Flask dependencies occupy quite a bit of space.
 
 And now we can start the Python Flask web server from the Docker image:
 
-```console
+```bash
 $ docker run --rm -p 8080:8080 http-python-flask /usr/local/bin/python3.10 /src/server.py
  * Serving Flask app 'server'
  * Debug mode: off
@@ -1028,8 +1080,10 @@ The server starts and waits for connections on TCP port `8080`.
 
 To test it, we query the server:
 
-```console
+```bash
 $ curl localhost:8080
+```
+```
 Hello, World!
 ```
 
@@ -1039,7 +1093,7 @@ A `Hello, World!` message is printed, so everything works OK.
 
 With the information above we construct a minimized Docker environment in the `Dockerfile`:
 
-```Dockerfile
+```dockerfile
 FROM python:3.10.11 AS base
 
 WORKDIR /app
@@ -1056,8 +1110,10 @@ COPY ./server.py /app/server.py
 
 We then build an image from the `Dockerfile`:
 
-```console
+```bash
 $ docker build -t minimal-http-python-flask .
+```
+```
 [+] Building 18.1s (11/11) FINISHED                                                                                                                                                                                             docker:default
  => [internal] load .dockerignore                                                                                                                                                                                                         0.5s
  => => transferring context: 2B                                                                                                                                                                                                           0.0s
@@ -1080,8 +1136,10 @@ $ docker build -t minimal-http-python-flask .
 
 We verify the creation of the image:
 
-```console
+```bash
 $ docker image ls minimal-http-python-flask
+```
+```
 REPOSITORY                  TAG       IMAGE ID       CREATED          SIZE
 minimal-http-python-flask   latest    76f8451f9509   10 seconds ago   51MB
 ```
@@ -1107,13 +1165,13 @@ cmd: ["/server.py"]
 
 Next we use `kraft run` to pull the `python` image, pack the Python Flask filesystem application and run it with `python`:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -p 8080:8080
 ```
 
 We get the output:
 
-```console
+```
  D  kraftkit 0.7.3
  D  using platform=qemu
  D  cannot run because: no arguments supplied runner=linuxu
@@ -1136,8 +1194,10 @@ t/runtime/4667ae02-d991-4135-af68-ba22698ecd72/qemu_events.sock,server,nowait -r
 
 The error message lets us know there is a problem with running the application, so we check the debug file:
 
-```console
+```bash
 $ cat /home/razvand/.local/share/kraftkit/runtime/ef6a273d-f066-4674-8d06-b85a10068f13/machine.log
+```
+```
 [...]
 Booting from ROM...
 [    0.000000] CRIT: [libkvmplat] <memory.c @  359> Assertion failure: mr_prio == 0 || ml_prio == 0
@@ -1145,13 +1205,13 @@ Booting from ROM...
 
 The failure to extract contents can be an issue related to the amount of memory used, so we go for `512M` of memory:
 
-```console
+```bash
 kraft run --log-type basic --log-level debug -M 512M -p 8080:8080
 ```
 
 This, indeed works, with the output:
 
-```console
+```
  D  qemu-system-x86_64 -append vfs.fstab=[ "initrd0:/:extract:::" ] -- /server.py  -cpu host,+x2apic,-pmu -daemonize -device virtio-net-pci,mac=02:b0:b0:7e:03:01,netdev=hostnet0 -device pvpanic -device sga -display none -enable-kvm -initrd /home/razvand/unikraft/catalog/examples/tmp/http-python3.12-flask/.unikraft/build/initramfs-x86_64.cpio -kernel /tmp/kraft-run-3035028343/unikraft/bin/kernel -machine pc,accel=kvm -m size=488M -monitor unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_mon.sock,server,nowait -name 355437d0-52d6-443f-9906-f12be299a9cb -netdev user,id=hostnet0,hostfwd=tcp::8080-:8080 -nographic -no-reboot -S -parallel none -pidfile /home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/machine.pid -qmp unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_control.sock,server,nowait -qmp unix:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/qemu_events.sock,server,nowait -rtc base=utc -serial file:/home/razvand/.local/share/kraftkit/runtime/355437d0-52d6-443f-9906-f12be299a9cb/machine.log -smp cpus=1,threads=1,sockets=1 -vga none
 Powered by
 o.   .o       _ _               __ _
@@ -1171,8 +1231,10 @@ Press CTRL+C to quit
 
 We also check it works correctly by querying it:
 
-```console
+```bash
 $ curl localhost:8080
+```
+```
 Hello, World!
 ```
 
