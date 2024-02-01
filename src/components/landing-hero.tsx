@@ -240,19 +240,19 @@ export default function LandingHero() {
               }}
             >
               <Stat>
-                <StatNumber>v0.16.0</StatNumber>
+                <StatNumber>v0.16.1</StatNumber>
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1798</StatNumber>
+                <StatNumber>1824</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>91</StatNumber>
+                <StatNumber>93</StatNumber>
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1246</StatNumber>
+                <StatNumber>1269</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>
