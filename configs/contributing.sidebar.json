@@ -26,6 +26,10 @@
         {
           "title": "Coding Conventions",
           "path": "/docs/contributing/coding-conventions"
+        },
+        {
+          "title": "Adding to the App Catalog",
+          "path": "/docs/contributing/adding-to-the-app-catalog"
         }
       ]
     }

@@ -1,21 +1,21 @@
 ---
-title: "Application Catalog: Behind the Scenes"
+title: "Behind the Scenes with the Application Catalog"
 description: |
   This guide presents internal technical information about the application catalog.
   It shows what is happening behind the scenes and how you can get more control on the build and run phases.
 ---
 
-The [guide on using the application catalog](/guides/catalog) provides the user-friendly information on using the Unikraft application registry and the [`catalog` repository](https://github.com/unikraft/catalog).
+The [guide on using the application catalog](/guides/using-the-app-catalog) provides the user-friendly information on using the Unikraft application registry and the [`catalog` repository](https://github.com/unikraft/catalog).
 It presents some hints into what's happening behind the scenes, but it aims to keep the user away for this.
 This guide takes a deep dive into the internals of configuring, building and running Unikernel applications from the catalog.
-It is aimed for those more technically inclined who would be interested in understanding what's happening behind the scenes and maybe [contribute to the application catalog](/guides/catalog-add).
+It is aimed for those more technically inclined who would be interested in understanding what's happening behind the scenes and maybe [contribute to the application catalog](/docs/contributing/adding-to-the-app-catalog).
 
-Similar to the [guide on using the application catalog](/guides/catalog), we will use two applications:
+Similar to the [guide on using the application catalog](/guides/using-the-app-catalog), we will use two applications:
 
 - [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
 - [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
 
-## Nginx
+## NGINX
 
 For the [`nginx/1.25` bincompat application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25), there is a build phase and a run phase.
 The build phase creates the output kernel, and the run phase launches a Unikraft virtual machine instance from the kernel.
@@ -40,18 +40,18 @@ The `Kraftfile` defines the:
 The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
 The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
 
-```Dockerfile
+```dockerfile
 FROM --platform=linux/x86_64 nginx:1.25.3-bookworm AS build
 
 # These are normally syminks to /dev/stdout and /dev/stderr, which don't
-# (currently) work with Unikraft. We remove them, such that Nginx will create
+# (currently) work with Unikraft. We remove them, such that NGINX will create
 # them by hand.
 RUN rm /var/log/nginx/error.log
 RUN rm /var/log/nginx/access.log
 
 FROM scratch
 
-# Nginx binaries, modules, configuration, log and runtime files
+# NGINX binaries, modules, configuration, log and runtime files
 COPY --from=build /usr/sbin/nginx /usr/bin/nginx
 COPY --from=build /usr/lib/nginx /usr/lib/nginx
 COPY --from=build /etc/nginx /etc/nginx
@@ -80,20 +80,20 @@ COPY ./conf/unikraft.local.key /etc/nginx/unikraft.local.key
 COPY ./wwwroot /wwwroot
 ```
 
-The Dockerfile is being interpreted via [`BuildKit`](https://docs.docker.com/build/buildkit/), hence the need to set up the `BuildKit` container.
+The `Dockerfile` is being interpreted via [`BuildKit`](https://docs.docker.com/build/buildkit/), hence the need to set up the `BuildKit` container.
 
 ### Build Phase
 
 The build command requires the `BuildKit` container to be configured beforehand:
 
-```console
+```bash
 docker run -d --name buildkitd --privileged moby/buildkit:latest
 export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
 ```
 
 The build command is:
 
-```console
+```bash
 kraft build --plat qemu --arch x86_64
 ```
 
@@ -106,8 +106,10 @@ kraft build --plat qemu --arch x86_64
 
 The resulting embedded kernel image is `.unikraft/build/nginx_qemu-x86_64`:
 
-```console
+```bash
 $ ls -lh .unikraft/build/nginx_qemu-x86_64
+```
+```
 -rwxr-xr-x 2 razvand docker 15M Jan  2 21:23 .unikraft/build/nginx_qemu-x86_64
 ```
 
@@ -115,13 +117,13 @@ $ ls -lh .unikraft/build/nginx_qemu-x86_64
 
 This image is run with a command such as:
 
-```console
+```bash
 kraft run -W -p 8080:80 .
 ```
 
 It can also be run manually with `qemu-system-x86_64`:
 
-```console
+```bash
 qemu-system-x86_64 \
     -kernel .unikraft/build/nginx_qemu-x86_64 \
     -nographic \
@@ -135,19 +137,19 @@ qemu-system-x86_64 \
 This starts a QEMU virtual machine instance.
 Query it using:
 
-```console
+```bash
 curl http://localhost:8080
 ```
 
 If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 kraft net create -n 172.44.0.1/24 virbr0
 ```
 
 An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 qemu-system-x86_64 \
     -kernel .unikraft/build/nginx_qemu-x86_64 \
     -nographic \
@@ -160,7 +162,7 @@ qemu-system-x86_64 \
 This starts a QEMU virtual machine instance.
 Query it using:
 
-```console
+```bash
 curl http://172.44.0.2
 ```
 
@@ -197,7 +199,7 @@ The `Kraftfile` defines:
 The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
 The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
 
-```Dockerfile
+```dockerfile
 FROM golang:1.21.3-bookworm AS build
 
 WORKDIR /src
@@ -226,14 +228,14 @@ The Dockerfile is being interpreted via [BuildKit](https://docs.docker.com/build
 
 The run command requires the `BuildKit` container to be configured beforehand:
 
-```console
+```bash
 docker run -d --name buildkitd --privileged moby/buildkit:latest
 export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
 ```
 
 The run command is:
 
-```console
+```bash
 kraft run -W -p 8080:8080 .
 ```
 
@@ -248,11 +250,19 @@ kraft run -W -p 8080:8080 .
 
 The resulting initrd image is `.unikraft/build/initramfs.cpio`.
 
-```console
+```bash
 $ ls -lh .unikraft/build/initramfs.cpio
+```
+```
 -rw-r--r-- 1 root root 8.9M Jan  4 18:16 .unikraft/build/initramfs-x86_64.cpio
+```
 
+To view the contents of the root filesystem you can use `cpio`:
+
+```bash
 $ cpio -itv < .unikraft/build/initramfs.cpio
+```
+```
 d---------   0 root     root            0 Jan  1  1970 /lib
 d---------   0 root     root            0 Jan  1  1970 /lib/x86_64-linux-gnu
 -rwxr-xr-x   1 root     root      1922136 Sep 30 11:31 /lib/x86_64-linux-gnu/libc.so.6
@@ -266,13 +276,13 @@ The kernel image is pulled into a temporary directory.
 
 To run the application manually, first pull the kernel image from `unikraft.org/base:latest`:
 
-```console
+```bash
 kraft pkg pull -w base unikraft.org/base:latest
 ```
 
 The kernel image is `base/unikraft/bin/kernel`:
 
-```console
+```bash
 $ tree
 base/
 `-- unikraft/
@@ -287,7 +297,7 @@ $ ls -lh base/unikraft/bin/kernel
 
 You can run the application manually with `qemu-system-x86_64` and the passing of the `-kernel`, `-initrd` and `-append` arguments:
 
-```console
+```bash
 qemu-system-x86_64 \
     -kernel base/unikraft/bin/kernel \
     -nographic \
@@ -302,19 +312,19 @@ qemu-system-x86_64 \
 This starts a QEMU virtual machine instance.
 Query it using:
 
-```console
+```bash
 curl http://localhost:8080
 ```
 
 If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 kraft net create -n 172.44.0.1/24 virbr0
 ```
 
 An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
 
-```console
+```bash
 qemu-system-x86_64 \
     -kernel base/unikraft/bin/kernel \
     -nographic \
@@ -328,7 +338,7 @@ qemu-system-x86_64 \
 This starts a QEMU virtual machine instance.
 Query it using:
 
-```console
+```bash
 curl http://172.44.0.2:8080
 ```
 
