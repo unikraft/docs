@@ -1,0 +1,64 @@
+---
+version: 0.16.2
+releaseDate: 2024-02-13
+codename: Telesto
+commit: 6b137204f6944d35399557eeecdfd45a7fbfaac2
+blogPost: /blog/2024-02-16-unikraft-releases-v0.16.2
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.16.1...RELEASE-0.16.2
+---
+
+## Changelog
+
+* `.github/workflows`: Disable 'merge' global flag ([#1318](https://github.com/unikraft/unikraft/pull/1318)) by @craciunoiuc
+* `.github/workflows`: Set committer email and name globally ([#1313](https://github.com/unikraft/unikraft/pull/1313)) by @craciunoiuc
+* `lib/posix-fdtab`: Fix minor docstring issues ([#1312](https://github.com/unikraft/unikraft/pull/1312)) by @andreittr
+* `lib/nolibc`: Solve warning of Musl imported `strstr` ([#1311](https://github.com/unikraft/unikraft/pull/1311)) by @mogasergiu
+* `lib/posix-poll`: Fix EPOLL_CTL_MOD missing events ([#1310](https://github.com/unikraft/unikraft/pull/1310)) by @andreittr
+* `lib/nolibc`: Expose FD_SETSIZE as Kconfig option ([#1309](https://github.com/unikraft/unikraft/pull/1309)) by @andreittr
+* `lib/posix-sysinfo`: Fix off-by-1 error in `sethostname` ([#1307](https://github.com/unikraft/unikraft/pull/1307)) by @andreittr
+* `plat/xen`: Remove duplicate PAGE definitions ([#1306](https://github.com/unikraft/unikraft/pull/1306)) by @michpappas
+* `plat/kvm/x86`: Remove unused variable from `lxboot_entry()` ([#1305](https://github.com/unikraft/unikraft/pull/1305)) by @michpappas
+* `lib/posix-time`: Add support for` CLOCK_BOOTTIME` ([#1304](https://github.com/unikraft/unikraft/pull/1304)) by @andreittr
+* `lib/posix-process`: Add option to context switch away from clone caller ([#1303](https://github.com/unikraft/unikraft/pull/1303)) by @mschlumpp
+* `lib/vfscore`: Prevent superfluous slashes in working directory ([#1302](https://github.com/unikraft/unikraft/pull/1302)) by @mschlumpp
+* `lib/posix-fdio`: ENOTTY for unsupported tty ioctls ([#1301](https://github.com/unikraft/unikraft/pull/1301)) by @andreittr
+* `lib/ukvmem`: Use correct argument type in format string ([#1300](https://github.com/unikraft/unikraft/pull/1300)) by @michpappas
+* `lib/posix-fdtab`: Silence unused parameter warning ([#1299](https://github.com/unikraft/unikraft/pull/1299)) by @michpappas
+* `lib/nolibc`: Use `strcat()` from mini-os ([#1298](https://github.com/unikraft/unikraft/pull/1298)) by @michpappas
+* `lib/posix-poll`: Fix `epoll` missing events ([#1297](https://github.com/unikraft/unikraft/pull/1297)) by @andreittr
+* `lib/posix-socket`: Introduce `CREATE`, `BIND` events ([#1296](https://github.com/unikraft/unikraft/pull/1296)) by @skuenzer
+* `.github/workflows`: Remove redundant checks ([#1295](https://github.com/unikraft/unikraft/pull/1295)) by @craciunoiuc
+* `lib/posix-process`: Add support for RLIMIT_AS ([#1294](https://github.com/unikraft/unikraft/pull/1294)) by @andreittr
+* `build`: Disable image compression ([#1293](https://github.com/unikraft/unikraft/pull/1293)) by @michpappas
+* `.github/workflows`: Enable `-Werror` on integration builds ([#1292](https://github.com/unikraft/unikraft/pull/1292)) by @michpappas
+* `lib/ukboot`: Ensure the auxiliary stack is backed by physical memory ([#1291](https://github.com/unikraft/unikraft/pull/1291)) by @michpappas
+* `checkpatch`: Update to v6.8-rc2 ([#1289](https://github.com/unikraft/unikraft/pull/1289)) by @michpappas
+* `drivers/ukintctrl`: Update GICv2 compatible list ([#1287](https://github.com/unikraft/unikraft/pull/1287)) by @ananos
+* `lib/ukboot`: Ensure the auxiliary stack is backed by physical memory ([#1286](https://github.com/unikraft/unikraft/pull/1286)) by @michpappas
+* `.github/workflows`: Add missing checkpatch flags ([#1285](https://github.com/unikraft/unikraft/pull/1285)) by @craciunoiuc
+* `lib/vfscore`: Additional mount options ([#1282](https://github.com/unikraft/unikraft/pull/1282)) by @skuenzer
+* `lib/nolibc`: Change default FD_SETSIZE to 1024 ([#1280](https://github.com/unikraft/unikraft/pull/1280)) by @marcrittinghaus
+* `lib/posix-socket`: Extend socket events ([#1279](https://github.com/unikraft/unikraft/pull/1279)) by @marcrittinghaus
+* `support/scripts`: Fix `checkpatch.uk` ([#1276](https://github.com/unikraft/unikraft/pull/1276)) by @skuenzer
+* Add README for posix-pipe library ([#1275](https://github.com/unikraft/unikraft/pull/1275)) by @RaduNichita
+* `support/scripts`: Auto-split words and disable info message ([#1274](https://github.com/unikraft/unikraft/pull/1274)) by @craciunoiuc
+* `lib/posix-mmap`: Round-up madvise length to page size ([#1273](https://github.com/unikraft/unikraft/pull/1273)) by @michpappas
+* `.github/workflows`: Switch to debug logging ([#1270](https://github.com/unikraft/unikraft/pull/1270)) by @craciunoiuc
+* Misc fixes found during the development of the Aarch64 XEN support. ([#1269](https://github.com/unikraft/unikraft/pull/1269)) by @oleksiimoisieiev
+* Align auxiliary stack with regular stacks and add guard pages on per-thread regular stacks ([#1264](https://github.com/unikraft/unikraft/pull/1264)) by @mogasergiu
+* Promote unhandled page fault message level and add stack guard page explicit message ([#1263](https://github.com/unikraft/unikraft/pull/1263)) by @mogasergiu
+* `lib/nolibc`: Import `strstr` from `musl` ([#1261](https://github.com/unikraft/unikraft/pull/1261)) by @mogasergiu
+* `lib/posix-poll`: Fix `epoll()` crash on `NULL` event arg ([#1259](https://github.com/unikraft/unikraft/pull/1259)) by @andreittr
+* `lib/posix-poll`: Handle unpollable files correctly ([#1258](https://github.com/unikraft/unikraft/pull/1258)) by @andreittr
+* `lib/posix-poll`: Fix `poll()` ignoring fd 0 ([#1255](https://github.com/unikraft/unikraft/pull/1255)) by @andreittr
+* `{include/,lib/*}`: Separate initializers from anonymous right-hand values ([#1245](https://github.com/unikraft/unikraft/pull/1245)) by @andreittr
+* `lib/posix-fdtab`: Add comments for `posix-fdtab` ([#1241](https://github.com/unikraft/unikraft/pull/1241)) by @DeliaPavel
+* `.github/workflows`: Move integration tests to upb runners ([#1215](https://github.com/unikraft/unikraft/pull/1215)) by @craciunoiuc
+* `plat/common/x86`: Use `FSGSBASE` for TLS if available ([#862](https://github.com/unikraft/unikraft/pull/862)) by @andreittr
+* `arm64/xen`: Introduce xen support for aarch64 architecture ([#726](https://github.com/unikraft/unikraft/pull/726)) by @oleksiimoisieiev
+* `[lib-lwip]`: Expose `LWIP_SO_RCVBUF` config and set on by default ([#50](https://github.com/unikraft/lib-lwip/pull/50)) by @andreittr
+* `[lib-lwip]`: Set system hostname when initializing interface ([#49](https://github.com/unikraft/lib-lwip/pull/49)) by @andreittr
+* `[lib-lwip]`: Prepare lwip to provde DNS functions to native musl ([#48](https://github.com/unikraft/lib-lwip/pull/48)) by @skuenzer
+* `[lib-lwip]`: Option to wait for DHCP and fail without netifs ([#47](https://github.com/unikraft/lib-lwip/pull/47)) by @skuenzer
+* `[lib-lwip]`: Various smaller fixes ([#46](https://github.com/unikraft/lib-lwip/pull/46)) by @mschlumpp
+* `[lib-musl]`: Option to handle DNS requesets by lwIP ([#74](https://github.com/unikraft/lib-musl/pull/74)) by @skuenzer
