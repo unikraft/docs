@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2024-01-18-unikraft-releases-v0.16.1'} passHref>
+              <NextLink href={'/blog/2024-02-12-unikraft-releases-v0.16.2'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases v0.16.1 (Telesto)
+                    Unikraft releases v0.16.2 (Telesto)
                   </Text>
                   <Box
                     display={{
@@ -240,11 +240,11 @@ export default function LandingHero() {
               }}
             >
               <Stat>
-                <StatNumber>v0.16.1</StatNumber>
+                <StatNumber>v0.16.2</StatNumber>
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1824</StatNumber>
+                <StatNumber>1834</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
@@ -252,7 +252,7 @@ export default function LandingHero() {
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1269</StatNumber>
+                <StatNumber>1273</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>

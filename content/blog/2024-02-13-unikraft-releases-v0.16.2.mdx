@@ -1,0 +1,73 @@
+---
+title: "Unikraft releases v0.16.2 (Telesto)"
+description: |
+  This release contains fixes primarily related to platform and application support.
+publishedDate: 2024-02-13
+authors:
+- Razvan Deaconescu
+- Alexander Jung
+- Oleksii Moiseiev
+tags:
+- release
+- announcement
+---
+
+We are proud to announce the latest version of Unikraft, v0.16.2!
+
+### Xen on ARM64
+
+_This feature was championed by [Oleksii Moiseiev](https://github.com/oleksiimoisieiev) with great support from [Michalis Pappas](https://github.com/michpappas) and from [Andrei Stan](https://github.com/andreistan26) and [Maria Sfîrăială](https://github.com/mariasfiraiala)_.
+
+This release brings the Xen support for ARM64.
+Up until this point, Xen was only running on x86_64.
+Recent advances in the embedded world, with focus on automotive and security, have made Xen an important target for the ARM64 architecture.
+
+The current Xen on ARM64 work includes the following features:
+
+* Implemented of the loaders and image header for ARM64 architecture.
+* Implemented all basic drivers, that are essential for work on XEN, such as: memory management, `gnttab`, `xenbus` and console drivers.
+* Updated and tested frontend drivers for the devices: `9p`, `blkfront` and `netfront`.
+* Ported `pvcalls`-frontend driver from the Linux Kernel implementation.
+
+With the resurfacing of Xen support in release 0.16, Unikraft has now enhanced its Xen ecosystem with the ARM64 support.
+Future steps relate to using binary-compatibility mode on Xen and KraftKit integration.
+
+### Application Catalog
+
+_This feature was championed by [Alexander Jung](https://github.com/nderjung) and [Razvan Deaconescu](https://github.com/razvand) with feedback from [Ștefan Jumărea](https://github.com/StefanJum) and [Mihnea Firoiu](https://github.com/Mihnea0Firoiu)._
+
+The [`catalog`](https://github.com/unikraft/catalog) has been populated with additional applications and examples.
+Currently a large set of programming languages (JavaScript, Java, Python, Lua, Ruby, Perl) are supported, together with other applications (Nginx, Redis).
+
+Feel free to try existing applications and examples and add your own to the catalog.
+
+### Community Activities
+
+#### Monthly Hackathon
+
+We continue organizing monthly hackathons, generally taking place in the last Saturday of each month.
+Hackathons take place both online and in person, generally at the National University of Science and Technology POLITEHNICA of Bucharest.
+
+We organized a monthly hackathon on Saturday, January 27, 2024.
+It was targeted on the 0.16.2 release, application support, CI improvements and fixes.
+
+The next monthly hackathon is scheduled to take place on Saturday, March 2, 2024.
+
+#### FOSDEM'24
+
+Unikraft was of [FOSDEM'24](https://fosdem.org/2024/), at the [Microkernel and Component-based OS devroom](https://fosdem.org/2024/schedule/track/microkernel/), on February 3&4, 2024, in Brussels.
+There were two talks from the Unikraft community, videos and slides now available online:
+
+- ["Linux Binary Compatible Unikernels with Unikraft"](https://fosdem.org/2024/schedule/event/fosdem-2024-3386-linux-binary-compatible-unikernels-with-unikraft/), by [Simon Kuenzer](https://github.com/skuenzer)
+- ["Unikernels Are Here: Building, Running and Deploying Application Unikernels With One Command"](https://fosdem.org/2024/schedule/event/fosdem-2024-3459-unikernels-are-here-building-running-and-deploying-application-unikernels-with-one-command/) by [Răzvan Deaconescu](https://github.com/razvand)
+
+It was a good time to meet with members of the [Unikernel Alliance community](https://unikernelalliance.org/), and other friends of the Unikraft project.
+
+### Applying for GSoC'24
+
+With [Google Summer of Code 2024 (GSoC'24)](https://summerofcode.withgoogle.com/) being announced, Unikraft applied as an organization.
+We have [a healthy list of projects](https://github.com/unikraft/gsoc/blob/staging/gsoc-2024/ideas.md) that we offer to future participants, in case Unikraft is selected for GSoC'24.
+
+According to the [GSoC'24 timeline](https://developers.google.com/open-source/gsoc/timeline), we will know whether Unikraft is selected as an organization on Wednesday, February 21, 2024.
+
+If you are interested in taking part in GSoC'24, and work on operating-systems, cloud and tooling items, see the [Unikraft GSoC'24 projects page](https://github.com/unikraft/gsoc/blob/staging/gsoc-2024/ideas.md), join [Unikraft Discord](http://bit.ly/UnikraftDiscord), take part in discussions, make contributions and ask for support.
