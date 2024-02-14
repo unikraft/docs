@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2024-02-12-unikraft-releases-v0.16.2'} passHref>
+              <NextLink href={'/blog/2024-02-13-unikraft-releases-v0.16.2'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
