@@ -7,7 +7,7 @@
 	.st1{display:inline;}
 	.st2{fill:none;stroke:#000000;stroke-width:0.75;stroke-miterlimit:10;stroke-dasharray:4,4;}
 	.st3{fill:none;}
-	.st4{font-family:'Inter-Regular';}
+	.st4{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st5{font-size:9px;}
 	.st6{fill:#EF9E70;stroke:#D64B27;stroke-width:0.75;stroke-miterlimit:10;}
 	.st7{fill:#F8B9C7;stroke:#AF64A2;stroke-width:0.75;stroke-miterlimit:10;}

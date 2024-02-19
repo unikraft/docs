@@ -11,7 +11,7 @@
 	.st5{fill:#FFFFFF;}
 	.st6{font-family:'Inter-SemiBold';}
 	.st7{font-size:13px;}
-	.st8{font-family:'Inter-Regular';}
+	.st8{font-family:'Inter','helvetica neue', helvetica, ubuntu, roboto, noto, 'segoe ui', arial, sans-serif;}
 	.st9{font-size:12px;}
 	.st10{opacity:0.9;fill:#FFFFFF;}
 	.st11{opacity:0.2;fill:#FFFFFF;}
