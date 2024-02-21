@@ -3,24 +3,34 @@ title: "kraft net create"
 description: Create a new machine network
 ---
 
-```console
+Create a new machine network.
+
+```
 kraft net create [FLAGS] NETWORK
+```
+
+### Examples
+
+```
+# Create a new machine network
+$ kraft network create my-network --network 133.37.0.1/12
+
 ```
 
 ## Options
 
-```text
+```
   -h, --help             help for create
   -n, --network string   Set the gateway IP address and the subnet of the network in CIDR format.
 ```
 
 ## Options inherited from parent commands
 
-```text
+```
   -d, --driver string   Set the network driver. (default "bridge")
 ```
 
 ## See Also
 
-* [kraft net](kraft_net.md)	 - Manage machine networks
+* [`kraft net`](/docs/cli/reference/kraft/net): Manage machine networks
 

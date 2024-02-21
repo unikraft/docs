@@ -1,0 +1,43 @@
+---
+title: "kraft lib add"
+description: Add unikraft library to the project directory
+---
+
+Pull a Unikraft component microlibrary from a remote location
+and add to the project directory
+
+
+```
+kraft lib add [FLAGS] [PACKAGE|DIR]
+```
+
+### Examples
+
+```
+# Add a local library to the project
+$ kraft lib add path/to/library
+
+# Add a library from a source repository
+$ kraft lib add github.com/unikraft/lib-nginx.git
+
+# Add from a manifest
+$ kraft lib add nginx:staging
+
+# Add a library from a registry
+$ kraft lib add unikraft.org/nginx:stable
+
+```
+
+## Options
+
+```
+  -h, --help               help for add
+  -K, --kraftfile string   Set an alternative path of the Kraftfile
+      --no-update          Do not update package index before running the build
+  -w, --workdir string     workdir to add the package to
+```
+
+## See Also
+
+* [`kraft lib`](/docs/cli/reference/kraft/lib): Manage and maintain Unikraft microlibraries
+

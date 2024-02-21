@@ -5,13 +5,14 @@ description: Run a unikernel
 
 Run a unikernel virtual machine
 
-```console
+
+```
 kraft run [FLAGS] PROJECT|PACKAGE|BINARY -- [APP ARGS]
 ```
 
 ### Examples
 
-```console
+```
 Run a built target in the current working directory project:
 $ kraft run
 
@@ -30,8 +31,8 @@ $ kraft run --arch x86_64 --plat qemu --memory 1Gi path/to/kernel-x86_64-qemu
 Run an OCI-compatible unikernel, mapping port 8080 on the host to port 80 in the unikernel:
 $ kraft run -p 8080:80 unikraft.org/nginx:latest
 
-Attach the unikernel to an existing network kraft0 backed by the bridge driver:
-$ kraft run --network bridge:kraft0
+Attach the unikernel to an existing network kraft0:
+$ kraft run --network kraft0
 
 Run a Linux userspace binary in POSIX-/binary-compatibility mode:
 $ kraft run a.out
@@ -50,11 +51,12 @@ $ kraft run --rootfs ./initramfs.cpio --volume ./path/to/dir:/dir
 
 Customize the default content directory of the official Unikraft NGINX OCI-compatible unikernel and map port 8080 to localhost:
 $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
+
 ```
 
 ## Options
 
-```text
+```
   -m, --arch string            Set the architecture
       --as string              Force a specific runner
   -d, --detach                 Run unikernel in background
@@ -66,9 +68,12 @@ $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
       --mac string             Assign the provided MAC address
   -M, --memory string          Assign memory to the unikernel (K/Ki, M/Mi, G/Gi) (default "64Mi")
   -n, --name string            Name of the instance
-      --network string         Attach instance to the provided network in the format <driver>:<network>, e.g. bridge:kraft0
+      --network strings        Attach instance to the provided network, in the format <network>[:ip[/mask][:gw[:dns0[:dns1[:hostname[:domain]]]]]], e.g. kraft0:172.100.0.2
+      --no-start               Do not start the machine
       --plat string            Set the platform virtual machine monitor driver. (default "auto")
   -p, --port stringArray       Publish a machine's port(s) to the host
+      --prefix string          Prefix each log line with the given string
+      --prefix-name            Prefix each log line with the machine name
       --rm                     Automatically remove the unikernel when it shutsdown
       --rootfs string          Specify a path to use as root file system (can be volume or initramfs)
       --symbolic               Use the debuggable (symbolic) unikernel
@@ -78,4 +83,5 @@ $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
 
 ## See Also
 
-* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
+

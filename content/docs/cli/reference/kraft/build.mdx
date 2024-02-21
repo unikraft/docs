@@ -5,26 +5,28 @@ description: Configure and build Unikraft unikernels
 
 Build a Unikraft unikernel.
 
-The default behaviour of `kraft build` is to build a project.
-Given no arguments, you will be guided through interactive mode.
+The default behaviour of `kraft build` is to build a project.  Given no
+arguments, you will be guided through interactive mode.
 
-```console
+
+```
 kraft build [FLAGS] [SUBCOMMAND|DIR]
 ```
 
 ### Examples
 
-```console
+```
 # Build the current project (cwd)
 $ kraft build
 
 # Build path to a Unikraft project
 $ kraft build path/to/app
+
 ```
 
 ## Options
 
-```text
+```
       --all                Build all targets
   -m, --arch string        Filter the creation of the build by architecture of known targets
       --build-log string   Use the specified file to save the output from the build
@@ -40,10 +42,12 @@ $ kraft build path/to/app
       --no-fetch           Do not run Unikraft's fetch step before building
       --no-update          Do not update package index before running the build
   -p, --plat string        Filter the creation of the build by platform of known targets
+      --print-stats        Print build statistics
       --rootfs string      Specify a path to use as root file system (can be volume or initramfs)
   -t, --target string      Build a particular known target
 ```
 
 ## See Also
 
-* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
+

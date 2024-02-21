@@ -5,13 +5,14 @@ description: Pull a Unikraft unikernel and/or its dependencies
 
 Pull a Unikraft unikernel, component microlibrary from a remote location
 
-```console
+
+```
 kraft pkg pull [FLAGS] [PACKAGE|DIR]
 ```
 
 ### Examples
 
-```console
+```
 # Pull the dependencies for a project in the current working directory
 $ kraft pkg pull
 
@@ -26,26 +27,26 @@ $ kraft pkg pull nginx:1.21.6
 
 # Pull from a registry
 $ kraft pkg pull unikraft.org/nginx:1.21.6
+
 ```
 
 ## Options
 
-```text
+```
   -A, --all                Pull all versions
   -m, --arch string        Specify the desired architecture
-  -M, --as string          Force the handler type (Omitting it will attempt auto-detect) (default "auto")
-  -Z, --force-cache        Force using cache and pull directly from source
+  -f, --as string          Set the package format (default "auto")
   -h, --help               help for pull
   -k, --kconfig strings    Request a package with specific KConfig options.
   -K, --kraftfile string   Set an alternative path of the Kraftfile
   -C, --no-checksum        Do not verify package checksum (if available)
-  -D, --no-deps            Do not pull dependencies
+  -o, --output string      Save the package contents to the provided directory
   -p, --plat string        Specify the desired platform
-  -d, --with-deps          Pull dependencies
+  -u, --update             Perform an update which gathers remote sources
   -w, --workdir string     Set a path to working directory to pull components to
 ```
 
 ## See Also
 
-* [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
+* [`kraft pkg`](/docs/cli/reference/kraft/pkg): Package and distribute Unikraft unikernels and their dependencies
 

@@ -1,0 +1,38 @@
+---
+title: "kraft pkg info"
+description: Show information about a package
+---
+
+Shows a Unikraft package like library, core, etc.
+
+
+```
+kraft pkg info [FLAGS] [PACKAGE|DIR]
+```
+
+### Examples
+
+```
+# Shows details for the library nginx
+$ kraft pkg info nginx
+
+```
+
+## Options
+
+```
+  -h, --help            help for info
+  -o, --output string   Set output format. Options: table,yaml,json,full (default "table")
+  -u, --update          Get latest information about components before listing results
+```
+
+## Options inherited from parent commands
+
+```
+  -K, --kraftfile string   Set an alternative path of the Kraftfile
+```
+
+## See Also
+
+* [`kraft pkg`](/docs/cli/reference/kraft/pkg): Package and distribute Unikraft unikernels and their dependencies
+

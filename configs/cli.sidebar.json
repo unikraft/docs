@@ -90,6 +90,10 @@
               "path": "/docs/cli/reference/kraft/pkg/ls"
             },
             {
+              "title": "`kraft pkg info`",
+              "path": "/docs/cli/reference/kraft/pkg/info"
+            },
+            {
               "title": "`kraft pkg pull`",
               "path": "/docs/cli/reference/kraft/pkg/pull"
             },
@@ -136,6 +140,10 @@
             {
               "title": "`kraft stop`",
               "path": "/docs/cli/reference/kraft/stop"
+            },
+            {
+              "title": "`kraft start`",
+              "path": "/docs/cli/reference/kraft/start"
             }
           ]
         },
@@ -172,46 +180,46 @@
           ]
         },
         {
-          "title": "Kraft Cloud Commands",
+          "title": "Compose Commands",
           "sort": false,
           "open": true,
           "summarize": true,
           "routes": [
             {
-              "title": "`kraft cloud deploy`",
-              "path": "/docs/cli/reference/kraft/cloud/deploy"
+              "title": "`kraft compose down`",
+              "path": "/docs/cli/reference/kraft/compose/down"
             },
             {
-              "title": "`kraft cloud img ls`",
-              "path": "/docs/cli/reference/kraft/cloud/img/ls"
+              "title": "`kraft compose ls`",
+              "path": "/docs/cli/reference/kraft/compose/ls"
             },
             {
-              "title": "`kraft cloud inst create`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/create"
+              "title": "`kraft compose ps`",
+              "path": "/docs/cli/reference/kraft/compose/ps"
             },
             {
-              "title": "`kraft cloud inst delete`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/delete"
+              "title": "`kraft compose up`",
+              "path": "/docs/cli/reference/kraft/compose/up"
+            }
+          ]
+        },
+        {
+          "title": "Microlibrary Commands",
+          "sort": false,
+          "open": true,
+          "summarize": true,
+          "routes": [
+            {
+              "title": "`kraft lib add`",
+              "path": "/docs/cli/reference/kraft/lib/add"
             },
             {
-              "title": "`kraft cloud inst logs`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/logs"
+              "title": "`kraft lib create`",
+              "path": "/docs/cli/reference/kraft/lib/create"
             },
             {
-              "title": "`kraft cloud inst ls`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/ls"
-            },
-            {
-              "title": "`kraft cloud inst start`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/start"
-            },
-            {
-              "title": "`kraft cloud inst status`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/status"
-            },
-            {
-              "title": "`kraft cloud inst stop`",
-              "path": "/docs/cli/reference/kraft/cloud/instance/stop"
+              "title": "`kraft lib remove`",
+              "path": "/docs/cli/reference/kraft/lib/remove"
             }
           ]
         },

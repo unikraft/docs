@@ -5,23 +5,23 @@ description: Remove the build object files of a Unikraft project
 
 Remove the build object files of a Unikraft project
 
-```console
+```
 kraft clean [DIR]
 ```
 
 ### Examples
 
-```console
+```
 # Clean the cwd build directory
 $ kraft clean
 
-# clean a project at a path
+# properclean a project at a path
 $ kraft clean --proper path/to/app
 ```
 
 ## Options
 
-```text
+```
   -m, --arch string        Filter prepare based on a target's architecture
   -h, --help               help for clean
   -K, --kraftfile string   Set an alternative path of the Kraftfile
@@ -32,5 +32,5 @@ $ kraft clean --proper path/to/app
 
 ## See Also
 
-* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
 

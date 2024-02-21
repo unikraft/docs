@@ -1,37 +1,41 @@
 ---
-title: "kraft pkg rm"
+title: "kraft pkg remove"
 description: Removes selected local packages
 ---
 
-```console
-kraft pkg rm [FLAGS] [PACKAGE]
+Remove a Unikraft component.
+
+```
+kraft pkg remove [FLAGS] [PACKAGE]
 ```
 
 ### Examples
 
-```console
+```
 # Remove all packages
-kraft pkg rm --all
+kraft pkg remove --all
 
 # Remove only select OCI index packages
-kraft pkg rm --format=oci unikraft.org/nginx:latest
+kraft pkg remove --format=oci unikraft.org/nginx:latest
+
 ```
 
 ## Options
 
-```text
+```
   -a, --all             Prunes all the packages available on the host machine
   -f, --format string   Set the package format. (default "any")
-  -h, --help            help for rm
+  -h, --help            help for remove
   -n, --name string     Specify the package name that has to be pruned
 ```
 
 ## Options inherited from parent commands
 
-```text
+```
   -K, --kraftfile string   Set an alternative path of the Kraftfile
 ```
 
 ## See Also
 
-* [kraft pkg](kraft_pkg.md)	 - Package and distribute Unikraft unikernels and their dependencies
+* [`kraft pkg`](/docs/cli/reference/kraft/pkg): Package and distribute Unikraft unikernels and their dependencies
+

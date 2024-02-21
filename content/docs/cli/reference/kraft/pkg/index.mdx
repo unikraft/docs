@@ -1,0 +1,63 @@
+---
+title: "kraft pkg"
+description: Package and distribute Unikraft unikernels and their dependencies
+---
+
+Package and distribute Unikraft unikernels and their dependencies.
+
+With `kraft pkg` you are able to turn output artifacts from `kraft build`
+into a distributable archive ready for deployment.  At the same time,
+`kraft pkg` allows you to manage these archives: pulling, pushing, or
+adding them to a project.
+
+The default behaviour of `kraft pkg` is to package a project.  Given no
+arguments, you will be guided through interactive mode.
+
+
+```
+kraft pkg [FLAGS] [SUBCOMMAND|DIR]
+```
+
+### Examples
+
+```
+# Package a project as an OCI archive and embed the target's KConfig.
+$ kraft pkg --as oci --name unikraft.org/nginx:latest	
+
+```
+
+## Options
+
+```
+  -m, --arch string        Filter the creation of the package by architecture of known targets
+  -a, --args strings       Pass arguments that will be part of the running kernel's command line
+  -M, --as string          Force the packaging despite possible conflicts (default "oci")
+      --dbg                Package the debuggable (symbolic) kernel image instead of the stripped image
+      --force-format       Force the use of a packaging handler format
+  -h, --help               help for pkg
+  -k, --kernel string      Override the path to the unikernel image
+  -K, --kraftfile string   Set an alternative path of the Kraftfile
+  -n, --name string        Specify the name of the package
+      --no-kconfig         Do not include target .config as metadata
+      --no-pull            Do not pull package dependencies before packaging
+  -o, --output string      Save the package at the following output
+  -p, --plat string        Filter the creation of the package by platform of known targets
+  -P, --push               Push the package on if successfully packaged
+      --rootfs string      Specify a path to use as root file system (can be volume or initramfs)
+      --strategy string    When a package of the same name exists, use this strategy when applying targets. (default "overwrite")
+  -t, --target string      Package a particular known target
+  -w, --workdir string     Set an alternative working directory (default is cwd)
+```
+
+## See Also
+
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
+* [`kraft pkg info`](/docs/cli/reference/kraft/pkg/info): Show information about a package
+* [`kraft pkg list`](/docs/cli/reference/kraft/pkg/list): List installed Unikraft component packages
+* [`kraft pkg pull`](/docs/cli/reference/kraft/pkg/pull): Pull a Unikraft unikernel and/or its dependencies
+* [`kraft pkg push`](/docs/cli/reference/kraft/pkg/push): Push a Unikraft unikernel package to registry
+* [`kraft pkg remove`](/docs/cli/reference/kraft/pkg/remove): Removes selected local packages
+* [`kraft pkg source`](/docs/cli/reference/kraft/pkg/source): Add Unikraft component manifests
+* [`kraft pkg unsource`](/docs/cli/reference/kraft/pkg/unsource): Remove Unikraft component manifests
+* [`kraft pkg update`](/docs/cli/reference/kraft/pkg/update): Retrieve new lists of Unikraft components, libraries and packages
+

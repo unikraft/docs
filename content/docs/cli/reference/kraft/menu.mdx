@@ -5,13 +5,13 @@ description: Open's Unikraft configuration editor TUI
 
 Open Unikraft's configuration editor TUI.
 
-```console
+```
 kraft menu [FLAGS] [DIR]
 ```
 
 ### Examples
 
-```console
+```
 # Open configuration editor in the cwd project
 $ kraft menu
 
@@ -21,19 +21,19 @@ $ kraft menu path/to/app
 
 ## Options
 
-```text
+```
   -m, --arch string        Filter the creation of the build by architecture of known targets
+      --force-pull         Force pulling components before opening the menu
   -f, --frontend string    Alternative frontend to use for the configuration editor (default "menuconfig")
   -h, --help               help for menu
   -K, --kraftfile string   Set an alternative path of the Kraftfile
       --no-cache           Do not use the cache when pulling dependencies
       --no-configure       Do not run Unikraft's configure step before building
-      --no-pull            Do not pull the dependencies of the project
   -p, --plat string        Filter the creation of the build by platform of known targets
   -t, --target string      Build a particular known target
 ```
 
 ## See Also
 
-* [kraft](kraft.md)	 - Build and use highly customized and ultra-lightweight unikernels
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
 

@@ -1,0 +1,36 @@
+---
+title: "kraft net"
+description: Manage machine networks
+---
+
+Manage machine networks.
+
+```
+kraft net SUBCOMMAND
+```
+
+### Examples
+
+```
+# Create a new network
+$ kraft network create my-network
+
+```
+
+## Options
+
+```
+  -d, --driver string   Set the network driver. (default "bridge")
+  -h, --help            help for net
+```
+
+## See Also
+
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
+* [`kraft net create`](/docs/cli/reference/kraft/net/create): Create a new machine network
+* [`kraft net down`](/docs/cli/reference/kraft/net/down): Bring a network offline
+* [`kraft net inspect`](/docs/cli/reference/kraft/net/inspect): Inspect a machine network
+* [`kraft net list`](/docs/cli/reference/kraft/net/list): List machine networks
+* [`kraft net remove`](/docs/cli/reference/kraft/net/remove): Remove a network
+* [`kraft net up`](/docs/cli/reference/kraft/net/up): Bring a network online
+

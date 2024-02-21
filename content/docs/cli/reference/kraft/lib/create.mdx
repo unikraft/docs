@@ -1,0 +1,48 @@
+---
+title: "kraft lib create"
+description: Initialize a library from a template
+---
+
+Creates a library template
+
+
+```
+kraft lib create [FLAGS] [NAME]
+```
+
+### Examples
+
+```
+# Create a library template
+$ kraft lib create
+
+# Create a library template with a name
+$ kraft lib create sample-project
+
+```
+
+## Options
+
+```
+      --author-email string       Set the author email to the template
+      --author-name string        Set the author name to the template
+      --copyright-holder string   Set the copyright holder name to the template
+      --description string        Set the description to the template
+      --git-init                  Init git through the creating library
+  -h, --help                      help for create
+      --initial-branch string     Set the initial branch name to the template
+      --library-kname string      Set the library kname to the template
+      --library-name string       Set the library name to the template
+      --no-provide-c-main         Do not provide C main to the template
+      --origin string             Source code origin URL
+      --patch-dir                 provide patch directory to the template
+      --project-name string       Set the project name to the template
+      --project-path string       Where to create library
+      --update-refs               Softly pack the component so that it is available via kraft list
+  -v, --version string            Set the library version to the template
+```
+
+## See Also
+
+* [`kraft lib`](/docs/cli/reference/kraft/lib): Manage and maintain Unikraft microlibraries
+
