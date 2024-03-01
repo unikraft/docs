@@ -11,7 +11,7 @@ WORKDIR /docs
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* ./
 
-RUN npm ci --force
+RUN npm install --force
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -24,7 +24,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build --no-lint
+RUN npm run build --no-lint
 
 # Production image, copy all the files and run next
 FROM base AS runner
