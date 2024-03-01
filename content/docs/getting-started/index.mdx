@@ -1,62 +1,56 @@
 ---
 title: Welcome to Unikraft's Documentation 👋
 description: |
-  Unikraft is a fast, secure and open-source Unikernel Development Kit which
-  enables you to build custom, minimal, immutable ultra-lightweight unikernel
-  virtual machines quickly and easily.
+  Unikraft is a fast, secure and open-source Unikernel Development Kit which enables you to easily build minimal, ultra-lightweight virtual machines (unikernels).
 ---
 
-This documentation is organized into guides for operators of Unikraft unikernels
-who wish to run ultra-lightweight VMs; developers who wish to package
-pre-existing applications into a unikernel; and, hackers, researchers and staff
-who wish to extend Unikraft itself.
-
 ## Overview
+Unikraft allows you to build, at compile time, extremely specialized virtual machines (known as *unikernels*). Unikraft unikernels provide:
 
-Unikraft is a compile-time specialization strategy and alternative system for
-running your application compared to containers or traditional VMs as it allows
-you to completely customize the OS/kernel which facilitates the runtime of your
-application.  There are many benefits in running your application as a
-unikernel: for more information about [the performance
-advantages](/docs/concepts/performance) 🚀, [the added
-security](/docs/concepts/security) 🔒 and a [positive impact on the
-environment](/docs/concepts/efficiency) 🌱 please check out the [introductory
-concept chapters](/docs/concepts).
+🚀 High [performance](/docs/concepts/performance) and ultra lightweight deployments.<br />
+🔒 Strong, hardware-level [isolation](/docs/concepts/security) (they're VMs!) and a minimal TCB.<br />
+⚒️ Ease of use, including integration with Dockerfiles and other mainstream [tools](/docs/getting-started/integrations/container-runtimes).<br />
+🤝 Compatibility with the [Linux API](/docs/concepts/compatibility).<br />
 
-The Unikraft ecosystem consists of an extensive build system and tooling,
-libraries and pre-built unikernel applications.  All of the source code is
-open-source and licensed under `BSD-3-Clause` (contributions welcome!).  As an
-active community, we host regular working groups, hackathons, meetups and more.
+The Unikraft ecosystem consists of an extensive build system and tooling, libraries and pre-built unikernel applications.
+All of the source code is open-source and licensed under `BSD-3-Clause` (contributions welcome!).
+As an active [community](/community/about), we host regular working groups, hackathons, meetups and more.
 
-## Quick-start
+## Quick Start
 
-To get started building and using Unikraft, you can use [the companion
-command-line tool `kraft`](/docs/cli), allowing you to easily leverage Unikraft
-unikernels at every stage of their lifecycle, from construction to production:
+To begin first install the [`kraft`](/docs/cli) tool, which allows you to easily leverage Unikraft unikernels at every stage of their lifecycle, from construction to production:
 
 ```bash
-curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
+curl -sSfL https://get.kraftkit.sh | sh
 ```
 
-See [alternative installation methods](/docs/cli/install) and [CLI usage
-instructions](/docs/cli).
+See [alternative installation methods](/docs/cli/install) and [CLI usage instructions](/docs/cli).
 
 ## Language & Framework Guides
 
-Unikraft works with your favorite programming languages.  We've put together
-step-by-step guides for these languages:
+Unikraft works with your favorite programming languages.
+We've put together and application [**catalog**](https://github.com/unikraft/catalog/tree/main/examples) with step-by-step guides: click on one of the following items and follow the instructions in the `README.md`:
 
 <LanguageLinks />
 
+## What's Next?
+
+We've put together a number of guides in case you'd like to know more about Unikraft:
+
+* [Basic Unikraft concepts](/docs/concepts)
+* [Using the Application Catalog](/guides/using-the-app-catalog)
+* [Behind the Scenes with the Application Catalog](/guides/catalog-behind-the-scenes)
+
+## A Unikraft-Powered Cloud? KraftCloud is Here! 🔥
+
+If you'd like to experience blazing fast, Unikraft-driven cloud deployments sign up now at https://kraft.cloud/
 
 ## Contribute
 
-Looking to get involved? Contributions are welcome! Unikraft is an open-source
-project hosted on GitHub with weekly community meetings on Discord which follow
-on-going projects. There are also unclaimed projects, open issues, and
-opportunities for bachelors and masters theses.
+Looking to get involved?
+Contributions are welcome! Unikraft is an open-source project hosted on GitHub with weekly community meetings on Discord which follow on-going projects.
+There are also unclaimed projects, open issues, and opportunities for bachelors and masters theses.
 
-Whether you're a beginner or advanced user, joining our community is the best
-way to connect with like-minded people who build great products.
+Whether you're a beginner or advanced user, joining our community is the best way to connect with like-minded people who build great products.
 
 <JoinCommunityCards />
