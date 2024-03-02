@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -9,9 +9,23 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /docs
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* ./
+COPY package.json package-lock.json* ./
 
 RUN npm install --force
+
+# Dev image
+FROM base AS dev
+
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+WORKDIR /docs
+
+COPY --from=deps /docs/node_modules ./node_modules
+
+COPY . .
+
+CMD ["npm", "run", "dev"]
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -57,4 +71,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+CMD ["npm", "run", "start"]

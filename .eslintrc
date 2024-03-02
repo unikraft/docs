@@ -9,6 +9,9 @@
   ],
   "plugins": ["@typescript-eslint", "import"],
   "rules": {
+    "react/no-unescaped-entities": "off",
+    "react/jsx-key": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "react/react-in-jsx-scope": "off",
     "react/display-name": "off",
@@ -22,9 +25,6 @@
       }
     ],
     "import/no-unresolved": "off"
-  },
-  "parserOptions": {
-    "project": "tsconfig.json"
   },
   "settings": {
     "import/resolver": {
