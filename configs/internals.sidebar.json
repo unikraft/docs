@@ -24,6 +24,10 @@
               "path": "/docs/internals/syscall-shim"
             },
             {
+              "title": "Booting",
+              "path": "/docs/internals/booting"
+            },
+            {
               "title": "Debugging a Unikernel",
               "path": "/docs/internals/debugging"
             },

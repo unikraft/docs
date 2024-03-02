@@ -76,6 +76,12 @@ async function redirect() {
       destination: '/docs/cli/reference/kraftfile/latest',
       permanent: true,
     },
+    // Redirections to keep the old urls valid.
+    {
+      source: '/docs/develop/booting',
+      destination: '/docs/internals/booting',
+      permanent: true
+    }
   ]
 }
 
