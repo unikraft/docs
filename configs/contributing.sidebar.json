@@ -12,6 +12,10 @@
           "path": "/docs/contributing/unikraft"
         },
         {
+          "title": "Documentation",
+          "path": "/docs/contributing/docs"
+        },
+        {
           "title": "Review Process",
           "path": "/docs/contributing/review-process"
         },
