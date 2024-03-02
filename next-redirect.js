@@ -81,6 +81,11 @@ async function redirect() {
       source: '/docs/develop/booting',
       destination: '/docs/internals/booting',
       permanent: true
+    },
+    {
+      source: '/docs/develop/writing-tests',
+      destination: '/docs/internals/writing-tests',
+      permanent: true
     }
   ]
 }

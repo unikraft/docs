@@ -34,6 +34,10 @@
             {
               "title": "Cross-compiling Unikraft",
               "path": "/docs/internals/cross-compiling"
+            },
+            {
+              "title": "Writing Tests",
+              "path": "/docs/internals/writing-tests"
             }
           ]
         }
