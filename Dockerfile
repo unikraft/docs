@@ -11,7 +11,7 @@ WORKDIR /docs
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
 
-RUN npm install --force
+RUN npm install
 
 # Dev image
 FROM base AS dev
@@ -71,4 +71,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["npm", "run", "start"]
+#TODO (by someone else): replace cmd with "npm run start" and make it work
+CMD ["node", "server.js"]

@@ -151,6 +151,7 @@ function AlgoliaSearch() {
             indexName='unikraft'
             apiKey='7997f4960bc7a01d21c00c1fd4d61b22'
             appId='0Y6SVWJDUS'
+/* XXX: Commented to eliminate build error with new docsearch version   
             //@ts-expect-error we allow this error because we don't need what is missing here.
             navigator={{
               navigate({ suggestionUrl }) {
@@ -158,6 +159,7 @@ function AlgoliaSearch() {
                 router.push(suggestionUrl)
               },
             }}
+	*/
             hitComponent={Hit}
             transformItems={(items) => {
               return items.map((item) => {
