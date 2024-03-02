@@ -105,14 +105,12 @@ KUnit is not the only tool used for testing Linux, there are tens of tools used 
 * Test suites
   * [Linux Test Project](https://github.com/linux-test-project/ltp) is a collection of tools
   * Static code analyzers ([`Coverity`](https://scan.coverity.com/), [`Coccinelle`](https://coccinelle.gitlabpages.inria.fr/website/), [`smatch`](https://lwn.net/Articles/691882/), [`sparse`](https://sparse.docs.kernel.org/en/latest/))
-  * Module tests (KUnit)
+  * Module tests ([KUnit](https://kunit.dev/))
   * Fuzzing tools ([`Trinity`](https://github.com/kernelslacker/trinity), [`Syzkaller`](https://github.com/google/syzkaller))
   * Subsystem tests
 * Automatic testing
-  * `kisskb`
   * [`0Day`](https://github.com/0day-ci/linux)
   * [`kernelci`](https://foundation.kernelci.org/)
-  * `Kerneltests`
 
 In the figure below, we can see that as more and better tools were developed we saw an increase in reported vulnerabilities.
 There was a peak in 2017, after which a steady decrease which may be caused by the amount of tools used to verify patches before being upstreamed.
@@ -218,7 +216,7 @@ UK_TESTCASE(testsuite_name, testcase2_name)
 The key ideas that were followed when writing `uktest` are:
 
 * **Non-sophisticated**:
-It should follow an existing framework (e.g. [`KUnit`](https://01.org/linuxgraphics/gfx-docs/drm/dev-tools/kunit/usage.html)) in order to reuse the existing documentation and have a smaller learning curve
+It should follow an existing framework (e.g. [`KUnit`](https://kunit.dev/) in order to reuse the existing documentation and have a smaller learning curve
 * Ability to specify when to run the tests during the boot process
 * Written in C
 * Should not conflict with other unit test frameworks (e.g. the one used for testing libraries and apps such as [`Google Test`](https://github.com/google/googletest))
@@ -321,4 +319,4 @@ int uk_testsuite_run(struct uk_testsuite *suite)
 * [6.005 Reading 3: Test](https://ocw.mit.edu/ans7870/6/6.005/s16/classes/03-testing/index.html#automated_testing_and_regression_testing)
 * [A gentle introduction to Linux Kernel fuzzing](https://blog.cloudflare.com/a-gentle-introduction-to-linux-kernel-fuzzing/)
 * [Symbolic execution with KLEE](https://adalogics.com/blog/symbolic-execution-with-klee)
-* [Using KUnit](https://www.kernel.org/doc/html/latest/dev-tools/kunit/usage.html)
+* [Using KUnit](https://kunit.dev/)
