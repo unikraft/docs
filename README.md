@@ -1,23 +1,37 @@
-## This is the Unikraft Documentation website
+# Unikraft Documentation
 
-It's the <https://unikraft.org> website for the latest version of
-[Unikraft](https://github.com/unikraft/unikraft) and
-[KraftKit](https://kraftkit.sh).
+This is the repository hosting Unikraft documentation.
+It is deployed on the [Unikraft website](https://unikraft.org/)
+It provides information for the latest version of [Unikraft](https://github.com/unikraft/unikraft) and [KraftKit](https://kraftkit.sh).
 
-### Building and testing locally
+Documentation is written in [MDX](https://mdxjs.com/) format.
+Building and deploying it requires Node and NPM.
+You can build and run either natively or using Docker.
+
+## Building and Testing Natively
 
 ```console
-yarn install
+npm install
 
-yarn run dev
+npm run dev
 ```
 
-### Using Docker
+## Using Docker
+
+In order to use Docker, follow [the instructions](https://docs.docker.com/get-started/).
+
+For local development:
 
 ```console
-docker build -t ghcr.io/unikraft/docs:base --target base .
+docker build -t ghcr.io/unikraft/docs:dev --target dev .
 
-docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 --entrypoint sh ghcr.io/unikraft/docs:base
+docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
+```
 
-yarn run dev
+For production deployment:
+
+```console
+docker build -t ghcr.io/unikraft/docs:runner --target runner .
+
+docker run -it --rm -p 3000:3000 ghcr.io/unikraft/docs:runner
 ```
