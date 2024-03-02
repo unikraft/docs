@@ -1,0 +1,192 @@
+---
+title: Testing Concepts
+description: |
+  We are going to explore the idea of validation by testing.
+  The main focus will be testing but we also tackle other validation methods such as fuzzing and symbolic execution.
+---
+
+## The Concept of Testing
+
+Before diving into how we can do testing on Unikraft, let’s first focus on several key concepts that are used when talking about testing.
+
+There are three types of testing: **unit testing**, **integration testing** and **end-to-end testing**.
+To better understand the difference between them, we will look over an example of a webshop:
+
+If we're testing the whole workflow (creating an account, logging in, adding products to a cart, placing an order) we will call this **end-to-end testing**.
+Our shop also has an analytics feature that allows us to see a couple of data points such as:
+how many times an article was clicked on, how much time did a user look at it and so on.
+To make sure the inventory module and the analytics module are working correctly (a counter in the analytics module increases when we click on a product), we will be writing **integration tests**.
+Our shop also has at least an image for every product which should maximize when we're clicking on it.
+To test this, we would write a **unit test**.
+
+Running the test suite after each change is called **regression testing**.
+**Automatic testing** means that the tests are run and verified automatically and are usually triggered by contributiosn (pull requests).
+**Automated regression testing** is the best practice in software engineering.
+
+One of the key metrics used in testing is **code coverage**.
+This is used to measure the percentage of code that is executed during a test suite run.
+
+There are three common types of coverage:
+
+* **Statement coverage** is the percentage of code statements that are run during the testing.
+* **Branch coverage** is the percentage of branches executed during the testing (e.g. if or while).
+* **Path coverage** is the percentage of paths executed during the testing.
+
+We'll now go briefly over two other validation techniques, fuzzing and symbolic execution.
+
+### Fuzzing
+
+**Fuzzing** or fuzz testing is an automated software testing technique that involves providing invalid, unexpected, or random data as inputs to a computer program.
+The program is then monitored for exceptions such as crashes, failing built-in code assertions, or potential memory leaks.
+
+The most popular OS fuzzers are [`kAFL`](https://github.com/IntelLabs/kAFL) and [`syzkaller`](https://github.com/google/syzkaller), but research in this area is very active.
+
+### Symbolic Execution
+
+As per Wikipedia, **symbolic execution** is a means of analyzing a program to determine what inputs cause each part of a program to execute.
+An interpreter follows the program, assuming symbolic values for inputs rather than obtaining actual inputs as normal execution of the program would.
+An example of a program being symbolically executed can be seen in the figure below:
+
+<Image
+      src="/images/symbex.png"
+      class="w-auto mx-auto"
+      title="Symbolic execution"
+      description="The workflow of symbolic execution"
+      position="center"
+/>
+
+The most popular symbolic execution engines are [`KLEE`](https://klee.github.io/), [`S2E`](https://s2e.systems/docs/) and [`angr`](https://angr.io/).
+
+## Existing Testing Frameworks
+
+Nowadays, testing is usually done using a framework.
+There is no single testing framework that can be used for everything but one has plenty of options to chose from.
+
+### Linux Testing
+
+The main framework used by Linux for testing is [`KUnit`](https://kunit.dev/).
+The building blocks of KUnit are test cases, functions with the signature `void (*)(struct kunit *test)`.
+For example:
+
+```C++
+void example_add_test(struct kunit *test)
+{
+  /* check if calling add(1,0) is equal to 1 */
+  KUNIT_EXPECT_EQ(test, 1, add(1, 0));
+}
+```
+
+We can use macros such as `KUNIT_EXPECT_EQ` to verify results.
+
+A set of test cases is called a **test suite**.
+In the example below, we can see how one can add a test suite.
+
+```C
+static struct kunit_case example_add_cases[] = {
+        KUNIT_CASE(example_add_test1),
+        KUNIT_CASE(example_add_test2),
+        KUNIT_CASE(example_add_test3),
+        {}
+};
+
+static struct kunit_suite example_test_suite = {
+        .name = "example",
+        .init = example_test_init,
+        .exit = example_test_exit,
+        .test_cases = example_add_cases,
+};
+kunit_test_suite(example_test_suite);
+```
+
+The API is pretty intuitive and thoroughly detailed in the [official documentation](https://01.org/linuxgraphics/gfx-docs/drm/dev-tools/kunit/usage.html).
+
+KUnit is not the only tool used for testing Linux, there are tens of tools used to test Linux at any time:
+
+* Test suites
+  * [Linux Test Project](https://github.com/linux-test-project/ltp) is a collection of tools
+  * Static code analyzers ([`Coverity`](https://scan.coverity.com/), [`Coccinelle`](https://coccinelle.gitlabpages.inria.fr/website/), [`smatch`](https://lwn.net/Articles/691882/), [`sparse`](https://sparse.docs.kernel.org/en/latest/))
+  * Module tests ([KUnit](https://kunit.dev/))
+  * Fuzzing tools ([`Trinity`](https://github.com/kernelslacker/trinity), [`Syzkaller`](https://github.com/google/syzkaller))
+  * Subsystem tests
+* Automatic testing
+  * [`0Day`](https://github.com/0day-ci/linux)
+  * [`kernelci`](https://foundation.kernelci.org/)
+
+In the figure below, we can see that as more and better tools were developed we saw an increase in reported vulnerabilities.
+There was a peak in 2017, after which a steady decrease which may be caused by the amount of tools used to verify patches before being upstreamed.
+
+<Image
+      src="/images/linux_vulnerabilities.png"
+      class="w-auto mx-auto"
+      title="Linux vulnerabilities"
+      description="Vulnerabilites in Linux by year"
+      position="center"
+/>
+
+### OSV Testing
+
+Let's see how another unikernel does the testing.
+OSv uses a [different approach](https://documentation.tricentis.com/tosca/1420/en/content/orchestrate/orchestrate.htm).
+They're using the [Boost test framework](https://www.boost.org/doc/libs/1_82_0/libs/test/doc/html/index.html) alongside tests consisting of standalone simple applications.
+For example, to test `read` they have the following [standalone app](https://github.com/cloudius-systems/osv/blob/master/tests/tst-read.cc), whereas for [testing thevfs](https://github.com/cloudius-systems/osv/blob/master/tests/tst-vfs.cc), they use boost.
+
+### User Space Testing
+
+Right now, there are a plethora of existing testing frameworks for different programming languages.
+For example, [`Google Test`](https://github.com/google/googletest) is a testing framework for C++ whereas JUnit for Java.
+Let's take a quick look at how `Google Test` works:
+
+We have the following C++ code for the factorial in a function.cpp:
+
+```C++
+int Factorial(int n) {
+  int result = 1;
+  for (int i = 1; i <= n; i++) {
+    result *= i;
+  }
+
+  return result;
+}
+```
+
+To create a test file, we'll create a new C++ source that includes `gtest/gtest.h`
+We can now define the tests using the `TEST` macro.
+We named this test `Negative` and added it to the `FactorialTest`.
+
+```C++
+TEST(FactorialTest, Negative) {
+...
+}
+```
+
+Inside the test we can write C++ code as inside a function and use existing macros for adding test checks via macros such as `EXPECT_EQ`, `EXPECT_GT`.
+
+```C++
+#include "gtest/gtest.h"
+
+TEST(FactorialTest, Negative)
+{
+      EXPECT_EQ(1, Factorial(-5));
+      EXPECT_EQ(1, Factorial(-1));
+      EXPECT_GT(Factorial(-10), 0);
+}
+```
+
+In order to run the test we add a main function similar to the one below to the test file that we have just created:
+
+```C++
+int main(int argc, char ∗∗argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
+```
+
+Easy?
+This is not always the case, for example this [sample](https://github.com/google/googletest/blob/master/googletest/samples/sample9_unittest.cc) shows a more advanced and nested test.
+
+## Further Reading
+
+* [6.005 Reading 3: Test](https://ocw.mit.edu/ans7870/6/6.005/s16/classes/03-testing/index.html#automated_testing_and_regression_testing)
+* [A gentle introduction to Linux Kernel fuzzing](https://blog.cloudflare.com/a-gentle-introduction-to-linux-kernel-fuzzing/)
+* [Symbolic execution with KLEE](https://adalogics.com/blog/symbolic-execution-with-klee)
+* [Using KUnit](https://kunit.dev/)
