@@ -1,0 +1,143 @@
+---
+title: Submitting changes to the KraftKit repository 
+description: |
+  New features, bugfixes, improvements, maintenance and everything in between as contributions are welcome!
+---
+
+The Unikraft project is an open source and encourages the fostering open collaboration
+If you are reading this guide on how to submit changes, then thank you in advance!
+
+Unikraft's source code is hosted on [GitHub](https://github.com).
+This includes the Unikraft core repository, auxiliary external microlibraries, applications, platforms, architectures and additional tools like `kraft`.
+Any of these repositories follow the same submission process for changes: the pull request.
+
+Make sure one pull request covers only one topic.
+
+### Submission Checklist
+
+When you make a submission, please make sure you follow the steps below, also part of the pull request template:
+
+- [ ] Read the contribution guidelines in this page regarding submitting new changes to the project;
+- [ ] Test your changes against relevant architectures and platforms;
+- [ ] Ran `make fmt` on your commit series before opening this PR; (the formatting tool of choice for `KraftKit` is [gofumpt](https://github.com/mvdan/gofumpt))
+- [ ] Update relevant documentation.
+
+The pull request template will also request you to write a description of changes.
+
+## Commits
+
+Make sure each commit corresponds to one code / content change only.
+
+Please create descriptive commit messages.
+Consider using a prefix for the commit message.
+Add a detailed description on the motivation for the commit and summary of changes.
+Follow [this guide](https://cbea.ms/git-commit/) on writing good commit messages.
+
+Each commit must be authored by adding a `Signed-off-by` message.
+Use the `-s|--signoff` option of the `git` command when creating a commit.
+
+### Commit Message Format
+
+In order to simplify reading and searching the patch history, please use the following format for the short commit message:
+
+```txt
+[selector]([package]): [Your short message]
+```
+
+Where `[selector]` can be one of the following:
+
+| Selector    | Description                                   |
+|-------------|-----------------------------------------------|
+| `build`     | Changes generated when building dependencies. |
+| `ci`        | Changes to the ci workflows.                  |
+| `docs`      | Changes to the documentation.                 |
+| `feat`      | Changes introducing a new feature.            |
+| `fix`       | Changes introducing a fix.                    |
+| `perf`      | Changes improving the performance.            |
+| `refactor`  | Changes that refactor code.                   |
+| `style`     | Changes related to coding style.              |
+| `test`      | Changes related to tests.                     |
+| `revert`    | Changes reverting previous commits.           |
+| `gomod`     | Changes to the `go.mod` file.                 |
+
+> Commit titles must be at most 75 characters long, and each line in the commit message must be at most 74 characters long.
+
+Usually, a commit will involve changes to a single package.
+In case the changes span over multiple packages, the ``([package])`` portion of the commit title can be omitted.
+
+In the case the changes are related to the dependencies of `KraftKit` and not `kraft` itself, `deps` is used as a placeholder for `[package]`.
+
+The short message part should start with a capital and be formulated in simple present.
+
+The long message part is pretty free form but should be used to explain the reasons for the commit, what has been changed and why.
+It is important to provide enough information to allow `reviewers` and other developers to understand the commit's purpose.
+
+### Developer's Certificate of Origin
+
+Please note that all commits **must be signed off**.
+This is required so that you certify that you submitted the patch under the [Developer's Certificate of Origin](https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1).
+
+```txt
+Developer's Certificate of Origin 1.1
+
+By making a contribution to this project, I certify that:
+(a) The contribution was created in whole or in part by me and I
+    have the right to submit it under the open source license
+    indicated in the file; or
+
+(b) The contribution is based upon previous work that, to the best
+    of my knowledge, is covered under an appropriate open source
+    license and I have the right under that license to submit that
+    work with modifications, whether created in whole or in part
+    by me, under the same open source license (unless I am
+    permitted to submit under a different license), as indicated
+    in the file; or
+
+(c) The contribution was provided directly to me by some other
+    person who certified (a), (b) or (c) and I have not modified
+    it.
+
+(d) I understand and agree that this project and the contribution
+    are public and that a record of the contribution (including all
+    personal information I submit with it, including my sign-off) is
+    maintained indefinitely and may be redistributed consistent with
+    this project or the open source license(s) involved.
+```
+
+Signing off is done by adding the following line after the long commit message:
+
+```txt
+Signed-off-by: $FULL_NAME <$EMAIL>
+```
+
+You can also use the `--signoff` or `-s` parameter of `git commit` when writing commit messages.
+
+### Example Commit Message
+
+```txt
+feat(foo): Add new trondle calls
+
+Add some new trondle calls to the foobar interface to support the new
+zot feature.
+
+Signed-off-by: John Smith <j.smith@unikraft.org>
+```
+
+## Addressing Multiple Authors
+
+It is common that new code introduced into Unikraft comes from multiple authors.
+Each author should have their name added as part of the respective commit.
+
+Unikraft OSS project adopts a similar process seen with the Linux kernel, where a new merge request or PR can have multiple authors, multiple reviewers, testers, acknowledgements and more.
+
+Each author **must** add a `Signed-off-by` message, in order to certify that the submission is published under the [`DCO`](https://wiki.linuxfoundation.org/dco).
+
+## Rebasing and Squashing
+
+While working on a pull request, the destination branch may change.
+This will require [rebasing](https://docs.github.com/en/get-started/using-git/about-git-rebase) the source branch to keep it in sync.
+There may be conflicts that need to be solved as part of the rebase.
+
+As you want to create on commit for each content change, [squashing multiple commits](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/managing-commits/squashing-commits) into one may be required.
+This may be either because of different small changes added to the pull request as new commits.
+Or due to [incorporating suggested changes](/docs/contributing/suggest-changes).
