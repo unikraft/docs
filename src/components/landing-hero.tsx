@@ -244,15 +244,15 @@ export default function LandingHero() {
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1834</StatNumber>
+                <StatNumber>1875</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>93</StatNumber>
+                <StatNumber>100+</StatNumber>
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1273</StatNumber>
+                <StatNumber>1331</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>
