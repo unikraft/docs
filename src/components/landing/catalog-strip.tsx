@@ -33,7 +33,8 @@ const PullExample = (props) => {
       <Heading
         fontWeight={'bold'}
         color={'slate.700'}
-        fontSize={{ base: '2xl' }}
+        fontSize={{ base: 'xl', xl: '2xl' }}
+        pb={4}
       >
         {title}
       </Heading>
@@ -67,7 +68,7 @@ const PullExample = (props) => {
           borderColor='slate.400'
           color='slate.500'
           _hover={{
-            bg: 'rgba(255,255,255,0.15)'
+            bg: 'slate.200'
           }}
         />
       </Box>
@@ -136,7 +137,7 @@ export function CatalogStrip(props: BoxProps) {
           fontSize='6xl'
           gridTemplateColumns={{
             base: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
+            sm: 'repeat(3, 1fr)',
             md: 'repeat(4, 1fr)',
             lg: 'repeat(6, 1fr)',
           }}
@@ -155,10 +156,6 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='C++' src='/logos/lang-cpp.svg' maxW='20' minH='24' mx='auto' />
           </AppLink>
-          <PullExample
-            title="Try out you first unikernel"
-            snippet="kraft run --rm unikraft.org/helloworld:latest"
-            />
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-rs'
             accentColor='black'
@@ -166,6 +163,10 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='Rust' src={`/logos/lang-rust-dark.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
+          <PullExample
+            title="Try out your first unikernel"
+            snippet="kraft run --rm unikraft.org/helloworld:latest"
+            />
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-go1.21'
             accentColor='#01ADD7'
@@ -229,13 +230,6 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Ruby' src={`/logos/lang-ruby.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/library/php/8.2'
-            accentColor='#777BB3'
-            name='PHP'
-          >
-            <Image alt='PHP' src={`/logos/lang-php.svg`} maxW='28' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
             href='https://github.com/unikraft/catalog/tree/main/library/caddy/2.7'
             accentColor='#22B638'
             name='Caddy'
@@ -246,6 +240,13 @@ export function CatalogStrip(props: BoxProps) {
             title="Run your next Caddy proxy with Unikraft"
             snippet="kraft run --rm -p 2015:2015 unikraft.org/caddy:2.7"
             />
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/library/php/8.2'
+            accentColor='#777BB3'
+            name='PHP'
+          >
+            <Image alt='PHP' src={`/logos/lang-php.svg`} maxW='28' minH='24' mx='auto' />
+          </AppLink>
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/library/memcached/1.6'
             accentColor='#776A65'

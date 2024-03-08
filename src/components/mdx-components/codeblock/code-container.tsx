@@ -7,6 +7,8 @@ function CodeContainer(props: BoxProps) {
       my='8'
       bg='slate.100'
       border='solid 1px rgba(0,0,0,.05)'
+      whiteSpace={'nowrap'}
+      overflowX={'scroll'}
       _dark={{
         bg: 'ukblue.950',
         borderColor: 'rgba(255,255,255,.1)'
