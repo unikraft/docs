@@ -4,6 +4,7 @@ import LandingHero from 'components/landing-hero'
 import { KraftCloudStrip } from 'components/landing/kraftcloud-strip'
 import { BlueprintStrip } from 'components/landing/blueprint-strip'
 import { KraftKitStrip } from 'components/landing/kraftkit-strip'
+import { CatalogStrip } from 'components/landing/catalog-strip'
 import { ResearchStrip } from 'components/landing/research-strip'
 import { GreenStrip } from 'components/landing/green-strip'
 import Header from 'components/header'
@@ -22,6 +23,7 @@ const HomePage = () => {
       <KraftCloudStrip />
       <BlueprintStrip />
       <KraftKitStrip />
+      <CatalogStrip />
       <ResearchStrip />
       <GreenStrip />
       <Footer />
