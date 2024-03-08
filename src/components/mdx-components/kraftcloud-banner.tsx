@@ -3,7 +3,7 @@ import { Box, Heading, Flex, chakra } from '@chakra-ui/react';
 import { CompanyKraftCloud } from 'components/logos';
 import { t } from 'utils/i18n';
 
-export const KraftCloudBanner = ({ title, url, children }: {
+export const KraftCloudBanner = ({ title, url, children, ...rest }: {
   title: { string }
   url: { string }
   children: React.ReactNode
@@ -22,6 +22,7 @@ export const KraftCloudBanner = ({ title, url, children }: {
       outlineOffset={-1}
       color={'white'}
       p={4}
+      {...rest}
     >
       <Flex
         justifyContent={'space-between'}
