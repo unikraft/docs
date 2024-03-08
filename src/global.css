@@ -712,3 +712,20 @@ html[data-theme="dark"] blockquote[data-status="info"] #codeblock > div {
     color: var(--chakra-colors-ukblue-300);
   }
 }
+
+.list-getting-started {
+  list-style: thumbs;
+  padding-top: 18px;
+}
+
+@counter-style thumbs {
+  system: cyclic;
+  symbols: "🚀" "🔒" "⚒️" "🤝";
+  suffix: " ";
+}
+
+.list-getting-started li {
+  padding-bottom: 8px;
+  margin-left: 20px;
+  padding-left: 8px;
+}
