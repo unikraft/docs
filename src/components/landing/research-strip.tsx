@@ -16,7 +16,7 @@ import {
   CompanyNEC,
   CompanyARM,
   CompanyOpensynergy,
-  UniTexas,
+  CompanyEPAM,
   UniICL,
 } from 'components/logos'
 import * as React from 'react'
@@ -69,7 +69,7 @@ export function ResearchStrip(props: BoxProps) {
           <Logo><CompanyNEC /></Logo>
           <Logo><CompanyARM /></Logo>
           <Logo><CompanyOpensynergy /></Logo>
-          <Logo><UniTexas /></Logo>
+          <Logo><CompanyEPAM /></Logo>
           <Logo><UniICL /></Logo>
         </SimpleGrid>
       </Container>

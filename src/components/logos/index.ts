@@ -3,6 +3,7 @@ export { default as CompanyAWS } from './company-aws.svg';
 export { default as CompanyAWSsm } from './company-aws-sm.svg';
 export { default as CompanyDigitalocean } from './company-digitalocean.svg';
 export { default as CompanyDigitaloceanSm } from './company-digitalocean-sm.svg';
+export { default as CompanyEPAM } from './company-epam.svg';
 export { default as CompanyGitHub } from './company-github.svg';
 export { default as CompanyGoogleCloud } from './company-google-cloud.svg';
 export { default as CompanyGoogleCloudSm } from './company-google-cloud-sm.svg';
