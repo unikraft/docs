@@ -24,8 +24,8 @@ const HomePage = () => {
       <BlueprintStrip />
       <KraftKitStrip />
       <CatalogStrip />
-      <ResearchStrip />
       <GreenStrip />
+      <ResearchStrip />
       <Footer />
     </>
   )
