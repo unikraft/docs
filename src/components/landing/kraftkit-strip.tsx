@@ -74,7 +74,7 @@ export function KraftKitStrip(props: BoxProps) {
                 zIndex='2'
                 position='relative'
                 overflow='hidden'
-                src="/asciinema/kraft-build.cast" />
+                src="/asciinema/kraft-build-run-pkg.cast" />
               <Box
                 zIndex='1'
                 position='absolute'
