@@ -6,6 +6,7 @@ import FontFace from 'components/font-face'
 import theme from 'theme'
 import { getSeo } from 'utils/seo'
 import '../src/global.css' // TODO(nderjung): Non-relative path.
+import 'asciinema-player/dist/bundle/asciinema-player.css'
 import 'components/asciinema-player.css'
 
 const App = ({ Component, pageProps }) => {

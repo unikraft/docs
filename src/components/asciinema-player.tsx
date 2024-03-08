@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import 'asciinema-player/dist/bundle/asciinema-player.css'
 import { useColorModeValue } from '@chakra-ui/react'
 import { Box } from '@chakra-ui/react'
 
