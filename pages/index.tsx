@@ -21,7 +21,7 @@ const HomePage = () => {
       <Header />
       <LandingHero />
       <KraftCloudStrip />
-      <CatalogStrip />            
+      <CatalogStrip />
       <BlueprintStrip />
       <KraftKitStrip />
       <GreenStrip />
