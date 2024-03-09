@@ -234,7 +234,7 @@ This file is included by Unikraft to render the menu-based configuration, and to
 Each setting that is defined in this file will be globally populated as a set variable for all `Makefile.uk` files, as well as a defined macro in your source code when you use `"#include <uk/config.h>"`.
 Please ensure that all settings are properly namespaced.
 They should begin with `[APPNAME]_` (e.g. `APPHELLOWORLD_`).
-Please also note that some variable names are predefined for each application or library namespace (see [`Makefile.uk`](docs/develop/porting/#makefileuk)).
+Please also note that some variable names are predefined for each application or library namespace (see [`Makefile.uk`](/docs/internals/build-system/#makefileuk)).
 
 As best practice, we recommend to begin the file with defining dependencies with an invisible boolean option that is set to `y` (i.e. an option that will not be visible in the `menuconfig` screen):
 
