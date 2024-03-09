@@ -87,7 +87,7 @@
             },
             {
               "title": "`kraft pkg ls`",
-              "path": "/docs/cli/reference/kraft/pkg/ls"
+              "path": "/docs/cli/reference/kraft/pkg/list"
             },
             {
               "title": "`kraft pkg info`",
@@ -103,7 +103,7 @@
             },
             {
               "title": "`kraft pkg rm`",
-              "path": "/docs/cli/reference/kraft/pkg/rm"
+              "path": "/docs/cli/reference/kraft/pkg/remove"
             },
             {
               "title": "`kraft pkg source`",
@@ -131,7 +131,7 @@
             },
             {
               "title": "`kraft rm`",
-              "path": "/docs/cli/reference/kraft/rm"
+              "path": "/docs/cli/reference/kraft/remove"
             },
             {
               "title": "`kraft run`",
@@ -167,11 +167,11 @@
             },
             {
               "title": "`kraft net ls`",
-              "path": "/docs/cli/reference/kraft/net/ls"
+              "path": "/docs/cli/reference/kraft/net/list"
             },
             {
               "title": "`kraft net rm`",
-              "path": "/docs/cli/reference/kraft/net/rm"
+              "path": "/docs/cli/reference/kraft/net/remove"
             },
             {
               "title": "`kraft net up`",

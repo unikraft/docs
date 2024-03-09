@@ -16,6 +16,8 @@ npm install
 npm run dev
 ```
 
+See also [contributing/docs#building-the-website](https://unikraft.org/docs/contributing/docs#building-the-website).
+
 ## Using Docker
 
 In order to use Docker, follow [the instructions](https://docs.docker.com/get-started/).
@@ -35,3 +37,7 @@ docker build -t ghcr.io/unikraft/docs:runner --target runner .
 
 docker run -it --rm -p 3000:3000 ghcr.io/unikraft/docs:runner
 ```
+
+## Contributing
+
+Please see our [Contribution Guide](https://unikraft.org/docs/contributing/docs) for more details.
