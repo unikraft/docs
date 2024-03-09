@@ -264,6 +264,60 @@ Found 0 clones.
 Detection time:: 41.945ms
 ```
 
+#### Running the URL checker
+
+When new additional material is added, it's a good practice to run a URL [checker](https://github.com/topics/link-checker) on the new pages that have been added.
+
+You can use any tool you find easy to setup or use, Below are two examples:
+
+Using [linkchecker](https://github.com/linkchecker/linkchecker):
+
+```bash
+$ pip install linkchecker
+$ linkchecker http://localhost:3000/docs/new-entry -r 1 # -r 1 limits the check to just the url given
+...
+URL        `docs/broken-url'
+Name       `baby-steps'
+Parent URL http://localhost:3000/docs/contributing/docs, line 127, col 28
+Real URL   http://localhost:3000/docs/contributing/docs/broken-url
+Check time 4.030 seconds
+Result     Error: 404 Not Found
+```
+
+Using [lychee](https://github.com/lycheeverse/lychee):
+
+```bash
+$ lychee content/docs/path/to/new-entry               # lychee can run checks on our files directly
+$ lychee http://localhost:3000/docs/new-entry         # and can be run against our local development website
+$ lychee --offline content/docs/contributing/docs.mdx # --ofline limits the checks to just our local files instead
+  27/27 ━━━━━━━━━━━━━━━━━━━━ Finished extracting links                                                                                            Issues found in 1 input. Find details below.
+
+[content/docs/contributing/docs.mdx]:
+✗ [ERR] file:///.../unikraft/docs/content/docs/contributing/docs/broken-url | Failed: Cannot find file
+
+🔍 27 Total (in 1s) ✅ 26 OK 🚫 1 Error
+```
+
+Pre-built binaries can be found on the [release](https://github.com/lycheeverse/lychee/releases/latest) page.
+
+For example, to install and extract the binary built for Linux:
+
+```bash
+$ pushd /tmp
+$ curl -OL https://github.com/lycheeverse/lychee/releases/download/v0.14.3/<release>.tar.gz
+$ tar -xf <release>.tar.gz # this would create a `lychee` binary in our current directory
+$ mv ./lychee ~/.local/bin # we place the binary in our local home dir path
+$ popd
+```
+
+The above assumes we have already configured our default shell to include `~/.local/bin` in the `PATH` by already having `export PATH=$PATH:~/.local/bin` defined in our `~/.bashrc` or `~/.zshrc`, depending on the default shell set.
+
+We can also place the binary in our working project directory and call it from there `./lychee` or anywhere on the filesystem, assuming we provide the full path to it.
+
+**Limitations:**
+
+Url checkers will not catch all broken references, for example, an empty url block `[foobar](#)` or a section that does not exist within our file `[foobar](#foo-section)` (better detected with the markdown [linter](#running-the-linter-locally)), but they can help eliminate some cases like typos or moved content.
+
 ### Reviewing Changes
 
 If you are assigned as a reviewer to a pull request (PR), please follow the [testing steps](#testing-changes) and make sure everything looks good.
