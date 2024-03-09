@@ -157,16 +157,46 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='C++' src='/logos/lang-cpp.svg' maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75'
-            accentColor='black'
-            name='Rust'
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-cpp-boost'
+            accentColor='#659AD2'
+            name='C++ Boost'
           >
-            <Image alt='Rust' src={`/logos/lang-rust-dark.svg`} maxW='20' minH='24' mx='auto' />
+            <Image alt='C++ Boost' src='/logos/framework-boost.svg' maxW='20' minH='24' mx='auto' />
           </AppLink>
           <PullExample
             title="Try out your first unikernel:"
             snippet="kraft run unikraft.org/python:3.10 -p 8080"
             />
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/caddy'
+            accentColor='#22B638'
+            name='Caddy'
+          >
+            <Image alt='Caddy' src={`/logos/app-caddy.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='href=https://github.com/unikraft/catalog/tree/main/exanokes/duckdb-go'
+            accentColor='black'
+            name='DuckDB'
+          >
+            <Image alt='DuckDB' src={`/logos/framework-duckdb.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          {/*
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/node21-expressjs'
+            accentColor='black'
+            name='ExpressJS'
+          >
+            <Image alt='ExpressJS' src={`/logos/framework-expressjs.png`} maxW='40' minH='20' mx='auto' />
+          </AppLink>
+        */}
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10-flask3.0'
+            accentColor='#37A7BD'
+            name='Flask'
+          >
+            <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
+          </AppLink>
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-go1.21'
             accentColor='#01ADD7'
@@ -175,18 +205,41 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Go' src={`/logos/lang-go.svg`} maxW='28' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-cpp-boost'
-            accentColor='#659AD2'
-            name='C++ Boost'
+            href='https://github.com/unikraft/catalog/tree/main/examples/hugo'
+            accentColor='black'
+            name='Gohugo'
           >
-            <Image alt='C++ Boost' src='/logos/framework-boost.svg' maxW='20' minH='24' mx='auto' />
-          </AppLink>          
+            <Image alt='Gohugo' src={`/logos/framework-hugo.svg`} maxW='32' minH='24' mx='auto' />
+          </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10'
-            accentColor='#3772A4'
-            name='Python3'
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-lua5.4'
+            accentColor='#070080'
+            name='Lua'
           >
-            <Image alt='Python 3' src='/logos/lang-python3.svg' maxW='20' minH='24' mx='auto' />
+            <Image alt='Lua' src={`/logos/lang-lua.svg`} maxW='24' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/memcached'
+            accentColor='#776A65'
+            name='Memcached'
+          >
+            <Image alt='Memcached' src={`/logos/app-memcached.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          {/*
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/node21-nextjs'
+            accentColor='black'
+            name='NextJS'
+          >
+            <Image alt='NextJS' src={`/logos/framework-nextjs.svg`} maxW='24' minH='24' mx='auto' />
+          </AppLink>
+        */}
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/exanokes/nginx'
+            accentColor='#009900'
+            name='NGINX'
+          >
+            <Image alt='NGINX' src={`/logos/app-nginx.svg`} maxW='32' minH='24' mx='auto' />
           </AppLink>
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-node18'
@@ -196,12 +249,104 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Node' src={`/logos/runtime-node-dark.svg`} maxW='28' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10-flask3.0'
-            accentColor='#37A7BD'
-            name='Flask'
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-perl5.38'
+            accentColor='black'
+            name='Perl'
           >
-            <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
+            <Image alt='Perl' src={`/logos/lang-perl.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-php8.2'
+            accentColor='#777BB3'
+            name='PHP'
+          >
+            <Image alt='PHP' src={`/logos/lang-php.svg`} maxW='28' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10'
+            accentColor='#3772A4'
+            name='Python3'
+          >
+            <Image alt='Python 3' src='/logos/lang-python3.svg' maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/redis'
+            accentColor='#D82B1F'
+            name='Redis'
+          >
+            <Image alt='Redis' src={`/logos/app-redis.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          {/*
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/node21-remix'
+            accentColor='#467AB6'
+            name='Remix'
+          >
+            <Image alt='Remix' src={`/logos/framework-remix.png`} maxW='24' minH='24' mx='auto' />
+      </AppLink>  */}
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-ruby3.2'
+            accentColor='#A71501'
+            name='Ruby'
+          >
+            <Image alt='Ruby' src={`/logos/lang-ruby.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75'
+            accentColor='black'
+            name='Rust'
+          >
+            <Image alt='Rust' src={`/logos/lang-rust-dark.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+         <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-actix-web4'
+            accentColor='black'
+            name='Rust Actix'
+          >
+            <Image alt='Rust Actix' src={`/logos/framework-actix.png`} maxW='24' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-rocket0.5'
+            accentColor='#D2394A'
+            name='Rust Rocket'
+          >
+            <Image alt='Rust Rocket' src={`/logos/framework-rocket.png`} maxW='32' minH='24' mx='auto' />
+          </AppLink>
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-tokio'
+            accentColor='black'
+            name='Rust Tokio'
+          >
+            <Image alt='Rust Tokio' src={`/logos/framework-tokio.svg`} maxW='20' minH='24' mx='auto' />
+          </AppLink>
+          {/*
+          <AppLink
+            href='https://github.com/unikraft/catalog/tree/main/examples/node21-solidjs'
+            accentColor='#37609D'
+            name='SolidJS'
+          >
+            <Image alt='SolidJS' src={`/logos/framework-solidjs.png`} maxW='24' minH='24' mx='auto' />
+          </AppLink>
+        */}
+
+          {/*
+          <PullExample
+            title="Run your next Caddy proxy with Unikraft"
+            snippet="kraft run --rm -p 2015:2015 unikraft.org/caddy:2.7"
+        /> */}
+          {/*
+          <PullExample
+            title="Set up your next database with Unikraft"
+            snippet="kraft run --rm -p 3306:3306 unikraft.org/mariadb:1.25"
+            />
+          */}
+          {/*
+          <PullExample
+            title="Keep up to date with all the latest apps"
+            snippet="kraft pkg ls --update --all --apps"
+            />
+          */}
+
           {/*
           <AppLink
             href='#'
@@ -220,62 +365,6 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Django' src={`/logos/framework-django.svg`} maxW='20' maxH='24' mx='auto' />
           </AppLink>
           */}
-          {/*
-          <AppLink
-            href='#'
-            accentColor='black'
-            name='Next.js'
-          >
-            <Image alt='Next.js' src={`/logos/framework-next.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          */}
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-ruby3.2'
-            accentColor='#A71501'
-            name='Ruby'
-          >
-            <Image alt='Ruby' src={`/logos/lang-ruby.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/caddy'
-            accentColor='#22B638'
-            name='Caddy'
-          >
-            <Image alt='Caddy' src={`/logos/app-caddy.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          {/*}
-          <PullExample
-            title="Run your next Caddy proxy with Unikraft"
-            snippet="kraft run --rm -p 2015:2015 unikraft.org/caddy:2.7"
-        /> */}
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-php8.2'
-            accentColor='#777BB3'
-            name='PHP'
-          >
-            <Image alt='PHP' src={`/logos/lang-php.svg`} maxW='28' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/memcached'
-            accentColor='#776A65'
-            name='Memcached'
-          >
-            <Image alt='Memcached' src={`/logos/app-memcached.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/exanokes/nginx'
-            accentColor='#009900'
-            name='NGINX'
-          >
-            <Image alt='NGINX' src={`/logos/app-nginx.svg`} maxW='32' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/redis'
-            accentColor='#D82B1F'
-            name='Redis'
-          >
-            <Image alt='Redis' src={`/logos/app-redis.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
           {/*
           <AppLink
             href='#'
@@ -302,19 +391,6 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='Ruby on Rails' src={`/logos/framework-rails.svg`} maxW='32' minH='24' mx='auto' />
           </AppLink>
-          */}
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-perl5.38'
-            accentColor='black'
-            name='Perl'
-          >
-            <Image alt='Perl' src={`/logos/lang-perl.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          {/*
-          <PullExample
-            title="Set up your next database with Unikraft"
-            snippet="kraft run --rm -p 3306:3306 unikraft.org/mariadb:1.25"
-            />
           */}
           {/*
           <AppLink
@@ -352,15 +428,6 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Dragonfly' src={`/logos/app-dragonfly.svg`} maxW='24' minH='24' mx='auto' />
           </AppLink>
           */}
-          {
-          <AppLink
-            href='href=https://github.com/unikraft/catalog/tree/main/exanokes/duckdb-go'
-            accentColor='black'
-            name='DuckDB'
-          >
-            <Image alt='DuckDB' src={`/logos/framework-duckdb.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          }
           {/*
           <AppLink
             href='#'
@@ -370,41 +437,6 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='SurrealDB' src={`/logos/app-surrealdb.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
           */}
-         <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-actix-web4'
-            accentColor='black'
-            name='Rust Actix'
-          >
-            <Image alt='Rust Actix' src={`/logos/framework-actix.png`} maxW='24' minH='24' mx='auto' />
-          </AppLink>          
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-tokio'
-            accentColor='black'
-            name='Rust Tokio'
-          >
-            <Image alt='Rust Tokio' src={`/logos/framework-tokio.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/hugo'
-            accentColor='black'
-            name='Gohugo'
-          >
-            <Image alt='Gohugo' src={`/logos/framework-hugo.svg`} maxW='32' minH='24' mx='auto' />
-          </AppLink>
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-rocket0.5'
-            accentColor='#D2394A'
-            name='Rust Rocket'
-          >
-            <Image alt='Rust Rocket' src={`/logos/framework-rocket.png`} maxW='32' minH='24' mx='auto' />
-          </AppLink>          
-          <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-lua5.4'
-            accentColor='#070080'
-            name='Lua'
-          >
-            <Image alt='Lua' src={`/logos/lang-lua.svg`} maxW='20' minH='24' mx='auto' />
-          </AppLink>
           {/*
           <AppLink
             href='#'
@@ -422,12 +454,6 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='MinIO' src={`/logos/app-minio.svg`} maxW='32' minH='24' mx='auto' />
           </AppLink>
-          */}
-          {/*
-          <PullExample
-            title="Keep up to date with all the latest apps"
-            snippet="kraft pkg ls --update --all --apps"
-            />
           */}
         </Grid>
         <Box
