@@ -279,10 +279,10 @@ export function CatalogStrip(props: BoxProps) {
           {/*
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/node21-remix'
-            accentColor='#467AB6'
+            accentColor='black'
             name='Remix'
           >
-            <Image alt='Remix' src={`/logos/framework-remix.png`} maxW='24' minH='24' mx='auto' />
+            <Image alt='Remix' src={`/logos/framework-remix.svg`} maxW='24' minH='24' mx='auto' />
           </AppLink>
           */}
           <AppLink
