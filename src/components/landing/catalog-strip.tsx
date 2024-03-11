@@ -189,7 +189,7 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='ExpressJS' src={`/logos/framework-expressjs.png`} maxW='40' minH='20' mx='auto' />
           </AppLink>
-        */}
+          */}
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10-flask3.0'
             accentColor='#37A7BD'
@@ -283,7 +283,8 @@ export function CatalogStrip(props: BoxProps) {
             name='Remix'
           >
             <Image alt='Remix' src={`/logos/framework-remix.png`} maxW='24' minH='24' mx='auto' />
-      </AppLink>  */}
+          </AppLink>
+          */}
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-ruby3.2'
             accentColor='#A71501'
@@ -327,13 +328,13 @@ export function CatalogStrip(props: BoxProps) {
           >
             <Image alt='SolidJS' src={`/logos/framework-solidjs.png`} maxW='24' minH='24' mx='auto' />
           </AppLink>
-        */}
-
+          */}
           {/*
           <PullExample
             title="Run your next Caddy proxy with Unikraft"
             snippet="kraft run --rm -p 2015:2015 unikraft.org/caddy:2.7"
-        /> */}
+          />
+          */}
           {/*
           <PullExample
             title="Set up your next database with Unikraft"
@@ -346,7 +347,6 @@ export function CatalogStrip(props: BoxProps) {
             snippet="kraft pkg ls --update --all --apps"
             />
           */}
-
           {/*
           <AppLink
             href='#'
