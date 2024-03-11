@@ -323,10 +323,10 @@ export function CatalogStrip(props: BoxProps) {
           {/*
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/node21-solidjs'
-            accentColor='#37609D'
+            accentColor='#4377bb'
             name='SolidJS'
           >
-            <Image alt='SolidJS' src={`/logos/framework-solidjs.png`} maxW='24' minH='24' mx='auto' />
+            <Image alt='SolidJS' src={`/logos/framework-solidjs.svg`} maxW='24' minH='24' mx='auto' />
           </AppLink>
           */}
           {/*
