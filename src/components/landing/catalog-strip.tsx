@@ -165,7 +165,7 @@ export function CatalogStrip(props: BoxProps) {
           </AppLink>
           <PullExample
             title="Try out your first unikernel:"
-            snippet="kraft run unikraft.org/python:3.10 -p 8080"
+            snippet="kraft run unikraft.org/helloworld:latest"
             />
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/caddy'
