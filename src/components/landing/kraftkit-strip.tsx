@@ -94,6 +94,16 @@ export function KraftKitStrip(props: BoxProps) {
               base: 'span 12/span 12',
               lg: 'span 6/span 6'
             }}
+            pt={{
+              base: 8,
+              lg: 4,
+              '2xl': 0,
+            }}
+            px={{
+              base: 0,
+              lg: 4,
+              '2xl': 8,
+            }}
           >
             <Box>
               <Text textTransform='uppercase' fontWeight='bold' color='orange.500' size='lg' mb='2'>
