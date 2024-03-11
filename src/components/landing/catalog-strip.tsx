@@ -310,7 +310,7 @@ export function CatalogStrip(props: BoxProps) {
             accentColor='#D2394A'
             name='Rust Rocket'
           >
-            <Image alt='Rust Rocket' src={`/logos/framework-rocket.png`} maxW='32' minH='24' mx='auto' />
+            <Image alt='Rust Rocket' src={`/logos/framework-rocket.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
             href='https://github.com/unikraft/catalog/tree/main/examples/http-rust1.75-tokio'
