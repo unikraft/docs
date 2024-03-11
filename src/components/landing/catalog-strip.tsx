@@ -474,7 +474,7 @@ export function CatalogStrip(props: BoxProps) {
                 }}
                 p={{
                   base: 8,
-                  sm: 8,
+                  sm: 6,
                 }}
                 rightIcon={<FaArrowRight fontSize='0.8em' />}
               >

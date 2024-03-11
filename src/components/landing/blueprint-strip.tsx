@@ -218,13 +218,13 @@ export function BlueprintStrip(props: BoxProps) {
                   <Icon as={CheckIcon} />
                 </Box>
                 <VStack align={'start'}>
-                  <Text color='slate.600' fontSize='lg' fontWeight={'semibold'}>{feature}</Text>
+                  <Text color='slate.600' fontSize='xl' fontWeight={'semibold'}>{feature}</Text>
                 </VStack>
               </HStack>
             ))}
             </SimpleGrid>
           </Box>
-          <Box borderTop='solid 1px var(--chakra-colors-slate-200)' p='6' textAlign={'center'}>
+          <Box borderTop='solid 1px var(--chakra-colors-slate-200)' p='8' textAlign={'center'}>
             <NextLink href={`/docs/`} passHref>
               <chakra.a
                 as={Button}
@@ -232,9 +232,14 @@ export function BlueprintStrip(props: BoxProps) {
                 bg='slate.100'
                 whiteSpace={'normal'}
                 textAlign={'center'}
-                py={{
+                fontSize={'xl'}
+                _hover={{
+                  bg: 'slate.200',
+                  textDecoration: 'underline'
+                }}
+                p={{
                   base: 8,
-                  sm: 4,
+                  sm: 6,
                 }}
                 rightIcon={<FaArrowRight fontSize='0.8em' />}
               >
