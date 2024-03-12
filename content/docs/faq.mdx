@@ -20,7 +20,7 @@ description: |
   <FaqItem
     question="ERR: [libukboot] <boot.c @ 346> Init function at 0x1729a0 returned error -1"
   >
-    A function in the initialization table failed. 
+    A function in the initialization table failed.
   </FaqItem>
   <FaqItem
     question="Can I use Unikraft code in commercial products?"
@@ -37,7 +37,7 @@ description: |
   >
   First, join our community server on [Discord](https://bit.ly/UnikraftDiscord).
   Then, send a Pull Request, if you already have an idea of contribution, or ask the community for some contribuition ideas.
-  For more details, see the [Contributing](/docs/contributing/) section. 
+  For more details, see the [Contributing](/docs/contributing/) section.
   </FaqItem>
   <FaqItem
     question="I was assigned a reviewer to a pull request. What do I do?"
@@ -61,5 +61,231 @@ description: |
   Unikraft is lightweight, faster than a container, while having the security of a virtual machine.
   Best of both worlds.
   For more details, see the [Performance](/docs/concepts/performance/) and [Security](/docs/concepts/security/) sections.
+  </FaqItem>
+  <FaqItem
+    question="I get the error `Could not access KVM kernel module: No such file or directory`"
+  >
+  This is caused by missing KVM support.
+  This may be the case if:
+
+  * you are running an ARM64 image on x86_64 (or viceversa)
+  * you are using a virtual machine for development / deployment
+  * you are using Windows (with WSL) or macOS
+  * your system simply doesn't have KVM support.
+
+  If you are using `kraft run`, use the `-W` option to disable KVM support requirement.
+  If you are using QEMU, be sure to **not** use the `-enable-kvm` nor the `-accel kvm` options.
+  Firecracker currently requires KVM support;
+  you can't run it on a KVM-less system.
+  </FaqItem>
+  <FaqItem
+    question="How do I stop a running QEMU instance?"
+  >
+  Use `Ctrl+a x` (i.e. press `Ctrl` and `a` keys simultanously, release, then press `x` key) to close an open QEMU instance in the terminal.
+  You can also kill all QEMU instances by running, in another console:
+
+  ```console
+  pkill -f qemu-system
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="How do I stop a running Firecracker instance?"
+  >
+  There's no keyboard shortcut to stop a running Firecracker instance.
+  You either find out the pid and kill it:
+
+  ```console
+  pgrep -f firecracker
+  kill <PID>
+  ```
+
+  Replace `<PID>` with the actual PID (_Process ID_) returned by `pgrep`.
+
+  You can also kill all Firecracker instances by running, in another console:
+
+  ```console
+  pkill -f firecracker
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="How do I stop a running KraftKit instance (started with `kraft run`)?"
+  >
+  If you use `Ctrl+c` that will close the current KraftKit controlling process, but may not fully remove the runtime information, including potential port mappings and potential started QEMU / Firecracker / Xen processes.
+
+  Use `--rm` as argument to `kraft run` to remove the underlying runtime when using `Ctrl+c`.
+
+  To list all active / inactive KraftKit instances, use:
+
+  ```console
+  kraft ps -a
+  ```
+
+  To stop an instance or all instances, or to remove an instance or all instances use:
+
+  ```console
+  kraft stop <instance_name>
+  kraft stop --all
+  kraft rm <instance_name>
+  kraft rm --all
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="I get the error `port 0.0.0.0:8080 is already in use by ...`
+    What do I do?"
+  >
+  There is another instance running that is using port `8080`.
+
+  First, check the listening services to detect what is using the port:
+
+  ```console
+  netstat -tlpn
+  ```
+
+  That may be a KraftKit instance, a QEMU instance, a Firecracker instance, or something else.
+  If it's something else, you can kill it by passing the PID to the `kill` command:
+
+  ```console
+  kill <PID>
+  ```
+
+  If it's a KraftKit, QEMU or Firecracker instance using the port, you can check the running state:
+
+  ```console
+  kraft ps -a
+  ps -ef | grep qemu-system
+  ps -ef | grep firecracker
+  ```
+
+  You can stop them to free the port:
+
+  ```console
+  kraft rm <instance_name>
+  kill <qemu_PID>
+  kill <firecracker_PID>
+  ```
+
+  You can also stop all running instances:
+
+  ```console
+  kraft rm --all
+  pkill -f qemu-system
+  pkill -f firecracker
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="I want to debug a Unikraft image with QEMU.
+    But when I use QEMU (`qemu-system-x86_64 -kernel ...qemu-x86_64.dbg`) it says `qemu-system-x86_64: Error loading uncompressed kernel without PVH ELF`."
+  >
+  This is because you passed the debug image (with the `.dbg` extension) to QEMU.
+  You need to pass the actual image (i.e. **without** the `.dgb` extension).
+  The image with the `.dbg` extension is used by GDB.
+
+  See more [here](https://unikraft.org/guides/debugging#using-gdb).
+  </FaqItem>
+  <FaqItem
+    question="I run an image with QEMU and I get `CRIT: [libkvmplat] 1GiB pages not supported.`"
+  >
+  It's because you don't use KVM support and large pages are required.
+  Pass the `-cpu max` option to `qemu-system-x86_64`.
+  </FaqItem>
+  <FaqItem
+    question="I am trying to run an application with `kraft run unikraft.org/<app_name>` and I get `W  could not find package 'unikraft.org/nginx' based on qemu/x86_64`"
+  >
+  You need to also pass the tag, the full command should be:
+
+  ```console
+  kraft run unikraft.org/<app_name>:<tag>
+  ```
+
+  For example, run:
+
+  ```console
+  kraft run unikraft.org/nginx:1.25
+  kraft run unikraft.org/ruby:3.2
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="When I run an app I get `CRIT: [libvfscore] Failed to extract cpio archive to /: -3`."
+  >
+  You didn't provide enough memory.
+  Use the `-M` option to `kraft run`, e.g.:
+
+  ```console
+  kraft run -M 256M unikraft.org/ruby:3.2
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="I'm trying to run applications using instructions at `http://github.com/unikraft/app-...` and I have problems."
+  >
+  The `app-...` repositories are archived and no longer in use.
+  Visit the [`catalog` repository](https://github.com/unikraft/catalog) and see applications and examples there.
+  </FaqItem>
+  <FaqItem
+    question="I'm trying to port / run a new application on Unikraft.
+    What should I do?"
+  >
+  Your goal should be to add the appplication to the [`catalog` repository](https://github.com/unikraft/catalog).
+  Follow these guides:
+
+  * [Using the Application Catalog](https://unikraft.org/guides/using-the-app-catalog)
+  * [Behind the Scenes with the Application Catalog](https://unikraft.org/guides/catalog-behind-the-scenes)
+  * [Adding Applications to the Catalog](https://unikraft.org/docs/contributing/adding-to-the-app-catalog)
+  </FaqItem>
+  <FaqItem
+    question="Whenever I run `kraft build` or `kraft run` it takes a lot of time to build the required filesystem from the `Dockerfile`.
+    How can I speed that up?"
+  >
+  In its default configuration, KraftKit will start a temporary / transient [BuildKit instance](https://docs.docker.com/build/buildkit/).
+
+  To speed things up, start a more permanent BuildKit instance that will cache the built filesystems.
+  Follow the instruction [here](https://unikraft.org/guides/building-dockerfile-images-with-buildkit) to start a more permanent BuildKit instance.
+  </FaqItem>
+  <FaqItem
+    question="I think things are pretty messed up and I want to clear all KraftKit related configurations and files.
+    What do I do?"
+  >
+  Use the commands below to clear all KraftKit-related information and then refresh it.
+
+  ```console
+  kraft rm --all
+  kraft pkg rm --all
+  rm -fr ~/.local/share/kraftkit/
+  kraft pkg ls --apps --update
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="When I use `kraft build` I don't seem to get the latest version of the repositories."
+  >
+
+  Make sure you remove the local configuration and output files beforehand:
+
+  ```console
+  rm -f config*
+  rm -fr .unikraft
+  ```
+
+  There are cached version of repositories.
+  You can clean the KraftKit setup with the steps above:
+
+  ```console
+  kraft rm --all
+  kraft pkg rm --all
+  rm -fr ~/.local/share/kraftkit/
+  kraft pkg ls --apps --update
+  ```
+
+  Otherwise, request `kraft build` to use only fresh images:
+
+  ```console
+  kraft build --no-cache --no-update ...
+  ```
+
   </FaqItem>
 </FaqList>
