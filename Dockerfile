@@ -38,7 +38,9 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm run build --no-lint
+RUN set -xe; \
+    npm run search-meta:gen; \
+    npm run build --no-lint
 
 # Production image, copy all the files and run next
 FROM base AS runner
