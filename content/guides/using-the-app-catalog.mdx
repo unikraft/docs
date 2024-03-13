@@ -17,7 +17,7 @@ As a user it shouldn't matter to you.
 You can list the applications in the registry by using:
 
 ```bash
-$ kraft pkg ls --apps --all --update
+kraft pkg ls --apps --all --update
 ```
 ```
 TYPE  NAME                     VERSION  FORMAT  MANIFEST  INDEX    PLAT
@@ -82,7 +82,7 @@ If you are running natively (for maximum performance), and if you likely have ha
 Similarly, we can pull and run Nginx:
 
 ```bash
-kraft run -W unikraft.org/nginx
+kraft run -W unikraft.org/nginx:1.15
 ```
 ```
  i  using arch=x86_64 plat=qemu
@@ -99,7 +99,7 @@ Note that the Nginx server starts but waits for a connection.
 In order to connect to it, we need to pass a port mapping, similar to [`docker` commands](https://docs.docker.com/network/#published-ports):
 
 ```bash
-kraft run -W -p 8080:80 unikraft.org/nginx
+kraft run -W -p 8080:80 unikraft.org/nginx:1.15
 ```
 ```
  i  using arch=x86_64 plat=qemu
@@ -112,6 +112,12 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
  OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
                  Telesto 0.16.1~b1fa7c5
 ```
+
+
+<Info>
+You can use Nginx version 1.25 instead of version 1.15 by appending `:1.25` to the `kraft run` command.
+For example: `kraft run -W unikraft.org/nginx:1.25`
+</Info>
 
 With the command above we mapped the local port `8080` to the internal Nginx Unikraft port `80`:
 Query the server to get the index page:
@@ -140,7 +146,7 @@ For an IP-based network connection, you can use a bridged interface.
 First create a bridge interface, as `root` (prefix with `sudo` if required):
 
 ```bash
-sudo kraft run --network bridge:virbr0 unikraft.org/nginx
+sudo kraft run --network virbr0 unikraft.org/nginx:1.15
 ```
 ```
  i  using arch=x86_64 plat=qemu
@@ -247,7 +253,7 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 1. Run as `root` (prefix with `sudo` if required):
 
    ```bash
-   kraft run --network bridge:virbr0 .
+   kraft run --network virbr0 .
    ```
 
 1. Query the unikernel instance:
@@ -304,7 +310,7 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 1. Run as `root` (prefix with `sudo` if required):
 
    ```bash
-   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --network bridge:virbr0 .
+   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --network virbr0 .
    ```
 
 1. Query the unikernel instance:
