@@ -210,13 +210,55 @@ description: |
 
   </FaqItem>
   <FaqItem
-    question="When I run an app I get `CRIT: [libvfscore] Failed to extract cpio archive to /: -3`."
+    question="How do I debug a `kraft run` issue?"
   >
-  You didn't provide enough memory.
+  If there is an issue with the `kraft run` commnd, get more info by using the `--log-level debug --log-type basic` options:
+
+  ```console
+  kraft run --log-level debug --log-type basic --rm ...
+  ```
+
+  **Note**: Place the `--log-level debug --log-type basic` options **immediately** after `kraft run`, as in the command above.
+
+  In case of an issue with running QEMU / Firecracker, you should see the generated command line, pointing you to a log file.
+  For example, for QEMU, you will get something like:
+
+  ```text
+  qemu-system-x86_64 [...] -serial file:/home/razvand/.local/share/kraftkit/runtime/f93556bb-3cd1-45da-beac-075d1b123a3b/machine.log
+  ```
+
+  The `machine.log` file may contain useful information related to the runtime issue:
+
+  ```text
+  cat /home/razvand/.local/share/kraftkit/runtime/f93556bb-3cd1-45da-beac-075d1b123a3b/machine.log
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="When I run an app I get `E: machine fatally exited`."
+  >
+  It's very likely you didn't provide enough memory.
+  Investigate further by using the `--log-level debug --log-type basic` options to `kraft run`:
+
+  ```console
+  kraft run --log-level debug --log-type basic --rm ...
+  ```
+
   Use the `-M` option to `kraft run`, e.g.:
 
   ```console
-  kraft run -M 256M unikraft.org/ruby:3.2
+  kraft run --rm -M 256M unikraft.org/ruby:3.2
+  ```
+
+  </FaqItem>
+  <FaqItem
+    question="When I run an app I get `CRIT: [libvfscore] Failed to extract cpio archive to /: -3`."
+  >
+  As above, it's very likely you didn't provide enough memory.
+  Use the `-M` option to `kraft run`, e.g.:
+
+  ```console
+  kraft run --rm -M 256M unikraft.org/ruby:3.2
   ```
 
   </FaqItem>
