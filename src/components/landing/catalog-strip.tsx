@@ -175,7 +175,7 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Caddy' src={`/logos/app-caddy.svg`} maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/exanokes/duckdb-go'
+            href='https://github.com/unikraft/catalog/tree/main/examples/duckdb-go'
             accentColor='black'
             name='DuckDB'
           >
