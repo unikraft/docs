@@ -231,7 +231,7 @@ APPNAME_FILENAME_VARIANT_INCLUDES-y         file and variant of the library
 Unikraft's configuration system is based on [Linux's KConfig system](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html).
 With `Config.uk` you define possible configurations for your application and define dependencies to other libraries.
 This file is included by Unikraft to render the menu-based configuration, and to load and store configurations (aka `.config`).
-Each setting that is defined in this file will be globally populated as a set variable for all `Makefile.uk` files, as well as a defined macro in your source code when you use `"#include <uk/config.h>"`.
+Each setting that is defined in this file will be globally populated as a set variable for all `Makefile.uk` files, as well as a defined macro in your source code when you use `#include <uk/config.h>`.
 Please ensure that all settings are properly namespaced.
 They should begin with `[APPNAME]_` (e.g. `APPHELLOWORLD_`).
 Please also note that some variable names are predefined for each application or library namespace (see [`Makefile.uk`](/docs/internals/build-system/#makefileuk)).
