@@ -36,7 +36,7 @@ For Unikraft, however, the use of a root filesystem is totally optional and depe
 
 Thanks to Unikraft's highly modular structure, building a unikernel with root filesystem support is both trivial and left up to the application developer and ultimately the application use case.
 Some unikernels may not require a filesystem at all if the application does not read or write any files.
-In this case, neither the underlying filesystem subsystem (`vfscore`) or a root filesystem can are compiled into the unikernel binary.
+In this case, neither the underlying filesystem subsystem (`vfscore`) nor a root filesystem have to be compiled into the unikernel binary.
 For example, this may be use in lambda-type use cases.
 However, many applications do need access to files, configuration data, a temporary file directory scratch pad (e.g. `/tmp`) or other have file-based resource needs.
 In such cases, a root filesystem is essential.
