@@ -11,7 +11,7 @@ WORKDIR /docs
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
 
-RUN npm install
+RUN npm install --verbose
 
 # Dev image
 FROM base AS dev
@@ -24,6 +24,8 @@ WORKDIR /docs
 COPY --from=deps /docs/node_modules ./node_modules
 
 COPY . .
+
+RUN npm run search-meta:gen
 
 CMD ["npm", "run", "dev"]
 
