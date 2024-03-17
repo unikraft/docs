@@ -13,6 +13,8 @@ You can build and run either natively or using Docker.
 ```console
 npm install
 
+npm run search-meta:gen
+
 npm run dev
 ```
 
