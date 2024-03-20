@@ -1,0 +1,80 @@
+---
+version: 0.16.3
+releaseDate: 2024-03-20
+codename: Telesto
+commit: e453b74a2e78a0de98563d75d8e0a97e668088e6
+blogPost: /blog/2024-03-20-unikraft-releases-v0.16.3
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.16.2...RELEASE-0.16.3
+---
+
+## Changelog
+
+* `arch/arm64`: Update asm constraints in `mte_insert_random_tag()` (#1361) by @michpappas
+* `doc`: Update kraft link in `README.md` (#1359) by @PorridgeSwim
+* `lib/posix-futex`: Clear thread's objects upon thread exit (#1358) by @michpappas
+* `lib/posix-time`: Support `CLOCK_REALTIME_COARSE` (#1355) by @andreittr
+* `lib/posix-socket`: Add `LIBPOSIX_FDIO` config dependency (#1354) by @michpappas
+* `drivers/ukbus/platform`: Make `UKBUS_PLATFORM_FDT` conditional to parent (#1353) by @michpappas
+* `lib/posix-environ`: Deduplicate env variables during boot (#1352) by @skuenzer
+* `scripts/checkpatch`: Do not warn about symbolic permissions (#1351) by @skuenzer
+* `drivers/virtio`: Replace libc types with unikraft defined (#1345) by @rares-miculescu
+* `drivers/ukintctlr`: Replace libc types with unikraft defined (#1344) by @rares-miculescu
+* `drivers/ukbus`: Replace libc types with unikraft defined (#1343) by @rares-miculescu
+* `checkpatch`: Additional updates for compliance to coding style (#1342) by @michpappas
+* `lib/posix-poll`: Fix missing `epoll` file locking (#1338) by @andreittr
+* `lib/ukvmem/arch`: Do not print error message if demand paging disabled (#1334) by @mogasergiu
+* `lib/nolibc`: Include `htonl()` and `ntohl()` functions (#1332) by @mschlumpp
+* `lib/ukintctlr`: Simplify the interface of `ukintctlr_platform_probe()` (#1330) by @michpappas
+* `drivers/virtio/net`: Ensure half-page alignment for `netbuf` (#1328) by @mogasergiu
+* `lib/nolibc`: Provide `fd` functions without `vfscore` (#1327) by @andreittr
+* `lib/posix-unixsocket`: Fix `NULL` deref crash (#1326) by @andreittr
+* `lib/posix-sysinfo`: Use a more Linux compatible release string (#1325) by @mschlumpp
+* `lib/posix-time`: Alias `CLOCK_MONOTONIC_RAW` to `CLOCK_MONOTONIC` (#1324) by @mschlumpp
+* `plat/kvm/x86`: Fix {`XSAVE`,`AVX`,`FSGSBASE`} checking/enabling behavior (#1323) by @mogasergiu
+* `lib/uksched`: Add `membarrier` syscall (#1321) by @andreittr
+* `lib/vfscore`: Ensure we return symlink target on `namei_resolve` (#1320) by @mogasergiu
+* `driver/virtio/blk`: Ensure request header stays in-page boundaries **AND** some minor sglist cleanup (#1290) by @mogasergiu
+* `lib/uknetdev`: Add a interface for TCP segmentation offload (#1030) by @mschlumpp
+* `[app-elfloader]`: Consider environment variables `PATH` and `PWD` (#75) by @skuenzer
+* `[app-elfloader]`: Ensure `args`, `env` and `auxv` strings are in the information block (#71) by @mogasergiu
+* `[app-helloworld-cpp]`: README: Add reference to active repository (#25) by @feohuman
+* `[app-helloworld]`: README: Add reference to active repository (#36) by @feohuman
+* `[app-helloworld]`: Fix verbose build issue by modifying makefile (#16) by @ranfun
+* `[app-httpreply]`: README: Add reference to active repository (#21) by @feohuman
+* `[app-lua]`: README: Add reference to active repository (#13) by @feohuman
+* `[app-nginx]`: README: Redirect to active repository (#24) by @feohuman
+* `[app-redis]`: README: Add reference to active repository (#24) by @feohuman
+* `[app-sqlite]`: README: Add reference to active repository (#14) by @feohuman
+* `[lib-lwip]`: Ignore `SO_LINGER` socket option (#51) by @mogasergiu
+* `[lib-musl]`: `libsched`: Add `sys/membarrier.h` to provided headers (#75) by @andreittr
+* `[catalog]`: feat(examples): Add Node 21 Prisma example (#104) by @razvand
+* `[catalog]`: feat(examples): Update helloworld-rs (#97) by @razvand
+* `[catalog]`: feat(node18): Use alpine Dockerfile (#95) by @razvand
+* `[catalog]`: fix(library): Add user-provided EINITRD support (#94) by @razvand
+* `[catalog]`: feat(examples): Introduce Caddy example (#93) by @razvand
+* `[catalog]`: fix(examples): Update some examples to newer README.md format (#92) by @felipehuici
+* `[catalog]`: feat(examples): Add examples and have others use runtime directive (#91) by @felipehuici
+* `[catalog]`: feat(examples): Introduce HTTP Node21 example (#90) by @razvand
+* `[catalog]`: feat(library): Introduce NodeJS 21 as library (#83) by @razvand
+* `[catalog]`: feat(library): Introduce NodeJS 20 as library (#82) by @razvand
+* `[catalog]`: feat(library): Introduce NodeJS 19 as library (#81) by @razvand
+* `[catalog]`: feat(examples): Add Redis example (#78) by @felipehuici
+* `[catalog]`: feat(examples): Add Hugo, C++ Boost, DuckDB and Flask examples (#76) by @felipehuici
+* `[catalog]`: feat(examples): Add Memcached example (#74) by @felipehuici
+* `[catalog]`: feat(examples): Add PHP example (#73) by @felipehuici
+* `[catalog]`: feat(examples): Add Ruby and Perl examples (#71) by @felipehuici
+* `[catalog]`: feat(examples): Add Rust examples (#69) by @felipehuici
+* `[catalog]`: fix(examples): Improve http-python3.10 README (#68) by @razvand
+* `[catalog]`: fix(examples): Improve README for http-python3.10 (#63) by @felipehuici
+* `[catalog]`: fix(examples): Improve README for http-python3.10 (#62) by @razvand
+* `[catalog]`: docs(redis/7.0): Indicate min memory requirement (#59) by @ChaoyiHuang
+* `[catalog]`: feat(examples): Add Node Prisma example (#56) by @razvand
+* `[catalog]`: feat(examples): Introduce HTTP Flask server as example (#55) by @razvand
+* `[catalog]`: feat(library): Introduce Hugo 0.122 as library (#53) by @razvand
+* `[catalog]`: feat(library): Introduce Memcached 1.6 as library (#49) by @razvand
+* `[catalog]`: feat(library): Introduce Perl 5.38 as library (#28) by @razvand
+* `[catalog]`: feat(library): Introduce PHP as library (#24) by @razvand
+* `[catalog]`: feat(library): Introduce Ruby as library (#23) by @razvand
+* `[catalog]`: feat(native): add tiny-http Rust server (#20) by @mkroening
+* `[catalog]`: feat(library): Introduce Skipper 0.18 (#15) by @razvand
+* `[catalog]`: feat(library): Add support for Caddy (#12) by @razvand
