@@ -1,89 +1,95 @@
 ---
 title: Virtualization
 description: |
-  Through virtualization, multiple operating systems (OSes) are able to run on 
-  the same hardware, independently, thinking that each one of them controls the 
-  entire system. 
+  Through virtualization, the same hardware can run multiple operating systems
+  independently, making them think that each one of them controls the
+  entire system.
 ---
 
-Virtualization can be done using a hypervisor, which is a low-level software
-that virtualizes the underlying hardware and manages access to the real
-hardware, either directly or through the host Operating System. There are 2 main
-virtualized environments: virtual machines and containers, each with pros and
-cons regarding complexity, size, performance and security. Unikernels come
-somewhere between those 2.
+Virtualization requires a hypervisor which is a low-level software that
+virtualizes the underlying hardware and manages access to the real hardware,
+either directly or through the host operating system (OS). Virtual machines
+(VMs) and containers form the two main virtualized environments. Both have their
+trade-offs based on complexity, size, performance, and security. Unikernels fall
+somewhere between the two.
 
-## Virtual Machines
+## Virtual machines
 
-A virtual machine represents an abstraction of the hardware, over which an
-operating system can run, thinking that it is alone on the system and that it
-controls the hardware below it. Virtual machines rely on hypervisors to run
-properly.
+A VM represents an abstraction of the hardware on which an OS can run. The VM
+tricks the OS into thinking that it alone has access to the system and that it
+can control the underlying hardware. To achieve this, VMs rely on hypervisors
+that run on the host.
 
 A hypervisor incorporates hardware-enabled multiplexing and segmentation of
-compute resources in order to better utilize, better secure and better
-facilitate the instantenous runtime of user-defined programs. By the
-means of a virtual machine, an operating system is unaware of the multiplexing
-which happens to facilitate its existence. The hypervisor emulates devices on
-behalf of the guest OS, including providing access to virtual CPUs, virtual
-Interrupt Controllers and virtual NICs, which are segmented from the underlying
-hardware.
+compute resources to use, secure, and ease the instantaneous runtime of
+user-defined programs in a better manner. Inside the VM, the OS does not get to
+know of the multiplexing which brings about its existence. The hypervisor
+emulates devices by on behalf of the guest OS by segmenting them from the
+underlying hardware. These devices include virtual CPUs, interrupt controllers
+and network interface cards (NICs), etc.
 
-The hypervisors can be classified in 2 categories: Type 1 and Type 2:
+Hypervisors generally fall into the following categories:
 
-* The **Type 1 hypervisor**, also known as **bare-metal hypervisor**, has direct
-  access to the hardware and controls all the operating systems that are running
-  on the system. The guest OSes have access to the physical hardware, and the
-  hypervisor arbiters this accesses. KVM is an example of Type 1 hypervisor.
+- **Type 1**: Also known as **bare-metal hypervisors**, these hypervisors have
+  direct access to the hardware and control all the OSs that run on the host.
+  The guest OSs have access to the physical hardware and the hypervisor
+  arbitrates this access.
 
-* The **Type 2 hypervisor**, also known as **hosted hypervisor**, has to go 
-  through the host operating system to reach the hardware. Access to the 
-  hardware is emulated, using software components that behave in the same way 
-  as the hardware ones. An example of Type 2 hypervisor is VirtualBox.
+  Example: [Kernel Virtual Machine (KVM)][kvm]
+
+- **Type 2**: Also known as **hosted hypervisors**, these hypervisors have to go
+  through the host operating system to reach the hardware. They emulate hardware
+  access using software components that behave like their hardware counterparts.
+
+  Example: [VirtualBox][virtualbox]
 
 <Image
   border
-  ratio={16/6}
-  src="/diagrams/vm-modes.svg"
-  title="Figure 1"
-  description="Comparison between different virtualization systems."
+  ratio={16 / 6}
+  src='/diagrams/vm-modes.svg'
+  title='Figure 1'
+  description='Comparison of different virtualization systems.'
 />
 
-In Figure 1 a comparison between different virtualization systems is illustrated
-and demonstrates how the degree of separation between a "guest application" and
-the hardware and “host” becomes further removed. The defined job of the host OS
-and kernel or hypervisor became that of 1). to juggle the runtime of multiple
-applications and environments; 2). to present a subset or non-contiguous
-representation of hardware resources virtually and translate operations, and
-provide emulation and compatibility between guest and host; and, 3). to
-ultimately guard access to them to prevent corruption or malicious attacks.
+Figure 1 demonstrates how the degree of separation between a guest application,
+the host OS, and the hardware becomes further removed as we go from (c) to (a).
+The sole job of the host OS and kernel or hypervisor becomes that of:
 
+- juggling multiple application runtimes and environments.
+- presenting a subset or non-contiguous representation of hardware resources
+  virtually, translating operations, and providing emulation and compatibility
+  between the guest and the host.
+- ultimately guarding access to them to prevent corruption or malicious attacks.
 
 ## Supported platforms
 
-Unikraft is usually run in 2 ways:
+We can run Unikraft images in the following ways:
 
-* As a virtual machine, using [**QEMU-KVM**](/docs/operations/plats/kvm/) or
-  [**Xen**](/docs/operations/plats/xen/). It acts as an operating system, having
+- Inside a VM using [QEMU-KVM][qemu-kvm] or [Xen][xen]: It acts as an OS, having
   the responsibility to configure the hardware components that it needs (clocks,
-  additional processors, etc). This mode gives Unikraft direct and total control
-  over hardware components, allowing advanced functionalities.
-* As a [**linuxu**](/docs/operations/plats/linuxu/) build, in which it behaves
-  as a Linux user-space application. This severely limits its performance, as
-  everything Unikraft does must go through the Linux kernel, via system calls.
-  This mode should be used only for development and debugging.
+  more processors, etc.). This mode gives Unikraft direct and total control over
+  hardware components, allowing advanced functionalities.
+- As a [linuxu][linuxu] build: It behaves as a Linux user-space application.
+  This severely limits its performance, as everything Unikraft does must go
+  through the Linux kernel, via system calls. We recommend using this for
+  development alone.
 
-When Unikraft is running using **QEMU-KVM**, it can either be run on an emulated
-system or a (para)virtualized one. Technically, **KVM** means virtualization
-support is enabled. If using **QEMU** in emulated mode, **KVM** is not used.
-
-Emulation is slower, but it allows using CPU architectures different from the
-local one (you can run ARM code on a x86 machine). Using (para)virtualisation,
-aka hardware acceleration, greater speed is achieved and more hardware
-components are visible to Unikraft.
-
+Unikraft supports both (para-)virtualized and emulated modes of QEMU.
+Virtualized mode uses KVM while emulated mode does not. Using
+(para-)virtualization, or hardware acceleration, yields greater performance and
+allows Unikraft to see more hardware components. Emulation performs slower, but
+allows using CPU architectures different from the host (e.g., we can run ARM
+code on an x86 machine).
 
 ## Future virtualization support
 
-Unikraft is planned to be able to run on **Hyper-V** and **VMWare**, in the near
-future.
+We plan to support running Unikraft on [Hyper-V][hyper-v] and [VMWare][vmware].
+
+[kvm]: https://linux-kvm.org/page/Main_Page
+[virtualbox]: https://www.virtualbox.org/
+[qemu-kvm]: /docs/operations/plats/kvm/
+[xen]: /docs/operations/plats/xen/
+[linuxu]: /docs/operations/plats/linuxu/
+[hyper-v]:
+  https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/hyper-v-technology-overview
+[vmware]: https://www.vmware.com/
