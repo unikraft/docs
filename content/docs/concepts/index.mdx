@@ -39,7 +39,7 @@ Unikernels are specifically designed for use in cloud environments.  In most
 production systems often the standard unit of isolation is the VM since this
 provides the greatest degree of security for the enclosed application(s).  Its
 isolation is made possible directly by hardware primitives instead of OS-level
-(software) primitives.  However, a fully virtualized traditional VMs is too
+(software) primitives.  However, a fully virtualized traditional VM is too
 heavy for most applications which has led to the container-based model.
 Naturally, the evolution of running applications in the cloud has led to the
 model where containers are deployed within VMs due to the properties of each
@@ -97,6 +97,7 @@ To meet the needs of a large variety of different use cases, KPIs and contexts,
 configuration of library components allow users to tune specific attributes to
 their liking.  This ability to configure all parts of the unikernel is
 first-class in Unikraft and enables developers to develop the best-in-class 
+applications.
 
 In Unikraft, this system is enabled by a custom port of [Linux's KConfig
 system](#) which allows users to quickly and easily pick and choose which
