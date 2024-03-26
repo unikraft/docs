@@ -5,6 +5,11 @@ async function redirect() {
       destination: 'https://discord.com/invite/RG5ZQGKxyW',
       permanent: false,
     },
+    {
+      source: '/buildkit',
+      destination: 'https://unikraft.org/guides/building-dockerfile-images-with-buildkit',
+      permanent: false,
+    },
     // GENERAL
     {
       source: '/docs',
