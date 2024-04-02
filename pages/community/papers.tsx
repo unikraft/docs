@@ -2,6 +2,7 @@ import {
   Heading,
   SimpleGrid,
   Text,
+  Link,
   Tag,
   Card,
   CardHeader,
@@ -40,7 +41,7 @@ function Paper(props: { paper: IPaper }) {
     >
       <CardHeader>
         <Tag size='sm'>{venue}</Tag>
-        <Heading size='sm' my='1'>{title}</Heading>
+        <Heading size='sm' my='1'><Link href={pdf}>{title}</Link></Heading>
         <Text><span>by</span> {authors.join(', ')}</Text>
       </CardHeader>
     </Card>
