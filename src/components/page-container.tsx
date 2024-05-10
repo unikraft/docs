@@ -78,7 +78,15 @@ function PageContainer(props: PageContainerProps) {
 
   return (
     <>
-      <SEO title={title} description={description} />
+      <SEO title={title} description={description} openGraph={{
+        title: title,
+        description: description,
+        images: [{
+          url: image,
+          width: 1200,
+          height: 630,
+        }]
+      }} />
       <Grid
         w='100vw'
         h='100vh'
