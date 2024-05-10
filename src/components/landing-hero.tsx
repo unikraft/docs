@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2024-03-20-unikraft-releases-v0.16.3'} passHref>
+              <NextLink href={'/blog/2024-05-10-unikraft-gsoc24'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases v0.16.3 (Telesto)
+                    5 Projects Selected at Google Summer of Code 2024!
                   </Text>
                   <Box
                     display={{
