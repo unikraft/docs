@@ -96,31 +96,43 @@ If you did not create an account already, signup [here](https://console.kraft.cl
 You will be using that in the following sessions.
 
 Once you have a token, follow the steps [here](http://docs.kraft.cloud/quickstart/) to deploy your first unikernel.
-If everything went well, deploy more applications following the links [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=0).
+If everything went well, deploy more applications following the tasks [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=0).
 
 ### Behind the Scenes: Using KraftKit to Operate Unikraft Applications
 
 In the previous session, you deployed application using KraftCloud.
-Now you will build and run some unikernels locally, looking at what `kraft cloud` does behind the scenes.
+Now you will build and run Unikraft-based application locally.
+With this, you will get a better look at what `kraft cloud` does behind the scenes.
 
 Follow the steps [here](https://unikraft.org/guides/using-the-app-catalog) and bring the cloud to your machine.
-After you are done with all of them, take a look to some more applications, following the links [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=89673838).
+After you are done with all of them, take a look to some more applications, following the tasks [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=89673838).
+Go through them orderly and aim to complete all items until the `Extra` section.
+If you have extra time on your hands, go through the `Extra` section as well.
 
 ### Using Docker and Docker-based Filesystems
 
 In order to bring your own application on KraftCloud, you need to build a minimal required filesystem.
-We do that using `docker`, then we will run the application using `kraft`.
+We do that using `docker`.
+This is useful both to understand what is happening behind the scenes and to have a test environment for your application.
+In case there are issues with KraftCloud / KraftKit, you can use Docker to see if everything is in the right place and to assist in debugging.
+
 Follow the steps [here](https://unikraft.org/docs/contributing/adding-to-the-app-catalog) (only the ones under `Redis`) to see how you can port a new application on top of Unikraft.
 Mark the items as completed [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=1549350059).
+Go through them orderly and aim to complete all items until the `Extra` section.
+If you have extra time on your hands, go through the `Extra` section as well.
 
 ### Debugging Unikraft / KraftCloud Applications
 
 When porting new applications, you can run into issues both on the Docker build and on the Unikraft runtime.
 To debug the issues, you can follow the instructions [here](https://docs.kraft.cloud/guides/features/debugging/).
-Mark the items as completed [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=680791461).
+Get a hands-on experience with debugging by following the items [here](https://docs.google.com/spreadsheets/d/1exnUCaUvDx_FldLOz9HNnGpbmaafMYVL_0Tu6A6AFL4/edit#gid=680791461).
 
 ### Hackathon
 
-For the hackathon, please create teams of 2-3 people, choose a project in any kind of language you like, using any applications you like, and deploy it on KraftCloud.
-At the and of the hackathon, you should make a PR in the [`catalog`](https://github.com/unikraft/catalog) repository with your work.
+For the hackathon, please create teams of 2-3 people, and create your very own cloud-native application to run on KraftCloud.
+Think of a cool application you've been waiting for a while to implement.
+Use your preferred programming language (supported by KraftCloud), employ any frameworks or existing software components as required, and then deploy it on KraftCloud.
+After you create a team and decide on a project, fill [this spreadsheet](https://docs.google.com/spreadsheets/d/1cnkDy3o3ddqoySfmnH1Ft78w532f3aAGQ2cgSgx4uPc/edit?usp=sharing) with the team name, members and project idea.
+
+At the and of the hackathon, you should make a PR in the [KraftCloud `examples` repository](https://github.com/kraftcloud/examples) with your work.
 We will be evaluating the project, focusing on functionality, originality, robustness, complexity, code quality and team work.
