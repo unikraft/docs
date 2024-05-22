@@ -1,0 +1,102 @@
+---
+title: "Unikraft Summer Workshop 2024"
+description: Unikraft Summer Workshop 2024, July 1 - July 20, 2024
+startDate: 2024-07-01
+registerForm: https://forms.gle/6AMFoCoqJqKGdBgX6
+image: TODO
+---
+
+## Unikraft Summer Workshop 2024
+
+Unikraft Summer Workshop 2024 (*USW'24*) is a **free and virtual** workshop held by members of the Unikraft community.
+It focuses on cloud-native applications and on the unikernel technology that powers efficient and high performance cloud deployments.
+This is the fourth edition of the event, after USoC'21 to USoC'23, and unlike the previous editions, we will focus on cloud deployments of Unikraft applications.
+
+The three-week event holds a number of starter tutorials and workshops on how to configure, build, run, deploy and debug cloud applications using Unikraft.
+
+There will be 6 sessions taking place in the first two weeks (between July 1 and July 12, 2024).
+Each session takes place for 3 hours, in the 4pm-7pm CEST, in English.
+Sessions will consist of talks and demos delivered by members of the Unikraft community, followed by practical tutorials that you will work on with support and supervision.
+Sessions take place on [Unikraft's Discord server](https://bit.ly/UnikraftDiscord).
+
+Topics include building unikernels, benchmarking, debugging, porting applications, virtualization and platform specifics.
+The first 3 sessions (first week) will focus on using KraftKit, Unikraft's compation tool, to manage cloud applications.
+The next 3 sessions (second week) will focus on the internals of Unikraft: the build system, native configuration options, application porting.
+
+The two weeks with sessions will be followed by a week of working on the final project.
+You will work on the project in teams of 2-3 people.
+We will have support sessions online to help with the project.
+
+On Saturday, 20 July 2024, 9am-5pm CEST, we will have the final hackathon, that consists of adding final touches to the project.
+The hackathon will take place in hybrid format, in person, at the [The National University of Science and Technology POLITEHNICA of Bucharest](https://upb.ro/en/), and, online, [Unikraft's Discord server](https://bit.ly/UnikraftDiscord).
+Participants will receive a participation diploma.
+The first three teams will get special prizes.
+All hackathon in-person participants will get a Unikraft T-shirt.
+
+### Registration
+
+If you're eager to learn more about efficient cloud computing and unikernel technology, to work on practical open source tasks and to expand your knowledge of cloud-native and low-level topics, you'll want to be part of USW'24.
+You will need to complete a set of challenges that will get you accustomed to the environment you will be using during the sessions.
+You will need to submit the challenge solution on the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6) by Thursday, June 27, 2024, 8pm CET.
+
+It's recommended you check these prerequisites before taking part in USW'24:
+
+* fair knowledge of Linux command-line interface
+* good knowledge of programming concepts;
+  knowledge of the C programming language is a plus
+* basic understanding of operating system concepts: processes, threads, virtual memory, filesystems, file descriptors
+* some exposure to the assembly language and computer architecture
+* fondness for software engineering, hacking, tinkering with software components
+
+### People
+
+USW'24 will be held by members of the Unikraft community including professors and students from [The National University of Science and Technology POLITEHNICA of Bucharest](https://upb.ro/) and the comercial side of Unikraft, [`Unikraft.io`](https://unikraft.io/).
+Other members of the Unikraft community will provide online support on [Discord](https://bit.ly/UnikraftDiscord).
+
+### Schedule
+
+USW'24 consists of 6 sessions, 3 support sessions and a final hackathon.
+Each session is 3 hours long and consists of practical tutorials and challenges for participants.
+The support sessions are 2 hours long and consists of providing support for the final project the teams are working on.
+The hackathon is a full day event (8 hours) where you'll add the final touches to the project, followed by the evaluation of the projects and the awarding ceremony.
+
+The complete schedule for USW'24 is (all times in CEST - Central European Summer Time):
+
+| Date | Interval | Activity |
+|------|----------|----------|
+| Tue, 02.07.2023 | 3:30pm-4pm<br/> 4pm-7pm| Opening Ceremony<br/> Session 01: Overview of Unikraft |
+| Thu, 04.07.2023 | 4pm-7pm | Session 02: Baby Steps |
+| Fri, 05.07.2023 | 4pm-7pm | Session 03: Behind the Scenes |
+| Tue, 09.07.2023 | 4pm-7pm | Session 04: Binary Compatibility |
+| Thu, 11.07.2023 | 4pm-7pm | Session 05: Debugging in Unikraft |
+| Fri, 12.07.2023 | 4pm-7pm | Session 06: Application Porting |
+| Tue, 16.07.2023 | 4pm-7pm | Support Session 01 |
+| Thu, 18.07.2023 | 4pm-7pm | Support Session 02 |
+| Fri, 19.07.2023 | 4pm-7pm | Support Session 03 |
+| Sat, 20.07.2023 | 9am-5pm | Final Hackathon |
+
+### Registration Challenges
+
+#### First Challenge - Cloud Master
+
+Create a `docker-compose.yml` file that sets up a [Compose](https://docs.docker.com/compose/) application consisting of a database, a monitoring service, and a simple service that queries the database.
+The goal is to create an environment where these services can interact seamlessly within Docker containers.
+
+Services Overview:
+
+ * Database Service: You can use whatever database suits you.
+ * Stats Service: A service that computes and provides statistical data (e.g. Grafana).
+ * Query Service: A simple API that interacts with the database (can be done in any programming language you like).
+
+Be creative, use networks, volume, everything you like.
+You can extend the stack as much as you like.
+
+Submit the `docker-compose.yml` in the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6).
+
+#### Second challenge - My First Unikernel
+
+Download the Unikernel image from [here](https://github.com/unikraft-upb/USoC23-registration/raw/add-challenges/03-my-first-unikernel/my-first-unikernel_kvm-x86_64).
+Run it using `qemu-system-x86_64` and find the flag.
+Upload the flag in the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6).
+
+Read the basic unikernel concepts [here](https://unikraft.org/docs/concepts).
