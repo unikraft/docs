@@ -69,7 +69,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2024-05-10-unikraft-gsoc24'} passHref>
+              <NextLink href={'/blog/2024-06-07-unikraft-releases-v0.17.0'} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +111,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    5 Projects Selected at Google Summer of Code 2024!
+                    Unikraft releases 0.17.0 (Calypso)
                   </Text>
                   <Box
                     display={{
@@ -240,11 +240,11 @@ export default function LandingHero() {
               }}
             >
               <Stat>
-                <StatNumber>v0.16.3</StatNumber>
+                <StatNumber>v0.17.0</StatNumber>
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1889</StatNumber>
+                <StatNumber>2397</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
@@ -252,7 +252,7 @@ export default function LandingHero() {
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1356</StatNumber>
+                <StatNumber>1484</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>

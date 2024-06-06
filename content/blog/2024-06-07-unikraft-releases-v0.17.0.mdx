@@ -1,0 +1,230 @@
+---
+title: "Unikraft releases v0.17.0 (Calypso)"
+description: |
+  This release contains features and improvements to Unikraft.
+publishedDate: 2024-03-20
+authors:
+- Razvan Deaconescu
+- Andrei Tatar
+- Michalis Pappas
+- Sergiu Moga
+- Alexandru Apostolescu
+- Alexander Jung
+tags:
+- release
+- announcement
+---
+
+We are proud to announce the update version of Unikraft, v0.17.0.
+
+This release comes packed with features related to security, virtual filesystem and general application support.
+It contains plenty of fixes that improve the stability and application support of Unikraft.
+
+In this blog post, we present the new features available in Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.16.3...RELEASE-0.17.0).
+
+### Remove `linuxu` platform ([#1422](https://github.com/unikraft/unikraft/pull/1422))
+
+_This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) with support from [Marco Schlumpp](https://github.com/mschlumpp)._
+
+Given the limited scope and reduced use of the `linuxu` platform, it has been removed.
+This simplifies maintenance effort.
+
+Applications should no longer be built for the `linuxu` platform.
+
+### Rework Paged Memory Init ([#1373](https://github.com/unikraft/unikraft/pull/1373))
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas) with great support from [Sergiu Moga](https://github.com/mogasergiu) and assistance from [Șerban Sorohan](https://github.com/SerbanSo)._
+
+The initialization of paged memory is now reworked to provide a more flexible implementation that is capable of handling regions beyond the limits defined in the boot pagetables. The motivation for this change is to allow mapping device regions that are unknown at compile-time, such as device regions of Arm CCA Realms accessed via their Unprotected IPA Alias, the address of which cannot be derived at compile-time.
+
+The new implementation replaces the previous method of updating the boot pagetables with the initialization of a new pagetable from regions defined in bootinfo. This simplifies the implementation and avoids expensive TLB flushes associated with updating the existing pagetable. To support this rework additional changes have been made to bootinfo and the way device MMIO regions are mapped.
+
+#### Changes in bootinfo
+
+With the initialization of a new pagetable bootinfo is now simplified to only contain descriptors that correspond to valid memory regions. This deprecates the `UKPLAT_MEMRF_MAP` / `UKPLAT_MEMRF_UNMAP` flags in bootinfo regions as well as the hard-coded `unmap_mrd` region in the boot pagetables.
+
+#### Changes in Device MMIO Regions
+
+The initialization of a new pagetable additionally requires that early devices add descriptors for their MMIO regions to bootinfo, so that they remain mapped when transitioning to the new pagetable. To address this requirement, a new early init boot-stage has been added to `kvm/arm64`, that is invoked at the end of early boot before passing control to the platform. `x86_64` is not affected by this change.
+
+Finally, devices that register at later stages of init are also updated to map their MMIO regions at runtime.
+
+#### Misc Updates
+
+This changeset comes with additional changes and cleanup, most importantly on the drivers of the `pl011` and `ns16550` devices.
+
+### Revise the Generation of Random Numbers ([#1008](https://github.com/unikraft/unikraft/pull/1008))
+
+_This feature was championed by [Alexandru Apostolescu](https://github.com/Alex-deVis) and [Michalis Pappas](https://github.com/michpappas) with support from [Sergiu Moga](https://github.com/mogasergiu) and [Delia Pavel](https://github.com/DeliaPavel)._
+
+The `uk_swrand` library has been redesigned to exclusively provide cryptographically secure random numbers and has been renamed to `uk_random`. The random numbers are generated using the `ChaCha20` algorithm, seeded by a hardware TRNG. Both `/dev/random` and `/dev/urandom` provide access to the output of the software CSPRNG, while direct access to hardware generated randomness is exposed through the newly added `/dev/hwrng`, which provides additional compatibility with Linux.
+
+For non security-critical use cases, software-generated non cryptographically-secure random numbers are available via the standard library's `rand()` function, available in [nolibc](https://github.com/unikraft/unikraft/blob/staging/lib/nolibc/random.c) and [musl](https://git.musl-libc.org/cgit/musl/tree/src/prng/rand.c).
+
+### vfscore Redesign
+
+_This set of features were championed by [Andrei Tatar](https://github.com/andreittr) with support from [Andrei Stan](https://github.com/andreistan26), [Andrei Tatar](https://github.com/andreittr), [Delia Pavel](https://github.com/DeliaPavel), [Eduard Vintilă](https://github.com/eduardvintila), [Marco Schlumpp](https://github.com/mschlumpp), [Mihnea Firoiu](https://github.com/Mihnea0Firoiu), [Mihnea Popeanga](https://github.com/Mihnea27), [Radu Nichita](https://github.com/RaduNichita), [Razvan Deaconescu](https://github.com/razvand), [Razvan Virtan](https://github.com/razvanvirtan), [Serban Sorohan](https://github.com/SerbanSo), [Stefan Jumarea](https://github.com/StefanJum)._
+
+As part of [the ongoing effort to deprecate `vfscore`](https://unikraft.org/blog/2024-01-02-unikraft-releases-telesto#virtual-filesystem-interface-redesign) in favor of an improved and more modular file/filesystem layer, [the new-style `ukfile`](https://github.com/unikraft/unikraft/tree/staging/lib/ukfile)s introduced in v0.16.0 (Telesto) have seen new additions and marked improvements. In addition to many under-the-hood changes, users and developers alike can expect several new features.
+
+#### posix-tty: Serial and Pseudo-files for Standard I/O ([#1226](https://github.com/unikraft/unikraft/pull/1226))
+
+The handling of standard I/O files (`stdin`, `stdout`, `stderr`) has been moved out of `vfscore` into its own core library: [`posix-tty`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-tty), responsible for `ukfile` implementations of serial- and pseudo-files, as well as the initialization of the first 3 file descriptors on boot.
+
+With this change, file descriptors `0`, `1`, and `2` are no longer special and can be closed like any other files.
+
+#### Packet-mode Pipes ([#1272](https://github.com/unikraft/unikraft/pull/1272))
+
+Support for packet-mode pipes (`O_DIRECT`) has been introduced. This Linux extension has pipes behave analogous to datagram sockets, handling data in indivisible "packets" and  matching each read with a singular write.
+
+#### Improvements to UNIX Sockets ([#1272](https://github.com/unikraft/unikraft/pull/1272))
+
+UNIX Sockets, introduced in the previous release have seen improvements:
+
+- support for datagram (`SOCK_DGRAM`) and sequential-packet (`SOCK_SEQPACKET`) sockets
+- support for specifying a destination socket in calls to `sendto` & equivalent
+- support for basic socket options with `getsockopt`/`setsockopt`
+
+#### Opt-in Scheduler Yield in File Polling ([#1319](https://github.com/unikraft/unikraft/pull/1319))
+
+File polling functions (`select`/`poll`/`epoll`) can now be opted into forcefully yielding execution back to the scheduler when called. This may help mitigate hangs on workloads that (perhaps inadvertently) rely on a pre-emptive/starvation-free scheduler to work correctly. This behavior is enabled by the `CONFIG_LIBPOSIX_POLL_YIELD` `Kconfig` option.
+
+#### Autoremove Closed Files from `epoll` ([#1419](https://github.com/unikraft/unikraft/pull/1419))
+
+Files that are closed while being monitored by `epoll` will now automatically remove themselves from being monitored. This prevents resource leaks on workloads such as Nginx that do not remove files from `epoll` before closing.
+
+#### Misc `ukfile` API Changes & Improvements ([#1397](https://github.com/unikraft/unikraft/pull/1397))
+
+The (still in development) `ukfile` API continues to stabilize and improve in response to the needs of consumer libraries:
+
+- File finalizers: custom cleanup code to be run when the last reference to a file is dropped. The aforementioned `epoll` feature of autodeleting closed files is implemented using file finalizers;
+- Expose operations directly on file state; and,
+- Common code for `iovec`-based I/O.
+
+### Binary Tree Implementations from FreeBSD ([#1356](https://github.com/unikraft/unikraft/pull/1356))
+
+_This feature was championed by [Andrei Tatar](https://github.com/andreittr) with support from [Marco Schlumpp](https://github.com/mschlumpp), [Delia Pavel](https://github.com/DeliaPavel) and [Mihnea Firoiu](https://github.com/Mihnea0Firoiu)._
+
+Implementations of splay and rank-balanced trees have been imported from FreeBSD 13.3, enabling their use in Unikraft libraries for implementing efficient mappings.
+
+### Introduce Generic (Page Guarded) Stack Allocator Library ([#1322](https://github.com/unikraft/unikraft/pull/1322))
+
+_This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with support from [Michalis Pappas](https://github.com/michpappas) and [Simon Kuenzer](https://github.com/skuenzer)._
+
+Implement a generic stack allocation wrapper over a given Unikraft memory allocator. The library receives as arguments an allocator and, if `libukvmem` is enabled, a virtual address space and an initial size. The library works in three ways:
+
+1. If `libukvmem` is disabled, the library will make use of the allocator received as argument to allocate the initial allocator structure and Unikraft compliant stacks (16-byte alignment).
+2. If `libukvmem` is enabled, the library will make use of the allocator received as argument to allocate the initial allocator structure and Unikraft compliant stacks. The difference from 1. is that the virtual address space and the initial size arguments are now available. The two arguments will hint how much of the stack to premap (page-in early) whenever they are allocated first, i.e. what is the initial stack size before on-demand paging kicks in.
+3. If `libukvmem` is enabled AND the configuration option of the library integrating page guards is enabled, the allocator given as argument will only be used once when allocating the initial allocator structure, while the virtual address space and initial size arguments will be used to create stack VMA's, specific to `libukvmem`.
+
+Additionally, now all `libukvmem` stacks have their guards end-to-end with the help of two new configurations: `CONFIG_LIBUKVMEM_STACK_GUARD_PAGES_TOP` (Number of guard pages for the top of the stack) and `CONFIG_LIBUKVMEM_STACK_GUARD_PAGES_BOTTOM` (Number of guard pages for the bottom of the stack (low address)).
+
+### Redo Syscall ctx's and `swapgs` Logic ([#1346](https://github.com/unikraft/unikraft/pull/1346), [#77](https://github.com/unikraft/app-elfloader/pull/77))
+
+_This feature was championed by [Sergiu Moga](https://github.com/mogasergiu) with great support from [Simon Kuenzer](https://github.com/skuenzer)._
+
+Following the introduction of the concept of auxiliary stack pointers, `swapgs`, `struct uk_syscall_ctx` and `struct ukarch_sysregs`, a number of things have emerged:
+
+- the aforementioned structs are very generic so they should be moved under `libcontext` (`arch/`)
+- `swapgs` introduces a significant inconsistency between `ARM64` and `x86_64` as we never know during an exception the state of `MSR_GS_BASE` / `MSR_KERNEL_GS_BASE`
+- auxiliary stack pointers  have increased flexibility as every thread and LCPU can have one and have private data stored in there than may be accessed anytime, dependency free
+
+Thus, this commit does the following:
+
+1. Move/rename aforementioned structured to `libcontext` and document them
+
+  - `lib/syscall_shim/arch/x86_64/sysregs.c` -> `arch/x86/sysctx.c`
+  - `lib/syscall_shim/arch/x86_64include/arch/sysregs.h` -> `arch/x86/x86_64include/uk/asm/sysctx.h`
+  - `s/struct ukarch_sysregs/struct ukarch_sysctx/` (and all related defs)
+  - `struct uk_syscall_ctx from lib/syscall_shim/include/uk/syscall.h` to `include/uk/arch/ctx.h` as `struct ukarch_execenv`
+  - `s/struct uk_syscall_ctx/struct ukarch_execenv/` (and all related defs)
+  - actually comment these functions
+  - re-adjust all places that make use of such definitions
+
+2. Get rid of the `swapgs`, architecture specific holdback by exploiting the flexibility of auxiliary stacks through the introduction of a new always existing control block at their top end:
+
+  - introduce `struct ukarch_auxspcb` under `libcontext`
+  - add Unikraft system context as field to it so that we always have and know Unikraft TLS (and LCPU in case ox x86_64) in a dependency free and assumption free manner
+  - add a current frame pointer field: since the `auxspscb` will be part of the auxiliary stack, we need to know the safe place where we can start using the auxiliary stack area as a stack (this is also helpful in cases where we need to nest on the `auxstack`)
+  - for the aforementioned fields/structs, init/getter/setter functions have been added and documented
+  - now the `swapgs` pair will only be done very early during system call entry (and only there, not on clone child exit anymore either) just enough so that we, first things first, switch to `auxstack` and push `auxsp` so that on entry to C handler we will know that we must do a call to `ukarch_sysctx_load` on the Unikraft `sysctx` we can get from the pushed `auxsp` (another benefit of this is we get rid of MSR read/writes)
+
+### Community Activities
+
+#### Monthly Coding Sessions
+
+We continue organizing monthly coding sessions (formerly hackathons), generally taking place in the last Saturday of each month. Hackathons take place both online and in person, generally at the National University of Science and Technology POLITEHNICA of Bucharest.
+
+We organized a monthly coding session on Saturday, March 30, 2024. And then we organized one on Sunday, April 28, 2024. It was targeted on the 0.17 release.
+
+The next monthly coding session is scheduled to take place on Saturday, June 22, 2024.
+
+#### Unikraft Summer Workshop 2024
+
+[Unikraft Summer Workshop 2024 (*USW'24*)](https://unikraft.org/hackathons/usw24) is a **free and virtual** workshop held by members of the Unikraft community. It focuses on cloud-native applications and on the unikernel technology that powers efficient and high performance cloud deployments.
+
+The three-week event holds a number of starter tutorials and workshops on how to configure, build, run, deploy and debug cloud applications using Unikraft.
+
+There will be 6 sessions taking place in the first two weeks (between July 1 and July 12, 2024). Each session takes place for 3 hours, in the 4pm-7pm CEST, in English. Sessions will consist of talks and demos delivered by members of the Unikraft community, followed by practical tutorials that you will work on with support and supervision. Sessions take place on [Unikraft's Discord server](https://bit.ly/UnikraftDiscord).
+
+Topics include building unikernels, benchmarking, debugging, porting applications, virtualization and platform specifics. The first 3 sessions (first week) will focus on using KraftKit, Unikraft's companion tool, to manage cloud applications. The next 3 sessions (second week) will focus on the internals of Unikraft: the build system, native configuration options, application porting.
+
+The two weeks with sessions will be followed by a week of working on the final project. You will work on the project in teams of 2-3 people. We will have support sessions online to help with the project.
+
+On Saturday, 20 July 2024, 9am-5pm CEST, we will have the final hackathon, that consists of adding final touches to the project. The hackathon will take place in hybrid format, in person, at the [The National University of Science and Technology POLITEHNICA of Bucharest](https://upb.ro/en/), and, online, [Unikraft's Discord server](https://bit.ly/UnikraftDiscord). Participants will receive a participation diploma. The first three teams will get special prizes. All hackathon in-person participants will get a Unikraft T-shirt.
+
+#### DORS/CLUC
+
+Unikraft was part of [DORS/CLUC](https://www.dorscluc.org/), an open source conference, taking place in Zagreb, Croatia, on May 14-17, 2024, where:
+
+- [Ștefan Jumărea](https://github.com/StefanJum) presented his work, [Enhancing Memory Security for Unikernels with MTE](https://drive.google.com/file/d/1OjM74FSmXihnFv8Q_C0AUqLEaL5UKsok/view?usp=sharing); and,
+- [Răzvan Deaconescu](https://github.com/razvand) took part in the [Open 4 Business meetup](https://www.dorscluc.org/open-4-business/) and presented [Unikraft: A POSIX-compliant Unikernel for the Cloud](https://docs.google.com/presentation/d/1DV2Z1EBhHlx-SgMp2DQsPPCKL7U5PCjCvEHY7HXBf4M/edit?usp=sharing).
+
+It was a great occasion to get in touch with other members of the open source community and advertise the Unikraft project, both to technical enthusiasts and business professionals.
+
+#### Zagreb Unikraft Hackathon
+
+The [Zagreb Unikraft Hackathon](https://unikraft.org/hackathons/2024-05-zagreb) was organized in conjunction with [DORS/CLUC](https://www.dorscluc.org/) on May 18-19, 2024. This was the first event focused on cloud applications, KraftKit and KraftCloud.
+
+Participants were able to deploy existing application and also try their own, using unikernel technology and KraftCloud.
+
+#### Xen Summit 2024
+
+Unikraft took part in [Xen Summit 2024](https://events.linuxfoundation.org/xen-project-summit/), the yearly gathering of the Xen community, in Lisbon, Portugal, on June 4-6, 2024. We gave the Keynote, titled [Unikraft Has Arrived: The Lightweight, Fast, Usable Solution for Cloud Deployments] (https://docs.google.com/presentation/d/1bOskgOIW5P0yQjybuiEqWolXwuCoTzwBy5e_OqGoRi8/edit?usp=sharing).
+
+We also headed the "Xen and Unikraft (and unikernels)" design session, where we captured insights in improving Unikraft's Xen support and where we clarified use cases for Unikraft for Xen (such as stub domains and Qubes OS).
+
+#### GSoC'24 Projects
+
+Unikraft GSoC'24 projects have been announced!
+[5 projects](https://unikraft.org/blog/2024-05-10-unikraft-gsoc24) are currently under way in the Unikraft community:
+
+The 5 applicants, and their projects are:
+
+**[Mihnea Firoiu](https://github.com/Mihnea0Firoiu) from [POLITEHNICA Bucharest](https://www.upb.ro/en) in Bucharest, Romania**
+
+* Project: Linux x86 Boot Protocol Support
+* Mentors: [Ștefan Jumărea](https://github.com/StefanJum), [Răzvan Deaconescu](https://github.com/razvand), [Michalis Pappas](https://github.com/michpappas)
+
+**[Yang Hu](https://github.com/huyang531) from [University of Toronto](https://www.utoronto.ca/) in Toronto, Canada**
+
+* Project: Synchronization Support in Internal Libraries
+* Mentors: [Răzvan Vîrtan](https://github.com/razvanvirtan), [Radu Nichita](https://github.com/RaduNichita), [Marc Rittinghaus](https://github.com/marcrittinghaus)
+
+**[Ujjwal Mahar](https://github.com/UjjwalMahar) from [Sharda University](https://www.sharda.ac.in/) in Greater Noida, NCR, India**
+
+* Project: Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds
+* Mentors: [Cezar Crăciunoiu](https://github.com/craciunoiuc), [Luca Serițan](https://github.com/LucaSeri), [Alexander Jung](https://github.com/nderjung)
+
+**[Maria Pană](https://github.com/mariapana) from [POLITEHNICA Bucharest](https://www.upb.ro/en) in Bucharest, Romania**
+
+* Project: Multiboot2 Support in Unikraft
+* Mentors: [Cristian Vijelie](https://github.com/cristian-vijelie), [Sergiu Moga](https://github.com/mogasergiu), [Michalis Pappas](https://github.com/michpappas)
+
+**[Sriprad Potukuchi](https://github.com/procub3r) from [PES University](https://pes.edu/) in Bengaluru, India**
+
+* Project: UEFI Graphics Output Protocol Support in Unikraft
+* Mentors: [Sergiu Moga](https://github.com/mogasergiu), [Răzvan Vîrtan](https://github.com/razvanvirtan), [Michalis Pappas](https://github.com/michpappas)
+
+Congratulations Mihnea, Yang, Ujjwal, Mia, Sriprad! 🥳

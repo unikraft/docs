@@ -1,0 +1,126 @@
+---
+version: 0.17.0
+releaseDate: 2024-06-07
+codename: Calypso
+commit: e453b74a2e78a0de98563d75d8e0a97e668088e6
+blogPost: /blog/2024-06-07-unikraft-releases-v0.17.0
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.16.3...RELEASE-0.17.0
+---
+
+We are proud to announce the latest version update of Unikraft, v0.17!
+This release comes with plenty of new features and updates.
+
+⚠️  Be aware of the following potentially breaking changes:
+
+* The `linuxu` platform has been removed.
+  No build should be performed against the `linuxu` platform.
+
+* Random number generation is reliant on CPU support.
+  This means that, when using QEMU, one of two options must be enabled:
+
+  1. You are using QEMU >= 8.0.
+  1. You are using hardware acceleration, with KVM.
+
+  There is an (**insecure**) configuration option to disable support for CPU-based randomization.
+  This is however only recommended for test & development builds.
+
+Here is the full updates list:
+
+### 🚀 New Features
+
+* `include/uk`: Import tree implementations from FreeBSD + improvements ([#1356](https://github.com/unikraft/unikraft/pull/1356)) by @andreittr
+* `plat/linuxu`: Retire mostly unused and unmaintained linuxu platform ([#1422](https://github.com/unikraft/unikraft/pull/1422)) by @skuenzer
+* `lib/ukfile`: API improvements ([#1397](https://github.com/unikraft/unikraft/pull/1397)) by @andreittr
+* `lib/posix-poll`: Add option to yield on wait ([#1319](https://github.com/unikraft/unikraft/pull/1319)) by @andreittr
+* `lib/posix-poll`: Autoremove closed files from `epoll` ([#1419](https://github.com/unikraft/unikraft/pull/1419)) by @andreittr
+* `plat`: Rework paged memory init ([#1373](https://github.com/unikraft/unikraft/pull/1373)) by @michpappas
+* `driver/virtio/blk`: Ensure request header stays in-page boundaries AND some minor `sglist` cleanup ([#1290](https://github.com/unikraft/unikraft/pull/1290)) by @mogasergiu
+* `lib/posix-*`: Add support for packet pipes & datagram unix sockets ([#1272](https://github.com/unikraft/unikraft/pull/1272)) by @andreittr
+* `lib/{vfscore, posix-tty}`: Introduce `posix-tty` & move stdio/console files out of vfscore ([#1226](https://github.com/unikraft/unikraft/pull/1226)) by @andreittr
+* `lib/ukrandom`: Rename and refactor `lib/ukswrand` ([#1008](https://github.com/unikraft/unikraft/pull/1008)) by @Alex-deVis
+* `lib`: Introduce generic (page guarded) stack allocator library ([#1322](https://github.com/unikraft/unikraft/pull/1322)) by @mogasergiu
+* `{lib,arch,plat}`: Redo syscall ctx's and `swapgs` logic ([#1346](https://github.com/unikraft/unikraft/pull/1346)) by @mogasergiu
+* `[app-elfloader]`: Adjust to the rename `ukarch_sysregs` -> `ukarch_sysctx` ([#77](https://github.com/unikraft/app-elfloader/pull/77)) by @mogasergiu
+
+### 🐛 Bug Fixes & Improvements
+
+* `plat/common`: Fix wrong `vbase` of legacy video memory area ([#1452](https://github.com/unikraft/unikraft/pull/1452)) by @mogasergiu
+* `lib/ukrandom`: Alternative options for seeding the CSPRNG ([#1451](https://github.com/unikraft/unikraft/pull/1451)) by @michpappas
+* `plat`: Set `HAVE_RANDOM` at the platform ([#1450](https://github.com/unikraft/unikraft/pull/1450)) by @michpappas
+* `plat/common`: A bunch of fixes post-merge of [#1212](https://github.com/unikraft/unikraft/pull/1212) ([#1449](https://github.com/unikraft/unikraft/pull/1449)) by @mogasergiu
+* `plat/xen`: Remove `UKPLAT_MEMRF_MAP` from `arm/setup64` ([#1445](https://github.com/unikraft/unikraft/pull/1445)) by @michpappas
+* `plat/common/x86`: Sanitize the ECTX slot on syscall entry ([#1444](https://github.com/unikraft/unikraft/pull/1444)) by @mogasergiu
+* `plat/common/arm`: Check for QARMA3 support in `pauth_init()` ([#1441](https://github.com/unikraft/unikraft/pull/1441)) by @michpappas
+* `lib/ukalloc`: Fix build with clang when `MEMTAG` is enabled ([#1440](https://github.com/unikraft/unikraft/pull/1440)) by @michpappas
+* `arch/arm64`: Add checks for min clang version ([#1439](https://github.com/unikraft/unikraft/pull/1439)) by @michpappas
+* `lib/posix-poll`: Fix finalizer duplication in `epoll` ([#1438](https://github.com/unikraft/unikraft/pull/1438)) by @andreittr
+* `plat/xen/arm`: Set `pg_count` parameter for mrd regions ([#1436](https://github.com/unikraft/unikraft/pull/1436)) by @oleksiimoisieiev
+* `.github/workflows`: Allow capital letters in files & new error message ([#1435](https://github.com/unikraft/unikraft/pull/1435)) by @craciunoiuc
+* `plat/xen`: Remove redundant memory region ([#1434](https://github.com/unikraft/unikraft/pull/1434)) by @andreistan26
+* `README`: Fix broken codacy link ([#1433](https://github.com/unikraft/unikraft/pull/1433)) by @thass0
+* `lib/vfscore`: Add support for renameat syscall ([#1430](https://github.com/unikraft/unikraft/pull/1430)) by @RaduNichita
+* `plat/common/arm`: Add ISB after enabling PAuth() ([#1428](https://github.com/unikraft/unikraft/pull/1428)) by @michpappas
+* `docs`: Update `ADOPTERS.md` with CertKOR ([#1425](https://github.com/unikraft/unikraft/pull/1425)) by @hapticslabs
+* `.github/workflows`: Pretty print failed runs ([#1423](https://github.com/unikraft/unikraft/pull/1423)) by @craciunoiuc
+* `lib/posix-unixsocket`: Add support for destination in `sendmsg` ([#1421](https://github.com/unikraft/unikraft/pull/1421)) by @andreittr
+* `lib/vfscore`: Do not interpret device pointer as string ([#1418](https://github.com/unikraft/unikraft/pull/1418)) by @mschlumpp
+* `lib/posix-fdio`: Allow owner/group == -1 for `fchown` ([#1416](https://github.com/unikraft/unikraft/pull/1416)) by @andreittr
+* `lib/ukvmem`: Ensure `bool` exists through `stdbool.h` in VMA stacks ([#1415](https://github.com/unikraft/unikraft/pull/1415)) by @mogasergiu
+* `uk/plat`: Mark MRD validation flags variable in macro as maybe unused ([#1414](https://github.com/unikraft/unikraft/pull/1414)) by @mogasergiu
+* `lib/ukboot`: Fix configuration of no "no scheduler" ([#1413](https://github.com/unikraft/unikraft/pull/1413)) by @skuenzer
+* `.github/workflows`: Tidy up unused checkpatch variables ([#1400](https://github.com/unikraft/unikraft/pull/1400)) by @craciunoiuc
+* `lib/ukboot`: Fix unused variable warning in `boot.c` ([#1399](https://github.com/unikraft/unikraft/pull/1399)) by @keenox
+* `lib/ukfile`: Add utility inlines for iovec I/O ([#1396](https://github.com/unikraft/unikraft/pull/1396)) by @andreittr
+* `plat/kvm/x86`: Add dependency to ukbitops ([#1395](https://github.com/unikraft/unikraft/pull/1395)) by @andreittr
+* `lib/posix-fdio`: Add bincompat support for `RWF_*` ([#1394](https://github.com/unikraft/unikraft/pull/1394)) by @andreittr
+* `lib/posix-*`: Fix missing/unneeded dependencies ([#1393](https://github.com/unikraft/unikraft/pull/1393)) by @andreittr
+* `lib/posix-fdio`: Move non-trivial libc syscall wrappers over from vfscore ([#1392](https://github.com/unikraft/unikraft/pull/1392)) by @andreittr
+* `support`: Change `PYTHONCMD` to python3 ([#1391](https://github.com/unikraft/unikraft/pull/1391)) by @tbunch1
+* `.clang-format`: Update to match coding conventions ([#1390](https://github.com/unikraft/unikraft/pull/1390)) by @tbunch1
+* `lib/ukvmem/arch/arm`: Fix `error_code` build error with correct `esr` ([#1388](https://github.com/unikraft/unikraft/pull/1388)) by @mogasergiu
+* `lib/ukfile`: Remove padding from struct `uk_statx` ([#1387](https://github.com/unikraft/unikraft/pull/1387)) by @andreittr
+* `lib/syscall_shim`: Update syscall numbers to 6.8 ([#1385](https://github.com/unikraft/unikraft/pull/1385)) by @andreittr
+* `.github/workflows`: Catalog tests fixes and adjustments ([#1382](https://github.com/unikraft/unikraft/pull/1382)) by @craciunoiuc
+* `lib/ukboot`: Silence compiler warning on envp ([#1378](https://github.com/unikraft/unikraft/pull/1378)) by @michpappas
+* `lib/posix-process`: Fix off-by-one error in tid check ([#1377](https://github.com/unikraft/unikraft/pull/1377)) by @michpappas
+* `lib/vfscore`: No-op `mkmp` on `/` ([#1376](https://github.com/unikraft/unikraft/pull/1376)) by @mogasergiu
+* `lib/posix-timerfd`: Fix update thread double free and add update thread dtor ([#1375](https://github.com/unikraft/unikraft/pull/1375)) by @mogasergiu
+* `doc`: Correct links in `README.md` ([#1374](https://github.com/unikraft/unikraft/pull/1374)) by @razvand
+* `arch/`: Replace libc types with Unikraft defined ([#1369](https://github.com/unikraft/unikraft/pull/1369)) by @rares-miculescu
+* `include/uk`: Replace libc types with Unikraft defined ([#1368](https://github.com/unikraft/unikraft/pull/1368)) by @rares-miculescu
+* `doc`: Refactor README.md with new layout and latest info ([#1366](https://github.com/unikraft/unikraft/pull/1366)) by @nderjung
+* `.github/workflows`: Add job to merge staging to stable ([#1363](https://github.com/unikraft/unikraft/pull/1363)) by @craciunoiuc
+* `lib/ukcpio`: Consistently overwrite existing destination ([#1362](https://github.com/unikraft/unikraft/pull/1362)) by @andreittr
+* `arch/x86`: Use the ISR-safe variant for ectx string operations ([#1357](https://github.com/unikraft/unikraft/pull/1357)) by @kha-dinh
+* `lib/posix-environ`: Deduplicate env variables during boot ([#1352](https://github.com/unikraft/unikraft/pull/1352)) by @skuenzer
+* `lib/ukfile`: Add opt-in support for file finalizers ([#1341](https://github.com/unikraft/unikraft/pull/1341)) by @andreittr
+* `lib/posix-socket`: Expose internal socket syscalls ([#1337](https://github.com/unikraft/unikraft/pull/1337)) by @andreittr
+* `lib/posix-time*`: Replace time syscalls with internal API ([#1336](https://github.com/unikraft/unikraft/pull/1336)) by @andreittr
+* `plat/kvm/x86`: Add early COM1 init/print for CPU init errors ([#1335](https://github.com/unikraft/unikraft/pull/1335)) by @mogasergiu
+* `lib/uknofault`: Add on-demand paging disabled read/write operations ([#1333](https://github.com/unikraft/unikraft/pull/1333)) by @mogasergiu
+* `{arch,plat}/x86`: Refactor `FS_BASE/GS_BASE` operations ([#1316](https://github.com/unikraft/unikraft/pull/1316)) by @mogasergiu
+* `lib/posix-unixsocket`: Add basic `*sockopt` support ([#1314](https://github.com/unikraft/unikraft/pull/1314)) by @andreittr
+* `uk/plat/memory`: Introduce `pg_off` and `pg_count` memregion fields ([#1212](https://github.com/unikraft/unikraft/pull/1212)) by @mogasergiu
+* `lib/ukrust`: Fix helloworld-rust application compilation error ([#1163](https://github.com/unikraft/unikraft/pull/1163)) by @cocodery
+* `plat`: Migrate RTC PL031 to `drivers/ukrtc/` ([#972](https://github.com/unikraft/unikraft/pull/972)) by @rares-miculescu
+* `doc`: Replaced libc types with unikraft defined ([#954](https://github.com/unikraft/unikraft/pull/954)) by @rares-miculescu
+* `arch/x86`: Fix interrupts on qemu-microvm/qboot ([#947](https://github.com/unikraft/unikraft/pull/947)) by @felixmoebius
+* `[app-click]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#6](https://github.com/unikraft/app-click/pull/6)) by @Alex-deVis
+* `[app-elfloader]`: Rename `LIBUKSWRAND` to LIBUKRANDOM` ([#80](https://github.com/unikraft/app-elfloader/pull/80)) by @Alex-deVis
+* `[app-elfloader]`: Use default allocators of the current scheduler for stacks/TLS ([#73](https://github.com/unikraft/app-elfloader/pull/73)) by @mogasergiu
+* `[app-elfloader]`: `Config.uk`: Imply yield-on-wait behavior for `*poll` ([#72](https://github.com/unikraft/app-elfloader/pull/72)) by @andreittr
+* `[lib-embedded-gcov]`: Add memory output support ([#3](https://github.com/unikraft/lib-embedded-gcov/pull/3)) by @Starnox
+* `[lib-embedded-gcov]`: Add binary file output support ([#2](https://github.com/unikraft/lib-embedded-gcov/pull/2)) by @Starnox
+* `[lib-libc-test]`: patches: Adapt malloc patch to match new test format ([#4](https://github.com/unikraft/lib-libc-test/pull/4)) by @craciunoiuc
+* `[lib-libsodium]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#10](https://github.com/unikraft/lib-libsodium/pull/10)) by @Alex-deVis
+* `[lib-lwip]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#57](https://github.com/unikraft/lib-lwip/pull/57)) by @Alex-deVis
+* `[lib-lwip]`: `patches`: Bring back address structure length checks ([#56](https://github.com/unikraft/lib-lwip/pull/56)) by @mogasergiu
+* `[lib-lwip]`: Indicate `EPOLLRDHUP` when the peer closed the connection ([#55](https://github.com/unikraft/lib-lwip/pull/55)) by @mschlumpp
+* `[lib-lwip]`: `lwip`: Provide config option for `SO_LINGER` and enable by default ([#52](https://github.com/lib-lwip/unikraft/pull/52)) by @michpappas
+* `[lib-musl]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#78](https://github.com/unikraft/lib-musl/pull/78)) by @Alex-deVis
+* `[lib-musl]`: Add `sys/membarrier.h` to the headers list ([#76](https://github.com/unikraft/lib-musl/pull/76)) by @StefanJum
+* `[lib-nginx]`: Rename LIBUKSWRAND to `LIBUKRANDOM` ([#17](https://github.com/unikraft/lib-nginx/pull/17)) by @Alex-deVis
+* `[lib-openssl]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#10](https://github.com/unikraft/lib-openssl/pull/10)) by @Alex-deVis
+* `[lib-redis]`: Rename `LIBUKSWRAND` to `LIBUKRANDOM` ([#14](https://github.com/unikraft/lib-redis/pull/14)) by @Alex-deVis
+
+A big thank you also to all those who helped in the [review process](https://unikraft.org/docs/contributing/review-process): [Alexander Jung](https://github.com/nderjung), [Alexandru Apostolescu](https://github.com/Alex-deVis), [Andrei Stan](https://github.com/andreistan26), [Andrei Tatar](https://github.com/andreittr), [Cezar Craciunoiu](https://github.com/craciunoiuc), [Delia Pavel](https://github.com/DeliaPavel), [Eduard Vintilă](https://github.com/eduardvintila), [Felipe Huici](https://github.com/felipehuici), [Marco Schlumpp](https://github.com/mschlumpp), [Maria Pana](https://github.com/mariapana), [Maria Sfiraiala](https://github.com/mariasfiraiala), [Michalis Pappas](https://github.com/michpappas), [Mihnea Firoiu](https://github.com/Mihnea0Firoiu), [Mihnea Popeanga](https://github.com/Mihnea27), [Radu Nichita](https://github.com/RaduNichita), [Rares Miculescu](https://github.com/rares-miculescu), [Razvan Deaconescu](https://github.com/razvand), [Razvan Virtan](https://github.com/razvanvirtan), [Robert Zamfir](https://github.com/robertZamfir601), [Serban Sorohan](https://github.com/SerbanSo), [Sergiu Moga](https://github.com/mogasergiu), [Simon Kuenzer](https://github.com/skuenzer), [Stefan Jumarea](https://github.com/StefanJum).
