@@ -72,14 +72,14 @@ Add Unikraft’s official GPG key:
 
 ```console
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://apt.pkg.kraftkit.sh/kraftkit/linux/debian/gpg | \
+curl -fsSL https://deb.pkg.kraftkit.sh/gpg.key | \
   sudo gpg --dearmor -o /etc/apt/keyrings/unikraft.gpg
 ```
 
 Use the following command to set up the APT repository:
 
 ```console
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/unikraft.gpg] https://apt.pkg.kraftkit.sh \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/unikraft.gpg] https://deb.pkg.kraftkit.sh \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/unikraft.list > /dev/null
 ```
 
