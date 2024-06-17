@@ -1,0 +1,80 @@
+---
+title: "GSoC'24: Porting the mimalloc memory allocator to Unikraft"
+description: |
+  Different applications have different memory usage patterns and perform better
+  when using dedicated memory allocators. Right now, the buddy allocator is the only
+  available memory allocator used in Unikraft, so this GSoC project aims to 
+  port more memory allocators to it, starting with mimalloc.
+publishedDate: 2024-06-16
+authors:
+- Yang Hu
+tags:
+- gsoc
+- gsoc24
+- synchronization
+---
+
+<img width="150px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+### Memory allocation in Unikraft
+
+Memory allocators have a significant impact on application performance.
+[Research](https://dl.acm.org/doi/10.1145/378795.378821) have shown that programs can run as much as 60% faster just by switching to an appropriate memory allocator.
+As a unikernel OS, though, Unikraft has only one general-purpose memory allocator, the buddy allocator, available for use today.
+To that end, this project aims to port [mimalloc](https://github.com/microsoft/mimalloc) (pronounced "me-malloc"), a high-performance general-purpose memory allocator developed by Microsoft, to Unikraft.
+This is the first step in a series of efforts to provide Unikraft users with more memory allocators to choose from to optimize the performance of their applications.
+
+### Objectives
+
+[Hugo Lefeuvre](https://github.com/hlef) has made an effort to port mimalloc to Unikraft back in 2020 (see [this repo](https://github.com/unikraft/lib-mimalloc)).
+However, as Unikraft has evolved significantly over the years, more work is needed to adapt the `lib-mimalloc` port to the latest Unikraft core.
+
+The steps of porting the memory allocators are as follows:
+
+1. Adapt the existing port, which uses `lib-newlib` and `lib-pthread-embedded` as the C library to use `lib-musl` instead
+1. Patch the existing port of mimalloc (v1.6.3) to adapt to the latest Unikraft's memory allocation interface
+1. Patch the latest mimalloc (v2.1.7) to the latest Unikraft version (v0.17.0)
+
+## Current Progress
+
+### Studying memory allocation in Unikraft
+
+I started the project by studying the [Hugo's bachelor thesis](https://os.itec.kit.edu/downloads/2020_BA_Lefeuvre_Toward_Specialization_of_Memory_Management_in_Unikernels.pdf) which is a great introduction to Unikraft's memory allocation subsystem and different memory allocators performance in unikernel environments in general.
+
+### Using `lib-musl`
+
+The major difficulty in switching from `newlib` to `musl` is that the latter lacks certain atomic features because while `newlib` is written with C11 compatibility, `musl` is based on the C99 standard.
+This means that `musl` does not have the `stdatomic.h` header, which provides a series of *macro definitions* that enable advanced memory ordering constraints on the atomic operations (such as `__ATOMIC_RELAXED`, `__ATOMIC_CONSUME`, `__ATOMIC_ACQUIRE`, etc.).
+The `atomic.h` header that `musl` does have, though, only provides *function definitions* (which are less generic than macro definitions), of which only a few have two levels memory ordering constraint (i.e., with or without `LL/SC` enabled).
+
+After discussing with the community, we decided to add the `stdatomic.h` header to the `musl` library as a solution.
+This is done by first creating the header file in the `include/` directory in the `lib-musl` port, and then setting `LIBMUSL_GLOBAL_INCLUDES-y += -I$(LIBMUSL_BASE)/include` in the lib-musl `Makefile.uk`.
+Please see [this draft PR](https://github.com/unikraft/lib-musl/pull/80) for details of the work, and [this blog](https://unikraft.org/docs/internals/build-system#makefileuk) for more on how Unikraft's `Makefile.uk` works.
+
+### Adapting `lib-mimalloc` to `lib-musl` and Unikraft's new threading interface
+
+This work includes changing the dependency configurations of the port, fixing a few variable names, and including a new header to prevent compilation errors.
+All well-illustrated in [this draft PR](https://github.com/unikraft/lib-mimalloc/pull/12).
+
+### Other work
+
+While building and testing my implementation, I also ran into some minor bugs with the `ukvmem` library, addressed in [this PR](https://github.com/unikraft/unikraft/pull/1447).
+
+I also fixed a few typos in the documentation and added notes in the [Unikraft Internals guide](https://unikraft.org/guides/internals) about enabling hardware acceleration with KVM for random number generation since [Unikraft v0.17.0](https://github.com/unikraft/unikraft/releases/tag/RELEASE-0.17.0).
+Please see [this PR](https://github.com/unikraft/docs/pull/405).
+
+## Next steps
+
+Even though the mimalloc library can now be compiled with the Musl library on the latest Unikraft core without errors, its functionality, portability, and performance have to be tested.
+My future work includes:
+
+1. Test the mimalloc memory allocator aggressively, both with and without virtual memory enabled.
+1. Add support for Unikraft's other memory allocation interface that are not implemented yet by the current port (such as `maxalloc()`, `availmem()`, and `addmem()`).
+1. Port the latest version of mimalloc to the latest Unikraft core.
+
+## Acknowledgements
+
+Special thanks to Răzvan Vîrtan and Radu Nichita, my two amazing mentors, for their support along the way.
+I would also like to thank Razvan Deaconescu, Hugo Lefeuvre, Ștefan Jumarea, Marco Schlumpp, Sergiu Moga, and the entire Unikraft community for all the work, discussions, and guidance which made this project possible.
