@@ -1,0 +1,64 @@
+---
+title: "GSoC'24: Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds"
+description: |
+  The goal of this project is to improve Unikraft's tooling, more especially, the `kraft` command-line tool, so that it can dynamically inject user-supplied variables into the build system. 
+publishedDate: 2024-06-19
+tags:
+- GSoC'24
+- Unikernels
+- KraftKit
+- Golang
+authors:
+- Ujjwal Mahar
+---
+
+## GSoC'24: Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+### Project Overview
+
+Unikraft is a highly adaptable cloud-based library operating system with a high degree of modularity.
+However, developers' ability to add custom variables to the build process is hampered by the rigidity of the current tooling.
+The goal of this project is to improve Unikraft's tooling, specifically the `kraft` command-line tool, so that it can dynamically inject user-supplied variables into the build system.
+Features like changing GCC versions and compile-time settings are included in this.
+Developers can customize Unikraft builds to meet specific needs by providing dynamic configurations, enhancing flexibility.
+
+Impact of this project on the Unikraft Ecosystem:
+
+- Tooling Framework Improvement
+- Integration with KraftKit Configuration System
+- Modification of Build Invocation Mechanism
+- Default Configuration Setting for CC
+- Kraftfile Integration
+- Dynamic Injection Using Flags in the Command Line
+
+### Progress
+
+Over the past few weeks, I have been following the instructions given by my mentors in the issue [Steps](https://github.com/unikraft/kraftkit/issues/673).
+I have completed two of the steps which include:
+
+1. **Test Building an Application via Make:**
+   Configured the development environment and successfully built a sample Unikraft application using Make.
+   It was necessary to have a good understanding of how Unikraft builds and also a necessary step for [hacking](https://unikraft.org/docs/cli/hacking) in kraftkit.
+
+2. **Exploring Different Toolchain Options Toolchain Testing:**
+   I have experimented with various GCC versions and compile-time settings by passing different options to the make command.
+   This gave me a better understanding of how to utilize different toolchain options in Unikraft and would eventually help me with my project.
+
+### Next Steps
+
+For the next steps I aim to get started on the actual implementation of the following:
+
+1. **Hardcode-Inject Toolchain Option:**
+   Hardcode-inject a toolchain option within the KraftKit make package to evaluate its functionality and determine if redesigning is necessary.
+
+2. **Global Toolchain Config Variable:**
+   Introduce the Toolchain global Kraftkit config variable to streamline configuration management.
+
+3. **Kraftfile Toolchain Element:**
+   Introduce the toolchain element in the Kraftfile, which centralizes and simplifies the management of toolchain settings that are ultimately passed to Unikraft's build system.
+
+4. **CLI Toolchain Options:**
+   Introduce command-line options/commands to set and list toolchain variables, enhancing user control and flexibility.
+   
