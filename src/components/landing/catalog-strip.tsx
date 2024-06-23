@@ -235,7 +235,7 @@ export function CatalogStrip(props: BoxProps) {
           </AppLink>
         */}
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/exanokes/nginx'
+            href='https://github.com/unikraft/catalog/tree/main/library/nginx/1.25'
             accentColor='#009900'
             name='NGINX'
           >
