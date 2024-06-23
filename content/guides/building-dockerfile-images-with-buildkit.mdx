@@ -2,39 +2,72 @@
 title: Building Dockerfile Images with Buildkit
 
 description: |
-  This guide shows how to install buildkit to allow you to build Dockerfile images with Unikraft.
+  This guide shows how to install Buildkit for building Dockerfile images with
+  Unikraft.
 ---
 
-Unikraft uses [BuildKit](https://docs.docker.com/build/buildkit/), along with [Dockerfiles](https://docs.docker.com/reference/dockerfile/), to construct the root filesystem used by applications.
+Unikraft uses [BuildKit][buildkit], along with [Dockerfiles][dockerfiles], to
+construct the root filesystem used by applications.
 
-You can install BuildKit by either running it natively via systemd or in a container.
-Please refer to [BuildKit's installation instructions](https://github.com/moby/buildkit) for more information.
+We can install BuildKit either by running it natively via `systemd` or inside a
+container. Please refer to [BuildKit's installation
+instructions][buildkit-installation] for more information. For convenience, we
+recommend running it inside a container.
 
-To use BuildKit with Docker on your system, you first need to install Docker following the [official instructions](https://docs.docker.com/engine/install/).
-This can be either [Docker Engine](https://docs.docker.com/engine/) or [Docker Desktop](https://docs.docker.com/desktop/).
+We will also need a [container engine][container-engine] on our host. Popular
+choices include [Docker][docker], [podman], and [containerd]. Please follow
+their respective documentation to get them up and running. For the rest of this
+article, we will assume Docker to be the installed container engine.
 
-After installing Docker, you can run BuildKit in a container via:
+After installing the container engine, we can go ahead and run BuildKit.
 
 ```bash
 docker run -d --name buildkitd --privileged moby/buildkit:latest
 ```
 
-Now instruct `kraft` to use the BuildKit instance from the `buildkitd` container by either setting the environmental variable:
+We can check if the container launched by doing:
 
 ```bash
-export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+$ docker container ps | grep buildkitd
 ```
-
-Or edit KraftKit's configuration file at `~/.config/kraftkit/config.yaml` and set the `buildkit_host` attribute.
-
-To check that it worked you can run the following command:
-
-```bash
-docker container ps | grep buildkit
-```
-
-You should see output similar to:
 
 ```bash
 b146031cd4db   moby/buildkit:latest   "buildkitd"   About a minute ago   Up About a minute      buildkit
 ```
+
+Now, we instruct `kraft` to use the BuildKit instance we launched. We can do it
+in the following ways:
+
+- `KRAFTKIT_BUILDKIT_HOST` environment variable:
+  ```bash
+  export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+  ```
+- KraftKit's configuration file (`~/.config/kraftkit/config.yaml`):
+  ```yaml
+  buildkit_host: docker-container://buildkitd
+  ```
+- Passing the `--buildkit-host` CLI flag to `kraft`:
+  ```bash
+  kraft --buildkit-host=docker-container://buildkitd <args>
+  ```
+
+> A container's URI depends on its name and the container engine. For example, a
+> container managed by `podman` will have `podman-container://buildkitd` as its
+> URI.
+
+Since we gave a name to our container, we can use the `start` and `stop`
+subcommands to spawn/stop our BuildKit instance on demand.
+
+```bash
+docker stop buildkitd   # Start the container
+docker start buildkitd  # Stop the container
+```
+
+[buildkit]: https://docs.docker.com/build/buildkit/
+[Dockerfiles]: https://docs.docker.com/reference/dockerfile/
+[buildkit-installation]: https://github.com/moby/buildkit
+[container-engine]:
+  https://developers.redhat.com/blog/2018/02/22/container-terminology-practical-introduction#h.6yt1ex5wfo3l
+[docker]: https://www.docker.com/
+[podman]: https://docs.podman.io/en/latest/
+[containerd]: https://containerd.io/
