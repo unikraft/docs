@@ -5,7 +5,7 @@ description: |
   It shows what is happening behind the scenes and how you can get more control on the build and run phases.
 ---
 
-The [guide on using the application catalog](/guides/using-the-app-catalog) provides the user-friendly information on using the Unikraft application registry and the [`catalog` repository](https://github.com/unikraft/catalog).
+The [guide on using the application catalog](/guides/using-the-app-catalog) provides user-friendly information on using the Unikraft application registry and the [`catalog` repository](https://github.com/unikraft/catalog).
 It presents some hints into what's happening behind the scenes, but it aims to keep the user away for this.
 This guide takes a deep dive into the internals of configuring, building and running Unikernel applications from the catalog.
 It is aimed for those more technically inclined who would be interested in understanding what's happening behind the scenes and maybe [contribute to the application catalog](/docs/contributing/adding-to-the-app-catalog).
@@ -38,7 +38,7 @@ The `Kraftfile` defines the:
 - root filesystem used to build the (embedded) initrd
 
 The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
-The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
+The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, and data files):
 
 ```dockerfile
 FROM --platform=linux/x86_64 nginx:1.25.3-bookworm AS build
@@ -141,13 +141,13 @@ Query it using:
 curl http://localhost:8080
 ```
 
-If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
+If you want to use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
 
 ```bash
 kraft net create -n 172.44.0.1/24 virbr0
 ```
 
-An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
+And then run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
 
 ```bash
 qemu-system-x86_64 \
@@ -171,7 +171,7 @@ To close the running QEMU instance, use `Ctrl+a x` in the QEMU console.
 ## HTTP Go Server
 
 For the [`http-go1.21` bincompat example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21), there is no build phase, only a run phase.
-The example it's using a prebuilt kernel image.
+The example is using a prebuilt kernel image.
 The prebuilt [`base` kernel image](https://github.com/unikraft/catalog/tree/main/library/base) is pulled from the registry, from `unikraft.org/base`.
 This happens during the run phase.
 
@@ -197,7 +197,7 @@ The `Kraftfile` defines:
 - the available run targets: currently only x86_64-based builds are available, and only KVM-based builds, using QEMU or Firecracker
 
 The root filesystem is generated from a `Dockerfile` specification, as configured in the `Kraftfile`.
-The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, data files):
+The `Dockerfile` specification collects the required files (binary executable, depending libraries, configuration files, and data files):
 
 ```dockerfile
 FROM golang:1.21.3-bookworm AS build
@@ -243,7 +243,7 @@ kraft run -W -p 8080:8080 .
 
 1. It pulls the kernel package from the registry, from `unikraft.org/base:latest`.
 1. It generates the root filesystem, via BuildKit from the `Dockerfile` specification.
-   The generation of the root filesystem implies the building the Go source code files into a binary executable (`ELF`).
+   The generation of the root filesystem implies the building of the Go source code files into a binary executable (`ELF`).
    The executable, together with the depending libraries is then extracted into the root filesystem.
 1. It packs the root filesystem in an initial ramdisk (initrd).
 1. It runs the kernel attaching the initrd and using the command line in the specification: `/http_server`.
@@ -316,13 +316,13 @@ Query it using:
 curl http://localhost:8080
 ```
 
-If you want use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
+If you want to use a bridge interface, first create the bridge interface as `root` (prefix with `sudo` if required):
 
 ```bash
 kraft net create -n 172.44.0.1/24 virbr0
 ```
 
-An the run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
+And then run manually with `qemu-system-x86_64` as `root` (prefix with `sudo` if required):
 
 ```bash
 qemu-system-x86_64 \
