@@ -1,14 +1,11 @@
 ---
 title: "Unikraft Summer Workshop 2024"
-description: Unikraft Summer Workshop 2024, July 1 - July 20, 2024
+description: A free and virtual workshop held by members of the Unikraft community this July 1 - July 20, 2024.
 startDate: 2024-07-01
 registerForm: https://forms.gle/6AMFoCoqJqKGdBgX6
-image: /hackathons/usw24.png
+image: /hackathons/2024-07-usw.jpg
 ---
 
-## Unikraft Summer Workshop 2024
-
-Unikraft Summer Workshop 2024 (*USW'24*) is a **free and virtual** workshop held by members of the Unikraft community.
 It focuses on cloud-native applications and on the unikernel technology that powers efficient and high performance cloud deployments.
 This is the fourth edition of the event, after USoC'21 to USoC'23, and unlike the previous editions, we will focus on cloud deployments of Unikraft applications.
 
@@ -37,7 +34,7 @@ All hackathon in-person participants will get a Unikraft T-shirt.
 
 If you're eager to learn more about efficient cloud computing and unikernel technology, to work on practical open source tasks and to expand your knowledge of cloud-native and low-level topics, you'll want to be part of USW'24.
 You will need to complete a set of challenges that will get you accustomed to the environment you will be using during the sessions.
-You will need to submit the challenge solution on the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6) by Thursday, June 27, 2024, 8pm CET.
+You will need to submit the challenge solution on the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6) by Saturday, June 29, 2024, 10pm CEST.
 
 It's recommended you check these prerequisites before taking part in USW'24:
 
@@ -100,3 +97,216 @@ Run it using `qemu-system-x86_64` and find the flag.
 Upload the flag in the [registration form](https://forms.gle/6AMFoCoqJqKGdBgX6).
 
 Read the basic unikernel concepts [here](https://unikraft.org/docs/concepts).
+
+### Session 01: Overview of Unikraft
+
+For the next 3 sessions, we will use [KraftCloud](http://docs.kraft.cloud/) to deploy our applications.
+If you did not create an account already, signup [here](https://console.kraft.cloud/signup) and get a token.
+You will be using that in the following sessions.
+
+Once you have a token, follow the steps [here](http://docs.kraft.cloud/quickstart/) to deploy your first unikernel.
+If everything went well, deploy more applications and use extra features following the tasks [here](https://docs.google.com/spreadsheets/d/1_dOqYnHKQgkVJn0Tiudawna4d1SV_PGgS1D8oLmGD34/edit?usp=sharing).
+
+There are two types of tutorials in this session: application tutorials and feature tutorials.
+This means you will both learn how to use some already existing applications and make use of different KraftCloud features, like load balancing, scale to 0, etc.
+You will likely use those features for the final project too, so make sure to focus on them.
+
+### Session 02: Baby Steps
+
+In Session 01, we deployed some applications using KraftCloud.
+In this session, we will use the same applications, but we will configure, build and run them locally, on our system.
+With this, you will get a better look at what kraft cloud does behind the scenes.
+Make sure you have [`docker`](https://docs.docker.com/engine/install/) installed.
+
+Applications for this session are stored in the [`catalog` repository](https://github.com/unikraft/catalog).
+Similar to the [`kraftcloud/examples`](https://github.com/kraftcloud/examples/) repository we used in Session 01, the `catalog` repository contains some minimal applications we can run locally.
+Make sure you clone it before starting the session.
+
+Follow the steps [here](https://unikraft.org/guides/using-the-app-catalog) and bring the cloud to your machine.
+While you work on them, mark the progress [here](https://docs.google.com/spreadsheets/d/1_dOqYnHKQgkVJn0Tiudawna4d1SV_PGgS1D8oLmGD34/edit?usp=sharing), in the `Session 02` spreadsheet.
+After you are done with all of them, take a look to some more applications, following the tasks [here](https://docs.google.com/spreadsheets/d/1_dOqYnHKQgkVJn0Tiudawna4d1SV_PGgS1D8oLmGD34/edit?usp=sharing), and the same steps for building and running you used before.
+Go through them orderly and aim to complete all items until the Extra section.
+If you have extra time on your hands, go through the Extra section as well.
+
+### Session 03: Behind the Scenes
+
+In order to run applications using `kraft`, both locally and with `kraftcloud`, we need to build a minimal required filesystem for the application we want to run.
+We do that using `Docker`.
+This is useful both to understand what is happening behind the scenes and to have a test environment for your application.
+In case there are issues with KraftCloud / KraftKit, you can use Docker to see if everything is in the right place and to assist in debugging.
+
+Follow the steps [here](https://unikraft.org/docs/contributing/adding-to-the-app-catalog) to see how you can port a new application on top of Unikraft.
+Mark the items as completed [here](https://docs.google.com/spreadsheets/d/1_dOqYnHKQgkVJn0Tiudawna4d1SV_PGgS1D8oLmGD34/edit?usp=sharing).
+
+### Session 04: Binary Compatibility
+
+In the previous sessions, we managed to run some applications on top of Unikraft, with only a minimal filesystem required.
+We extracted the filesystem making use of Docker and KraftKit.
+We made use of the already existing kernel images from the registry, but sometimes we want to configure our kernel in a particular way, so we want to have manual control over the build process.
+
+In this session, we will take a look at what `kraft` does behind the scenes in order to build the Unikraft kernel image.
+
+To run the application that we have inside the minimal filesystem, we will use an application called [`elfloader`](https://github.com/unikraft/app-elfloader/), together with the [Unikraft core](https://github.com/unikraft/unikraft/) and some external libraries.
+All of them will be cloned by `kraft`, so we don't have to worry about that.
+
+#### `helloworld-c`
+
+Let's start with the [`helloworld-c`](https://github.com/unikraft/catalog/tree/main/examples/helloworld-c) application.
+We need to update the `Kraftfile`, so it build a kernel image locally, whithout pulling it directly from the registry.
+You can copy the [`Nginx` Kraftfile](https://github.com/unikraft/catalog/blob/main/library/nginx/1.25/Kraftfile), change the `name:` to `helloworld` and the `cmd:` to `["/helloworld"]`.
+
+Let's run `kraft build` and notice what happens.
+First, we will see some messages that look like this:
+
+```text
+[+] pulling app/elfloader:staging        ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 100% [0.0s]
+[+] finding core/unikraft:staging... done!                                                                                                                                              [0.5s]
+[+] finding lib/lwip:staging... done!                                                                                                                                                   [0.3s]
+[+] finding lib/libelf:staging... done!                                                                                                                                                 [0.3s]
+[+] pulling lib/libelf:staging           ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 100% [0.0s]
+[+] pulling lib/lwip:staging             ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 100% [0.0s]
+[+] pulling core/unikraft:staging        ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••• 100% [0.1s]
+```
+
+This tells us that `kraft` successfully cloned all the required dependencies to build the kernel.
+They are placed under `.unikraft/`:
+
+```console
+$ tree -L 1 .unikraft/
+.unikraft/
+|-- apps/
+|-- build/
+|-- libs/
+`-- unikraft/
+```
+
+The default configuration will be placed by `kraft` in `.config.helloworld_qemu-x86_64`.
+The final image will be placed under the `build/` directory, as shown by the output of `kraft build`:
+
+```text
+[*] Build completed successfully!
+ |
+ |---- kernel: .unikraft/build/helloworld_qemu-x86_64 (2.8 MB)
+ `- initramfs: .unikraft/build/initramfs-x86_64.cpio  (2.1 MB)
+```
+
+To tweak the configuration of the kernel, we need to add a `Makefile` and choose what we want to include in the final image.
+The `Makefile` will look like this:
+
+```make
+UK_APP ?= $(PWD)/workdir/apps/elfloader
+UK_ROOT ?= $(PWD)/workdir/unikraft
+UK_LIBS ?= $(PWD)/workdir/libs
+UK_BUILD ?= $(PWD)/workdir/build
+LIBS ?= $(UK_LIBS)/lwip:$(UK_LIBS)/libelf
+
+all:
+        @$(MAKE) -C $(UK_ROOT) A=$(UK_APP) L=$(LIBS) O=$(UK_BUILD)
+
+$(MAKECMDGOALS):
+        @$(MAKE) -C $(UK_ROOT) A=$(UK_APP) L=$(LIBS) O=$(UK_BUILD) $(MAKECMDGOALS)
+```
+
+All it does it call the `Makefile` from `.unikraft/unikraft/` with the right parameters, so we can just copy-paste it any time we want to configure the kernel.
+To enter the configuration menu, we can run `make C=$(pwd)/.config.helloworld_qemu-x86_64 menuconfig`.
+This will prompt us with a text interface that allows us to select certain features.
+Let's select `Library Configuration -> ukdebug: Debugging and tracing -> Enable debug messages globally`.
+We then exit by repeatedly pressing `ESC` on our keyboard.
+
+To build the image, we run `make C=$(pwd)/.config.helloworld_qemu-x86_64 -j$(nproc)`.
+The final image will be placed under `.unikraft/build/elfloader_qemu-x86_64`.
+We can run it manually, using `qemu-system-x86`, which is what `kraft` does behind the scenes.
+
+```console
+$ qemu-system-x86_64 -cpu max -nographic -kernel .unikraft/build/elfloader_qemu-x86_64 --append "/helloworld"
+
+[...]
+[    0.431128] dbg:  [appelfloader] brk @ 0x407821000 (brk heap region: 0x407800000-0x407a00000)
+[    0.432070] dbg:  [libposix_fdio] (ssize_t) uk_syscall_r_write((int) 0x1, (const void *) 0x4078002a0, (size_t) 0xc)
+Bye, World!
+[    0.433875] dbg:  [libposix_process] (int) uk_syscall_r_exit_group((int) 0x0)
+[    0.434095] dbg:  [libposix_process] Terminating PID 1: Self-killing TID 1...
+[...]
+```
+
+To close the application, press `Ctrl+a`, then `x` on the keyboard.
+
+You can toy around with the configuration, enable different features and see how the application changes.
+
+#### `nginx`
+
+Let's move to [`nginx`](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25), a more complex application.
+To configure and build it, we follow the same steps.
+This time we don't have to modify the `Kraftfile`, just add a `Makefile` with the same content as the one above, and run `make C=$(pwd)/.config.helloworld_qemu-x86_64 -j$(nproc)`.
+
+To run `nginx`, we also need to setup the networking.
+Let's create a script called `run.sh`.
+
+```bash
+# Remove previously created network interfaces.
+sudo ip link set dev tap0 down
+sudo ip link del dev tap0
+sudo ip link set dev virbr0 down
+sudo ip link del dev virbr0
+
+# Create bridge interface for QEMU networking.
+sudo ip link add dev virbr0 type bridge
+sudo ip address add 172.44.0.1/24 dev virbr0
+sudo ip link set dev virbr0 up
+
+sudo qemu-system-x86_64 \
+    -kernel .unikraft/build/elfloader_qemu-x86_64 \
+    -nographic \
+    -m 1024M \
+    -netdev bridge,id=en0,br=virbr0 -device virtio-net-pci,netdev=en0 \
+    -append "netdev.ip=172.44.0.2/24:172.44.0.1::: -- /usr/bin/nginx" \
+    -cpu max
+```
+
+You can see that we firstly remove the network interfaces, then we recreate them and run the application.
+We give more memory to the application and also give an ip address.
+To test that this works, we can open another terminal and run `curl 172.44.0.2`.
+We close the application by pressing `Ctrl+a` then `x`.
+
+#### `redis`
+
+Follow the same steps with [`redis`](https://github.com/unikraft/catalog/tree/main/library/redis/7.2).
+Create a `Makefile`, build the application and then run it.
+
+#### `hugo`
+
+Follow the same steps with [`hugo`](https://github.com/unikraft/catalog/tree/main/library/redis/0.122).
+Create a `Makefile`, build the application and then run it.
+
+#### `redis`
+
+Follow the same steps with [`node/21`](https://github.com/unikraft/catalog/tree/main/library/node/21).
+Create a `Makefile`, build the application and then run it.
+
+#### `redis`
+
+Follow the same steps with [`PHP`](https://github.com/unikraft/catalog/tree/main/library/php/8.2).
+Create a `Makefile`, build the application and then run it.
+
+#### Custom Application
+
+Create an application of your choice in a **compiled** programming language (i.e. obtain an executable) and run it with Unikraft in binary-compatibility mode.
+Use compiled programming languages such as C, C++, Go, Rust.
+
+#### Add System Call Tracing
+
+Uncomment the syscall tracing feature in the `Kraftfile` of one of the applications above:
+
+```text
+CONFIG_LIBSYSCALL_SHIM_STRACE: 'y'
+```
+
+Build and run the application with Unikraft with the syscall tracing feature enabled.
+See the system calls.
+
+Compare the system calls from the Unikraft-based run, with those from a native Linux run.
+They are identical, since the application is run unmodified on Linux and on Unikraft.
+
+### Session Recordings
+
+You can check the recordings of the initial presentations for each session on [YouTube](https://www.youtube.com/playlist?list=PL0ZXUYDfkQ61ezmByQNLlzJ8s_dkJmQ1S).

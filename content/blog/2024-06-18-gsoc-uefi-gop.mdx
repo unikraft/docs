@@ -1,0 +1,47 @@
+---
+title: "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft"
+description: |
+  This project aims to add support for the modern UEFI GOP interface in Unikraft.
+publishedDate: 2024-06-18
+image: /images/unikraft-gsoc24.png
+authors:
+- Sriprad Potukuchi
+tags:
+- gsoc
+- gsoc24
+- uefi
+- booting
+---
+
+## Project Overview
+
+Unikraft's ability to print logs to the screen is quite limited, which makes it harder to debug it during development. While it is entirely possible to use the serial port console, it is not as easily accessible or available on usual consumer machines.
+
+The widely available and standardized [UEFI Graphics Output Protocol](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-graphics-output-protocol) (GOP) interface is an excellent candidate. It provides a raw framebuffer, which can be used to set individual pixels on the screen.
+
+This project aims to implement a UEFI GOP based console. The UEFI GOP interface allows us to query for a framebuffer, which is an array of pixels in memory. Setting the color value of the pixels in the framebuffer will set the colors of the corresponding pixels on the screen accordingly.
+
+This framebuffer is procured by calling UEFI routines. These routines interact with the video driver, asking it to initialize the framebuffer for us. We can configure this framebuffer to our desired size, resolution etc _before_ ExitBootServices is called (Which is when UEFI cleans up after itself, releases all driver resources, and hands over control to the kernel). Though we can't configure the framebuffer after calling ExitBootServices, the framebuffer itself persists and the kernel can use it to display graphics!
+
+Text can be rendered to the screen by lighting up particular pixels. The exact pixels to light up to display a character is known by implementing a font parser, which derives this information from the provided font(s).
+
+## Progress
+- I have implemented a low level routine that locates the GOP protocol and gets the framebuffer (and some metadata like width and height).
+
+- I've created a [convenience script](https://github.com/procub3r/unikraft/blob/poc/run.sh) that helps build a UEFI image and run it in qemu.
+
+- I have also written a small [proof of concept](https://github.com/unikraft/unikraft/pull/1448) that demonstrates our ability to control individual pixels on the screen.
+
+  <Image
+        src="/images/uefi-gop-proof-of-concept.png"
+        title="UEFI GOP Proof of Concept"
+        description="A gradient displayed on the screen (in qemu-system-x86_64)"
+  />
+
+## Next Steps
+- Display characters from a bitmap font. [This](https://github.com/dhepper/font8x8) font looks like a promising candidate!
+- Expose a high level API that lets the caller print (formatted) strings to the screen.
+- Implement scrolling to allow printing logs even after screen space runs out.
+
+## Acknowledgement
+The Unikraft community has been extremely welcoming. I would like to thank Razvan Deaconescu and Sergiu Moga in particular for helping me with my issues (technical and non-technical) and generally just being extremely patient with me!

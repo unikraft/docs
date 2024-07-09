@@ -17,6 +17,11 @@ import CodeContainer from 'components/mdx-components/codeblock/code-container'
 import CopyButton from 'components/mdx-components/codeblock/copy-button'
 import { t } from 'utils/i18n'
 
+const announce = {
+  title: 'Unikraft Summer Workshop 2024',
+  href: '/hackathons/usw24',
+}
+
 export default function LandingHero() {
   const getKraftKit = 'curl -sSfL https://get.kraftkit.sh | sh'
 
@@ -69,7 +74,7 @@ export default function LandingHero() {
               p='2'
               pr='4'
             >
-              <NextLink href={'/blog/2024-06-07-unikraft-releases-v0.17.0'} passHref>
+              <NextLink href={announce.href} passHref>
                 <chakra.a
                   as={Box}
                   role={'group'}
@@ -111,7 +116,7 @@ export default function LandingHero() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Unikraft releases 0.17.0 (Calypso)
+                    {announce.title}
                   </Text>
                   <Box
                     display={{
@@ -244,7 +249,7 @@ export default function LandingHero() {
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>2397</StatNumber>
+                <StatNumber>2.4K+</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
@@ -252,7 +257,7 @@ export default function LandingHero() {
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1484</StatNumber>
+                <StatNumber>1.4K+</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>

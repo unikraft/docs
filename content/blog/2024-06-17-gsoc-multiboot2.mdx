@@ -1,0 +1,64 @@
+---
+title: "Multiboot2 Support in Unikraft"
+description: |
+  Multiboot2, an enhanced version of Multiboot, solves some of the limitations of the original protocol, such as the lack of support for 64-bit UEFI systems. It also provides a more accurate and detailed communication during the bootstrapping process and offers a standardized tag system for easier configuration.
+publishedDate: 2024-06-17
+image: /images/unikraft-gsoc24.png
+tags:
+- gsoc
+- gsoc24
+- multiboot2
+- Booting
+authors:
+- Maria Pana
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## GSoC'24: Multiboot2 Support in Unikraft
+
+### Project overview
+
+When booting an x86 system, the CPU starts in 16-bit mode and the memory is limited to 1MB (in Real Mode).
+The CPU starts executing at a specific memory address known as a reset vector situated at 0xFFFF0 (for Intel 8086 processors) or 0xFFFFFFF0 (for Intel 80386 and later).
+The initial instructions found here are part of the BIOS, stored in flash memory on the motherboard.
+The BIOS's first goal is to run self test and initialization routines on hardware.
+During this phase, the BIOS sets up standardized interfaces (e.g. legacy BIOS interrupts or UEFI routines) that software that succeeds it (bootloader or operating system) will use to understand the computer's resources without needing special drivers for each different motherboard model.
+
+However, having the kernel directly deal with the interfaces installed by the BIOS unnecessarily increases complexity and maintenance effort.
+This is where the bootloader comes in.
+After its initial routines, BIOS looks for bootable devices, such as a Hard Disk.
+If it finds one that has a valid (P)MBR or GPT partitioning scheme with a boot partition, the control is passed to the bootloader.
+This will then load the OS kernel into memory either by using the interfaces offered by the BIOS or its own drivers, and transfer control to it.
+
+There are multiple boot protocols, some already supported by Unikraft.
+Nonetheless, there is still room to add other boot protocols, such as Multiboot2, which is the focus of this project.
+
+Multiboot2, an enhanced version of Multiboot, solves some of the limitations of the original protocol, such as the lack of support for 64-bit UEFI systems.
+It also provides a more accurate and detailed communication during the bootstrapping process and offers a standardized tag system for easier configuration.
+For instance, the Command Line Tag retrieves boot parameters essential for configuring the kernel, while the Memory Map Tag provides a memory map crucial for managing physical memory.
+Additionally, the ELF Sections Tag delivers information about ELF sections, aiding in the proper handling of executable formats.
+By leveraging these tags and the others Multiboot2 offers, we can ensure that the kernel has access to all the necessary information right from the boot process, which simplifies kernel initialization and enhances compatibility and flexibility.
+
+### About Me
+
+My name is [Maria Pană](https://github.com/mariapana) and I am wrapping up my second year of studies at [University POLITEHNICA of Bucharest](https://upb.ro/en/).
+I am passionate about operating systems and low-level programming, which makes me thrilled to be part of the Unikraft community and work on this project during GSoC'24!
+
+### Progress
+
+Making changes or improvements to software generally involves three phases: understanding the existing code, making the necessary changes, and testing the new code.
+This week I focused on the first phase, by revisting the [GNU Multiboot2 specification](https://www.gnu.org/software/grub/manual/multiboot2/multiboot.html) and the notes I made prior to applying to GSoC.
+I also took a look at a previous attempt to integrate Multiboot2 in Unikraft and compared it to the original specification.
+
+Following the advice of my mentors, I then learned how to build GRUB and Multiboot2 images, and built GRUB from source.
+This helped me understand the process of creating a bootable image for a custom kernel and, by attaching GDB to the built GRUB, I prepared my "weapon" for future debugging sessions.
+
+Using the insight gained from these activities, I took a look at Unikraft's `mkukimg` script for creating bootable images, which will need updating to support Multiboot2.
+
+Lastly, I researched Unikraft's current Multiboot implementation, as well as how other projects handled Multiboot2 integration ([GRUB2](https://github.com/coreos/grub/tree/2.02-coreos/grub-core/loader), [ACRN Hypervisor](https://github.com/projectacrn/acrn-hypervisor/tree/53825c5cac898f682994d53d6ad0944c87fed6d6/hypervisor/boot)) to gain a wider perspective on the overall flow of the process moving forward.
+
+### Next Steps
+
+Up next, I aim to get started on the actual implementation of Multiboot2 in Unikraft by adding the standard structures and files needed for the protocol.
+Afterwards, I will continue with the necessary changes to the current codebase to ensure a smooth integration into Unikraft's booting process over the next few weeks of GSoC.
