@@ -1,0 +1,128 @@
+---
+title: "Multiboot2 Support in Unikraft"
+description: |
+  In my previous blog post, I focused on the first steps of the project: understanding the Multiboot2 protocol and preparing the development environment. Over the following three weeks, I progressed to implementing the necessary changes/additions and then testing the code.
+publishedDate: 2024-07-10
+tags:
+- gsoc
+- gsoc24
+- multiboot2
+- booting
+authors:
+- Maria Pana
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+In my [previous blog post](https://unikraft.org/blog/2024-06-17-gsoc-multiboot2), I outlined a general strategy for software enhancement, focusing on the first steps of the project: understanding the Multiboot2 protocol and preparing the development environment.
+Naturally, over the following three weeks, I progressed to the next stages: implementing the necessary changes/additions and then testing the code.
+
+## Structuring for Seamless Integration
+
+In order to have Multiboot2 integrated in Unikraft, I mirrored the existing file organization established for Multiboot and extended it to accommodate the new protocol.
+Three core files handle the protocol itself, while the rest of the codebase is updated around them to ensure proper integration and functionality.
+Let's take a closer look:
+
+### `multiboot.S`
+
+This assembly file plays a pivotal role in preparing a standardized operating environment.
+It verifies the system is booted through a compliant Multiboot/Multiboot2 bootloader and manages essential memory relocations.
+In this context, the only modifications required were replacing `multiboot.h` and `MULTIBOOT_BOOTLOADER_MAGIC` with their Multiboot2 counterparts, featured depending on the chosen configurations.
+
+### `multiboot2.py`
+
+The Python script generates and adds the Multiboot2 and updated ELF headers to the original ELF file.
+This ensures that the bootloader information is strategically positioned at the start, facilitating correct system initialization.
+Since the Multiboot protocol is limited to 32-bit systems, the `multiboot.py` script also required transforming 64-bit ELFs into 32-bit ones.
+This is no longer the case when it comes to Multiboot2, only needing to incorporate the Multiboot2 and updated ELF headers into the file, without any other alterations.
+
+### `multiboot2.c`
+
+This C program is responsible for processing boot information from a Multiboot2-compliant bootloader.
+It meticulously manages memory regions, integrates boot parameters, and prepares the system for kernel execution by consolidating memory configurations and allocating essential resources.
+
+Alongside these core files, I made adjustments to adjacent files to seamlessly link everything together and ensure successful booting under Multiboot2 (e.g. duplicating the `mkukimg` script's menuentry to use `multiboot2` instead of `multiboot` etc.).
+
+## Testing the Waters: Progress and Challenges
+
+My initial focus was to lay the groundwork by creating the `multiboot.S` and `multiboot2.py` files and testing them with the simple `helloworld` application.
+This allowed me to verify that the Multiboot2 header was inserted correctly and the system could boot without major hiccups.
+
+Of course, debugging became my constant companion during this process.
+Tools like `hexdump` and attaching `gdb` to my custom GRUB build proved invaluable.
+
+I encountered an initial hurdle regarding the ELF file.
+After playing around with GRUB error messages and making a "comparative study" of the binaries with Multiboot, Multiboot2, or no additional header, I realized the ELF was lacking the Multiboot2 header altogether.
+Some detective work later, I traced the issue to an unlinked `multiboot2.py` script.
+
+## Multiboot2 Header: A Deep Dive
+
+So far, I really emphasized the need of the Multiboot2 header.
+But what is its role?
+
+The Multiboot2 header is a structured data block embedded within the bootable system image.
+Its purpose is to facilitate the transition of control and information from the bootloader to the kernel during the boot process.
+This header acts as a standardized communication channel, ensuring the kernel can access essential details about the system's hardware, memory layout, and other boot-related parameters.
+
+### Format and Contents
+
+The Multiboot2 header follows a specific format, starting with a fixed-size header followed by a series of variable-length tags.
+
+The fixed-size header includes:
+
+- The magic number `0xE85250D6` indicating a Multiboot2-compliant image
+- The target architecture  (e.g. `i386`, `x86_64`)
+- The header length, including all tags
+- The checksum of the header, used for error detection
+
+I talked a little about the tags in my previous blog post, but to recap, they provide detailed information about the system's memory layout, boot command line, and other essential parameters.
+Commonly, each tag has a type, size and payload.
+There is a multitude of tags to choose from, depending on the specific requirements of the system, adding to the flexibility of Multiboot2.
+
+In the context of this project, it may be valuable to note that simply adding the Multiboot2 header to the ELF file is not sufficient.
+On top of that, both `multiboot.py` and `multiboot2.py` scripts add an extra ELF header with updated offsets, "sandwiching" the Multiboot2 header between it and the original ELF.
+To better visualize this, we can refer to the following diagram:
+
+```text
+          ┌────────────────────┐
+  ┌───────│ Updated EHDR       |─────────────┐
+  |       ├────────────────────┤             |
+  └──────>| Updated PHDR       |             |
+          ├────────────────────┤             |
+          | MB2HDR             |             |
+          ├────────────────────┤             |  
+  ┌───────| Original EHDR      |────────┐    |
+  |       ├────────────────────┤        |    |
+  └──────>| Original PHDR      |        |    |
+          ├────────────────────┤        |    |
+          | Original SHDR      |<───────┘    |
+          ├────────────────────┤             |
+          | ...                |             |
+          ├────────────────────┤             |
+          | Updated SHDR       |<────────────┘
+          └────────────────────┘
+```
+
+This ensures that GRUB identifies the overall file as an ELF and avoids any potential complications along the way.
+
+### Interaction between Bootloader and Kernel
+
+The bootloader locates the Multiboot2 header within the ELF file.
+After verifying the magic number and architecture compatibility, it parses the header and tags.
+Next, the information requested by the tags is placed into the kernel memory and the bootloader passes control to the kernel.
+
+The kernel, in turn, accesses the Multiboot2 header using the information provided by the bootloader.
+It iterates through the tags to extract the necessary data, such as memory regions, boot command line, and other parameters.
+This information is used to initialize its own data structures, set up memory management, and configure the system for execution.
+
+## Next Steps
+
+With the Multiboot2 header issue resolved, the ELF file is now generated correctly.
+However, the system still encounters a roadblock, getting stuck in what appears to be an infinite loop.
+More debugging using `gdb` for me it is!
+
+After I pinpoint and fix the problem, I will move on to:
+
+- Refactoring `multiboot2.py` to handle tag inclusion more generically
+- Implementing the `multiboot2.c` file
+- Testing the new modifications once again
