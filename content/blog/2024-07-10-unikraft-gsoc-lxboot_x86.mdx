@@ -1,0 +1,86 @@
+---
+title: "GSoC'24: Linux x86 Boot Protocol Support"
+description: |
+  The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.
+publishedDate: 2024-07-10
+image: /images/unikraft-gsoc24.png
+tags:
+- gsoc
+- gsoc24
+- booting
+authors:
+- Mihnea Firoiu
+---
+
+As I wrote in the previous blog post, my first objective is to make Unikraft boot on QEMU using the Linux x86 boot protocol.
+Here I will present my progress so far and different challenges I faced while working towards my goal.
+
+## Where does QEMU handle the lxboot header?
+
+By using the `git grep` command, I found that `QEMU 9.0.1` handles the Linux x86 boot protocol in the [x86.c](https://github.com/qemu/qemu/blob/stable-9.0/hw/i386/x86.c) file.
+Everything happens in the `x86_load_linux` function.
+
+### Fields used by QEMU
+
+These are as follows:
+
+* 0x202: HEADER
+* 0x206: VERSION
+* 0x211: LOADFLAGS
+* 0x236: XLOADFLAGS
+* 0x22c: INITRD_ADDR_MAX
+* 0x228: CMD_LINE_PTR
+* 0x1fa: VID_MODE
+* 0x210: TYPE_OF_LOADER
+* 0x224: HEAP_END_PTR
+* 0x1f1: SETUP_SECTS
+* 0x250: SETUP_DATA
+* 0x218: RAMDISK_IMAGE
+* 0x21c: RAMDISK_SIZE
+
+As you can see, only 13 out of 39 fields are used.
+Out of these, 6 are read by QEMU:
+
+* 0x202: HEADER
+* 0x206: VERSION
+* 0x211: LOADFLAGS
+* 0x236: XLOADFLAGS
+* 0x22c: INITRD_ADDR_MAX
+* 0x1f1: SETUP_SECTS
+
+And 7 are written by QEMU:
+
+* 0x228: CMD_LINE_PTR
+* 0x1fa: VID_MODE
+* 0x210: TYPE_OF_LOADER
+* 0x224: HEAP_END_PTR
+* 0x250: SETUP_DATA
+* 0x218: RAMDISK_IMAGE
+* 0x21c: RAMDISK_SIZE
+
+## Debugging and testing
+
+The application I am using to test the `mklinux_x86.py` file is [app-helloworld](https://github.com/unikraft/app-helloworld/tree/stable).
+By using multiple `printf` and `exit` calls inside the `x86_load_linux` function, I was able to determine the way QEMU uses the header.
+Another useful tool was `hexdump`,that was used to look at how my script builds the header.
+
+## Challenges
+
+For starters, I could not figure out why the header created by the script did not align to what QEMU expected.
+The problem was that the header, as presented in the documentation, starts at offset `0x1f1`, not `0x0`.
+To fix it I had to add 0x1f1 zeros.
+
+Another issue was with integrating it in Unikraft.
+Eventually I figured it out, with help from my mentors.
+
+## Integration with Unikraft
+
+Although debugging could be done only by running the `mklinux_x86.py` script and looking at the header, I wanted to test by integrating everything in Unikraft.
+For doing this I had to modify the following files: [Linker.uk](https://github.com/unikraft/unikraft/blob/staging/plat/kvm/Linker.uk), [Config.uk](https://github.com/unikraft/unikraft/blob/staging/plat/kvm/Config.uk) and [Makefile.rules](https://github.com/unikraft/unikraft/blob/staging/plat/common/Makefile.rules).
+
+## Next steps
+
+At the moment, when I try to run, it loops indefinitely.
+I have to debug and find out what does not work.
+
+Additionally I am going to look into SeaBIOS/qboot/GRUB2 to see how the jumping to the kernel happens and I will write the needed 16-bit and 32-bit assembly stubs.
