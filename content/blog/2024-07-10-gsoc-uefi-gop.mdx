@@ -1,0 +1,60 @@
+---
+title: "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part II"
+description: |
+  This is the second post in a series of posts where I talk about my progress with the project.
+publishedDate: 2024-07-10
+image: /images/unikraft-gsoc24.png
+authors:
+- Sriprad Potukuchi
+tags:
+- gsoc
+- gsoc24
+- uefi
+- booting
+---
+
+## Project Overview
+
+The widely available and standardized [UEFI Graphics Output Protocol](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-graphics-output-protocol) (GOP) interface is an excellent alternative to VGA or serial port consoles for printing logs to the screen.
+
+This project aims to implement a UEFI GOP based console.
+For more information, check out [Part I](https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop) of this series.
+
+## Progress
+
+- Using a placeholder [font](https://github.com/dhepper/font8x8), it is now possible to print null-terminated strings to the screens.
+  <Image
+        src="/images/uefi-gop-first-text-render.png"
+  />
+
+- It is also possible to scale the font in both the axes independently
+    - No scaling
+      <Image
+            src="/images/uefi-gop-scaled-text-1.png"
+      />
+    - Scaled Y-axis
+      <Image
+            src="/images/uefi-gop-scaled-text-2.png"
+      />
+
+- I've also implemented scrolling. When all the lines are filled and a new log needs to be printed, the current logs on the screen are scrolled up (using `memcpy`)
+  <Image
+        src="/images/uefi-gop-before-scrolling.png"
+  />
+  <Image
+        src="/images/uefi-gop-after-scrolling.png"
+  />
+
+Right now, scrolling moves all the framebuffer data in place.
+Reads and writes in framebuffer memory are slower because the video adapter actually syncs the framebuffer with the screen.
+This needs to be optimized!
+
+## Next Steps
+
+- Finalize a font!
+- Optimize scrolling (by maintaining an additional buffer)
+- Look into [this PR](https://github.com/unikraft/unikraft/pull/1464), which adds a generic console interface.
+
+## Acknowledgement
+
+I would like to thank all the great Unikraft folk for being a great community!
