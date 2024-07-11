@@ -307,6 +307,96 @@ See the system calls.
 Compare the system calls from the Unikraft-based run, with those from a native Linux run.
 They are identical, since the application is run unmodified on Linux and on Unikraft.
 
+### Session 05: Debugging
+
+Many times, when we try to port an application and to use it on top of Unikraft, we will run into issues, as we do when we use any other platform.
+Unikernels can seem harder to debug, since they function as virtual machines, but having the kernel code in the same address space as the application makes it easy to jump from the application code to the kernel code..
+In this sessions, we will look at different ways we can debug our Unikraft applications, from simple debug messages to using `gdb` to attach to the guest.
+
+#### Enable Debug Messages
+
+To enable debug messages, we will need to change the unikernel configuration, like we did in session 04.
+We will use the [`nginx`](https://unikraft.org/hackathons/usw24#nginx) application from the last session.
+
+First, let's enter the configuration menu using `make C=$(pwd)/.config.helloworld_qemu-x86_64 menuconfig`.
+There are multiple types of debugging messages we can enable.
+For now, let's go for the `strace`-like output.
+We do that by enabling `Library Configuration -> Syscall Shim -> Debugging -> strace-like messages`.
+After that, we can rebuild the application and run it, using the script from the last session.
+We should get an output similar to what `strace` will show on a usual linux setup:
+
+```text
+close(fd:7) = OK
+socketpair(0x1, 0x1, ...) = 0x0
+epoll_ctl(0x3, 0x1, ...) = 0x0
+close(fd:8) = OK
+epoll_wait(0x3, 0x1000158844, ...) = 0x1
+close(fd:7) = OK
+epoll_ctl(0x3, 0x1, ...) = 0x0
+gettimeofday(0x1000158980, 0x0, ...) = 0x0
+```
+
+This is very useful when the application requires certain files to be present in the filesystem, and we have no way of determining that at build time.
+If that is the case, we will likey see a message like:
+
+```text
+openat(AT_FDCWD, "/etc/localtime", O_RDONLY|O_CLOEXEC) = No such file or directory (-2)
+```
+
+If the application crashes after that, we can assume that the file is a requirement and we can add it to the filesystem, using the `Dockerfile`.
+If the application continues to run properly without that file, then most likely the file is not needed, it might be part of extra functionalities and we can choose if we want to add it or not.
+
+Another option is to enable all available debug messages.
+To do this, enable `Library Configuration -> ukdebug -> uk_printd`.
+This will show a lot of output, enabling debug messages globaly.
+
+You can toy around the configurations under `ukdebug` and see what they do and how they affect the printed messages.
+
+#### Using GDB
+
+Since we are running the applications using `qemu`, we can attach `gdb` and debug it like any other application.
+To do that, we need to update the run script accordingly.
+
+Let's start with the [`helloworld` application](https://unikraft.org/hackathons/usw24#session-04-binary-compatibility) that we used in the last session.
+The new run command will be:
+
+```console
+qemu-system-x86_64 -cpu max -nographic -kernel .unikraft/build/elfloader_qemu-x86_64 --append "/helloworld" -S -s
+```
+
+Notice the extra `-S -s` flags.
+The `-S` option will start the application in a paused state, while the `-s` will open a gdbserver on TCP port 1234.
+After that, we can open another terminal and run gdb:
+
+```console
+gdb --eval-command="target remote :1234" .unikraft/build/elfloader_qemu-x86_64.dbg
+```
+
+This will connect to the gdbserver, and we can go ahead and debug the application as usual.
+Notice that we used the `.unikraft/build/elfloader_qemu-x86_64.dbg`, with the extra `.dbg` when we started `gdb`.
+That is a non-stripped kernel image, that we can not run, but we will always use when debugging via gdb.
+When debugging, instead of the usual breakpoints, use `hb` (hardware breakpoints).
+
+#### `nginx` with `gdb`
+
+Follow the same steps on the `nginx` application.
+Attach gdb, toy around, place some breakpoints and see how the application flows.
+
+#### `redis`
+
+Follow the steps for debugging messages and gdb for [`redis`](https://github.com/unikraft/catalog/tree/main/library/redis/7.2).
+Use the `redis` setup from the last session.
+
+#### `hugo`
+
+Follow the steps for debugging messages and gdb for [`hugo`](https://github.com/unikraft/catalog/tree/main/library/hugo/0.122).
+Use the `hugo` setup from the last session.
+
+#### `node`
+
+Follow the steps for debugging messages and gdb for [`node`](https://github.com/unikraft/catalog/tree/main/library/node/21).
+Use the `node` setup from the last session.
+
 ### Session Recordings
 
 You can check the recordings of the initial presentations for each session on [YouTube](https://www.youtube.com/playlist?list=PL0ZXUYDfkQ61ezmByQNLlzJ8s_dkJmQ1S).
