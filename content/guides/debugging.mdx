@@ -82,7 +82,8 @@ TThe build system always creates two image files for each selected platform:
 * one that includes debugging information and symbols (`.dbg` file extension)
 * one that does not
 
-Before using GDB, go to the configuration menu under `Build Options` and select a `Debug information level` that is bigger than 0.
+Before using GDB, make sure compiler optimization is turned off: in the configuration menu, go to `Build Options` --> `Optimization level` and select `No optimizations`.
+Then, under `Build Options`, select a `Debug information level` that is bigger than 0.
 We recommend 3, the highest level.
 
 <Image
