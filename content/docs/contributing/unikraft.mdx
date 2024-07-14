@@ -51,13 +51,13 @@ In order to simplify reading and searching the patch history, please use the fol
 
 Where `[selector]` can be one of the following:
 
-| Selector    | Description                                                                                                                                                           |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `arch`      | Patch for the architecture code in `arch/`,  `[component]` is the architecture (e.g, `x86`) applies also for corresponding headers in `include/uk/arch/`.             |
-| `plat`      | Patch for one of the platform libraries in `plat/`, `[component]` is the platform (e.g, `linuxu`).  This applies also for corresponding headers in `include/uk/plat/` |
-| `include`   | Changes to general Unikraft headers (e.g. `include/`, `include/uk`).                                                                                                   |
-| `lib`       | Patch for one of the Unikraft base libraries (not external) in `lib/`, `[component]` is the library name without lib prefix (e.g, `fdt`).                             |
-| `build`     | Changes to build tool or generic configurations, `[component]` is optional.                                                                                         |
+| Selector    | Description                                                                                                                                                                  |
+|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `arch`      | Patch for the architecture code in `arch/`,  `[component]` is the architecture (e.g, `x86_64` or `arm64`) applies also for corresponding headers in `include/uk/arch/`.      |
+| `plat`      | Patch for one of the platform libraries in `plat/`, `[component]` is the platform (e.g, `qemu`, `firecracker` or `xen`).  This applies also for corresponding headers in `include/uk/plat/` |
+| `include`   | Changes to general Unikraft headers (e.g. `include/`, `include/uk`).                                                                                                         |
+| `lib`       | Patch for one of the Unikraft base libraries (not external) in `lib/`, `[component]` is the library name without lib prefix (e.g, `fdt`).                                    |
+| `build`     | Changes to build tool or generic configurations, `[component]` is optional.                                                                                                  |
 
 > Commit messages, along with all source files follow a 80-character rule.
 

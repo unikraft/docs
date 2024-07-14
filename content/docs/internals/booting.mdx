@@ -6,7 +6,7 @@ description: |
 
 ## Unikraft Boot Sequence
 
-The Unikraft boot sequence is dependent on the selected platform (linuxu, kvm, xen), but is very similar to how any other operating system would behave.
+The Unikraft boot sequence is dependent on the selected platform (`qemu`, `firecracker` or `xen`), but is very similar to how any other operating system would behave.
 
 In the case of the `KVM` platform, the booting process involves more steps.
 First, the image is loaded from the disk into memory and the program sections are defined (see `plat/kvm/x86/link64.lds.S`, as example for the x86 architecture).
