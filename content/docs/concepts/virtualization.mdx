@@ -61,17 +61,12 @@ ultimately guard access to them to prevent corruption or malicious attacks.
 
 ## Supported platforms
 
-Unikraft is usually run in 2 ways:
-
-* As a virtual machine, using [**QEMU-KVM**](/docs/operations/plats/kvm/) or
-  [**Xen**](/docs/operations/plats/xen/). It acts as an operating system, having
-  the responsibility to configure the hardware components that it needs (clocks,
-  additional processors, etc). This mode gives Unikraft direct and total control
-  over hardware components, allowing advanced functionalities.
-* As a [**linuxu**](/docs/operations/plats/linuxu/) build, in which it behaves
-  as a Linux user-space application. This severely limits its performance, as
-  everything Unikraft does must go through the Linux kernel, via system calls.
-  This mode should be used only for development and debugging.
+Unikraft can be run as a virtual machine, using **KVM** (with QEMU 
+or Firecracker as VMMs) or **Xen**.
+It acts as an operating system, having the responsibility to configure the 
+hardware components that it needs (clocks, additional processors, etc).
+This mode gives Unikraft direct and total control over hardware components, 
+allowing advanced functionalities.
 
 When Unikraft is running using **QEMU-KVM**, it can either be run on an emulated
 system or a (para)virtualized one. Technically, **KVM** means virtualization
