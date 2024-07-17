@@ -1,0 +1,146 @@
+---
+title: "GSoC'24: Testing the mimalloc Memory Allocator on Unikraft"
+description: |
+  Different applications have different memory usage patterns and perform better
+  when using dedicated memory allocators. Right now, the buddy allocator is the only
+  available memory allocator used in Unikraft, so this GSoC project aims to 
+  port more memory allocators to it, starting with mimalloc.
+publishedDate: 2024-07-12
+image: /images/unikraft-gsoc24.png
+authors:
+- Yang Hu
+tags:
+- gsoc
+- gsoc24
+- allocators
+- synchronization
+---
+
+## Project Overview
+
+### Memory allocation in Unikraft
+
+Memory allocators have a significant impact on application performance.
+[Research](https://dl.acm.org/doi/10.1145/378795.378821) have shown that programs can run as much as 60% faster just by switching to an appropriate memory allocator.
+Unikraft currently supports only one general-purpose memory allocator, the buddy allocator.
+This project aims to port [mimalloc](https://github.com/microsoft/mimalloc) (pronounced "me-malloc"), a high-performance general-purpose memory allocator developed by Microsoft, to Unikraft.
+This is the first step in a series of efforts to provide Unikraft users with more memory allocators to choose from to optimize the performance of their applications.
+
+### Objectives
+
+[Hugo Lefeuvre](https://github.com/hlef) has made an effort to port mimalloc to Unikraft back in 2020 (see [this repo](https://github.com/unikraft/lib-mimalloc)).
+However, as Unikraft has evolved significantly over the years, more work is needed to adapt the `lib-mimalloc` port to the latest Unikraft core.
+
+The steps of porting the memory allocators are as follows:
+
+1. Adapt the existing port, which uses `lib-newlib` and `lib-pthread-embedded` as the C library to use `lib-musl` instead
+1. Patch the existing port of mimalloc (v1.6.3) to adapt to the latest Unikraft's memory allocation interface
+1. Patch the latest mimalloc (v2.1.7) to the latest Unikraft version (v0.17.0)
+
+## Current Progress
+
+Last month, I successfully ported the mimalloc memory allocator to Unikraft, marked by a successful compilation of mimalloc `v1.6.3` against the latest Unikraft core (v0.17.0) with `lib-musl`.
+Following that, this month I am focused on stress-testing the `mimalloc` memory allocator to validate its usability and correctness.
+
+### Benchmark
+
+After porting was completed, I tested the allocator by running a few `malloc()` and `free()` calls in a single threaded `main()` function.
+
+That having no problem, I ported `cache-scratch`, a multi-threaded memory allocation benchmark, to Unikraft.
+This benchmarkthat exercises a heap's cache-locality and tests for [passive false sharing](https://psy-lob-saw.blogspot.com/2014/06/notes-on-false-sharing.html).
+It creates a number of worker threads that allocate a given-sized object, repeatedly write on it, then free it.
+An allocator that allows multiple threads to re-use the same small object (possibly all in one cache-line) will scale poorly, while an allocator like mimalloc, which gives each thread a private and page-aligned heap, will exhibit near-linear performance scaling.
+
+### Porting `cache-scratch`
+
+It is fairly intuitive to port the C program itself to Unikraft as the Musl library already provides most of what we need, including the `pthread` interface.
+It would be ideal if we could separate the helper functions from the main logic and build the benchmark as a library (as we do need to test the memory allocator against more benchmarks in the future), because then we could just build an all-in-one image and run a large number of tests with different benchmarks and different parameters using an automated script.
+However, I haven't figured out a good way to do it as [Unikraft's build system](https://unikraft.org/docs/internals/build-system#makefileuk) is quite complex.
+So for now, the benchmark is ported as [a single `main.c` file](https://gist.github.com/huyang531/28a31fc2d9f348fafb5b9d8e6c9493d5) that will run as an application.
+
+### Testing
+
+I ran the `cache-scratch` benchmark with `-nthreads 4 -iterations 1000 -objSize 8 -repititions 100000`.
+That is, we will create four worker threads, each iterating 1000 times the following operations:
+
+1. Allocate an 8-byte object
+1. Repeatedly scratch (write then read) the bytes in the object, one byte at a time, for 100,000 times
+
+When the main thread waits for the worker threads by calling `pthread_join()`, a general protection fault would occur:
+
+```console
+[   19.545757] dbg:  <init> {r:0x1f5634,f:0x11d40} [libmimalloc] <glue.c @  151> allocating 24 bytes from mimalloc
+[   19.560961] dbg:  <init> {r:0x1f5634,f:0x11d40} [libmimalloc] <glue.c @  151> allocating 24 bytes from mimalloc
+[   19.576167] CRIT: <init> {r:0x107d37,f:0x289f10} [libkvmplat] <traps.c @   84> Unhandled Trap 13 (general protection), error code=0x0
+[   19.593306] CRIT: <init> {r:0x106e82,f:0x289ef0} [libkvmplat] <trace.c @   41> RIP: 00000000001c2842 CS: 0008
+[   19.609267] CRIT: <init> {r:0x106ed7,f:0x289ef0} [libkvmplat] <trace.c @   42> RSP: 0000000000011d70 SS: 0010 EFLAGS: 00010246
+[   19.626078] CRIT: <init> {r:0x106f23,f:0x289ef0} [libkvmplat] <trace.c @   44> RAX: fffe796000000000 RBX: 0000000410450018 RCX: 0000000000000000
+[   19.643706] CRIT: <init> {r:0x106f6f,f:0x289ef0} [libkvmplat] <trace.c @   46> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[   19.661342] CRIT: <init> {r:0x106fbb,f:0x289ef0} [libkvmplat] <trace.c @   48> RBP: 0000000000011da0 R08: 00000000ffffffff R09: 0000000000000000
+[   19.678988] CRIT: <init> {r:0x107007,f:0x289ef0} [libkvmplat] <trace.c @   50> R10: 0000000000133c42 R11: 000000000000002d R12: 0000000000011df0
+[   19.696691] CRIT: <init> {r:0x107053,f:0x289ef0} [libkvmplat] <trace.c @   52> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[   19.714323] CRIT: <init> {r:0x107d8f,f:0x289f20} [libkvmplat] <traps.c @   90> Crashing
+```
+
+### Debugging
+
+A big portion of my work involves [debugging the unikernel](https://unikraft.org/guides/debugging).
+For instance, I used `addr2line` to reveal the above error:
+
+```console
+addr2line -e workdir/build/helloworld-pg_qemu-x86_64.dbg 00000000001c2842
+/home/huyang/code/gsoc/apps/helloworld-pg/workdir/build/libmusl/origin/musl-1.2.3//src/thread/pthread_join.c:16
+```
+
+Then I used GDB to probe deeper and confirm the error:
+
+```console
+(gdb) n
+16              while ((state = t->detach_state) && r != ETIMEDOUT && r != EINVAL) {
+(gdb) p t
+$1 = (pthread_t) 0xfffe796000000000
+(gdb) p t->detach_state
+Cannot access memory at address 0xfffe796000000038
+```
+
+This indicates that `t` is a corrupted pointer, and more investigation is needed to find out how memory was tampered.
+
+### Other work
+
+While testing the allocator, I noticed that sometimes the boot process gets stuck at this test:
+`posix_futex_testsuite->test_cmp_requeue_two_waiters_no_requeue`.
+Backtracing the call stack reviews that it happens because once one of the Waiter threads blocks at the `futex()` call, other threads (including the `init` thread, the other Waiter, and the Requeuer thread) will never be given a chance to run.
+Experiments show that it only happens when the QEMU virtual machine's memory size is smaller than a threshold (in my case, it is 427M), which is interesting because it isn't straightforward how the VM's memory size could impact the behaviour of the `futex()` system call.
+
+I also added tips about turning off compiler optimization for debugging [here](https://github.com/unikraft/docs/pull/442).
+
+## Next steps
+
+First, I will continue working on the `cache-scratch` benchmark:
+
+1. Debug `cache-scratch`: Figure out what went wrong in the multi-threaded test
+1. Run `cache-scratch` with different sets of arguments to validate the memory allocator under different conditions
+
+After that, I will test mimalloc with other more complicated benchmarks, which may include:
+
+- `threadtest`: tests general scalability of the allocator;
+Each thread repeatedly allocates a number of number of objects, does a fixed amount of computation, and then deletes its objects.
+- `linux-scalability`: a basic scalability test from Linux libc malloc testing, similar to `threadtest` except that there is no extra 'work' between allocations and frees so contention may be higher.
+- `cache-thrash`: tests for active false sharing
+- `larson`: simulates a server by having each thread allocate and deallocate objects and then transfer some objects to other threads to be freed
+- `phong` - a benchmark that randomly selects allocation sizes, and randomly chooses an allocated item to free
+
+Once fully tested, I will continue on with the work items outlined in [my previous post](https://unikraft.org/blog/2024-06-16-unikraft-gsoc-port-mimalloc-to-unikraft#next-steps).
+
+Meanwhlie, I will also try to debug the `test_cmp_requeue_two_waiters_no_requeue` to the best of my ability.
+
+## Acknowledgements
+
+Special thanks to Răzvan Vîrtan and Radu Nichita, my two amazing mentors, for their support along the way.
+I would also like to thank Răzvan Deaconescu, Hugo Lefeuvre, Ștefan Jumarea, Marco Schlumpp, Sergiu Moga, and the entire Unikraft community for all the work, discussions, and guidance which made this project possible.
+
+## About Me
+
+I'm [Yang Hu](https://linkedin.com/yanghuu531), a first year graduate student at the University of Toronto.
+I am enthusiastic about operating systems and building infrastructure software in general.
+In my free time, I really enjoy traveling and swimming.
