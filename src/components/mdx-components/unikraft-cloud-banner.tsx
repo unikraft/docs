@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Box, Heading, Flex, chakra } from '@chakra-ui/react';
-import { CompanyKraftCloud } from 'components/logos';
+import { CompanyUnikraftCloud } from 'components/logos';
 import { t } from 'utils/i18n';
 
-export const KraftCloudBanner = ({ title, url, children, ...rest }: {
+export const UnikraftCloudBanner = ({ title, url, children, ...rest }: {
   title: { string }
   url: { string }
   children: React.ReactNode
@@ -29,7 +29,7 @@ export const KraftCloudBanner = ({ title, url, children, ...rest }: {
         alignItems='start'
       >
         <Box maxW='200px' mt='1' mb='5' display='flex' alignItems={'center'}>
-          <CompanyKraftCloud width='100%' />
+          <CompanyUnikraftCloud width='100%' />
         </Box>
         <chakra.button
           width={{ base: '100%', md: 'auto' }}
@@ -39,7 +39,7 @@ export const KraftCloudBanner = ({ title, url, children, ...rest }: {
           justifyContent='center'
           display='inline-flex'
           alignItems='center'
-          href='https://kraft.cloud'
+          href='https://unikraft.cloud'
           rel='noopener'
           textDecoration={'none !important'}
           target='_blank'
@@ -55,14 +55,14 @@ export const KraftCloudBanner = ({ title, url, children, ...rest }: {
           transition='all 0.1s ease-in-out'
           _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'lg' }}
         >
-          {t('component.kraftcloud-strip.learn-more')}
+          {t('component.unikraft-cloud-strip.learn-more')}
         </chakra.button>
       </Flex>
       <Heading size='md' mt={0}>
-        {title || t('component.kraftcloud-strip.heading')}
+        {title || t('component.unikraft-cloud-strip.heading')}
       </Heading>
       <Box opacity={0.7} pt={3}>
-        {children || t('component.kraftcloud-strip.description')}
+        {children || t('component.unikraft-cloud-strip.description')}
       </Box>
     </Box>
   )

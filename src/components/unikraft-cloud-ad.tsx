@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Box, VStack, Heading, Flex, chakra } from '@chakra-ui/react';
-import { CompanyKraftCloud } from 'components/logos';
+import { CompanyUnikraftCloud } from 'components/logos';
 import { t } from 'utils/i18n';
 
-export const KraftCloudAd = () => {
+export const UnikraftCloudAd = () => {
   return (
     <VStack
       w='full'
@@ -25,14 +25,14 @@ export const KraftCloudAd = () => {
         w={'100%'}
       >
         <Box maxW='200px' mt='2' display='flex' alignItems={'center'}>
-          <CompanyKraftCloud width='100%' />
+          <CompanyUnikraftCloud width='100%' />
         </Box>
       </Flex>
       <Heading size='md'>
-        {t('component.kraftcloud-strip.heading')}
+        {t('component.unikraft-cloud-strip.heading')}
       </Heading>
       <Box opacity={0.7}>
-        {t('component.kraftcloud-strip.description')}
+        {t('component.unikraft-cloud-strip.description')}
       </Box>
       <chakra.button
         mt={{ base: '6', md: 0 }}
@@ -56,7 +56,7 @@ export const KraftCloudAd = () => {
         transition='all 0.1s ease-in-out'
         _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'lg' }}
       >
-        {t('component.kraftcloud-strip.learn-more')}
+        {t('component.unikraft-cloud-strip.learn-more')}
       </chakra.button>
     </VStack>
   )

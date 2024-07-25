@@ -33,7 +33,7 @@ import { relativeTimeFromDates } from 'utils/to-relative-time';
 import { IconType } from 'react-icons/lib'
 import { ReactElement } from 'react'
 import { DiscordCard } from 'components/discord-card'
-import { KraftCloudAd } from 'components/kraftcloud-ad'
+import { UnikraftCloudAd } from 'components/unikraft-cloud-ad'
 
 const BlogTags = (props: any) => {
   const { marginTop = 0, tags } = props
@@ -320,7 +320,7 @@ function Blogs() {
                   <GridItem area={'right'}>
                     <VStack w="xs" position={'sticky'} top={5} spacing={5}>
                       <DiscordCard />
-                      <KraftCloudAd />
+                      <UnikraftCloudAd />
                     </VStack>
                   </GridItem>
                 </Grid>

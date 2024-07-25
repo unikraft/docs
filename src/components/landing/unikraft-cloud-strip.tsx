@@ -6,11 +6,11 @@ import {
   BoxProps,
   chakra,
 } from '@chakra-ui/react';
-import { CompanyKraftCloud } from 'components/logos'
+import { CompanyUnikraftCloud } from 'components/logos'
 import Container from 'components/container'
 import { t } from 'utils/i18n'
 
-export function KraftCloudStrip(props: BoxProps) {
+export function UnikraftCloudStrip(props: BoxProps) {
   return (
     <Box
       {...props}
@@ -41,14 +41,14 @@ export function KraftCloudStrip(props: BoxProps) {
             }}
           >
             <Box maxW='md' mr='8' display='flex' alignItems={'center'}>
-              <CompanyKraftCloud width='100%' />
+              <CompanyUnikraftCloud width='100%' />
             </Box>
             <Box>
               <Heading size='md' lineHeight='1.2' mb={{ base: 4, sm: 1 }}>
-                {t('component.kraftcloud-strip.heading')}
+                {t('component.unikraft-cloud-strip.heading')}
               </Heading>
               <Text opacity={0.7}>
-                {t('component.kraftcloud-strip.description')}
+                {t('component.unikraft-cloud-strip.description')}
               </Text>
             </Box>
           </Flex>
@@ -60,7 +60,7 @@ export function KraftCloudStrip(props: BoxProps) {
             justifyContent='center'
             display='inline-flex'
             alignItems='center'
-            href='https://kraft.cloud'
+            href='https://unikraft.cloud'
             rel='noopener'
             target='_blank'
             fontWeight='bold'
@@ -74,7 +74,7 @@ export function KraftCloudStrip(props: BoxProps) {
             transition='all 0.1s ease-in-out'
             _hover={{ textDecoration: 'none', translateY: '-2px', shadow: 'lg' }}
           >
-            {t('component.kraftcloud-strip.learn-more')}
+            {t('component.unikraft-cloud-strip.learn-more')}
           </chakra.button>
         </Flex>
       </Container>

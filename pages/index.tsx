@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Footer } from 'components/footer'
 import LandingHero from 'components/landing-hero'
-import { KraftCloudStrip } from 'components/landing/kraftcloud-strip'
+import { UnikraftCloudStrip } from 'components/landing/unikraft-cloud-strip'
 import { BlueprintStrip } from 'components/landing/blueprint-strip'
 import { KraftKitStrip } from 'components/landing/kraftkit-strip'
 import { CatalogStrip } from 'components/landing/catalog-strip'
@@ -20,7 +20,7 @@ const HomePage = () => {
       />
       <Header />
       <LandingHero />
-      <KraftCloudStrip />
+      <UnikraftCloudStrip />
       <CatalogStrip />
       <BlueprintStrip />
       <KraftKitStrip />

@@ -11,7 +11,7 @@ export { default as CompanyNEC } from './company-nec.svg';
 export { default as CompanyOpensynergy } from './company-opensynergy.svg';
 export { default as CompanyOvhcloud } from './company-ovhcloud.svg';
 export { default as CompanyOvhcloudSm } from './company-ovhcloud-sm.svg';
-export { default as CompanyKraftCloud } from './company-kraftcloud.svg';
+export { default as CompanyUnikraftCloud } from './company-unikraft-cloud.svg';
 export { default as LinuxFoundation } from './linux-foundation.svg';
 export { default as PoweredByUnikraftInverse } from './powered-by-unikraft-inverse.svg';
 export { default as UnicoreProject } from './unicore-project.svg';
