@@ -1,0 +1,104 @@
+---
+title: "Multiboot2 Support in Unikraft"
+description: |
+  In this blog post, I go over the debugging process and the progress made in the implementation of Multiboot2 support these past three weeks of GSoC.
+publishedDate: 2024-08-01
+image: /images/unikraft-gsoc24.png
+tags:
+- gsoc
+- gsoc24
+- multiboot2
+- booting
+authors:
+- Maria Pana
+---
+
+Recalling my [previous blog post](https://unikraft.org/blog/2024-07-10-gsoc-multiboot2):
+
+> With the Multiboot2 header issue resolved, the ELF file is now generated correctly.
+
+Boy, was I wrong!
+The past three weeks have been a rollercoaster of debugging, testing, and more debugging.
+That being said, considerable progress has been made, which will be the focus of this update post.
+
+## The Debugging Chronicles
+
+In reviewing the issues with the infinite loop, I realized that the root cause was the omission of the end tag in the Multiboot2 header.
+Multiboot2 headers require a specific ending structure to signal the completion of the header sequence.
+Without this tag, the bootloader, GRUB in this case, continues to search for it indefinitely, leading to the infinite loop.
+Now that the issue was resolved, a new contender emerged: the "out of memory" error.
+Let the games begin!
+
+### The "Out of Memory" Error
+
+The "out of memory" error was a puzzling one.
+The first instinct was to increase the memory size, but no matter how much memory was allocated, the error persisted.
+This meant that either something was null or the area where the memory was being allocated was already populated due to possible fragmentation.
+
+Since the error was occuring in the [`grub_relocator_alloc_chunk_align`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/relocator.c#L1371) function, I decided to find its caller to reconstitute the flow and logic leading here.
+There were several difficulties with debugging this.
+
+Firstly, I was connected to a 64-bit `gdb` server, but the error was occurring in 32-bit mode so the registers were all messed up.
+To make life a bit easier, I ended up using `qemu-system-i386` instead of `qemu-system-x86_64`.
+Sure, I couldn't boot Unikraft like this, but I could at least debug the issue at hand.
+
+Additionally, I had no symbols.
+Therefore, I had to load them manually using `add-symbol-file` in `gdb` for each module I was interested in.
+
+It is important to mention what I mean by "module".
+GRUB has an interesting way of organizing its modules and object files.
+This might be misleading, since the extensions are `.mod` and `.module`.
+In short, `.mod` files are the final binary that will be loaded at boot time, while `.module`s are intermediate unstripped object files that contains symbol and debug information.
+For the purpose of debugging, I needed the `.module` files.
+
+Obviously, the first module I looked into was `relocator.module`.
+I then needed to determine the base address where I had added my breakpoint.
+The plan was to:
+
+- print the address of the function using [`__builtin_return_address(0)`](https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html#index-_005f_005fbuiltin_005freturn_005faddress)
+- object dump the module to find the offset of the function
+- get the base address by substracting the offset from the address
+
+Pretty straightforward, right?
+Normally, yes.
+But here?
+Well, not quite.
+After performing this process with the printed address, `gdb` was showing code from [`malloc_in_range`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/relocator.c#L416) instead of [`grub_relocator_alloc_chunk_align`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/relocator.c#L1371).
+Additionally, it did not match the assembly, which corresponded to the manual breakpoint I had added: a dummy volatile integer set to zero and an infinite loop waiting for a change in value (once in `gdb`, I set the register value to 1 to break the loop).
+
+```c
+volatile int dummy_var = 0;
+while (!dummy_var);
+```
+
+This was peculiar to say the least.
+So, without much hope of anything changing, I tried the address of the line I was currently on and, lo and behold, it worked!
+
+I could finally backtrace and see the flow of the code, which also solved the mystery of why the previous attempt failed in the first place.
+The address printed by [`__builtin_return_address(0)`](https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html#index-_005f_005fbuiltin_005freturn_005faddress) was that of a wrapper function which called [`grub_relocator_alloc_chunk_align`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/relocator.c#L1371).
+[`grub_relocator_alloc_chunk_align_safe`](https://elixir.bootlin.com/grub/grub-2.06/source/include/grub/relocator.h#L60) is defined in [`/include/grub/relocator.h`](https://elixir.bootlin.com/grub/grub-2.06/source/include/grub/relocator.h).
+Therefore, the printed address was correct, since I was in fact in the `_safe` counterpart.
+And normally, had it not been because of the definition in a header file, the address would have matched.
+But after the preprocessor replaced the call with the definition including [`grub_relocator_alloc_chunk_align`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/relocator.c#L1371), the address no longer matched.
+
+The backtrace also revealed the culprit for the "out of memory" error: the [`grub_relocator32_boot`](https://elixir.bootlin.com/grub/grub-2.06/source/grub-core/lib/i386/relocator.c#L75) function had been called earlier with a null relocator.
+To see when the relocator changed to null, I set a watchpoint, which quickly indicated the obstacle and allowed for an easy fix.
+
+Drumrolls, please!
+Ladies and gentlemen, we successfully booted into Unikraft! 🎉
+
+## Monkey see, Monkey do
+
+Now that GRUB collected the necessary information in the form of the `mbi`, it is time to pass it to Unikraft.
+This is done by calling the [`multiboot2_entry`](https://github.com/mariapana/unikraft/blob/multiboot2/plat/kvm/x86/multiboot2.c#L162) function, which is defined in `multiboot2.c`.
+
+The [`multiboot2_entry`](https://github.com/mariapana/unikraft/blob/multiboot2/plat/kvm/x86/multiboot2.c#L162) function is responsible for processing the Multiboot2 information and setting up the system for the kernel.
+This involves parsing the tags and setting up the memory regions, boot command line, and other essential parameters.
+
+The focus now shifts to implementing the `multiboot2.c` file and testing the new modifications.
+Considering Unikraft's ecosystem, the function handles three tags: `MULTIBOOT_TAG_TYPE_CMDLINE`, `MULTIBOOT_TAG_TYPE_MODULE` (mainly for `initrd`), and `MULTIBOOT_TAG_TYPE_MMAP`.
+
+## Next Steps
+
+Now being able to boot into Unikraft, I aim to refine how each scenario for the tags is implemented in order to have a functional `helloworld` application.
+Until then, stay tuned for the next update!
