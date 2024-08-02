@@ -1,0 +1,106 @@
+---
+title: "GSoC'24: Linux x86 Boot Protocol Support"
+description: |
+  The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.
+publishedDate: 2024-08-02
+image: /images/unikraft-gsoc24.png
+tags:
+- gsoc
+- gsoc24
+- booting
+authors:
+- Mihnea Firoiu
+---
+
+## Setup in Unikraft
+
+First of all, I added the following lines to the [lxboot.S](https://github.com/unikraft/unikraft/releases/tag/RELEASE-0.17.0) file from Unikraft:
+
+```diff
+diff --git a/plat/kvm/x86/lxboot.S b/plat/kvm/x86/lxboot.S
+index 0ebe18a5..8140804f 100644
+--- a/plat/kvm/x86/lxboot.S
++++ b/plat/kvm/x86/lxboot.S
+@@ -21,6 +21,13 @@ lcpu_boot_startup_args:
+        .quad   0
+        .quad   0
+ 
++.code32
++.section .text.32.boot
++ENTRY(_lxboot_entry32)
++    cli
++    hlt
++END(_lxboot_entry32)
++
+ /**
+  * 64-bit Linux Boot Protocol entry function
+  *
+```
+
+This way, if my header is correct and I do indeed reach Unikraft, the guest should hang.
+
+## Starting to debug
+
+There are 2 binary files that are of interest here: `linuxboot.bin` and `linuxboot_dma.bin`.
+The `linuxboot.bin` file is optained by compiling [linuxboot.S](https://github.com/qemu/qemu/blob/stable-9.0/pc-bios/optionrom/linuxboot.S) and the `linuxboot_dma.bin` file is optained by compiling [linuxboot_dma.c](https://github.com/qemu/qemu/blob/stable-9.0/pc-bios/optionrom/linuxboot_dma.c).
+As you can see, one is written in x86 AT&T assembly and the other is written in C, by using inline assembly.
+Naturally, the one written in C would be easier to debug, and luckily, it seems like I do no need the other one.
+
+By adding in [linuxboot.S](https://github.com/qemu/qemu/blob/stable-9.0/pc-bios/optionrom/linuxboot.S) the following code, the QEMU instance should stay in a loop:
+
+```diff
+diff --git a/pc-bios/optionrom/linuxboot.S b/pc-bios/optionrom/linuxboot.S
+index ba821ab922..26df825db8 100644
+--- a/pc-bios/optionrom/linuxboot.S
++++ b/pc-bios/optionrom/linuxboot.S
+@@ -30,6 +30,8 @@ run_linuxboot:
+ 
+     cli
+     cld
++0:
++    jmp        0b
+ 
+     jmp        copy_kernel
+ boot_kernel:
+
+```
+
+I observed that nothing changes in its behaviour, so I added the following lines in [linuxboot_dma.c](https://github.com/qemu/qemu/blob/stable-9.0/pc-bios/optionrom/linuxboot_dma.c):
+
+```diff
+diff --git a/pc-bios/optionrom/linuxboot_dma.c b/pc-bios/optionrom/linuxboot_dma.c
+index cbcf6679d9..4f12fe359e 100644
+--- a/pc-bios/optionrom/linuxboot_dma.c
++++ b/pc-bios/optionrom/linuxboot_dma.c
+@@ -55,6 +55,8 @@ asm(
+ "_bev:\n"
+ "   cli\n"
+ "   cld\n"
++"some_label:\n"
++"   jmp some_label\n"
+ "   jmp load_kernel\n"
+ );
+```
+
+This time the QEMU instance stayed in the loop, so everything was fine.
+Now, all I had to do was to change the `jmp` with two `nop` instructions in gdb and from there to start debugging.
+Sounds easy, right?
+
+## Unexpected challenges
+
+For some (at the time) unknown reason, when compiling the `.bin` files didn't update.
+Was it my fault?
+Did I have something wrong with my setup?
+
+After a lot of time, I figured out along with my mentors that I needed to have `gcc-multilib` instead of the one that I had previously.
+As different versions of gcc clash (installing one uninstalls the other), I had to replace it.
+
+I observed that there are 3 `linuxboot.bin` and 3 `linuxboot_dma.bin` in the filesystem.
+Only one of each was updated when compiling, and it wasn't the one that it searched for by default.
+Using `strace`, I figured out that QEMU looks for the `.bin` file in the directory from which the command runs.
+Because of this, I copied the `linuxboot_dma.bin` that was updated where I needed it.
+
+## Next steps
+
+I am going to look what and where the problem is inside the `linuxboot_dma.bin` file, using gdb.
+Everything took much more than I expected, so I have to do this now.
