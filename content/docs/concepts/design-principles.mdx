@@ -1,209 +1,207 @@
 ---
 title: Design Principles
 description: |
-  Unikraft is designed to highly modular, enabling the best-in-class performance
-  and security guarantees for your application.  To discover the right approach
-  and achieve these goals, understanding the limitations modern OSes was
-  necessary.
+  Unikraft is highly modular and provides best-in-class performance and
+  security guarantees for your application. To discover the right approach
+  and achieve these goals, understanding the limitations modern operating
+  systems was necessary.
 ---
 
-The problem we want to solve is to enable developers to create a specialized OS
-for every single application to ensure the best performance possible, security
-guarantees or desired target KPI.  The requirement of enabling such high
-modularity across multiple system boundaries has led to a number of key design
-decisions:
+We wanted to give developers the ability to create specialized operating systems
+(OS) for every application to ensure the best-possible performance, security
+guarantees, or desired target key performance indicator (KPI). The need to
+enable such high modularity across multiple system boundaries has led to some
+key design decisions:
 
-* **Single address space**: Target single application scenarios, with possibly
+- **Single address space**: Target single application scenarios with possibly
   different applications talking to each other through networked communications.
-
-* **Fully modular system**: All components, including operating system
-  primitives, drivers, platform code and libraries should be easy to add and
-  remove as needed; even APIs should be modular.
-
-* **Single protection level**: There should be no user-/kernel-space separation
-  to avoid costly processor mode switches. This does not preclude
-  compartmentalization (e.g., of micro-libraries), which can be achieved at
-  reasonable cost.
-
-* **Static linking**: Enable compiler features, e.g., Dead-Code Elimination and
-  Link-Time-Optimization (LTO), to automatically get rid of unneeded code.
-
-* **POSIX support**: In order to support existing or legacy
-  applications and programming languages while still allowing for
+- **Fully modular system**: Make all components, including OS primitives,
+  drivers, platform code, and libraries, easy to add or remove as required. Even
+  the APIs should have modularity.
+- **Single protection level**: Do away with user-/kernel-space separation to
+  avoid costly processor mode switches, while still allowing
+  compartmentalization (e.g., of micro-libraries) at a reasonable cost.
+- **Static linking**: Enable compiler features such as dead code elimination and
+  link time optimization (LTO) to automatically get rid of unneeded code.
+- **POSIX support**: Have POSIX support built-in to cater to existing or legacy
+  applications and programming languages, while still allowing for
   specialization under that API.
+- **Platform abstraction**: Effortlessly generate images for a variety of
+  hypervisors and virtual machine managers (VMMs).
 
-* **Platform abstraction**: Seamless generation of images for a range of
-  different hypervisors/VMMs.
+## Problems with Monolithic OSs
 
+To derive Unikraft's core design principles, it makes sense to analyze the
+features and (heavyweight) mechanisms of traditional OSs that do not fit in
+single application use cases:
 
-## Problems with Monolithic OSes
-
-To derive the core design principles of Unikraft, it is worth analyzing the
-features and (heavyweight) mechanisms of traditional OSes that are unnecessary
-or ill-suited to single application use cases:
-
-* Protection-domain switches between the application and the kernel might be
-  redundant in a virtualization context because isolation is ensured by the
-  hypervisor, and result in measurable performance degradation.
-
-* Multiple address spaces may be useless in a single application domain, but
-  removing such support in standard OSes requires a massive reimplementation
+- Protection-domain switches between the application and the kernel might be
+  redundant in a virtualization context because the hypervisor ensures isolation
+  and this could result in measurable performance degradation.
+- Multiple address spaces may be useless in a single application domain, but
+  removing such support in standard OSs requires a massive reimplementation
   effort.
-
-* For RPC-style server applications, threading is not needed, with a single,
-  run-to-completion event loop sufficing for high performance. This would remove
-  the need for a scheduler within the VM and its associated overheads, as well
-  as the mismatch between the guest and hypervisor schedulers.
-
-* For performance-oriented UDP-based apps, much of the OS networking stack is
-  useless: the app could simply use the driver API, much like DPDK-style
-  applications already do. There is currently no way to easily remove just the
-  network stack but not the entire network sub-system from standard OSes.
-
-* Direct access to NVMe storage from apps removes the need for file descriptors,
-  a VFS layer and a filesystem, but removing such support from existing OSes,
-  built around layers of the storage API, is very difficult.
-
-* Memory allocators have a large impact on application performance, and general
-  purpose allocators have been shown to be suboptimal for many apps. It would
-  therefore be ideal if each app could choose its own allocator; this is however
-  very difficult to do in today's operating systems because the allocators that
-  kernels use are baked in.
+- RPC-style server applications do not require threading as a single
+  run-to-completion event loop suffices for high performance. This removes the
+  need for a scheduler within the VM, its associated overheads, as well as the
+  mismatch between the guest and hypervisor schedulers.
+- Performance-oriented UDP-based applications utilise only a part of the OS
+  networking stack. They could simply use the driver API like any other
+  [DPDK][dpdk]-style application. At the time of writing, stardard OSs do not
+  provide a way to remove the network stack alone without removing the entire
+  network sub-system.
+- Direct access to NVMe storage from applications removes the need for file
+  descriptors, a virtual filesystem layer, and a filesystem. But removing such
+  support from existing OSs, built around layers of the storage API, is
+  challenging.
+- Memory allocators heavily impact application performance, and research has
+  demonstrated general-purpose allocators to be suboptimal for many
+  applications. Thus, ideally, an application should have the ability to choose
+  its own allocator. But this is challenging to do in today's OSs as the kernels
+  come with built-in allocators.
 
 This admittedly non-exhaustive list of application-specific optimizations
 implies that for each core functionality that a standard OS provides, there
-exists at least one or a few applications that do not need it. Removing such
+exist at least one or more applications that do not need it. Removing such
 functionality would reduce code size and resource usage but would often require
 an important re-engineering effort.
-
 
 ## Approaches to building a unikernel
 
 Given these design decisions, the question thus stems of how to implement such a
-system, either: by minimizing an existing general-purpose OS; by starting from
-an existing unikernel project; or, starting from scratch.  Existing work has
-taken three directions in tackling this problem.
+system. Existing work has taken three directions in tackling this problem:
 
+- Minimizing an existing general-purpose OS
+- Bypassing the OS
+- Starting from scratch
 
 ### Minimizing an existing general-purpose OS
 
-The first direction takes existing OSes and adds or removes functionality. Key
-examples add support for a single address space and remove protection domain
-crossings: [OSv](#) and [RUMP Kernel](#) which adopt parts of [the BSD
-kernel](#) and re-engineer it to work in a unikernel context. [Lupine Linux](#)
-relies on a minimal, specialized configuration of the Linux kernel with [Kernel
-Mode Linux (KML) patches](#).
+This approach takes existing OSs and adds or removes functionality. Key examples
+that add support for a single address space and remove protection domain
+crossings include:
 
-These approaches make application porting easy because they provide binary
-compatibility or POSIX compatibility, but the resulting kernel is monolithic.
+- [OSv][osv] and [rumpkernel][rump] which adopt parts of [the NetBSD
+  kernel][netbsd] and re-engineer it to work in a unikernel context.
+- [Lupine Linux][lupine] which relies on a minimal, specialized configuration of
+  the Linux kernel via the [Kernel Mode Linux (KML) patch][kml-patch].
 
-Existing monolithic OSes do have APIs for each component, but most APIs are
-quite rich as they have evolved organically, and component separation is often
-blurred to achieve performance (e.g., sendfile short circuits the networking and
-storage stacks).  The Linux kernel, for instance, [historically featured highly
-inter-dependent subsystems](https://dl.acm.org/doi/10.1145/302405.302691).
+These approaches ease application porting because they provide binary or POSIX
+compatibility but they result in a monolithic kernel.
+
+Existing monolithic OSs do have APIs for each component but these APIs have
+become quite rich as they have evolved organically. These OSs often blur
+component separation to achieve performance (e.g., [`sendfile`][sendfile] short
+circuits the networking and storage stacks). The Linux kernel, for instance, has
+[historically featured highly inter-dependent subsystems](https://dl.acm.org/doi/10.1145/302405.302691).
 
 To better quantify this API complexity, we analyzed dependencies between the
 main components of the Linux kernel. As a rough approximation, we used the
 subdirectories in the kernel source tree to identify (broad) components. [We
 used `cscope` to extract all function calls from the sources of all kernel
-components](https://github.com/unikraft/eurosys21-artifacts/tree/master/experiments/fig_01_linux-deps),
-and then for each call checked to see if the function is defined in the same
-component or a different one; in the latter case, we recorded a dependency.  We
-plot the dependency graph in Figure 1, the annotations on the edges show the
-number of dependencies between nodes.  This dense graph makes it obvious that
-removing or replacing any single component in the Linux kernel requires
-understanding and fixing all the dependencies of other components, a daunting
-task.
+components][linux-deps-exp]. For each function call, we checked if the function
+definition existed in the same component or a different one. In the latter case,
+we recorded a dependency. We plot the dependency graph in Figure 1 where the
+annotations on the edges show the number of dependencies between nodes. This
+dense graph makes it obvious that removing or replacing any single component in
+the Linux kernel requires understanding and fixing all the dependencies of other
+components, a daunting task indeed.
 
 <Image
   border
-  ratio={3/2}
+  ratio={3 / 2}
   maxW={'2xl'}
-  src="https://raw.githubusercontent.com/unikraft/eurosys21-artifacts/master/plots/fig_01_linux-deps.svg"
-  title="Figure 1"
-  description="Linux kernel components have strong inter-dependencies, making it
-               difficult to remove or replace them."
+  src='https://raw.githubusercontent.com/unikraft/eurosys21-artifacts/master/plots/fig_01_linux-deps.svg'
+  title='Figure 1'
+  description='Linux kernel components have strong inter-dependencies, making it
+               difficult to remove or replace them.'
 />
 
-While full modularization is difficult, modularizing certain parts of a
-monolithic kernel has been done succesfully by Rump. There, the NetBSD kernel
-was split into base layers (which must be used by all kernels), functions
-provided by the host (scheduling, memory allocation,etc) and so-called factions
-that can be run on their own (e.g.  network or filesystem support). Rump goes
-some way towards achieving our goals, however there are still many dependencies
-left which require that all kernels have the base and hypercall layers.
-Additionally, the dependencies on the host are limiting in the context of a VM,
-which is our target deployment.
+While full modularization is difficult, rumpkernel has modularized certain parts
+of a monolithic kernel. They split the NetBSD kernel into base layers (used by
+all kernels), functions provided by the host (scheduling, memory allocation,
+etc.), and independently executable "factions" (e.g., network or filesystem
+support). rumpkernel goes some way towards achieving our goals. Still, many
+dependencies remain that require the kernel to have the base and hypercall
+layers. In the context of a VM, which is our deployment target, this limits the
+extent of modularity that we can achieve.
 
+### Bypassing the OS
 
-### By-passing the OS
-
-The second direction is to bypass the OS altogether, mostly for I/O performance,
-while leaving the original stack in place -- wasting resources in the process.
-Even here, porting effort is required as apps must be coded against the new
-network ([DPDK](https://www.dpdk.org/),
-[Netmap](https://github.com/luigirizzo/netmap) or [Linux's `io_uring`
-subsystem](https://unixism.net/loti/what_is_io_uring.html)) or storage (SPDK)
-API.
-
+This involves bypassing the OS altogether, mostly for I/O performance, while
+leaving the original stack in place -- wasting resources in the process. Even
+this approach requires porting effort as applications must conform to the new
+network (DPDK, [netmap] or [Linux's `io_uring` subsystem][linux-io-uring]) or
+storage ([SPDK][spdk]) APIs.
 
 ### Starting from scratch
 
-The third direction is to add the required OS functionality from scratch for
-each target application, possibly by reusing code from existing operating
-systems. This is the approach taken by
-[ClickOS](https://github.com/sysml/clickos) to support [Click modular
-routers](https://github.com/kohler/click), [MirageOS](https://mirage.io/) to
-support OCaml applications, and [MiniCache](#) to implement a web cache, to name
-a few.  The resulting images are very lean, have great performance and have
-small boot times; the big problem is that the porting effort is huge, and that
-it has to be mostly repeated for every single application or language.
+In this approach, we add the required OS functionality for each target
+application from scratch, possibly reusing code from existing OSs. Many projects
+utilise this approach. For example, [ClickOS][clickos] uses it in their [modular
+routers][click-routers], [MirageOS][mirage-os] uses it to support OCaml
+applications, and [MiniCache][minicache] uses it for implementing a web cache.
+This results in lean and performant images that have small boot times. But, it
+demands huge porting efforts per application and repeating this for every
+application or language becomes problematic.
 
-In sum, starting from an existing project is suboptimal since none of the
-projects in the three directions mentioned were designed to support the key
-principles we have outlined. We opt for a clean-slate API design approach,
-though we do reuse components from existing works where relevant. Course
-borrowing parts of code from existing projects, where relevant, in order not to
-reinvent the wheel (eg x86_64 KVM boot).
+To summarize, starting from an existing project is suboptimal since none of the
+projects mentioned above conform to the key principles we have outlined. We opt
+for a clean-slate API design approach. Though, we do reuse components from
+existing works when relevant (e.g., x86_64 KVM boot).
 
-
-## Unikraft's approach
+## Our approach
 
 Unikraft consists of three basic components:
 
-* **Library Components.** Unikraft modules TODO, each of which provides some
-  piece of functionality. As is expected of a library, they are the core
-  building blocks of an application. Libraries can be arbitrarily small (e.g., a
-  small library providing a proof-of-concept scheduler) or as large as standard
-  libraries like libc. However, libraries in Unikraft often wrap pre-existing
-  libraries, such as openssl, and as such existing applications can still make
-  use of relevant, existing systems without having to re-work anything.
+- **Libraries**: Unikraft consists of multiple modules, called (micro)libraries.
+  They form the core building blocks of an application. They can be arbitrarily
+  small (e.g., a proof-of-concept scheduler) or as large as standard libraries
+  like `libc`. Still, libraries in Unikraft often wrap pre-existing libraries
+  like `openssl`. This enables existing applications to make use of relevant,
+  existing systems without having to re-work anything.
+- **Configuration**: Unikraft employs a configuration system inspired by Linux's
+  [KConfig][linux-kconfig]. It allows users to pick which libraries to include
+  in the builds and provides an interface to configure their options in a
+  hassle-free manner. Like KConfig, the menu keeps track of dependencies and
+  automatically selects them where applicable.
+- **Build tools**: At its core, Unikraft contains a suite of tools that aid in
+  the creation of the final unikernel image. This suite helps seamlessly build
+  and manage Unikraft, its components, configuration, and its execution. Based
+  on [GNU Make][gnu-make], it takes care of compiling and linking all the
+  relevant modules and producing images for the different platforms selected via
+  the configuration menu.
 
-* **Configuration.** Inspired by [Linux's KConfig
-  system](https://www.kernel.org/doc/html/next/kbuild/kconfig-language.html),
-  Unikraft uses this approach to quickly and easily allow users to pick and
-  choose which libraries to include in the build process, as well as to
-  configure options for each of them, where available. Like KConfig, the menu
-  keeps track of dependencies and automatically selects them where applicable.
-
-* **Build Tools.** To seamlessly build and manage Unikraft, its components,
-  configuration and its execution is a suite of tools ... core of Unikraft is a
-  suite of tools which aid in the creation of the final unikernel image.  Based
-  on [GNU Make](https://www.gnu.org/software/make/), it takes care of compiling
-  and linking all the relevant modules and of producing images for the different
-  platforms selected via the configuration menu.
-
-
-Unikraft libraries are grouped into two large groups: core (or internal)
-libraries, and external libraries. Core libraries generally provide
-functionality typically found in operating systems. Such libraries are grouped
-into categories such as memory allocators, schedulers, filesystems, network
-stacks and drivers, among others. Core libraries are part of the main Unikraft
-repo which also contains the build tool and configuration menu.
+Unikraft groups libraries into two classes: core (or internal) libraries and
+external libraries. Core libraries generally provide functionality typically
+found in operating systems. Such libraries fall into categories such as memory
+allocators, schedulers, filesystems, network stacks, and drivers, among others.
+The main Unikraft repository houses these libraries, alongwith the build tool
+and configuration.
 
 External libraries consist of existing code not specifically meant for Unikraft.
-This includes standard libraries such as libc or openssl, but also run-times
+This includes standard libraries such as `libc` or `openssl`, but also runtimes
 like Python.
 
-Whether core or external, from a user’s perspective these are indistinguishable: they simply show up as libraries in the menu.
+To the user, the distinction between core and external libraries is irrelevant
+as the configuration menu does not classify them.
+
+[osv]: https://osv.io/
+[rump]: https://wiki.netbsd.org/rumpkernel/
+[netbsd]: https://www.netbsd.org/docs/kernel/
+[lupine]: https://github.com/hckuo2/Lupine-Linux
+[kml-patch]: https://github.com/hckuo2/Lupine-Linux/blob/master/kml_4.0_001.diff
+[sendfile]: https://man7.org/linux/man-pages/man2/sendfile.2.html
+[dpdk]: https://www.dpdk.org/
+[netmap]: https://github.com/luigirizzo/netmap
+[linux-io-uring]: https://unixism.net/loti/what_is_io_uring.html
+[spdk]: https://spdk.io/doc/
+[linux-kconfig]:
+  https://www.kernel.org/doc/html/next/kbuild/kconfig-language.html
+[clickos]: https://github.com/sysml/clickos
+[click-routers]: https://github.com/kohler/click
+[mirage-os]: https://mirage.io/
+[minicache]: https://github.com/sysml/minicache
+[gnu-make]: https://www.gnu.org/software/make/
+[linux-deps-exp]:
+  https://github.com/unikraft/eurosys21-artifacts/tree/master/experiments/fig_01_linux-deps
