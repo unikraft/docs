@@ -82,7 +82,8 @@ TThe build system always creates two image files for each selected platform:
 * one that includes debugging information and symbols (`.dbg` file extension)
 * one that does not
 
-Before using GDB, go to the configuration menu under `Build Options` and select a `Debug information level` that is bigger than 0.
+Before using GDB, make sure compiler optimization is turned off: in the configuration menu, go to `Build Options` --> `Optimization level` and select `No optimizations`.
+Then, under `Build Options`, select a `Debug information level` that is bigger than 0.
 We recommend 3, the highest level.
 
 <Image
@@ -360,7 +361,7 @@ app-helloworld/
 
 For instructions on building `app-hellworld` using the manual method, see the [application README](https://github.com/unikraft/app-helloworld).
 
-#### Linuxu
+#### On Linuxu
 
 For the image for the **linuxu** platform we can use GDB directly with the binary already created because
 the resulting image is an actual Linux binary.
@@ -369,7 +370,7 @@ the resulting image is an actual Linux binary.
 gdb build/app-helloworld_linuxu-x86_64.dbg
 ```
 
-#### KVM
+#### On KVM
 
 To avoid using a command with a lot of parameters that you noticed above in the **KVM** section, we can use [the `qemu-guest` script](https://github.com/unikraft/unikraft/blob/staging/support/scripts/qemu-guest).
 
@@ -487,7 +488,7 @@ Follow these steps:
 
 1. Investigate memory addresses (using the `x` instruction - such as `x/s $rbp-0x120`), do instruction stepping (`stepi` or `nexti`), use breakpoints (`break *<address>`) and find out the secret.
 
-### 03.	 Bug or feature?
+### 03. Bug or Feature
 
 There are two kernel images located in the `03-bug-or-feature` folder.
 One of them is build for **Linuxu**, the other for **KVM**.
@@ -500,7 +501,7 @@ After you figure out what is happening with the **Linuxu** image, have a look at
 It was built from the code source, but when you will try to run it, you will not get a segmentation fault.
 Is this a bug or a feature?
 
-#### Support Instructions
+#### Support Instruction
 
 Use the `connect.sh` and `debug.sh` scripts located in the task directory for debugging a Unikraft instance.
 
@@ -543,7 +544,7 @@ Follow these steps:
 
 1. Deduce what the issue is.
 
-### 04. Nginx with or without main? That's the question
+### 04. Nginx with or without main - That's the question
 
 Let's try a new application based on networking, **Nginx**.
 
