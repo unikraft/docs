@@ -1,0 +1,98 @@
+---
+title: "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part III"
+description: |
+  This is the third post in a series of posts where I talk about my progress with the project.
+publishedDate: 2024-08-07
+image: /images/unikraft-gsoc24.png
+authors:
+- Sriprad Potukuchi
+tags:
+- gsoc
+- gsoc24
+- uefi
+- booting
+---
+
+## Project Overview
+
+The widely available and standardized [UEFI Graphics Output Protocol](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-graphics-output-protocol) (GOP) interface is an excellent alternative to VGA or serial port consoles for printing logs to the screen.
+
+This project aims to implement a UEFI GOP based console.
+For more information, check out [Part I](https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop) and [Part II](https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop) of this series.
+
+## Progress
+
+All the work referred to here can be found in [this draft PR](https://github.com/unikraft/unikraft/pull/1448).
+
+### Arbitrary fonts
+
+The driver can now work with any arbitrary bitmap font! The bitmap font array, along with the width and height of each character can be defined in `drivers/uktty/gop/font.c` as follows:
+
+```c
+__u8 char_width = 8;
+__u8 char_height = 16;
+
+__u8 font[256][16] = {
+    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, // control char
+    /* ... */
+    {0x00, 0x00, 0x7C, 0xC6, 0xC6, 0x0C, 0x18, 0x18, 0x18, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00, 0x00}, // question
+    {0x00, 0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xDE, 0xDE, 0xDE, 0xDC, 0xC0, 0x7C, 0x00, 0x00, 0x00, 0x00}, // at
+    {0x00, 0x00, 0x10, 0x38, 0x6C, 0xC6, 0xC6, 0xFE, 0xC6, 0xC6, 0xC6, 0xC6, 0x00, 0x00, 0x00, 0x00}, // A
+    {0x00, 0x00, 0xFC, 0x66, 0x66, 0x66, 0x7C, 0x66, 0x66, 0x66, 0x66, 0xFC, 0x00, 0x00, 0x00, 0x00}, // B
+    /* ... */
+    {0x00, 0x00, 0x00, 0x00, 0x10, 0x38, 0x6C, 0xC6, 0xC6, 0xC6, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00}, // char127
+};
+```
+
+The driver code in `drivers/uktty/gop/gop.c` externs these symbols and directly accesses them.
+
+```c
+/* Font metadata */
+extern __u8 char_width;
+extern __u8 char_height;
+extern __u8 font[256][16]; /* Default font */
+```
+
+### Generic console device interface
+
+A generic console device interface was proposed by [PR #1464](https://github.com/unikraft/unikraft/pull/1464) submitted by [thass0](https://github.com/thass0) on GitHub. This interface, exposed through a library called `ukconsole`, allows you to:
+
+- Register console devices, each of which uses its own underlying interfaces (serial, VGA, UEFI GOP etc).
+- Query registered console devices.
+- Write bytes to either or all registered console devices to print logs.
+- Read bytes from a given console device to take user input.
+
+All of my work has been rebased onto the work done in [PR #1464](https://github.com/unikraft/unikraft/pull/1464).
+The GOP driver has been modified into a console device that can now be registered to the `ukconsole` library.
+
+  <Image
+        src="/images/uefi-gop-with-ukconsole.png"
+        title="All kernel debug messages printed using the GOP console device, with a new 8x16 font!"
+  />
+
+This means that the kernel can be configured to transparently use this GOP console device without having to change any of the existing print statements!
+
+### Refactoring
+
+The code was moved to `drivers/uktty/gop/` from `plat/common/` which was a temporary location.
+This was done in order to integrate with `ukconsole`.
+
+In addition to this, the code underwent a substantial overhaul.
+It is now much cleaner!
+
+## Next Steps
+
+- Support for all ASCII codes (like `\a`, `\t` etc) must be added.
+
+- The logs are not colored!
+  The image above shows some weird characters being printed along with the actual logs.
+  
+  These are escape codes used to color the logs themselves, which must be interpreted as such and not actually printed onto the console.
+
+- The console device must be tested against all configuration options such as `CONFIG_LIBUKDEBUG_ANSI_COLOR`, which dictate some logging parameters.
+
+- The code must be brought to a mergeable state by adding license information, checking the formatting etc.
+
+## Acknowledgement
+
+I would once again like to thank all the great Unikraft folk for their continued support! This work would not have been possible without them :heart:
