@@ -65,15 +65,17 @@ $ make -C workdir/unikraft A=. L=workdir/libs/lib1:workdir/libs/lib2:workdir/lib
 The Unikraft build system provides a number of functions and macros to make it easier to write the `Makefile.uk` file.
 Also, ensure that all variables that you define begin with `APP[NAME]_` or `LIB[NAME]_` (e.g., `APPHELLOWORLD_`) so that they are properly namespaced.
 
-The first thing to do is to call [the Unikraft `addlib` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L195) to register the application with the system (note the letters `lib`: everything in Unikraft is ultimately a library).
+The first thing to do is to call the Unikraft `addlib` function to register the application with the system (note the letters `lib`: everything in Unikraft is ultimately a library).
 This function call will also populate `APPNAME_BASE` (containing the directory path to the application sources) and `APPNAME_BUILD` (containing the directory path to the application's build directory):
 
 ```Makefile
 $(eval $(call addlib,appname))
 ```
 
-where `name` would be replaced by your application's name.
-In case your main application code should be downloaded as an archive from a remote server, the next step is to set up a variable to point to a URL with the application sources (or objects, or pre-linked libraries, see further below), and to call [the Unikraft `fetch` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L456) to download and unpack those sources (`APPNAME_ORIGIN` is populated containing the directory path to the extracted files):
+where `name` would be replaced by your application's name. In case your main application code should be downloaded as an
+archive from a remote server, the next step is to set up a variable to point to a URL with the application sources (or
+objects, or pre-linked libraries, see further below), and to call the Unikraft `fetch` function to download and unpack
+those sources (`APPNAME_ORIGIN` is populated containing the directory path to the extracted files):
 
 ```Makefile
 APPNAME_ZIPNAME = myapp-v0.0.1
@@ -81,8 +83,8 @@ APPNAME_URL = http://app.org/$(APPNAME_ZIPNAME).zip
 $(eval $(call fetch,appname,$(APPNAME_URL)))
 ```
 
-Next we set up a call to [the Unikraft `patch` function](https://github.com/unikraft/unikraft/blob/staging/support/build/Makefile.rules#L360).
-Even if you don't have any patches yet, it's good to have this set up in case you need it later.
+Next we set up a call to the Unikraft `patch` function. Even if you don't have any patches yet, it's good
+to have this set up in case you need it later.
 
 ```Makefile
 APPNAME_PATCHDIR=$(APPNAME_BASE)/patches
@@ -142,7 +144,7 @@ With all of these in place, you can save `Makefile.uk`, and type `make`.
 Assuming that the chosen Unikraft libraries provide all of the support that your application needs, Unikraft should compile and link everything together, and output one image per target platform specified in the menu.
 
 In addition to all the functionality mentioned, applications might need to perform a number of additional tasks after the sources are downloaded and unpacked, but **before** the compilation takes place (e.g., run a configure script or a custom script that generates source code from source files).
-To support this, Unikraft provides the [`UK_PREPARE` variable](https://github.com/unikraft/unikraft/blob/staging/Makefile#L278), connected to the internal [`prepare` target](https://github.com/unikraft/unikraft/blob/staging/Makefile#L708), which you can set to a temporary marker file and from there to a target in your `Makefile.uk` file.
+To support this, Unikraft provides the `UK_PREPARE` variable, connected to the internal `prepare` target, which you can set to a temporary marker file and from there to a target in your `Makefile.uk` file.
 For example:
 
 ```Makefile

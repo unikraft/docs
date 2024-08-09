@@ -5,7 +5,7 @@ title: Syscall Shim Layer
 ## Unikraft Syscall Shim Layer
 
 The system call shim layer ([`lib/syscall_shim`](https://github.com/unikraft/unikraft/tree/staging/lib/syscall_shim)) provides Linux-style mappings of system call numbers to actual system call handler functions.
-You can implement a system call handler by using one of the defined macros ([`UK_SYSCALL_DEFINE`](https://github.com/unikraft/unikraft/blob/staging/lib/syscall_shim/include/uk/syscall.h#L199), [`UK_SYSCALL_R_DEFINE`](https://github.com/unikraft/unikraft/blob/staging/lib/syscall_shim/include/uk/syscall.h#L233)) and register the system call by adding it to `UK_PROVIDED_SYSCALLS-y` within your `Makefile.uk` file.
+You can implement a system call handler by using one of the defined macros (`UK_SYSCALL_DEFINE`, `UK_SYSCALL_R_DEFINE`) and register the system call by adding it to `UK_PROVIDED_SYSCALLS-y` within your `Makefile.uk` file.
 
 The `syscall shim layer` library supports two implementation variants for system call handlers:
 
