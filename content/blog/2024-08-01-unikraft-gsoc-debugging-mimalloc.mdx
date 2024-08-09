@@ -1,0 +1,134 @@
+---
+title: "GSoC'24: Debugging the Multithreaded Memory Allocation Interface"
+description: |
+  Different applications have different memory usage patterns and perform better
+  when using dedicated memory allocators. Right now, the buddy allocator is the only
+  available memory allocator used in Unikraft, so this GSoC project aims to 
+  port more memory allocators to it, starting with mimalloc.
+publishedDate: 2024-08-01
+image: /images/unikraft-gsoc24.png
+authors:
+- Yang Hu
+tags:
+- gsoc
+- gsoc24
+- allocators
+- synchronization
+---
+
+## Project Overview
+
+### Memory allocation in Unikraft
+
+Memory allocators have a significant impact on application performance.
+There have been some [research papers](https://dl.acm.org/doi/10.1145/378795.378821) which compared different memory allocators.
+According to their work, Switching to the appropiate memory allocator may improve the application performance by 60%.
+Unikraft currently supports only one general-purpose memory allocator, the buddy allocator.
+This project aims to port [mimalloc](https://github.com/microsoft/mimalloc) (pronounced "me-malloc"), a high-performance general-purpose memory allocator developed by Microsoft, to Unikraft.
+This is the first step in a series of efforts to provide Unikraft users with more memory allocators to choose from to enhance the performance of their applications.
+
+### Objectives
+
+[Hugo Lefeuvre](https://github.com/hlef) made an initial work to port mimalloc to Unikraft back in 2020 (see [this repo](https://github.com/unikraft/lib-mimalloc)).
+However, as Unikraft has evolved significantly over the years, more work has to be done in order to adapt the `lib-mimalloc` port to the latest Unikraft core.
+
+So far, I have successfully ported the mimalloc memory allocator to Unikraft, marked by a successful compilation of mimalloc `v1.6.3` against the latest Unikraft core (v0.17.0) with `lib-musl`.
+Now, I am focused on validating the functionality and benchmarking the performance of the allocator.
+The next step would be to port the latest mimalloc (v2.1.7) to the latest Unikraft version (v0.17.0).
+
+## Current Progress
+
+I have successfully ported the multithreaded `cache-scratch` stress test to Unikraft (as outlined in the [previous blog post](https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft)).
+For the past three weeks, I have been debugging it to get it running.
+
+### Debugging `pthread`
+
+The [first error we ran into](https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft#testing) was a memory corruption error with the `pthread` interface.
+Turns out, this was due to the lack of virtual memory support so it was easily solved by enabling the `ukvmem` library.
+> By the way, this is an error that would have never happened had I checked the return value of `pthread_create()` in the first place - lessons learned!
+
+### Debugging boot time virtual memory initialization
+
+There is a reason why we turned off virtual memory support when first porting the memory allocator.
+Unikraft's virtual memory interface requires the memory allocators to behave in certain ways that are not intrinsically supported by *mimalloc*.
+For example, this is what will happen when initializing the heap with virtual memory turned on:
+
+```c
+ /* In addition to paging, we have virtual address space management. We
+  * will thus also represent the heap as a dedicated VMA to enable
+  * on-demand paging for the heap. However, we have a chicken-egg
+  * problem here. This is because we need an allocator for allocating
+  * VMA objects but to do so, we need to create the heap VMA first.
+  * Theoretically, we could use a simple region allocator to bootstrap.
+  * But then, we would have to cope with VMA objects from different
+  * allocators. So instead, we just initialize a small heap using fixed
+  * mappings and then create the VMA on top. Afterwards, we add the
+  * remainder of the VMA to the allocator.
+  */
+```
+
+This is because Unikraft's Virtual Memory Areas (VMAs, described by `struct uk_vma`) are managed by a Virtual Address Space (VAS, described by `struct uk_vas`), which has one dedicated memory allocator assigned to it.
+So it would be impractical to allocate two VMAs under a same VAS using two different memory allocators.
+
+The code for this logic though, is customized for the buddy allocator:
+
+1. Initialize a physically-mapped small heap size of 16 pages
+1. Initialize the allocator based on this heap
+1. Initialize the VAS
+1. Map the rest of the heap as an anonymous VMA
+1. Call `uk_alloc_addmem()` to let the buddy allocator know that this anonymous region that is at its disposal
+
+This design accommodates the fact that the buddy allocator needs initial memory space to store its metadata and that it needs information about the total available memory for initializing its free lists.
+However, for *mimalloc*, we are not initializing the allocator per-se at this time because the Thread Local Storage (TLS) infrastructure that it needs is not yet ready.
+Instead, we initialize an internal *regions* allocator, and satisfy boot-time memory allocations using it until TLS is ready.
+It remains to be seen if this workaround is the best approach, though.
+> See [Hugo's thesis](https://os.itec.kit.edu/downloads/2020_BA_Lefeuvre_Toward_Specialization_of_Memory_Management_in_Unikernels.pdf) for more on this topic.
+
+Therefore, I have adapted the logic here to accommodate both allocators.
+
+### Debugging virtual memory interface
+
+Unikraft's current virtual memory interface is not without its flaws.
+I ran into multiple "Cannot handle read page fault" errors during boot time.
+
+```console
+[   11.290098] Info: <init> {r:0x175768,f:0x11e70} test: posix_futex_testsuite->test_wait_timeout
+[   11.304300] dbg:  <init> {r:0x130da1,f:0x11ba0} [libposix_futex] <futex.c @  283> (int) uk_syscall_r_futex((uint32_t *) 0x11e48, (int) 0x0, (uint32_t) 0xa, (const struct timespec *) 0x11e30, (uint32_t *) 0x0, (uint32_t) 0x0)
+[   11.326513] dbg:  <init> {r:0x13094b,f:0x11af0} [libposix_futex] <futex.c @  112> FUTEX_WAIT: Condition met (*uaddr == 10, uaddr: 0x11e48)
+[   11.342579] dbg:  <init> {r:0x1309ae,f:0x11af0} [libposix_futex] <futex.c @  124> FUTEX_WAIT: Wait 12326512446 nsec for wake-up
+[   11.358184] dbg:  <idle> {r:0x207f6f,f:0x119d0} [libcontext] <sysctx.c @   37> Sysctx 0x1000025fc8 GS_BASE register updated to 0x29e140 (before: 0x11bf0)
+[   11.375007] CRIT: <idle> {r:0x17dde9,f:0x28ce70} [libukvmem] <pagefault.c @   43> Cannot handle exec page fault at 0x0 (ec: 0x10): Bad address (14).
+[   11.392395] CRIT: <idle> {r:0x106f17,f:0x28cf00} [libkvmplat] <trace.c @   41> RIP: 0000000000000000 CS: 0008
+[   11.407999] CRIT: <idle> {r:0x106f6c,f:0x28cf00} [libkvmplat] <trace.c @   42> RSP: 000000100003afe8 SS: 0010 EFLAGS: 00010246
+[   11.424430] CRIT: <idle> {r:0x106fb8,f:0x28cf00} [libkvmplat] <trace.c @   44> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[   11.441611] CRIT: <idle> {r:0x107004,f:0x28cf00} [libkvmplat] <trace.c @   46> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+[   11.458821] CRIT: <idle> {r:0x107050,f:0x28cf00} [libkvmplat] <trace.c @   48> RBP: 0000000000011a70 R08: 0000000000000000 R09: 0000000000000000
+[   11.476011] CRIT: <idle> {r:0x10709c,f:0x28cf00} [libkvmplat] <trace.c @   50> R10: 0000000000000000 R11: 000000000000002d R12: 0000000000000000
+[   11.493210] CRIT: <idle> {r:0x1070e8,f:0x28cf00} [libkvmplat] <trace.c @   52> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[   11.510388] CRIT: <idle> {r:0x107240,f:0x28cf00} [libkvmplat] <trace.c @   86> base is 0x11a70 caller is 0x1732e6
+```
+
+After extensive debugging, I realized that this bug is not unique to the *mimalloc* port.
+I reproduced a similar error with the same library configurations on the buddy allocator as well and I have submitted [an issue](https://github.com/unikraft/unikraft/issues/1475) addressing this.
+More work needs to be done to fix the virtual memory infrastructure.
+
+## Next steps
+
+In order to resolve the abovementioned issues, I still have much to study about Unikraft's virtual memory management subsystem, its boot process, and how *mimalloc* works under the hood - and I will focus on just that in the following weeks.
+
+Hopefully, with those issues fixed, we could finally get the `cache-scratch` test running on multiple cores.
+Once that is done, I will get back on track with my "global" TODO list:
+
+1. Run more benchmarks on the current port to validate its correctness and performance (see more [here](https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft#next-steps))
+1. Port the latest version of mimalloc to Unikraft
+
+## Acknowledgements
+
+Special thanks to Răzvan Vîrtan and Radu Nichita, my two amazing mentors, for their support along the way.
+I would also like to thank Răzvan Deaconescu, Hugo Lefeuvre, Ștefan Jumarea, Marco Schlumpp, Sergiu Moga, and the entire Unikraft community for all the work, discussions, and guidance which made this project possible.
+
+## About Me
+
+I'm [Yang Hu](https://linkedin.com/yanghuu531), a first year graduate student at the University of Toronto.
+I am enthusiastic about operating systems and building infrastructure software in general.
+In my free time, I really enjoy traveling and swimming.
