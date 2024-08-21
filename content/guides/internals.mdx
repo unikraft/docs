@@ -156,6 +156,7 @@ The process should end with the following output:
   GZ      helloworld_qemu-x86_64.gz
 make[1]: Leaving directory '/home/X/workdir/helloworld/workdir/unikraft'
 ```
+
 Notice that each line in `make`'s output consists of an operation in the build process (i.e compiling, linking, symbol striping etc.) and a corresponding generated file.
 
 ### Running
@@ -205,19 +206,24 @@ When you exit the menu, you will most likely see this warning message:
 *** This is to ensure that the new setting is applied
 *** to every compilation unit.
 ```
+
 This is a very good recommandation and you'll use it a lot when configuring and building applications - so make sure to run
 
 ```console
 $ make properclean
 ```
 
-...followed by
+.
+.
+.followed by
 
 ```console
 $ make -j$(nproc)
 ```
 
-...to finally build an ARM64 unikernel.
+.
+.
+.to finally build an ARM64 unikernel.
 Since we are targeting a different architecture, we have to use QEMU to emulate an ARM64 CPU:
 
 ```console
@@ -244,6 +250,7 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 Hello world!
 Arguments:  "helloworld"
 ```
+
 ### Enabling kernel logs
 
 We will now try to further configure our `helloworld` application.
@@ -342,6 +349,7 @@ Arguments:  "build/helloworld_qemu-x86_64"
 ```
 
 You can notice that the debug logs prove to be quite useful: they include information such as timestamp, debugging level (warning, info, error etc.), internal library component (`libkvmpci`, `libukschedcoop` etc.) and the source file along with the line in it.
+
 ### Enabling tests
 
 As an exercise, try to enable the `uktest` internal library from the configuration menu.
