@@ -164,10 +164,19 @@ Notice that each line in `make`'s output consists of an operation in the build p
 Now that the unikernel image has been sucessfully generated, we can finally run it using the QEMU Virtual Machine Monitor:
 
 ```console
-$ qemu-system-x86_64 -kernel build/helloworld_qemu-x86_64 -nographic
+$ qemu-system-x86_64 -kernel workdir/build/helloworld_qemu-x86_64 -nographic -enable-kvm -cpu host
 ```
 
 The `-kernel` option is used for indicating the image to be booted by the machine, while the `-nographic` option is simply for using QEMU as a command-line program by redirecting all output to the terminal.
+
+Since [Unikraft v0.17.0 Calypso](https://github.com/unikraft/unikraft/releases/tag/RELEASE-0.17.0), random number generation is reliant on CPU support.
+This means that, when using QEMU, one of two options must be enabled:
+
+- You are using QEMU >= 8.0
+- You are using hardware acceleration, with KVM
+
+This is why we use `-enable-kvm` and `-cpu host` flags to explictly enable them.
+If you are running on other platforms, please remove them.
 
 ```console
 SeaBIOS (version Arch Linux 1.16.2-1-1)
@@ -223,7 +232,8 @@ $ make -j$(nproc)
 
 .
 .
-.to finally build an ARM64 unikernel.
+.
+to finally build an ARM64 unikernel.
 Since we are targeting a different architecture, we have to use QEMU to emulate an ARM64 CPU:
 
 ```console
