@@ -1,0 +1,67 @@
+---
+title: "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part IV"
+description: |
+  This is the fourth post in a series of posts where I talk about my progress with the project.
+publishedDate: 2024-08-22
+image: /images/unikraft-gsoc24.png
+authors:
+- Sriprad Potukuchi
+tags:
+- gsoc
+- gsoc24
+- uefi
+- booting
+---
+
+## Project Overview
+
+The widely available and standardized [UEFI Graphics Output Protocol](https://uefi.org/specs/UEFI/2.10/12_Protocols_Console_Support.html#efi-graphics-output-protocol) (GOP) interface is an excellent alternative to VGA or serial port consoles for printing logs to the screen.
+
+This project aims to implement a UEFI GOP based console.
+For more information, check out [Part I](https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop), [Part II](https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop) and [Part III](https://unikraft.org/blog/2024-08-07-gsoc-uefi-gop) of this series.
+
+## Progress
+
+All the work referred to here can be found in [this draft PR](https://github.com/unikraft/unikraft/pull/1448).
+
+## ASCII code support
+
+Added support for ASCII codes `\a`, `\b`, `\t`.
+
+## Colored output support
+
+Enabling the configuration option `CONFIG_LIBUKDEBUG_ANSI_COLOR` generates colored logs with the use of ANSI escape codes.
+These codes are now parsed and the logs are colored appropriately by the GOP console.
+All the new code has been pushed to the [draft PR](https://github.com/unikraft/unikraft/pull/1448)!
+
+  <Image
+        src="/images/uefi-gop-colored.png"
+        title="Parsing ANSI escape codes and coloring log output"
+  />
+
+ANSI escape codes control various paramters of text output such as foreground color, background color, formatting etc.
+
+These escape codes are prefixed with the escape character, which has the ASCII value `27` or `033` in octal or `0x1b` in hex.
+
+The format of ANSI color codes is `\033[<code>m`.
+There are many of these codes, but the focus of my implementation is on parsing just the color codes that the Unikraft kernel outputs in in logs when `CONFIG_LIBUKDEBUG_ANSI_COLOR` is on, which currently are:
+
+| Color Name | Foreground Color Code | Background Color Code |
+| :--------- | :-------------------- | :-------------------- |
+| Reset      | `0`                   | `0`                   |
+| Black      | `30`                  | `40`                  |
+| Red        | `31`                  | `41`                  |
+| Green      | `32`                  | `42`                  |
+| Yellow     | `33`                  | `43`                  |
+| Blue       | `34`                  | `44`                  |
+| Magenta    | `35`                  | `45`                  |
+| Cyan       | `36`                  | `46`                  |
+| White      | `37`                  | `47`                  |
+
+Full reference [here](https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797).
+
+For example, `\033[37m\033[44mHello World!` would print `Hello World!` in white on a blue background. The order in which the foreground and the background sequences are issued does not matter.
+
+## Acknowledgement
+
+I would once again like to thank all the great Unikraft folk for their continued support! This work would not have been possible without them :heart:
