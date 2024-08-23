@@ -1,0 +1,100 @@
+---
+title: "GSoC'24: Benchmarking mimalloc"
+description: |
+  Different applications have different memory usage patterns and perform better
+  when using dedicated memory allocators. Right now, the buddy allocator is the only
+  available memory allocator used in Unikraft, so this GSoC project aims to 
+  port more memory allocators to it, starting with mimalloc.
+publishedDate: 2024-08-22
+image: /images/unikraft-gsoc24.png
+authors:
+- Yang Hu
+tags:
+- gsoc
+- gsoc24
+- allocators
+- synchronization
+---
+
+## Project Overview
+
+### Memory allocation in Unikraft
+
+Memory allocators have a significant impact on application performance.
+There have been some [research papers](https://dl.acm.org/doi/10.1145/378795.378821) which compared different memory allocators.
+According to their work, Switching to the appropiate memory allocator may improve the application performance by 60%.
+Unikraft currently supports only one general-purpose memory allocator, the buddy allocator.
+This project aims to port [mimalloc](https://github.com/microsoft/mimalloc) (pronounced "me-malloc"), a high-performance general-purpose memory allocator developed by Microsoft, to Unikraft.
+This is the first step in a series of efforts to provide Unikraft users with more memory allocators to choose from to enhance the performance of their applications.
+
+### Objectives
+
+[Hugo Lefeuvre](https://github.com/hlef) made an initial work to port mimalloc to Unikraft back in 2020 (see [this repo](https://github.com/unikraft/lib-mimalloc)).
+However, as Unikraft has evolved significantly over the years, more work has to be done in order to adapt the `lib-mimalloc` port to the latest Unikraft core.
+
+So far, I have successfully ported the mimalloc memory allocator to Unikraft, marked by a successful compilation of mimalloc `v1.6.3` against the latest Unikraft core (v0.17.0) with `lib-musl`.
+Now, I am focused on validating the functionality and benchmarking the performance of the allocator.
+The next step would be to port the latest mimalloc (v2.1.7) to the latest Unikraft version (v0.17.0).
+
+## Current Progress
+
+These past three weeks, I have successfully ran the `cache-scratch` and `cache-thrash` benchmark using the *mimalloc* memory allocter, which uses MUSL's `pthread` interface for multithreading.
+
+### Debugging weird behaviours with multithreading
+
+It was not without a hassle to get `pthread` working.
+We had originally used [this test app](https://gist.github.com/mikesart/7c915b20df4af2cad7f0d0375be2d208) to test the creating and joining of threads.
+However, we quickly ran into a confusing bug during boot time:
+
+```console
+[    1.662513] CRIT: <init> [libposix_process] <clone.c @  445> Assertion failure: (*({ __uptr _curr_tlsp = ukplat_tlsp_get(); __sptr _offset; typeof(cl_uktls_magic) *_ref; do { if ((__builtin_expect((!!(!((child)->flags & (0x004)))), 0))) { do { if (((0
+```
+
+This assertion failure is telling us that our TLS memory region is not initialized properly, and thus the magic value does not equal what we should have set during initialization.
+I have tried to add break points and followed along the TLS initialization process during boot time, but did not find any significant defficiencies.
+It was after a four-hour long debug session with [@mogasergiu](https://github.com/mogasergiu) that we found out that for some unknown reason, the `cl_uktls_magic` value will be corrupted if we declare any TLS array greater than 15 bytes in size.
+We suspect that this is either an issue with the program linker - which should generate a variable offset for the TLS variables relative to the `fs` register at compile time - or with us that we simply did not initialize the `fs_base` register correctly.
+I have opened [an issue](https://github.com/unikraft/unikraft/issues/1478) addressing this.
+
+### Running `cache-scratch` and `cache-thrash`
+
+After resolving the above bug, we finally got `cache-scratch` (and its brother `cache-thrash`) up and running!
+This is one great milestone for the project as this is the first time we have gotten *mimalloc* to run in a multithreaded environment!
+Or, at least we think so.
+
+### Running *mimalloc* in an SMP environment
+
+After running the benchmarks under multiple configurations, we noticed that *mimalloc* did not perform significantly better than the existing *binary buddy* allocator.
+In fact, in many cases, its performance was even worse than its competitor.
+This is not an surprising result, though, because we are not running the virtual machine with SMP enabled, so *mimalloc* would have wasted much time on unnecessary synchronization.
+Therefore, to really benchmark the performance of *mimalloc* (and to justify Unikraft's potential for full SMP support), we need to get it running with real parallelism.
+
+Running *mimlloc* in a real SMP environment is not as easy as setting `CONFIG_UKPLAT_LCPU_MAXCOUNT` in Unikraft's configuration and specifying `-smp <N>` when launching QEMU.
+Some other considerations are:
+
+1. Unikraft's virtual memory interface (`ukvmem`) is not synchronized, so we have to initialize the entire memory region at boot time (as opposed to lazy-load them) to avoid concurrent page faults (note that Unikraft does not support swapping yet)
+1. Because *mimalloc* uses the `pthread` interface (specifically, `pthread_key_create` which is a synchronized call), we have to manually initialize a scheduler (the non-synchronous `ukschedcoop`) on each secondary CPU before we run any function that may yield to the scheduler on them.
+1. Do we need to access TLS variables on secondary CPUs?
+If so, we would also need to initialize the TLS memory region on them.
+
+If we zoom out a bit here, though, the main challenge becomes clear: how do we coordinate all of Unikraft's core components — some synchronized, some not - to work together in support an SMP application?
+Without a holistic view of how each part interacts with each other, in what order they are initialized, etc.,
+we will simply keep bumping into more and more chicken-egg problems and the like.
+
+## Next steps
+
+Next up, I will keep working on setting up *mimalloc* for an SMP environment.
+Once that is done, I will apply [this patch that synchronized the *buddy* allocator](https://github.com/unikraft/unikraft/pull/946/commits/ba6cb5dac2003812f972ef102a5c2bc935648fe3) and compare their performance on the benchmarks.
+In the future, I plan to port more sophisticated benchmarks to test the allocators, refine the port and Unikraft's synchronization support in general, and ultimately, have the *mimalloc* allocator run on a real industry-level application like Redis.
+Although my GSoC project is ending, the journey toward full synchronization support for Unikraft is far from over.
+
+## Acknowledgements
+
+This has been an incredibly fun (and challenging) summer project, and I am grateful to every one in the Unikraft community who made this project possible.
+Special thanks to Răzvan Vîrtan, Radu Nichita, Sergiu Moga, and Răzvan Deaconescu, for all your support along the way!
+
+## About Me
+
+I'm [Yang Hu](https://linkedin.com/yanghuu531), a first year graduate student at the University of Toronto.
+I am enthusiastic about operating systems and building infrastructure software in general.
+In my free time, I really enjoy traveling and swimming.
