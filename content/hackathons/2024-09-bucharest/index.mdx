@@ -1,0 +1,43 @@
+---
+title: Bucharest 2024
+description: OmniOpenCon Unikraft Workshop, September 27, 2024
+startDate: 2024-09-20
+registerForm: https://forms.gle/52NaFU2ftCzyKgz56
+image: /hackathons/omniopencon-cover.jpg
+slug: /hackathons/omniopencon
+---
+
+### Requirements
+
+Please bring your own laptop.
+It's best if you have a native Linux installed on your laptop.
+Otherwise, please install [this virtual machine](https://drive.google.com/file/d/16oBxfjFvu5mpf6DMb4-bsnyd5n2FqReo/view?usp=sharing).
+Use [VMware Workstation Player](https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html) or [VirtualBox](https://www.virtualbox.org/) or any other virtualization solution able to load an OVA image.
+
+For the virtual machine, login with username `unikraft` and password `unikraft`.
+Make sure you have a working networking connection inside the virtual machine.
+
+Either on your native Linux install, or on your virtual machine, install the basic set of tools detailed in [the "Overview" guide](/guides/overview#set-up).
+Also, please make sure you have [KraftKit](https://github.com/unikraft/kraftkit) installed on your system.
+Follow the instructions [here](https://unikraft.org/docs/getting-started#quick-start).
+
+### Deploying Cloud Applications using KraftCloud
+
+If you did not create an account already, signup [here](https://console.kraft.cloud/signup) and get a `token`.
+You will be using that in the following sessions.
+
+Once you have a token, follow the steps [here](http://docs.kraft.cloud/quickstart/) to deploy your first unikernel.
+If everything went well, deploy more applications following the tasks [here](https://docs.google.com/spreadsheets/d/1bK8Whm2bKy4mmtc5TFSq7KDW43kOAw-crXefIsw2X4I/edit?usp=sharing).
+
+### Using Docker and Docker-based Filesystems
+
+In order to bring your own application on KraftCloud, you need to build a minimal required filesystem.
+We do that using `docker`.
+This is useful both to understand what is happening behind the scenes and to have a test environment for your application.
+In case there are issues with KraftCloud / KraftKit, you can use Docker to see if everything is in the right place and to assist in debugging.
+
+Follow the steps [here](https://unikraft.org/docs/contributing/adding-to-the-app-catalog) (only the ones under `Redis`) to see how you can port a new application on top of Unikraft.
+Mark the items as completed [here](https://docs.google.com/spreadsheets/d/1bK8Whm2bKy4mmtc5TFSq7KDW43kOAw-crXefIsw2X4I/edit?usp=sharing).
+Go through them orderly and aim to complete all items until the `Extra` section.
+If you have extra time on your hands, go through the `Extra` section as well.
+If you have your own application that you want ot port, you can also do that.
