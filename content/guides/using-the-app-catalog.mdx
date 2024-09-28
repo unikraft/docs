@@ -248,12 +248,18 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 
    ```bash
    kraft net create -n 172.44.0.1/24 virbr0
+   or 
+   sudo kraft net create -n 172.44.0.1/24 virbr0
+
    ```
 
 1. Run as `root` (prefix with `sudo` if required):
 
    ```bash
    kraft run --network virbr0 .
+or 
+   sudo kraft run --network virbr0 .
+
    ```
 
 1. Query the unikernel instance:
