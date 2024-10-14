@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "scripts": {
     "dev": "next",
+    "postinstall":"npm run search-meta:gen",
     "build": "next build",
     "lint": "next lint",
     "prepare": "husky install",
