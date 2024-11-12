@@ -1,0 +1,118 @@
+---
+title: Vienna 2024
+slug: /hackathons/2024-12-vienna
+description: Vienna Unikraft Hackathon, December 7-8, 2024
+startDate: 2024-12-7
+registerForm: https://forms.gle/oZzjm4bNUsWaf9C97
+image: /hackathons/workshop-vienna24.png
+address:
+- SBA Research
+- Floragasse 7, 5th Floor, 1040
+- Vienna
+- Austria
+map: https://maps.app.goo.gl/RF4DM83zz9qrLMBk7
+---
+
+Unikraft and [SBA Research](https://www.sba-research.org/), together with [National University of Science and Technology POLITEHNICA of Bucharest (NUSTPB)](https://upb.ro/en/), come together to organize the **Vienna Unikraft Workshop** to be held on Saturday and Sunday, December 7-8, 2024.
+
+The workshop will take place as an in-person event at the [SBA Research](https://www.sba-research.org/about/contact/).
+The full address is [SBA Research, Floragasse 7, 5th Floor, 1040, Vienna, Austria](https://maps.app.goo.gl/RF4DM83zz9qrLMBk7).
+
+Support information and discussions will take place on [Discord](http://bit.ly/UnikraftDiscord), on the `#hack-vienna24` channel.
+
+### Registration
+
+To take part in the workshop please fill this [registration form](https://forms.gle/oZzjm4bNUsWaf9C97) by **Sunday, December 1, 2024, 11pm CEST**.
+
+### Requirements
+
+Please bring your own laptop.
+It's best if you have a native Linux installed on your laptop.
+Otherwise, please install [this virtual machine](https://drive.google.com/file/d/16oBxfjFvu5mpf6DMb4-bsnyd5n2FqReo/view?usp=sharing).
+Use [VMware Workstation Player](https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html) or [VirtualBox](https://www.virtualbox.org/) or any other virtualization solution able to load an OVA image.
+
+For the virtual machine, login with username `unikraft` and password `unikraft`.
+Make sure you have a working networking connection inside the virtual machine.
+
+Either on your native Linux install, or on your virtual machine, install the basic set of tools detailed in [the "Overview" guide](/guides/overview#set-up).
+Also, please make sure you have [KraftKit](https://github.com/unikraft/kraftkit) installed on your system.
+Follow the instructions [here](https://unikraft.org/docs/getting-started#quick-start).
+
+### People
+
+The hosts of the workshop are:
+
+* [Manuel Wiesinger](https://www.vusec.net/people/manuel-wiesinger/)
+* [Michael Pucher](https://www.sba-research.org/team/michael-pucher/)
+
+As part of the Unikraft community, [Răzvan Deaconescu](https://github.com/razvand) and [Ștefan Jumărea](https://github.com/StefanJum) will be on-site.
+
+### Schedule
+
+#### Saturday, December 7, 2024
+
+| Time (CEST)    | Session                                                                                              |
+| -------------  | -----------------------------------------------------------------------------------------------------|
+| 09:00-09:30    | Introduction to Unikernels and Cloud Computing                                                       |
+| 09:30-11:00    | Deploying Cloud Applications using KraftCloud                                                        |
+| 11:00-12:30    | Behind the Scenes: Using KraftKit to Operate Unikraft Applications                                   |
+| 12:30-14:00    | Lunch                                                                                                |
+| 14:00-15:00    | Using Docker and Docker-based Filesystems                                                            |
+| 15:00-16:00    | Debugging Unikraft / KraftCloud Applications                                                         |
+| 16:00-18:00    | Hackathon start: Announce Teams and Projects. Start Coding                                           |
+
+#### Sunday, December 8, 2024
+
+| Time (CEST)    | Session                                                                                              |
+| -------------  | -----------------------------------------------------------------------------------------------------|
+| 09:00-12:30    | Hackathon: Work on Project                                                                           |
+| 12:30-14:00    | Lunch                                                                                                |
+| 14:00-16:00    | Hackathon: Work on Project                                                                           |
+| 16:00-18:00    | Judging and Award Ceremony                                                                           |
+
+### Deploying Cloud Applications using KraftCloud
+
+If you did not create an account already, signup [here](https://console.kraft.cloud/signup) and get a `token`.
+You will be using that in the following sessions.
+
+Once you have a token, follow the steps [here](http://docs.kraft.cloud/quickstart/) to deploy your first unikernel.
+If everything went well, deploy more applications following the tasks [here](TODO).
+
+### Behind the Scenes: Using KraftKit to Operate Unikraft Applications
+
+In the previous session, you deployed application using KraftCloud.
+Now you will build and run Unikraft-based application locally.
+With this, you will get a better look at what `kraft cloud` does behind the scenes.
+
+Follow the steps [here](https://unikraft.org/guides/using-the-app-catalog) and bring the cloud to your machine.
+After you are done with all of them, take a look to some more applications, following the tasks [here](TODO).
+Go through them orderly and aim to complete all items until the `Extra` section.
+If you have extra time on your hands, go through the `Extra` section as well.
+
+### Using Docker and Docker-based Filesystems
+
+In order to bring your own application on KraftCloud, you need to build a minimal required filesystem.
+We do that using `docker`.
+This is useful both to understand what is happening behind the scenes and to have a test environment for your application.
+In case there are issues with KraftCloud / KraftKit, you can use Docker to see if everything is in the right place and to assist in debugging.
+
+Follow the steps [here](TODO) (only the ones under `Redis`) to see how you can port a new application on top of Unikraft.
+Mark the items as completed [here](TODO).
+Go through them orderly and aim to complete all items until the `Extra` section.
+If you have extra time on your hands, go through the `Extra` section as well.
+
+### Debugging Unikraft / KraftCloud Applications
+
+When porting new applications, you can run into issues both on the Docker build and on the Unikraft runtime.
+To debug the issues, you can follow the instructions [here](https://docs.kraft.cloud/guides/features/debugging/).
+Get a hands-on experience with debugging by following the items [here](TODO).
+
+### Hackathon
+
+For the hackathon, please create teams of 2-3 people, and create your very own cloud-native application to run on KraftCloud.
+Think of a cool application you've been waiting for a while to implement.
+Use your preferred programming language (supported by KraftCloud), employ any frameworks or existing software components as required, and then deploy it on KraftCloud.
+After you create a team and decide on a project, fill [this spreadsheet](TODO) with the team name, members and project idea.
+
+At the and of the hackathon, you should make a PR in the [KraftCloud `examples` repository](https://github.com/kraftcloud/examples) with your work.
+We will be evaluating the project, focusing on functionality, originality, robustness, complexity, code quality and team work.
