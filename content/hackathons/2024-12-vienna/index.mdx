@@ -108,6 +108,28 @@ When porting new applications, you can run into issues both on the Docker build 
 To debug the issues, you can follow the instructions [here](https://unikraft.cloud/docs/guides/features/debugging/).
 Get a hands-on experience with debugging by following the items [here](TODO).
 
+### First Principles Approach: Using Make and VMMs Directly
+
+Sometimes, if you want to go even further, you may need total control of the config, build or run steps.
+You may want to add certain steps to the building/linking of the application, use a very different running environment, etc.
+To do this, you can invoke the `make` command manually, and use `qemu` or `firecracker` to run the application.
+
+In order to simplify these steps, we created scripts that run the required commands.
+Follow the steps below to use the scripts.
+
+* Clone the [`catalog-core`](https://github.com/unikraft/catalog-core/) repository.
+* Move to the `scripts` branch (`git checkout scripts`).
+* Choose 3 applications from the ones available.
+* Enter the application directory (e.g. `cd c-hello/`).
+* Run the scripts, build and run each application, for multiple architectures/VMMs (e.g. run `./build.qemu.x86_64` and `./run.qemu.x86_64`, then `./build.qemu.arm64` and `./run.qemu.arm64`).
+
+You can find more instructions on using the scripts in the `README.scripts.md` file of each application directory.
+
+After doing that, it's time to run the commands one by one, without using the scripts.
+Switch bach to the `main` branch, enter the directories for the same applications you used before, and follow the instructions in the `REAMDE.md` file.
+You can find a summary of the commands in the `Quick Setup (aka TLDR)` section of the `README`.
+For every step, there is a section in the `README` file that goes into detail about the commands.
+
 ### Hackathon
 
 For the hackathon, please create teams of 2-3 people, and create your very own cloud-native application to run on Unikraft Cloud.
