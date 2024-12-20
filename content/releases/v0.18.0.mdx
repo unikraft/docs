@@ -1,0 +1,86 @@
+---
+version: 0.18.0
+releaseDate: 2024-12-21
+codename: Helene
+commit: 424eb3d920bfbe9ca0dc269750fba4a989ead184
+blogPost: /blog/2024-12-21-unikraft-releases-v0.18.0
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.17.0...RELEASE-0.18.0
+---
+
+We are proud to announce the latest version of Unikraft, `v0.18`!
+This release comes with plenty of new features and updates.
+
+Here is the full updates list:
+
+### 🚀 New Features
+
+* `lib/vfscore`: Support embedded initrd with custom compiled-in fstabs ([#1540](https://github.com/unikraft/unikraft/pull/1540)) by @skuenzer
+* `drivers/*`: Adopting serial driver configuration and making Xen x86_64 (PV) work again ([#1501](https://github.com/unikraft/unikraft/pull/1501)) by @skuenzer
+* `libukrandom`: Introduce driver for CPU-generated entropy + misc. fixes ([#1496](https://github.com/unikraft/unikraft/pull/1496)) by @michpappas
+* `lib/ukdebug`: Add GDB stub to Unikraft ([#1479](https://github.com/unikraft/unikraft/pull/1479)) by @thass0
+* `lib/uksched`: Export stats via `ukstore` ([#1477](https://github.com/unikraft/unikraft/pull/1477)) by @michpappas
+* `lib/ukboot`: Introduce early init bootstage ([#1472](https://github.com/unikraft/unikraft/pull/1472)) by @michpappas
+* `lib/uklibparam`: Refactor parameter registration ([#1471](https://github.com/unikraft/unikraft/pull/1471)) by @michpappas
+* `lib/ukconsole`: Add generic console device interface ([#1464](https://github.com/unikraft/unikraft/pull/1464)) by @thass0
+* `support/qemu-guest`: Enable `RDRAND`, `RDSEED` for x86 TCG ([#1459](https://github.com/unikraft/unikraft/pull/1459)) by @skuenzer
+* `lib/ukfalloc`: Export stats via `uk_store` ([#942](https://github.com/unikraft/unikraft/pull/942)) by @michpappas
+
+### 🐛 Bug Fixes & Improvements
+
+* `lib/syscall_shim`: Fix C++ build error with Clang ([#1559](https://github.com/unikraft/unikraft/pull/1559)) by @razvand
+* `lib/vfscore`: Fix missing syscall declaration ([#1556](https://github.com/unikraft/unikraft/pull/1556)) by @andreittr
+* `lib/ukrandom`: Improve boot and diagnostic messages ([#1554](https://github.com/unikraft/unikraft/pull/1554)) by @michpappas
+* `lib/ukrandom`: Add `README.md` ([#1551](https://github.com/unikraft/unikraft/pull/1551)) by @michpappas
+* `lib/ukschecoop`: Remove invalid assertion ([#1550](https://github.com/unikraft/unikraft/pull/1550)) by @michpappas
+* `lib/posix-pipe`: Fix ref leak on pipe creation ([#1539](https://github.com/unikraft/unikraft/pull/1539)) by @andreittr
+* `.github/workflows`: Wait once before checking ([#1538](https://github.com/unikraft/unikraft/pull/1538)) by @craciunoiuc
+* `drivers/ukconsole/vga`: Add initial sanity check ([#1530](https://github.com/unikraft/unikraft/pull/1530)) by @florommel
+* `lib/uklibparam`: Namespace symbols to avoid conflicts ([#1526](https://github.com/unikraft/unikraft/pull/1526)) by @michpappas
+* `plat/xen`: Use `-lgcc` for Xen ARM64 builds with fp emulation ([#1525](https://github.com/unikraft/unikraft/pull/1525)) by @razvand
+* `plat/xen`: Include `fp_arm64.c` in FPSIMD Xen ARM64 builds ([#1523](https://github.com/unikraft/unikraft/pull/1523)) by @razvand
+* `plat/xen`: Fix implicit `int` cast build error ([#1518](https://github.com/unikraft/unikraft/pull/1518)) by @andreistan26
+* `drivers/xen`: Select `XEN_GNTTAB` as dependency when used ([#1517](https://github.com/unikraft/unikraft/pull/1517)) by @andreistan26
+* `.github/workflows`: Show message before starting catalog loop ([#1516](https://github.com/unikraft/unikraft/pull/1516)) by @craciunoiuc
+* `plat/kvm`: Fix `Kconfig` dependency warning on Firecracker ([#1504](https://github.com/unikraft/unikraft/pull/1504)) by @michpappas
+* `drivers/ukconsole/ns16550`: Fix `Kconfig` warnings on invalid `choice` ([#1503](https://github.com/unikraft/unikraft/pull/1503)) by @michpappas
+* `include/uk/arch`: Define `bool` types for C++ compilers ([#1500](https://github.com/unikraft/unikraft/pull/1500)) by @StefanJum
+* `libuklibparam`: Fix symbols not present after linkage ([#1499](https://github.com/unikraft/unikraft/pull/1499)) by @michpappas
+* `plat/kvm`: Remove `|isr` flag to prevent build error ([#1497](https://github.com/unikraft/unikraft/pull/1497)) by @razvand
+* `lib/ukdebug`: Add `README.md` to `ukdebug` ([#1492](https://github.com/unikraft/unikraft/pull/1492)) by @thass0
+* `plat/xen`: Fix Arm setup to work with new Xen console ([#1490](https://github.com/unikraft/unikraft/pull/1490)) by @thass0
+* `plat/kvm`: Enable VGA by default on QEMU x86_64 ([#1489](https://github.com/unikraft/unikraft/pull/1489)) by @michpappas
+* `drivers/xen/console`: Update nolibc dependency ([#1487](https://github.com/unikraft/unikraft/pull/1487)) by @razvand
+* `include/uk/arch`: Add kernel `__bool` type ([#1484](https://github.com/unikraft/unikraft/pull/1484)) by @thass0
+* `plat/xen`: Fix implicit conversion on return type ([#1482](https://github.com/unikraft/unikraft/pull/1482)) by @andreistan26
+* `plat/kvm/arm64`: Do not unmask `PSTATE.D` on IRQ entry ([#1481](https://github.com/unikraft/unikraft/pull/1481)) by @michpappas
+* `.github/workflows`: Remove `jq` installation ([#1476](https://github.com/unikraft/unikraft/pull/1476)) by @nderjung
+* `lib/nolibc`: Fix memory bug in `vfscanf` ([#1474](https://github.com/unikraft/unikraft/pull/1474)) by @thass0
+* `drivers/uktty`: Improve early initialization ([#1473](https://github.com/unikraft/unikraft/pull/1473)) by @michpappas
+* Log calls to the `multiboot` and `mkefi` scripts ([#1469](https://github.com/unikraft/unikraft/pull/1469)) by @shym
+* `.github`: Remove `CODEOWNERS` ([#1468](https://github.com/unikraft/unikraft/pull/1468)) by @mschlumpp
+* Fix missing URL ([#1467](https://github.com/unikraft/unikraft/pull/1467)) by @yfenes
+* `drivers/ukbus/pci`: Map PCI regions at runtime ([#1465](https://github.com/unikraft/unikraft/pull/1465)) by @michpappas
+* `lib/vfscore`: Change `faccessat` with `AT_SYMLINK_NOFOLLOW` ([#1462](https://github.com/unikraft/unikraft/pull/1462)) by @robertZamfir601
+* `lib/vfscore`: Fix `renameat` function in vfscore ([#1460](https://github.com/unikraft/unikraft/pull/1460)) by @sebastianion
+* `plat/common/x86`: Use `X86_VIDEO_MEM_START` for SIPI vector allocation ([#1457](https://github.com/unikraft/unikraft/pull/1457)) by @mogasergiu
+* `lib/posix-{process, sysinfo}`: Take fdtab size from `posix-fdtab` instead of vfscore ([#1455](https://github.com/unikraft/unikraft/pull/1455)) by @andreittr
+* `lib/nolibc`: Compile `string.c` with `-O3` ([#1454](https://github.com/unikraft/unikraft/pull/1454)) by @andreittr
+* `include/uk/errptr`: Fix `NULL` being an error pointer ([#1453](https://github.com/unikraft/unikraft/pull/1453)) by @andreittr
+* `build`: Use different progress flags based on the `wget` version ([#1442](https://github.com/unikraft/unikraft/pull/1442)) by @thass0
+* `libs/vfscore`: Fix `dirent64` warning ([#1372](https://github.com/unikraft/unikraft/pull/1372)) by @razvanrus2003
+* `[app-elfloader]`: Handle empty file size loadable segments ([#85](https://github.com/unikraft/app-elfloader/pull/85)) by @mogasergiu
+* `[app-elfloader]`: .github/workflows: Introduce catalog tests ([#78](https://github.com/unikraft/app-elfloader/pull/78)) by @craciunoiuc
+* `[lib-compiler-rt]`: .github/workflows: Introduce catalog tests ([#20](https://github.com/unikraft/lib-compiler-rt/pull/20)) by @craciunoiuc
+* `[lib-libelf]`: .github/workflows: Introduce catalog tests ([#4](https://github.com/unikraft/lib-libelf/pull/4)) by @craciunoiuc
+* `[lib-libuuid]`: .github/workflows: Introduce catalog tests ([#7](https://github.com/unikraft/lib-libuuid/pull/7)) by @craciunoiuc
+* `[lib-lua]`: .github/workflows: Introduce catalog tests ([#10](https://github.com/unikraft/lib-lua/pull/10)) by @craciunoiuc
+* `[lib-lwip]`: Fix #59, invalid pointer for dns addr in gcc14 ([#60](https://github.com/unikraft/lib-lwip/pull/60)) by @cluosh
+* `[lib-lwip]`: .github/workflows: Introduce catalog tests ([#54](https://github.com/unikraft/lib-lwip/pull/54)) by @craciunoiuc
+* `[lib-musl]`: .github/workflows: Introduce catalog tests ([#77](https://github.com/unikraft/lib-musl/pull/77)) by @craciunoiuc
+* `[lib-nginx]`: .github/workflows: Introduce catalog tests ([#16](https://github.com/unikraft/lib-nginx/pull/16)) by @craciunoiuc
+* `[lib-python3]`: .github/workflows: Introduce catalog tests ([#23](https://github.com/unikraft/lib-python3/pull/23)) by @craciunoiuc
+* `[lib-redis]`: .github/workflows: Introduce catalog tests ([#13](https://github.com/unikraft/lib-redis/pull/13)) by @craciunoiuc
+* `[lib-sqlite]`: .github/workflows: Introduce catalog tests ([#9](https://github.com/unikraft/lib-sqlite/pull/9)) by @craciunoiuc
+* `[lib-zlib]`: .github/workflows: Introduce catalog tests ([#12](https://github.com/unikraft/lib-zlib/pull/12)) by @craciunoiuc
+
+A big thank you also to all those who helped in the [review process](unikraft.org/docs/contributing/review-process/): [Alexander Jung](https://github.com/nderjung), [Alex Apostolescu](https://github.com/Alex-deVis), [Andrei Stan](https://github.com/andreistan26), [Andrei Tatar](https://github.com/andreittr), [Cezar Crăciunoiu](https://github.com/craciunoiuc), [Florin Postolache](https://github.com/flpostolache), [Teodor Țeugea](https://github.com/John-Ted), [Maria Pană](https://github.com/mariapana), [Maria Sfîrăială](https://github.com/mariasfiraiala), [Michalis Pappas](https://github.com/michpappas), [Mihnea Firoiu](https://github.com/Mihnea0Firoiu), [Oleksii Moisieiev](https://github.com/oleksiimoisieiev), [Radu Nichita](https://github.com/RaduNichita), [Răzvan Deaconescu](https://github.com/razvand), [Sergiu Moga](https://github.com/mogasergiu), [Simon Kuenzer](https://github.com/skuenzer), [Ștefan Jumărea](https://github.com/StefanJum), [Thassilo Schulze](https://github.com/thass0)

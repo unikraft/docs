@@ -1,0 +1,159 @@
+---
+title: "Unikraft releases v0.18.0 (Helene)"
+description: |
+  This release contains features and improvements to Unikraft.
+publishedDate: 2024-12-21
+authors:
+- Michalis Pappas
+- Ștefan Jumărea
+- Răzvan Deaconescu
+tags:
+- release
+- announcement
+---
+
+We are proud to announce a new version of Unikraft: `v0.18.0`.
+
+This release comes packed with features related to security, virtual filesystem and general application support.
+It contains plenty of fixes that improve the stability and application support of Unikraft.
+
+In this blog post, we present the new features available in Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.17.0...RELEASE-0.18.0).
+
+### Integrated Debug Support with GDB Stub
+
+_This feature was championed by [Thassilo Schulze](https://github.com/thass0) with great support from [Michalis Pappas](https://github.com/michpappas) and [Simon Kuenzer](https://github.com/skuenzer).
+
+Unikraft `v0.18` introduces native support for GDB, allowing developers to debug applications and system-level code seamlessly, even on Virtual Machine Monitors (VMMs) and hypervisors that don't offer built-in debug facilities.
+Debugger support is provided by an implementation of a GDB stub within `libukdebug`, which enables direct communication with a GDB client over a serial connection.
+For more information on enabling and confguring the GDB stub see [libukdebug's README.md](https://github.com/unikraft/unikraft/blob/staging/lib/ukdebug/README.md).
+
+### Abstraction for Console Devices
+
+_This feature was championed by [Thassilo Schulze](https://github.com/thass0) with great support from [Michalis Pappas](https://github.com/michpappas) and [Simon Kuenzer](https://github.com/skuenzer).
+
+The newly introduced `libukconsole` provides an abstraction layer for consoles.
+The implementation of `COM` for `x86_64` has been merged with the `ns16550` driver, and all console drivers have been updated to implement the `ukconsole` driver API.
+This is a long anticipated feature that allows efficient management of console devices, and enables the addition of new features, with the GDB stub being the first one to utilize this subsystem.
+
+### Further improvements of libukrandom
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas) with great support from [Alex Apostolescu](https://github.com/Alex-deVis), [Maria Pana](https://github.com/mariapana), [Simon Kuenzer](https://github.com/skuenzer), and [Stefan Jumarea](https://github.com/StefanJum)._
+
+This release continues on the improvents introduced in Unikraft `v0.17` for cryptographically secure randomness.
+`libukrandom` now includes a driver API, and the implementation of CPU-generated randomness has been reworked into conforming drivers.
+For more flexibility, the driver API introduces fallback operations: On x86_64, `RDSEED` can now fall back to `RDRAND`, addressing common issues faced by users running on legacy machines without `RDSEED` support, or those using TCG emulation on older versions of QEMU.
+
+In addition to the above, it is now possible to seed the CSPRNG via Unikraft's command-line, or through the device tree blob.
+
+Finally, the CSPRNG has been updated to now use 20 rounds (ChaCha20), and an implementation of the test vectors of [RFC8439](https://datatracker.ietf.org/doc/html/rfc8439) is available to execute via `libuktest`.
+
+For more info see the new documentation at [drivers/ukrandom/lcpu](https://github.com/unikraft/unikraft/tree/staging/drivers/ukrandom/lcpu/README.md) and [lib/ukrandom](https://github.com/unikraft/unikraft/tree/staging/lib/ukrandom/README.md).
+
+### Early Initialization Framework
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas) with great support from [Andrei Stan](https://github.com/andreistan26),  [Oleksii Moisieiev](https://github.com/oleksiimoisieiev), [Sergiu Moga](https://github.com/mogasergiu), and [Simon Kuenzer](https://github.com/skuenzer).
+
+`libukboot` introduces `earlytab`, a lightweight framework for early initialization.
+This complements the existing `inittab`, with specific focus on the initialization of early devices and their dependencies.
+
+`libuklibparam` has been refactored to allow command-line parsing during early initialization.
+This additionally fixes a limitation of the previous registration mechanism where all parameters had to be registered from a single file.
+`libuklibparam` is assigned the highest (earliest) priority, to ensure that drivers and libraries in subsequent stages have access to Unikraft's command-line parameters.
+Notice that for the time being this has the side-effect of information printed by `libuklibparam` to be lost, as `earlycon` is registered to a later priority.
+This will be resolved once `libukprint` is introduced, as that library will provide a console buffer.
+
+Initialization of early devices have been migrated to `earlytab`.
+Serial console drivers are updated to register with `earlytab` when early console support is enabled.
+Similarly, drivers that provide secure randomness initialize `libukrandom` at early init, to fulfil the requirement of security-critical mechanisms for early randomness.
+
+Overall, the introduction of `earlytab` marks a significant step towards a unified and coordinated initialization process, which is a requirement for upcoming features.
+Most notably, `earlytab` will eventually replace the intermediate jump from boot code to platform-specific initialization, with platforms being able to register initialization calls directly with `earlytab`.
+Early adopters of this mechanism in this release are the UART and VGA console devices of KVM, and the hypervisor console of Xen.
+
+### Statistics for libuksched and libukfalloc
+
+_This feature was championed by [Michalis Pappas](https://github.com/michpappas)_ with great support from [Cezar Craciunoiu](https://github.com/craciunoiuc), [Florin Postolache](https://github.com/flpostolache), and [Simon Kuenzer](https://github.com/skuenzer).
+
+Following previous work on `libuknetdev`, this release comes with updates on`libusched` and `libukfalloc` to export statistics that provide insight on the performance and overall behavior of the system.
+
+`libuksched` defines the set of statistics that a given scheduler implementation should provide.
+Metrics include the number of schedules, yields, context switches to processes and the idle thread.
+The cooperative scheduler implementation, `libukschedcoop`, has been updated to export these metrics.
+
+Similarly, `libukfalloc` has been updated to define a set of per-instance as well as system-wide statistics.
+The buddy implementation, `libukfallocbuddy`, is updated to export these statistics where needed.
+
+In both cases, statistics are provided via the `libukstore`.
+For For a general descriptions on how to access the exported stats, see the documentation of `libukstore` at [lib/ukstore/README.md](https://github.com/unikraft/unikraft/blob/staging/lib/ukstore/README.md).
+
+### Known issues
+
+* [QEMU 9 doesn't boot C HTTP program on Ubuntu `22.04`](https://github.com/unikraft/unikraft/issues/1557)
+* [lib/ukallocbuddy: Boot error message for Nginx (QEMU, KVM, x86_64)](https://github.com/unikraft/unikraft/issues/1505)
+* [plat/kvm does not boot on Firecracker `0.10.0-dev` on arm64](https://github.com/unikraft/unikraft/issues/1488)
+
+For a full list of issues see: https://github.com/unikraft/unikraft/issues
+
+### Catalog Update
+
+We updated the [application `catalog`](https://github.com/unikraft/catalog) with multiple application runtimes, including MariaDB, MongoDB, Java, Grafana, Zig.
+The application catalog hosts application runtimes and examples running with Unikraft.
+Generally, we use [KraftKit](https://github.com/unikraft/kraftkit) as the tool to build and run unikernel images for these applications.
+
+### `catalog-core` - A Catalog for Core Developers, Reviewers, Testers and Maintainers
+
+[`catalog-core`](https://github.com/unikraft/catalog-core) is a catalog of Unikraft applications that are set up, configured, built and run using first principles tools: Make, GCC, Clang, KConfig, QEMU, Firecracker, Xen; that is, not using KraftKit.
+Each directory belongs to a given application and it typically consists of source code, `Makefile`, `Makefile.uk`, filesystem and a `README.md` file with instructions.
+
+`catalog-core` is targeted towards Unikraft core developers (i.e. developers of the [`unikraft` core repository](https://github.com/unikraft/unikraft) or [library repositories](https://github.com/search?q=topic%3Alibrary+org%3Aunikraft&type=Repositories)), maintainers, testers and those who want to learn about the internals of Unikraft.
+Application and tooling developers and general users should use the [official `catalog` repository](https://github.com/unikraft/catalog).
+
+`catalog-core` current consists of an initial set of applications to be built and run using first principles tools.
+It also contains scripts to automate the building, running and testing of applications, Unikraft core and libraries.
+
+### Community Activities
+
+#### OmniOpenCon 2024
+
+As part of [OmniOpenCon 2024](https://omniopencon.org/), we organised a workshop, where the participants took some first steps into building and running an application using Unikraft.
+
+We also had a talk beforehand, `Efficient, Effective and Fun Computing with Unikernels`, demonstrating how easy it is to build, package, run and deploy common applications with Unikraft, focusing on two primary areas: cloud computing and embedded development.
+
+OmniOpenCon 2024 also hosted an open source hackathon, with about 20 participants, with some working on Unikraft.
+
+#### Unikraft Summer Workshop 2024
+
+[Unikraft Summer Workshop 2024 (_USW'24_](https://unikraft.org/hackathons/usw24) is a **free and virtual** workshop held by members of the Unikraft community.
+It focuses on cloud-native applications and on the unikernel technology that powers efficient and high performance cloud deployments.
+
+The three-week event holds a number of starter tutorials and workshops on how to configure, build, run, deploy and debug cloud applications using Unikraft.
+
+This year, we had 11 students that took part in the Unikraft Summer Workshop.
+At the end of the three-week event, we organised a hackathon, were the students were able to contribute to the project.
+
+#### Vienna Unikraft Workshop
+
+On December 708, 2024, we organised the [Vienna Unikraft Workshop](https://unikraft.org/hackathons/2024-12-vienna), together with [SBA Research](https://www.sba-research.org/).
+The workshop took place as an in-person event, at `SBA Research`.
+Members of the Unikraft community were there, as well as our hosts from `SBA Research`.
+
+We spent the first day getting people accustomed to the Unikraft project, following some guides in order to build, run and deploy cloud applications.
+
+The second day was focused on participants contributing to the projects, porting new applications, finding and fixing issues, etc.
+During this, [`Tor`](https://github.com/unikraft/catalog/pull/146) and [`Zero MQ`](https://github.com/unikraft/catalog/pull/147) were ported, and several other issues were found and fixed.
+
+#### GSoC 2024
+
+As part of Google Summer of Code 2024, Unikraft had 5 projects approved.
+We've had 16 application, out of which 5 were selected.
+
+The 5 projects are:
+
+* "Linux x86 Boot Protocol Support", by [Mihnea Firoiu](https://github.com/Mihnea0Firoiu)
+* "Synchronization Support in Internal Libraries", by [Yang Hu](https://github.com/huyang531)
+* "Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds", by [Ujjwal Mahar](https://github.com/UjjwalMahar)
+* "Multiboot2 Support in Unikraft", by [Maria Pană](https://github.com/mariapana)
+* "UEFI Graphics Output Protocol Support in Unikraft", by [Sriprad Potukuchi](https://github.com/procub3r).
+
+All the participants described their work in detail in multiple blog posts that you can find on the [Unikraft blog page](https://unikraft.org/blog).
