@@ -18,8 +18,8 @@ import CopyButton from 'components/mdx-components/codeblock/copy-button'
 import { t } from 'utils/i18n'
 
 const announce = {
-  title: 'Vienna Unikraft Workshop',
-  href: '/hackathons/2024-12-vienna',
+  title: 'Unikraft releases 0.18.0',
+  href: '/blog/2024-12-21-unikraft-releases-v0.18.0',
 }
 
 export default function LandingHero() {
