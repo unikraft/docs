@@ -79,8 +79,8 @@ curl -fsSL https://deb.pkg.kraftkit.sh/gpg.key | \
 Use the following command to set up the APT repository:
 
 ```console
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/unikraft.gpg] https://deb.pkg.kraftkit.sh \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/unikraft.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/unikraft.gpg] https://deb.pkg.kraftkit.sh /" | \
+  sudo tee /etc/apt/sources.list.d/unikraft.list > /dev/null
 ```
 
 Update the APT package index, and install the latest version of `kraftkit`:
