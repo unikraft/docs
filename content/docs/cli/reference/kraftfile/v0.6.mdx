@@ -102,6 +102,44 @@ cmd:
 ```
 
 
+## Top-level `env` attribute
+
+An `env` attribute CAN be provided which injects environmental variables to the application.
+
+Compared to when specifying them in the `cmd` attribute (as seen in [specifying kernel parameters](#specifying-kernel-parameters)), using the `env` attribute is a lot more context-aware.
+`kraft` recognizes where it can be best injected, for example, embedded as static variables during build-time, as OCI environmental variables when packaging, as command-line arguments, etc.
+
+### Specified as a list
+
+```yaml ln={3-5,4}
+spec: v0.6
+
+env:
+- HOME=/
+```
+
+### Specified as a dictionary
+
+```yaml ln={3-5,4}
+spec: v0.6
+
+env:
+  HOME: /
+```
+
+
+## Top-level `labels` attribute
+
+A `labels` attribute CAN be specified which injects arbitrary key-value labels which are set during the packaging step:
+
+```yaml ln={3-5,7-9}
+spec: v0.6
+
+labels:
+  key: value
+```
+
+
 ## Top-level `volumes` attribute
 
 <Info>
