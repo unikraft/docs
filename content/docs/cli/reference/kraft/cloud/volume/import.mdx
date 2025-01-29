@@ -1,0 +1,49 @@
+---
+title: "kraft cloud volume import"
+description: Import local data to a persistent volume
+---
+
+```
+kraft cloud volume import [FLAGS]
+```
+
+### Examples
+
+```
+# Import data from a local directory "path/to/data" to a volume named "my-volume"
+$ kraft cloud volume import --source path/to/data --volume my-volume
+
+# Import data from a local Dockerfile "path/to/Dockerfile" to a volume named "my-volume"
+$ kraft cloud volume import --source path/to/Dockerfile --volume my-volume
+
+# Import data from a docker registry "docker.io/nginx:latest" to a volume named "my-volume"
+$ kraft cloud volume import --source docker.io/nginx:latest --volume my-volume
+
+# Import data from a local cpio file "path/to/file" to a volume named "my-volume"
+$ kraft cloud volume import --source path/to/file --volume my-volume
+
+```
+
+## Options
+
+```
+  -f, --force            Force import, even if it might fail
+  -h, --help             help for import
+      --image string     Volume import image to use (default "official/utils/volimport:1.0")
+  -s, --source string    Path to the data source (directory, Dockerfile, Docker link, cpio file) (default ".")
+  -t, --timeout uint     Timeout for the import process in seconds when unresponsive (default 10)
+  -v, --volume string    Identifier of an existing volume (name or UUID)
+  -w, --workdir string   Working directory for the import process
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

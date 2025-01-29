@@ -1,0 +1,38 @@
+---
+title: "kraft cloud volume get"
+description: Retrieve the state of persistent volumes
+---
+
+```
+kraft cloud volume get [FLAGS] UUID|NAME
+```
+
+### Examples
+
+```
+# Retrieve information about a kraftcloud volume by UUID
+$ kraft cloud volume get fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Retrieve information about a kraftcloud volume by name
+$ kraft cloud volume get my-volume-431342
+
+```
+
+## Options
+
+```
+  -h, --help            help for get
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "list")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

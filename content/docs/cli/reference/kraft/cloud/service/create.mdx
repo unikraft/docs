@@ -1,0 +1,43 @@
+---
+title: "kraft cloud service create"
+description: Create a service
+---
+
+Create a service.
+
+```
+kraft cloud service create [FLAGS] EXTERNAL:INTERNAL[/HANDLER]
+```
+
+### Examples
+
+```
+# Create a service with a single service listening on port 443 named "my-service"
+$ kraft cloud service create -n my-service 443:8080/http+tls
+
+```
+
+## Options
+
+```
+  -c, --certificate strings   Set the certificates to use for the service
+  -d, --domain strings        Specify the domain names of the service
+  -L, --hard-limit uint       Set the hard limit for the service
+  -h, --help                  help for create
+  -n, --name string           Specify the name of the service
+  -o, --output string         Set output format. Options: table,yaml,json,list,raw (default "table")
+  -l, --soft-limit uint       Set the soft limit for the service
+  -s, --subdomain strings     Set the subdomains to use when creating the service
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud service`](/docs/cli/reference/kraft/cloud/service): Manage services on KraftCloud
+

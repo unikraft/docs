@@ -1,0 +1,39 @@
+---
+title: "kraft cloud compose down"
+description: Stop and remove the services in a Unikraft Cloud Compose project deployment
+---
+
+```
+kraft cloud compose down [FLAGS] [COMPONENT]
+```
+
+### Examples
+
+```
+# Stop a deployment and remove all instances, services and volumes.
+$ kraft cloud compose down
+
+# Stop and remove two specific instances.
+$ kraft cloud compose down nginx component2
+
+```
+
+## Options
+
+```
+  -h, --help   help for down
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

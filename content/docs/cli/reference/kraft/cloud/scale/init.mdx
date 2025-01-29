@@ -1,0 +1,44 @@
+---
+title: "kraft cloud scale init"
+description: Initialize autoscale configuration for a service
+---
+
+```
+kraft cloud scale init [FLAGS] NAME|UUID
+```
+
+### Examples
+
+```
+# Initialize an autoscale configuration
+$ kraft cloud scale init my-service \
+	--master my-instance-name \
+	--min-size 1 \
+	--max-size 10 \
+	--cooldown-time 1s \
+	--warmup-time 1s
+
+```
+
+## Options
+
+```
+  -c, --cooldown-time duration   The cooldown time of the config (ms/s/m/h)
+  -h, --help                     help for init
+  -i, --master string            The UUID or Name of the master instance
+  -M, --max-size int             The maximum size of the configuration (default 10)
+  -m, --min-size string          The minimum size of the configuration
+  -w, --warmup-time duration     The warmup time of the config (ms/s/m/h)
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud scale`](/docs/cli/reference/kraft/cloud/scale): Manage instance autoscale policies
+

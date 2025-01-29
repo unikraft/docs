@@ -1,0 +1,39 @@
+---
+title: "kraft cloud img"
+description: Manage images
+---
+
+```
+kraft cloud img SUBCOMMAND
+```
+
+### Examples
+
+```
+# List images in your account.
+$ kraft cloud image list
+
+# Delete an image from your account.
+$ kraft cloud image remove caddy@sha256:2ba5324141...
+
+```
+
+## Options
+
+```
+  -h, --help   help for img
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+* [`kraft cloud img list`](/docs/cli/reference/kraft/cloud/img/list): List all images at a metro for your account
+* [`kraft cloud img remove`](/docs/cli/reference/kraft/cloud/img/remove): Remove an image
+

@@ -1,0 +1,37 @@
+---
+title: "kraft cloud scale reset"
+description: Reset autoscale configuration of a service
+---
+
+```
+kraft cloud scale reset [FLAGS] UUID|NAME
+```
+
+### Examples
+
+```
+# Reset an autoscale configuration by UUID
+$ kraft cloud scale reset fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Reset an autoscale configuration by name
+$ kraft cloud scale reset my-service
+
+```
+
+## Options
+
+```
+  -h, --help   help for reset
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud scale`](/docs/cli/reference/kraft/cloud/scale): Manage instance autoscale policies
+

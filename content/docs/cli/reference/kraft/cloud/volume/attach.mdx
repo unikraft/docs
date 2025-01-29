@@ -1,0 +1,40 @@
+---
+title: "kraft cloud volume attach"
+description: Attach a persistent volume to an instance
+---
+
+```
+kraft cloud volume attach [FLAGS] UUID|NAME
+```
+
+### Examples
+
+```
+# Attach the volume data to the instance nginx to the path /mnt/data
+$ kraft cloud vol attach data --to nginx --at /mnt/data
+
+# Attach a volume to the instance nginx to the path /mnt/data by UUID in read-only mode
+$ kraft cloud volume at 77d0316a-fbbe-488d-8618-5bf7a612477a --to nginx --at /mnt/data -r
+
+```
+
+## Options
+
+```
+      --at string   The path the volume should be mounted to
+  -h, --help        help for attach
+  -r, --read-only   Mount the volume read-only
+      --to string   The instance the volume should be attached to
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

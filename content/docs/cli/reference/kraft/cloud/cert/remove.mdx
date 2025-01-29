@@ -1,0 +1,45 @@
+---
+title: "kraft cloud cert remove"
+description: Remove a certificate
+---
+
+```
+kraft cloud cert remove [FLAGS] [UUID|NAME [UUID|NAME]...]
+```
+
+### Examples
+
+```
+# Remove a certificate by UUID
+$ kraft cloud certificate remove fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Remove a certificate by name
+$ kraft cloud certificate remove my-certificate-431342
+
+# Remove multiple certificates
+$ kraft cloud certificate remove my-certificate-431342 my-certificate-other-2313
+
+# Remove all certificates
+$ kraft cloud certificate remove --all
+
+```
+
+## Options
+
+```
+      --all             Remove all certificates
+  -h, --help            help for remove
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "table")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud cert`](/docs/cli/reference/kraft/cloud/cert): Manage TLS certificates
+

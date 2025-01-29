@@ -1,0 +1,41 @@
+---
+title: "kraft cloud cert create"
+description: Create a certificate
+---
+
+Create a new certificate.
+
+
+```
+kraft cloud cert create [FLAGS]
+```
+
+### Examples
+
+```
+# Create a new certificate with a given common name, private key file and chain.
+$ kraft cloud certificate create --name my-cert --cn '*.example.com' --pkey 'private-key.pem' --chain 'chain.pem'
+
+```
+
+## Options
+
+```
+  -C, --chain string   The chain of the certificate
+  -c, --cn string      The common name of the certificate
+  -h, --help           help for create
+  -n, --name string    The name of the certificate
+  -p, --pkey string    The private key of the certificate in PEM format
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud cert`](/docs/cli/reference/kraft/cloud/cert): Manage TLS certificates
+

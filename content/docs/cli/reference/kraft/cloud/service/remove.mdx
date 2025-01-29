@@ -1,0 +1,45 @@
+---
+title: "kraft cloud service remove"
+description: Delete services
+---
+
+```
+kraft cloud service remove [FLAGS] [NAME|UUID [NAME|UUID]...]
+```
+
+### Examples
+
+```
+# Remove a service from your account by UUID.
+$ kraft cloud service remove fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Remove a service from your account by name.
+$ kraft cloud service remove my-service
+
+# Remove multiple service from your account.
+$ kraft cloud service remove my-service my-other-service
+
+# Remove all service from your account.
+$ kraft cloud service remove --all
+
+```
+
+## Options
+
+```
+  -a, --all          Remove all services
+  -h, --help         help for remove
+      --wait-empty   Wait for the service to be empty before removing it
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud service`](/docs/cli/reference/kraft/cloud/service): Manage services on KraftCloud
+

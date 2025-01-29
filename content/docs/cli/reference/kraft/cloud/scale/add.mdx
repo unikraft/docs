@@ -1,0 +1,43 @@
+---
+title: "kraft cloud scale add"
+description: Add an autoscale configuration policy
+---
+
+Add an autoscale configuration policy for a service.
+
+```
+kraft cloud scale add [FLAGS] UUID|NAME
+```
+
+### Examples
+
+```
+# Add an autoscale configuration policy by service UUID
+$ kraft cloud scale add fd1684ea-7970-4994-92d6-61dcc7905f2b --name my-policy --step 0:10/1
+
+# Add an autoscale configuration policy by service name
+$ kraft cloud scale add my-service --name my-policy --step 0:10/1 --step 10:20/2
+
+```
+
+## Options
+
+```
+  -a, --adjustment string   The adjustment of the policy. Valid options: 'percent', 'absolute', 'change' (default "change")
+  -h, --help                help for add
+  -m, --metric string       The metric of the policy. Valid options: 'cpu' (default "cpu")
+  -n, --name string         The name of the policy
+  -s, --step strings        The step of the policy in the format 'LOWER_BOUND:UPPER_BOUND/ADJUSTMENT'
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud scale`](/docs/cli/reference/kraft/cloud/scale): Manage instance autoscale policies
+

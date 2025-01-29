@@ -1,0 +1,53 @@
+---
+title: "kraft cloud img remove"
+description: Remove an image
+---
+
+Remove an image for your account.
+
+
+```
+kraft cloud img remove [FLAGS] [USER/]NAME[:latest|@sha256:...]
+```
+
+### Examples
+
+```
+# Remove an image from your account.
+$ kraft cloud image remove caddy
+
+# Remove an image from your account by tag.
+$ kraft cloud image remove caddy:latest
+
+# Remove an image from your account by digest.
+$ kraft cloud image remove caddy@sha256:2ba5324141...
+
+# Remove an image from your account with user.
+$ kraft cloud image remove user/caddy
+
+# Remove multiple images from your account.
+$ kraft cloud image remove caddy:latest nginx:latest caddy:other-latest
+
+# Remove all images from your account.
+$ kraft cloud image remove --all
+
+```
+
+## Options
+
+```
+      --all    Remove all images
+  -h, --help   help for remove
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud img`](/docs/cli/reference/kraft/cloud/img): Manage images
+

@@ -1,0 +1,67 @@
+---
+title: "kraft cloud compose"
+description: Manage Compose deployments on Unikraft Cloud
+---
+
+Manage Compose deployments on Unikraft Cloud
+
+
+```
+kraft cloud compose
+```
+
+### Examples
+
+```
+# Deploy the Compose project on Unikraft Cloud
+$ kraft cloud compose up
+
+# Stop the deployment
+$ kraft cloud compose down
+
+# List the Compose services for this project Unikraft Cloud
+$ kraft cloud compose ps
+
+# Build a specific service image of a Compose project
+$ kraft cloud compose build nginx
+
+# Create a service image of a Compose project
+$ kraft cloud compose create
+
+# Push a service image of Compose project
+$ kraft cloud compose push nginx
+
+# View logs of a service deployment
+$ kraft cloud compose log nginx
+
+```
+
+## Options
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+  -h, --help              help for compose
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+* [`kraft cloud compose build`](/docs/cli/reference/kraft/cloud/compose/build): Build a compose project
+* [`kraft cloud compose create`](/docs/cli/reference/kraft/cloud/compose/create): Create a deployment from a Compose project on Unikraft Cloud
+* [`kraft cloud compose down`](/docs/cli/reference/kraft/cloud/compose/down): Stop and remove the services in a Unikraft Cloud Compose project deployment
+* [`kraft cloud compose log`](/docs/cli/reference/kraft/cloud/compose/log): View logs of services in a Unikraft Cloud Compose project deployment
+* [`kraft cloud compose ls`](/docs/cli/reference/kraft/cloud/compose/ls): List service deployments at a given path
+* [`kraft cloud compose ps`](/docs/cli/reference/kraft/cloud/compose/ps): List the active services of Unikraft Cloud Compose project
+* [`kraft cloud compose push`](/docs/cli/reference/kraft/cloud/compose/push): Push the images services to Unikraft Cloud from a Compose project
+* [`kraft cloud compose start`](/docs/cli/reference/kraft/cloud/compose/start): Start services in a Unikraft Cloud Compose project deployment
+* [`kraft cloud compose stop`](/docs/cli/reference/kraft/cloud/compose/stop): Stop services in a Unikraft Cloud Compose project deployment
+* [`kraft cloud compose up`](/docs/cli/reference/kraft/cloud/compose/up): Deploy services in a compose project to Unikraft Cloud
+

@@ -1,0 +1,47 @@
+---
+title: "kraft cloud compose build"
+description: Build a compose project
+---
+
+Build a compose project
+
+
+```
+kraft cloud compose build [FLAGS] [COMPONENT]
+```
+
+### Examples
+
+```
+# Build a compose project
+$ kraft cloud compose build
+
+# (If applicable) Set or override a runtime for a particular service
+$ kraft cloud compose build --runtime app=base:latest
+
+# Push the service images after a successful build
+$ kraft cloud compose build --push
+
+```
+
+## Options
+
+```
+  -h, --help              help for build
+      --push              Push the built service images
+      --runtime strings   Alternative runtime to use when packaging a service
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

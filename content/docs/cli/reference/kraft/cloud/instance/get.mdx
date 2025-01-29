@@ -1,0 +1,41 @@
+---
+title: "kraft cloud instance get"
+description: Retrieve the state of instances
+---
+
+Retrieve the state of an instance.
+
+
+```
+kraft cloud instance get [FLAGS] [UUID|NAME]
+```
+
+### Examples
+
+```
+# Retrieve information about a instance by UUID
+$ kraft cloud instance get fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Retrieve information about a instance by name
+$ kraft cloud instance get my-instance-431342
+
+```
+
+## Options
+
+```
+  -h, --help            help for get
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "list")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud instance`](/docs/cli/reference/kraft/cloud/instance): Manage instances
+

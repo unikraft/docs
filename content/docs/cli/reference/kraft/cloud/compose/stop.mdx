@@ -1,0 +1,42 @@
+---
+title: "kraft cloud compose stop"
+description: Stop services in a Unikraft Cloud Compose project deployment
+---
+
+```
+kraft cloud compose stop [FLAGS] [COMPONENT]
+```
+
+### Examples
+
+```
+# Stop all services in a Unikraft Cloud Compose project.
+$ kraft cloud compose stop
+
+# Stop the nginx service
+$ kraft cloud compose stop nginx
+
+```
+
+## Options
+
+```
+  -d, --drain-timeout duration   Timeout for the instance to stop (ms/s/m/h)
+  -f, --force                    Force stop the instance(s)
+  -h, --help                     help for stop
+  -w, --wait duration            Time to wait for the instance to drain all connections before it is stopped (ms/s/m/h)
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

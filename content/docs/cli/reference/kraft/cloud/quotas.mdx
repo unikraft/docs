@@ -1,0 +1,38 @@
+---
+title: "kraft cloud quotas"
+description: View your resource quota on Unikraft Cloud
+---
+
+```
+kraft cloud quotas
+```
+
+### Examples
+
+```
+# View your resource quota on Unikraft Cloud
+$ kraft cloud quota
+
+# View your resource quota on Unikraft Cloud in JSON format
+$ kraft cloud quota -o json
+
+```
+
+## Options
+
+```
+  -h, --help            help for quotas
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "list")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+

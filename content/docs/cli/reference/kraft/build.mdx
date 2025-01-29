@@ -28,10 +28,11 @@ $ kraft build path/to/app
 
 ```
       --all                Build all targets
-  -m, --arch string        Filter the creation of the build by architecture of known targets
+  -m, --arch string        Filter the creation of the build by architecture of known targets (x86_64/arm64/arm)
       --build-log string   Use the specified file to save the output from the build
   -c, --config string      Override the path to the KConfig .config file
       --dbg                Build the debuggable (symbolic) kernel image instead of the stripped image
+  -e, --env stringArray    Set environment variables to be built in the unikernel
       --force-pull         Force pulling packages before building
   -h, --help               help for build
   -j, --jobs int           Allow N jobs at once
@@ -40,8 +41,10 @@ $ kraft build path/to/app
       --no-configure       Do not run Unikraft's configure step before building
       --no-fast            Do not use maximum parallelization when performing the build
       --no-fetch           Do not run Unikraft's fetch step before building
+      --no-rootfs          Do not build the root file system (initramfs)
       --no-update          Do not update package index before running the build
-  -p, --plat string        Filter the creation of the build by platform of known targets
+  -o, --output string      Set the output directory for the build artifacts
+  -p, --plat string        Filter the creation of the build by platform of known targets (fc/qemu/xen)
       --print-stats        Print build statistics
       --rootfs string      Specify a path to use as root file system (can be volume or initramfs)
   -t, --target string      Build a particular known target

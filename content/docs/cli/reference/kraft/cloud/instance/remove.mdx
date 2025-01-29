@@ -1,0 +1,51 @@
+---
+title: "kraft cloud instance remove"
+description: Remove instances
+---
+
+Remove a KraftCloud instance.
+
+
+```
+kraft cloud instance remove [FLAGS] [UUID|NAME [UUID|NAME]...]
+```
+
+### Examples
+
+```
+# Remove an instance by UUID
+$ kraft cloud instance remove fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Remove an instance by name
+$ kraft cloud instance remove my-instance-431342
+
+# Remove multiple instances
+$ kraft cloud instance remove my-instance-431342 my-instance-other-2313
+
+# Remove all instances
+$ kraft cloud instance remove --all
+
+# Remove all stopped instances
+$ kraft cloud instance remove --stopped
+
+```
+
+## Options
+
+```
+  -a, --all       Remove all instances
+  -h, --help      help for remove
+  -s, --stopped   Remove all stopped instances
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud instance`](/docs/cli/reference/kraft/cloud/instance): Manage instances
+

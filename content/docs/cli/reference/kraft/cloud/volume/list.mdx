@@ -1,0 +1,41 @@
+---
+title: "kraft cloud volume list"
+description: List persistent volumes
+---
+
+List all volumes in your account.
+
+
+```
+kraft cloud volume list
+```
+
+### Examples
+
+```
+# List all volumes in your account.
+$ kraft cloud vol ls
+
+# List all volumes in your account in JSON format.
+$ kraft cloud volume list -o json
+
+```
+
+## Options
+
+```
+  -h, --help            help for list
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "table")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+
