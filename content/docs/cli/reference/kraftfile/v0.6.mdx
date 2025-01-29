@@ -53,6 +53,19 @@ name: helloworld
 When no `name` attribute is specified, the directory's base name is used.
 In some cases, a `--name` flag can also be used, e.g. in [`kraft pkg`](/docs/cli/reference/kraft/pkg) and [`kraft cloud deploy`](/docs/cli/reference/kraft/cloud/deploy).
 
+## Top-level `outdir` attribute
+
+An output directory `outdir` CAN be specified, for example:
+
+```yaml ln={3}
+spec: v0.6
+
+outdir: ./out
+```
+
+This changes the location of build artifacts when running `kraft build` or `kraft pkg`.
+The default location when unspecified is set to `./.unikraft/build/`.
+
 
 ## Top-level `cmd` attribute
 
