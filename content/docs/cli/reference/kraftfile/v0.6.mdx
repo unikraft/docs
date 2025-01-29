@@ -157,6 +157,7 @@ The provided path to the `rootfs` element can be one of the following:
 - [A path to a directory](#specifying-a-directory) which is then dynamically serialized into a CPIO archive; or,
 - [A path to a `Dockerfile`](#specifying-a-dockerfile) which will be constructed via [BuildKit](https://github.com/moby/buildkit) and then dynamically serialized into a CPIO archive.
   [Learn more about how to enable this feature in KraftKit](/docs/cli/filesystem#using-a-dockerfile-as-a-static-root-filesystem).
+- [A path to a tarball](#specifying-a-tarball) which will extract and repackage the tarball as a CPIO archive.  In the future we plan to support [tarballs and other file system types directly as initramfs](https://github.com/unikraft/unikraft/issues/1571).
 
 When invoking `kraft build` or `kraft run` and the provided path of the `rootfs` is either a directory or a `Dockerfile`, the resulting filesystem will be dynamically serialized and stored in `.unikraft/build/initramfs.cpio`.
 
@@ -182,6 +183,18 @@ rootfs: ./rootfs/
 spec: v0.6
 
 rootfs: ./Dockerfile
+```
+
+### Specifying a tarball
+
+```yaml ln={3-4,6-7}
+spec: v0.6
+
+# An uncompressed tarball
+rootfs: ./rootfs.tar
+
+# A compressed tarball
+rootfs: ./rootfs.tar.gz
 ```
 
 
