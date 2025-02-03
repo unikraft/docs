@@ -32,7 +32,7 @@ kraft pkg update
    src="/asciinema/kraft-pkg-update.cast"
    />
 
-This will locally store information locally about packages and library
+This will store information locally about packages and library
 components.  [This location on-disk](#) and [the remote location of the
 component locations](#) can be configured to yours needs.
 
@@ -53,14 +53,14 @@ occurring.
 Unikraft ships (and `kraft` allows you to ship) packages of different component
 types.  A component is a building block, and ultimately a code base, repository
 or distributable archive or binary, which is used within the Unikraft ecosystem.
-Components are one of 5 unique types:
+Components are one of five unique types:
 
 | Type   | Description |
 |--------|-------------|
-| `core` | A repository containing the [Unikraft core codebase](https://github.com/unikraft/unikraft) which consists of a Make and KConfig-based build system.  The Unikraft core provides the glue for stiching other components as well as your application together. |
+| `core` | A repository containing the [Unikraft core codebase](https://github.com/unikraft/unikraft) which consists of a Make and KConfig-based build system.  The Unikraft core provides the glue for stitching other components as well as your application together. |
 | `arch` | The component that defines behavior and hardware interactions specific to the target architecture. |
 | `plat` | A repository containing code that defines the interaction with the underlying hardware, depending on whether a hypervisor is present or not, and which hypervisor is present. |
-| `lib`  | A repository containing a [Unikraft external library](https://unikraft.org/docs/concepts/#unikraft-libraries), that defines an user-space functionality. |
+| `lib`  | A repository containing a [Unikraft external library](https://unikraft.org/docs/concepts/#unikraft-libraries), that defines a user-space functionality. |
 | `app`  | The final component type is that of a fully functioning unikernel.  The `app` component defines the use of the `core`, a `arch` and `plat` combination, as well as a list of `lib`s. |
 
 
@@ -97,7 +97,7 @@ registry, simply [add it as a source](#sourcing-additional-packages).
 
 You can configure different backends for OCI images, the default is
 directory-based and will store the artifacts locally on disk.  Alternatively,
-you can use [containerd](https://https://containerd.io/) as a backend by setting
+you can use [containerd](https://containerd.io/) as a backend by setting
 the [`containerd_addr` to the daemon socket in the global
 settings](/docs/cli/options).
 
