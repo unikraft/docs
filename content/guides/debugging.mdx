@@ -115,6 +115,15 @@ qemu-system-x86_64 -s -S -cpu host -enable-kvm -m 128 -nodefaults -no-acpi -disp
 
 Note that the `-s` parameter is shorthand for `-gdb tcp::1234`.
 
+<Info>
+QEMU/KVM can't detect guest debug support in Linux kernels earlier than **v5.7** ([details](https://gitlab.com/qemu-project/qemu/-/issues/2710)).
+Running the command above could produce such an error:
+```console
+gdbstub: current accelerator doesn't support guest debugging
+```
+Verify your Linux kernel version with `uname -r`.
+</Info>
+
 Now connect GDB by using the debug image with:
 
 ```console
