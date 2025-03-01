@@ -334,7 +334,8 @@ The above command will run BuildKit in the background with the name `buildkitd`.
 You can tell `kraft` to use this by either setting [the `buildkitd_host` attribute in your configuration file](/docs/cli/options#overview-of-configuration-options) or by using the following environmental variable:
 
 ```console
-export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+# CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
 ```
 
 See also [BuildKit's documentation for other container runtimes](https://github.com/moby/buildkit#containerizing-buildkit).

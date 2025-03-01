@@ -45,7 +45,8 @@ Use the steps below to build and run the NGINX binary-compatible application:
 
    ```bash
    docker run -d --name buildkitd --privileged moby/buildkit:latest
-   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   # CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+   export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
    ```
 
 1. Enter the NGINX binary-compatible directory:
@@ -137,7 +138,8 @@ Use the steps below to build and run the HTTP Go server as a binary-compatible a
 
    ```bash
    docker run -d --name buildkitd --privileged moby/buildkit:latest
-   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   # CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+   export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
    ```
 
 1. Enter the HTTP Go server example directory:
@@ -155,7 +157,8 @@ Use the steps below to build and run the HTTP Go server as a binary-compatible a
 1. Use `kraft run` to trigger the build the root filesystem as an initrd:
 
    ```bash
-   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --plat fc --arch x86_64 .
+   # CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+   sudo KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd kraft run --plat fc --arch x86_64 .
    ```
 
    Note that this will cause an error similar to the one below, as KraftKit does not yet support running Firecracker:
