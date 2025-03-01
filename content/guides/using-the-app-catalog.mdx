@@ -209,7 +209,8 @@ Follow the steps below to build and run the NGINX binary-compatible application:
 
    ```bash
    docker run -d --name buildkitd --privileged moby/buildkit:latest
-   export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+   # CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+   export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
    ```
 
 1. Clone the `catalog` repository:
@@ -310,7 +311,8 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
 1. Run as `root` (prefix with `sudo` if required):
 
    ```bash
-   sudo KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd kraft run --network virbr0 .
+   # CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+   sudo KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd kraft run --network virbr0 .
    ```
 
 1. Query the unikernel instance:
