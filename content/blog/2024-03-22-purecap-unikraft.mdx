@@ -1,0 +1,113 @@
+---
+title: "Bringing Hardware Capabilities to Unikraft"
+description: |
+  We have ported Unikraft to the CHERI/ARM Morello experimental
+  platform in pure capability mode, which provides complete spatial
+  memory safety to the kernel and applications.
+publishedDate: 2024-03-22
+authors:
+- Alistair Kressel
+- Pierre Olivier
+tags:
+- security
+- research
+---
+
+**Hardware capabilities**, such as those implemented on the ARM [Morello](https://www.arm.com/architecture/cpu/morello) platform, bring memory safety to traditionally memory-unsafe code such as that found in OSes such as Unikraft.
+How big is the issue of memory safety?
+Microsoft reported that [about 70% of CVEs they find each year stem from memory safety issues](https://msrc.microsoft.com/blog/2019/07/a-proactive-approach-to-more-secure-code/), Google reported that [~70% of security bugs found in Chromium are memory safety issues](https://www.chromium.org/Home/chromium-security/memory-safety/), and Mozilla analyzed bugs found over the lifetime of the Firefox style component and found that of severe bugs, [32/34 were memory safety issues](https://hacks.mozilla.org/2019/02/rewriting-a-browser-component-in-rust/).
+
+Morello is an implementation of the [CHERI](https://www.cl.cam.ac.uk/research/security/ctsrd/cheri/) hardware capability model developed at the University of Cambridge.
+Morello/CHERI offer a **pure capability** mode that brings **complete spatial safety** to languages such as C or C++, by enforcing bounds and permissions on memory loads and stores in hardware.
+Think of a hardware capability as a pointer which is extended to encode bounds and permissions alongside the address.
+When the capability is dereferenced, the hardware checks that the address is allowed to be accessed, and that the correct permissions are present to perform the operation.
+Contrary to the old so-called [fat pointers](https://dl.acm.org/doi/10.1145/1065887.1065892), that realized such checks in software, doing so in hardware is fast and does not impact performance.
+
+Hardware capabilities also enable other exciting applications such as software compartmentalization - the isolation of sensitive portions of code and data from the rest of the system, making attacks on software systems harder.
+
+In a [past blog post](https://unikraft.org/blog/2022-12-01-unikraft-on-morello) we reported about our experience porting Unikraft to Morello in **hybrid capability** mode, which is an ARMv8 retro compatibility mode with only a subset of a program’s pointer being capabilities.
+In this new blog post we detail the work we have done to port Unikraft to the ARM Morello platform in pure capability mode, for the OS to enjoy complete spatial memory safety.
+
+### First, what is CHERI?
+
+Capability Hardware Enhanced RISC Instructions (CHERI) brings hardware capabilities to RISC ISAs including RISC-V and ARM.
+In 2022 ARM released a prototype hardware implementation of CHERI in a Neoverse processor called Morello.
+
+Morello implements CHERI on top of ARMv8 where pointers are 64-bits.
+Morello extends these pointers to 128-bits, with the additional 64-bits encoding, among other things, bounds and permissions information.
+An additional tag bit is stored in a separate part of memory indicating the validity of the capability.
+Modifying a capability incorrectly in an attempt to forge an invalid pointer will clear the tag bit, rendering the capability useless.
+
+<Image
+  border
+  maxW={'2xl'}
+  ratio={5/2}
+  src="/images/cheri-capability.svg"
+  description="A picture of the different fields making up a hardware CHERI capability, including permissions, object type, bounds, value, flags, and the tag."
+/>
+
+CHERI security model relies on a set of invariants to ensure spatial memory safety:
+
+* **Capability monotonicity** - Capabilities cannot increase their bounds or permissions.
+Permissions and bounds can only be reduced.
+This means that a capability granting read only access to a buffer in memory cannot be expanded to cover neighboring memory, nor can it be given additional permissions.
+New capabilities must be created from an existing capability with at most its bounds and permissions.
+* **Provenance validity** - Capabilities must be constructed explicitly through capability-aware instructions, which perform monotonicity checks.
+
+Attempting to modify a capability through other instructions (such as standard Armv8 store instructions) will result in clearing the tag bit for that capability, in effect invalidating it.
+
+### Why does it make sense to use capabilities in Unikraft?
+
+There are a number of reasons why bringing hardware capabilities to Unikraft makes sense.
+
+1. **Unikraft is written primarily in memory unsafe languages** (C and C++) and adding memory safety is critically important for improving overall security.
+   While attempts can be made to write safe C code, it is notoriously difficult, as evidenced by the continual stream of CVEs present in critical software such as the Linux kernel.
+   Humans make mistakes, and short of formal verification which is impractical at a large scale, bugs will be present.
+   CHERI can mitigate the resulting vulnerabilities by enforcing memory safety at the hardware level, stopping common attacks such as buffer overflows.
+
+1. **CHERI capabilities can bring isolation between components in a single address space**, making them ideal for the single address space model followed by unikernels such as Unikraft.
+   Unikernels place all components in the same address space without any isolation between them.
+   CHERI can bring isolation to OS components without breaking the single address space model.
+
+1. **CHERI capabilities are lightweight**, implemented transparently as an extension to pointers which are checked atomically in hardware.
+   This is compatible with the lightweightness offered by unikernels such as Unikraft as a key selling point.
+   Additional security can be added without an unacceptable performance penalty.
+   For example, the aforementioned isolation can be brought without reintroducing costly mechanisms such as page table switches.
+
+### Porting Unikraft to CHERI/Morello pure capability mode
+
+Porting Unikraft to work with CHERI pure capabilities on Morello required a number of changes to the code of Unikraft, described here.
+
+#### Platform code
+
+Implementing a Morello specific platform was a prerequisite for running Unikraft on Morello hardware, both bare metal on the hardware and on the Fixed Virtual Platform (FVP).
+The platform code enters at EL2 and initializes the processor, including enabling capability features, and disabling capability trapping upon attempted loads and stores of capabilities.
+Additionally, capability relocations are performed.
+Here, capabilities which are statically defined, must first be constructed at boot time using information contained in the Capability Relocation Table in the binary.
+This contains information including to base and bounds which should be given to a capability, as well as where the application expects to load the capability from.
+Using this information, each capability is constructed and stored in the expected memory.
+
+Finally, assembly code, such as that found in interrupt handling routines and exception handling must be updated to use capability registers where pointers are used, as well as updating loads and stores to consider the increased size of capabilities (128-bits).
+
+#### Virtual memory allocator
+
+The virtual memory allocator is responsible for allocating memory in response to a call such as a `malloc`.
+When storing a capability to memory, this must be done to 16 byte aligned memory.
+Not doing so will cause an exception.
+Since any allocated memory may be used to store capabilities (remember, this is the equivalent of storing a pointer), any memory returned by an allocator must also be 16 bytes aligned.
+CHERI capabilities also provide the ability to set bounds on capabilities.
+The bounds (size) provided to the allocator such as `malloc(sizeof(my_struct))`; will be used by the allocator to set precise bounds in the capability which is returned.
+
+#### Pointer arithmetic
+
+Many libraries within Unikraft make use of pointer arithmetic which is where a pointer is treated as a 64-bit integer and is manipulated using standard arithmetic and bitwise manipulations.
+For example, [generating a stack pointer](https://github.com/unikraft/unikraft/blob/staging/arch/arm/arm64/include/uk/asm/ctx.h#L73) requires that this is aligned correctly which involves pointer arithmetic operations.
+Many instances of pointer arithmetics like this will not work due to breaking CHERI’s provenance validity requirement.
+Arithmetic operations are just that - they perform arithmetic on values, but these values cannot then be used as capabilities.
+The solution to this problem is to use the generated integer pointer and explicitly construct a capability with it.
+The problem of pointer arithmetic can also be extended to cover data types such as `uint64_t` or unsigned long, which may be used by some applications where addresses are required.
+Attempting to store a capability in such a data type will invalidate the capability, requiring that an explicit pointer such as `uint64_t*` is used instead.
+
+We are polishing the code of the port for an open source release that should happen soon, so stay tuned!
+If you would like to know more, feel free to check out the [project's website](https://olivierpierre.github.io/project-flexcap/).
+You can also get in touch by [email](https://sites.google.com/view/pierreolivier/contact-location).
