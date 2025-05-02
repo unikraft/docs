@@ -5,7 +5,7 @@ description: |
   Unikraft's build system which generate a unikernel.
 ---
 
-Unikraft is designed to build ultra-lightweight VM images.  For that matter, the
+Unikraft is designed to build ultra-lightweight VM images. For that matter, the
 build system is designed to take only the absolute necessary pieces of code and
 bind them togheter.
 
@@ -25,19 +25,23 @@ The lifecycle of the construction of a Unikraft unikernel includes several
 distinct steps:
 
 1. Configuring the Unikraft unikernel application with compile-time options;
-2. Fetching and preparing the source code for external libraries;
-3. Compiling the libraries and the core Unikraft code;
-4. Linking the final unikernel image.
+1. Fetching and preparing the source code for external libraries;
+1. Compiling the libraries and the core Unikraft code;
+1. Linking the final unikernel image.
 
 ## GNU Make-based build system
 
 Unikraft is a configurable operating system, where each component can be
-modified, configured, according to the user’s needs. This configuration is done
-using a version of Kconfig, through the Config.uk files. In these files, options
+modified, configured, according to the user’s needs.
+This configuration is done
+using a version of Kconfig, through the Config.uk
+files. In these files, options
 are added to enable libraries, applications and different components of the
-Unikraft core. The user can then apply those configuration options, using make
+Unikraft core.
+The user can then apply those configuration options, using make
 menuconfig, which generates an internal configuration file that can be
-understood by the build system, .config. Once configured, the Unikraft image can
+understood by the build system, .config
+. Once configured, the Unikraft image can
 be built, using make, and run, using the appropriate method (Linux ELF loader,
 qemu-kvm, xen, others).
 
