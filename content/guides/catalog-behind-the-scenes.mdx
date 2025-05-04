@@ -88,7 +88,8 @@ The build command requires the `BuildKit` container to be configured beforehand:
 
 ```bash
 docker run -d --name buildkitd --privileged moby/buildkit:latest
-export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+# CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
 ```
 
 The build command is:
@@ -230,7 +231,8 @@ The run command requires the `BuildKit` container to be configured beforehand:
 
 ```bash
 docker run -d --name buildkitd --privileged moby/buildkit:latest
-export KRAFTKIT_BUILDKIT_HOST=docker-container://buildkitd
+# CONTAINER_HOST is either docker-container or podman-container, depending on your container environment
+export KRAFTKIT_BUILDKIT_HOST=${CONTAINER_HOST}://buildkitd
 ```
 
 The run command is:
