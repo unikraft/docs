@@ -1,0 +1,154 @@
+---
+title: "Multiprocess Support"
+description: This blog post provides technical details on the implementation of multiprocess support introduced in Unikraft 0.19.0.
+publishedDate: 2025-05-15
+image:
+authors:
+- Simon Kuenzer
+- Michalis Pappas
+tags:
+- libposix-process
+- multiprocess
+---
+
+# Multiprocess support on Unikraft
+
+Although multithreading is widely adopted in modern software, many foundational applications in the cloud - such as PostgreSQL - continue to rely on multiprocess architectures.
+This preference persists not only because of historical design decisions, but also because of practical advantages such as isolation between execution units, easier implementation of scaling, and simplified fault tolerance.
+At first glance, this creates a conflict between the traditional unikernel philosophy and real-world requirements, seemingly requiring either the adaptation of multiprocess applications to the multithreaded model, or architectural compromises.
+
+At Unikraft, we see this as a false dichotomy:
+While multithreaded applications can benefit from more efficient data usage and faster intercommunication, this approach comes with significant engineering and maintenance overhead for every multiprocess application.
+On the other hand, we believe that mass adoption is a critical factor for the success of unikernels in the cloud, and maintain that unikernels and multiprocessing are fundamentally architecturally compatible.
+Our vision: Zero[^1] modifications to existing applications' codebases.
+
+Building on this vision, we are excited to announce that beginning from `0.19.0`, Unikraft incorporates  multiprocess capabilities.
+Thanks to Unikraft's truly modular architecture, these extensions are optional, non-intrusive, and configurable, preserving Unikraft's minimal nature.
+The rest of this post presents the technical aspects of multiprocess support in Unikraft's architecture.
+
+[^1]: Excluding some fork() cases that require adaptation, as we will see below.
+
+## POSIX and the challenges of multiprocess
+
+Despite its [many problems](https://www.microsoft.com/en-us/research/wp-content/uploads/2019/04/fork-hotos19.pdf), the cornerstone of multiprocess is [`fork(2)`](https://man7.org/linux/man-pages/man2/fork.2.html).
+When a process needs to run another program, it calls `fork()` to create a child process, followed by [execve(2)](https://man7.org/linux/man-pages/man2/execve.2.html) to load and run the target executable in the child's context.
+One important property of `fork()` is that the parent and child execute on distinct address spaces.
+That is a problem for unikernels, that traditionally are single address space operating systems.
+
+One alternative that suits the single address space model is [`vfork(2)`](https://man7.org/linux/man-pages/man2/vfork.2.html).
+`vfork()` first appeared in 3BSD as a workaround for the low performance of `fork()`, given that before [COW](https://en.wikipedia.org/wiki/Copy-on-write) `fork()` was too slow as the kernel had to copy the parent's context.
+In `vfork()`, the child executes at the same address space as the parent until the child calls `execve()` or terminates.
+For the sake of consistency, the parent blocks until one of these events occurs.
+Moreover, as any change by the child will be eventually visible to the parent, the child is only allowed a limited set of actions:
+(1) to update the parent's return value with the child's pid, (2) call `execve()`, and (3) call `_exit()`.
+The result of any other behavior is undefined.
+
+Linux introduced the non-standard [`clone(2)`](https://man7.org/linux/man-pages/man2/clone.2.html) syscall, that included the `CLONE_VFORK` (suspend parent) and `CLONE_VM` (calling process and child shares the same memory space) flags.
+With these flags, `vfork()` could be easily implemented by calling `clone()` with flags set to `CLONE_VM | CLONE_VFORK | SIGCHLD`.
+
+[`posix_spawn(3)`](https://www.man7.org/linux/man-pages/man3/posix_spawn.3.html) is a libc function that performs the steps required to spawn a new process along with other housekeeping tasks in a safe and performant way.
+Because of that, it is the recommended way to spawn a new process.
+Under the hood, the various implementation of libc use `fork()`, `vfork()`, or `clone()`.
+musl libc [implements `posix_spawn()`](https://github.com/esmil/musl/blob/master/src/process/posix_spawn.c) using `clone()`.
+glibc has some interesting history: Until 2.23 it used to provide the `POSIX_SPAWN_USEVFORK` flag to use `vfork()` over `fork()`.
+Starting from glibc 2.24, it switched from `vfork()` to `clone()`, and in recent versions `POSIX_SPAWN_USEVFORK` has no effect.
+Android's Bionic libc [still honors](https://android.googlesource.com/platform/bionic/+/master/libc/bionic/spawn.cpp#195) `POSIX_SPAWN_USEVFORK`.
+
+POSIX.1-2001 marked `vfork()` as obsolete in favor of `fork()` with COW and `posix_spawn()`, until it was finally removed in POSIX.1-2008.
+Nevertheless, Linux [continues to support](https://elixir.bootlin.com/linux/v6.11/source/kernel/fork.c#L2879) `vfork()` to this day, and so do the [various](https://man.freebsd.org/cgi/man.cgi?query=vfork) [flavors](https://www.netbsd.org/docs/kernel/vfork.html) of [BSD](https://man.openbsd.org/vfork.2), as `vfork()` remains relevant in systems without an MMU, performance-critical applications, and memory constrained systems.
+
+## The implementation on Unikraft
+
+Given the challenges of `fork()` and Unikraft’s single address space nature, we focus on supporting `posix_spawn`-like workflows, with a conscious decision against any full-fledged `fork()` support.
+We believe this strikes the right balance between compatibility and architectural purity.
+
+To enable this, [`libposix-process`](https://github.com/unikraft/unikraft/blob/staging/lib/posix-process) was carefully restructured so that multiprocess capabilities are not intrusive and Unikraft's modular nature is preserved.
+The library now offers three granular levels of configuration: (1) Bare minimum process-like behavior for single process applications that execute on a single thread, (2) single process with multithreading, and (3) full multiprocess functionality.
+Each configuration adjusts the availability and behavior of syscalls to match its specific usecase.
+For more details on the structure of `libposix-process` see [`lib/posix-process/README.md`](https://github.com/unikraft/unikraft/blob/staging/lib/posix-process/README.md).
+Also make sure to review the deprecation notice of some Kconfig options resulting from this work, in the [Release Notes of 0.19.0](https://www.notion.so/Blog-Post-Multiprocess-0-19-0-1eeffc0840c480f7b53dff76476a21c7?pvs=21).
+
+### Lifetime management
+
+A large part of the implementation of multiprocess lies on process lifetime management.
+As you may have guessed we implement that in Unikraft by adding support to `clone()` for  `CLONE_VM` and `CLONE_VFORK`, along with a `vfork()` syscall implemented as a wrapper to `clone()`.
+The implementation of `execve()` relies on the newly introduced [`libukbinfmt`](https://github.com/unikraft/unikraft/tree/staging/lib/ukbinfmt), which is inspired by Linux's binary format handling mechanism of the same name.
+Similarly to Linux, it delegates loading and execution of different binary formats to specialized components.
+A binfmt handler for ELF is introduced in [`app-elfloader`](https://github.com/unikraft/app-elfloader).
+Besides `libukbinfmt`, `execve()` requires logic to switch to the new context.
+The primitives to achieve that were introduced in Unikraft 0.17.0.
+All of the above, together with signals that we present below, enable  Unikraft to support `posix_spawn()`.
+
+The second part in lifetime management is task termination.
+That involves `_exit()` that terminates the calling thread, and `exit_group()` that terminates the calling process.
+At this point, task resources are released, and the parent can call `wait4()` or `waitid()` to reap the process and obtain its exit status.
+In Unikraft, resource management is implemented with events.
+Libraries that manage task resources are notified on creation and termination events [^2].
+This preserves modularity, and allows creating highly specialized configurations that break the traditional dependencies of POSIX.
+
+[^2]: The list of resources managed for each process in a full implementation is long.
+You can get an idea by having a look at the man pages of [`clone(2)`](https://man7.org/linux/man-pages/man2/clone.2.html) and [execve(2)](https://man7.org/linux/man-pages/man2/execve.2.html).
+
+### Signals
+
+Signals are another critical component of multiprocess, although also applicable to single-process workloads.
+Signals provide asynchronous communication for coordination (IPC), lifecycle management (the parent receives `SIGCHLD` upon child termination so that it can call `wait()` to reap the child), and error handling (applications can trap signals like `SIGSEGV` and `SIGILL` to handle system faults gracefully).
+
+The implementation involves syscalls for sending signals (`kill()`, `tkill()`, `tgkill()`, `rt_sigqueueinfo()`, `rt_tgsigqueueinfo()`), masking signals (`rt_sigprocmask()`), examining pending signals (`rt_sigpending()`), managing signal disposition (`rt_sigaction()`), examining and changing the stack context of signal handlers (`sigaltstack()`), blocking on signals (`pause()`, `rt_sigsuspend()`, `rt_sigtimedwait()`), signal monitoring based on file descriptors (`signalfd()`, `signalfd4()`), and the list goes on...
+
+The differences between a standard implementation of signals and the one of Unikraft mostly derive from the properties of unikernels:
+
+* There are no privilege checks when sending signals between processes and process groups, as Unikraft is a single-user OS.
+* There are no checks on whether the pointers passed to syscalls are part of the process' address space, because Unikraft is operates on a single address space.
+* There is no support for the `SIGSTOP` / `SIGCONT` signals, as the are not typical on unikernel workloads.
+* And when executing signal handlers, there is no need for the trampoline and [`sigreturn(2)`](https://man7.org/linux/man-pages/man2/sigreturn.2.html) mechanism of Linux, as there is no userspace / kernelspace boundary.
+
+In fact, signals in Unikraft are optional even in multiprocess configurations, making the feature truly modular and opt-in, unlike POSIX’s monolithic approach.
+
+### Initialization and shutdown
+
+In traditional *nix systems, process supervision - including intilization and shutdown - traditionally falls under the responsibility of `/sbin/init`, which is spawned as PID 1.
+
+This process is different from all others in that (1) it is created directly by the  kernel and (2) it can never exit.
+
+Since the inception of Unikraft, `libukboot` has provided logic to initialize and cleanup system components via its `inittab`.
+
+As multiprocess workloads cannot be expected to assume the responsibility of init, `libukboot` adds an optional init process that executes that takes care to (1) spawn the *application process* (2) foster orphaned processes (3) reap its children (4) coordinate process termination during shutdown.
+Each one of these tasks is described below.
+
+The *application process* is essentially the process that calls `main()`.
+That can be an application compiled together with Unikraft into a single binary, or `app-elfloader` that executes an ELF binary object.
+Spawning the application process results into the application executing as PID 2.
+
+When a process with children terminates, its chidren are orphaned.
+On Linux and other Unix-like operating systems the default is to reparent orphans to `init`.
+This scenario often occurs during daemonization, where a process spawns multiple chldren before it proceeds to exit.
+`init` is also responsible for reaping its children, whether reparented or not, to ensure that system resources are properly cleaned up.
+
+System shutdown requires termination of all processes before terminating other system components.
+This is particularly important for the filesystem, as process need to be terminated and their resources be released before unmounting the filesystem.
+For stateful applications, like databases, this is not enough as they need to additionally preserve the consistency of their data at the application level.
+Terminating a database process abruptly can result into database corruption.
+Unikraft's implementation of `init` provides the possibility of *graceful shutdown*, where `init` signals the application process to give it the opportunity to gracefully terminate itself and its children, before shutting down the system.
+The shutdown logic involves additional use-cases like single process, that are out of the scope of this document.
+Once again, for details see [`lib/posix-process/README.md`](https://github.com/unikraft/unikraft/blob/staging/lib/posix-process/README.md).
+
+One last thing worth to mention is that in unikernel workloads an `init` process is not always necessary.
+Multiprocess applications that manage their children and don't have requirements for persistence can execute without an init.
+For that reason, the implementation of `init` that comes with `libukboot` is optional.
+That provides multiprocess applications with the flexibility to choose whether they need an init process, or even to replace the default implementation with their own.
+
+## Ending thoughts
+
+Unikraft 0.19.0 lays the foundations for supporting multiprocess applications and runtimes commonly used in modern cloud environments.
+Overall the implementation comes with a remarkably small footprint, with the majority of changes concentrated in `libposix-process`, and smaller adaptations in `libukboot` and `app-elfloader`.
+From the architecture's perspective the design preserves Unikraft's high level of modularity - not only are all multiprocess components optional, but it's also possible to tailor down the system in ways that break the traditional dependency boundaries imposed by POSIX.
+
+Developers who wish to run multiprocess applications on Unikraft should focus on process creation.
+Applications that use `posix_spawn()`, `vfork()` or `clone()` with `CLONE_VFORK | CLONE_VM` should run out of the box.
+Those that exclusively rely on `fork()` will require adaptations to use one of the above mechanisms.
+
+While Unikraft 0.19.0 establishes the core multiprocess functionality, we're already working on 0.20.0 that comes several additional features that allow running complex multiprocess applications.
+For those curious about what's coming next, here's a sneak peek:
+
+![multiprocess demo](/videos/multiprocess_demo.mp4)
