@@ -18,8 +18,8 @@ import CopyButton from 'components/mdx-components/codeblock/copy-button'
 import { t } from 'utils/i18n'
 
 const announce = {
-  title: 'Unikraft releases 0.18.0',
-  href: '/blog/2024-12-21-unikraft-releases-v0.18.0',
+  title: 'Unikraft releases 0.19.0',
+  href: '/blog/2025-05-23-unikraft-releases-v0.19.0',
 }
 
 export default function LandingHero() {
@@ -245,11 +245,11 @@ export default function LandingHero() {
               }}
             >
               <Stat>
-                <StatNumber>v0.18.0</StatNumber>
+                <StatNumber>v0.19.0</StatNumber>
                 <StatLabel>Latest Version</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>2.8K+</StatNumber>
+                <StatNumber>3.1K+</StatNumber>
                 <StatLabel>GitHub Stars</StatLabel>
               </Stat>
               <Stat>
@@ -257,7 +257,7 @@ export default function LandingHero() {
                 <StatLabel>Contributors</StatLabel>
               </Stat>
               <Stat>
-                <StatNumber>1.6K+</StatNumber>
+                <StatNumber>1.8K+</StatNumber>
                 <StatLabel>Discord Members</StatLabel>
               </Stat>
             </StatGroup>
