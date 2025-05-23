@@ -1,5 +1,5 @@
 ---
-title: "Multiprocess Support"
+title: "Multiprocess support on Unikraft"
 description: This blog post provides technical details on the implementation of multiprocess support introduced in Unikraft 0.19.0.
 publishedDate: 2025-05-15
 image:
@@ -10,8 +10,6 @@ tags:
 - libposix-process
 - multiprocess
 ---
-
-# Multiprocess support on Unikraft
 
 Although multithreading is widely adopted in modern software, many foundational applications in the cloud - such as PostgreSQL - continue to rely on multiprocess architectures.
 This preference persists not only because of historical design decisions, but also because of practical advantages such as isolation between execution units, easier implementation of scaling, and simplified fault tolerance.
@@ -26,7 +24,7 @@ Building on this vision, we are excited to announce that beginning from `0.19.0`
 Thanks to Unikraft's truly modular architecture, these extensions are optional, non-intrusive, and configurable, preserving Unikraft's minimal nature.
 The rest of this post presents the technical aspects of multiprocess support in Unikraft's architecture.
 
-[^1]: Excluding some fork() cases that require adaptation, as we will see below.
+[^1]: Excluding some `fork()` cases that require adaptation, as we will see below.
 
 ## POSIX and the challenges of multiprocess
 
@@ -151,4 +149,6 @@ Those that exclusively rely on `fork()` will require adaptations to use one of t
 While Unikraft 0.19.0 establishes the core multiprocess functionality, we're already working on 0.20.0 that comes several additional features that allow running complex multiprocess applications.
 For those curious about what's coming next, here's a sneak peek:
 
-![multiprocess demo](/videos/multiprocess_demo.mp4)
+<VideoPlayer
+  url="https://youtu.be/zD4tDOd7A9k"
+  />
