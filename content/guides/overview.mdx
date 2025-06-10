@@ -8,12 +8,12 @@ description: |
 
 ## Set Up
 
-We encourage you to split into teams of 2-4 people, for both the tutorials and the hackathon challenges.
+You will be part of a team of 3-4 people.
+Discuss on the [thread](https://discord.com/channels/762976922531528725/1385697301007433898) and create/announce your team on Discord.
+Each team will be assigned a Discord channel to work together.
 You can use the `#hack-team-XX-voice` channels on the [Discord server](https://bit.ly/UnikraftDiscord).
 You will need a Linux environment for this session.
 You can use a virtual machine, but we strongly recommend a native Linux install.
-We provide you with a [virtual machine](https://drive.google.com/file/d/16oBxfjFvu5mpf6DMb4-bsnyd5n2FqReo/view?usp=sharing) that has the minimum requirements already installed.
-The credentials for the virtual machine are `unikraft:unikraft`.
 
 You will need to install the following packages:
 
@@ -57,20 +57,88 @@ sudo mkdir /etc/qemu/
 echo "allow all" | sudo tee /etc/qemu/bridge.conf
 ```
 
-## `app-helloworld` on Unikraft
+## Running Applications Using Unikraft
 
-The Unikraft `helloworld` application is located in [this repository](https://github.com/unikraft/app-helloworld), along with instructions on how to configure, build and run the application.
-We will go through them without focusing that much on the details, since we will see how everything works behind the scenes in the next sessions.
-Go through the repository `README.md` file and run your first Unikraft unikernel.
+The applications that we will look at are located in [this repository](https://github.com/unikraft/catalog-core/tree/scripts) (we will use the `scripts` branch for now, not the `main` branch).
+
+Before building and running applications, there are some setup steps we need to do.
+First, run the [`./setup.sh` script in the root of the repository](https://github.com/unikraft/catalog-core/blob/scripts/setup.sh).
+This will clone all the dependencies we need.
+After that, for every application we will run, we must run the `setup.sh` script from the application directory.
+
+All the applications have a `scripts/` subdirectory where several useful things are located:
+
+* Building scripts, under `scripts/build/`, named `plat.architecture` (we will use `qemu.x86_64` and `qemu.arm64`).
+* Running scripts, under `scripts/run/`, same naming convention as the build scripts.
+* Configuration files, under `scripts/defconfig/`, we will ignore that for now, and will come back to it in a later session.
+
+### `helloworld` on Unikraft
+
+We will start with the `c-hello` application, which is a simple "Hello, world", written in `C`.
+
+First, we `cd` into the `c-hello` directory and run `./setup.sh`.
+This will create a new directory, `c-hello/workdir/`, with all the unikraft-related dependencies.
+In order to build and run it as a `x86_64` virtual machine, we need to first run the `scripts/build/qemu.x86_64` script, then `scripts/run/qemu.x86_64`.
+
+```console
+git clone https://github.com/unikraft/catalog-core/
+cd catalog-core
+git checkout scripts
+./setup.sh
+cd c-hello/
+./setup.sh
+./scripts/build/qemu.x86_64 # This might take a while
+./scripts/run/qemu.x86_64
+```
+
+After the run script, we should see the output of the `hello-world` VM:
+
+```console
+SeaBIOS (version 1.16.3-debian-1.16.3-2)
+
+
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+0078AE00+006CAE00 CA00
+
+
+
+Booting from ROM..Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                    Pan 0.19.0~e4d07100
+Hello from Unikraft!
+```
+
+You can also try the `arm64` scripts:
+
+```console
+./scripts/build/qemu.arm64
+./scripts/run/qemu.arm64
+```
+
+This will emulate an `ARM64` VM and print the application message, similar to the `x86_64` application.
 
 ## Work Items
 
 Now that you've seen how to run Unikraft `helloworld`, you can go through the list below, follow the same steps and try more applications.
-All the steps required for running the applications can be found in every app repository `README.md` file.
+The steps for running all applications are similar, you run the `setup.sh` script, then `scripts/build/qemu.arch` and `scripts/run/qemu.arch`.
+Try to run the foolowing applications for both `x86_64` and `arm64`.
 
-* [`app-httpreply`](https://github.com/unikraft/app-httpreply)
-* [`app-nginx`](https://github.com/unikraft/app-nginx)
-* [`app-redis`](https://github.com/unikraft/app-redis)
-* [`app-sqlite`](https://github.com/unikraft/app-sqlite)
-* [`app-python3`](https://github.com/unikraft/app-python3)
+* [`c-html`](https://github.com/unikraft/catalog-core/tree/scripts/c-http)
+* [`cpp-hello`](https://github.com/unikraft/catalog-core/tree/scripts/cpp-hello)
+* [`cpp-html`](https://github.com/unikraft/catalog-core/tree/scripts/cpp-http)
+* [`nginx`](https://github.com/unikraft/catalog-core/tree/scripts/nginx)
+* [`redis`](https://github.com/unikraft/catalog-core/tree/scripts/redis)
+* [`python3-hello`](https://github.com/unikraft/catalog-core/tree/scripts/python3-hello)
 
+For applications that wait for connections (i.e. `nginx`, `*-http`, `redis`), the VM IP address is `172.44.0.2`.
+You can curl `172.44.0.2` for `nginx`, `172.44.0.2:8080` for `*-http`, and you must use [`redis-cli`](https://redis.io/docs/latest/develop/tools/cli/) for the `redis` application.
+To use `redis-cli`, you can use:
+
+```console
+redis-cli -h 172.44.0.2
+172.44.0.2:6379> PING
+PONG
+```
