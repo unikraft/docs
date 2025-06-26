@@ -1,0 +1,67 @@
+---
+title: "GSoC'25: Fine-tuning Unikraft's Performance | Part I"
+description: |
+  This GSoC project is aimed at improving the performance of the latest version of Unikraft (Unikraft 0.19.0 Pan), by taking performance measurements, identifying bottlenecks, and making patches that address them.
+publishedDate: 2025-06-26
+tags:
+- gsoc
+- gsoc25
+- performance
+- benchmarking
+- optimization
+authors:
+- Ashirvad Mohanty
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+Over the past releases, Unikraft has focused on compatibility with existing codebases and adding new OS features. This means less efforts were put into performance-testing Unikraft which has resulted in a drop in the performance in latest releases. Now that Unikraft has reached a certain level of maturity, it is essential that we go back to evaluating and fine-tuning its performance. To do this,
+
+- Evaluate the current performance of Unikraft - Evaluation of the Unikraft EuroSys paper, re-running experiments with the latest release of Unikraft.
+
+- Identify potential performance bottlenecks - Performance bottlenecks to be identified which can lie in any Unikraft component, and to be reported in the form of GitHub issues.
+
+- Address these bottlenecks through targeted patches - Provide self-contained targeted fixes for these bottlenecks in the form of GitHub pull requests.
+
+## Immediate Objective
+
+The immediate objective is to get `fig_13_nginx-perf` from [eurosys21-artifacts](https://github.com/unikraft/eurosys21-artifacts) to run with the latest version of Unikraft so the performance measurements can be compared between **Unikraft 0.5.0 Tethys** and **Unikraft 0.19.0 Pan**, before proceeding to running other experiments.
+
+## Current Progress
+
+### Created a separate [repository](https://github.com/ThestralWarrior/experiments-2025) for the newly run experiments
+A simplified version of [eurosys21-artifacts](https://github.com/unikraft/eurosys21-artifacts) which only contains the experiment `fig_13_nginx-perf` as of now and further reduced to remove the generation and benchmarking of kernel images unrelated to Unikraft. Modified it to be able to run on Ubuntu 24.04 instead of Debian Buster for which it was originally written.
+
+### Got a running Nginx + Mimalloc + Musl + Unikraft 0.19.0 unikernel build
+Based on Stefan Jumarea's suggestion, I took `nginx` from [catalog-core](https://github.com/unikraft/catalog-core) and modified it to run with **musl**, **mimalloc**, and Unikraft 0.19.0. The main challenge has been getting a similar configuration between the old and new unikernel as the CONFIG_* have changed, some new ones added as well. PRs and patches will be made when a stable configuration has been achieved.
+
+## Problems encountered
+
+The main issue with rerunning the experiments in eurosys21-artifacts is the lack of reproducibility mainly revolving around -
+- python3 dependency issues - dependency drift, dependency hell
+- inability to fetch patches via links that are not functional anymore
+
+The above issues led to immense difficulties getting the eurosys21-artifacts to run in a push-button manner and required manually running the Nginx experiment. Based on Hugo's suggestions, I didn't see it fit to upgrade the failing scripts and Dockerfiles when new ones can be rewritten from scratch when needed.
+
+Another problem was getting the right setup for building an Nginx unikernel with mimalloc. PRs made by Yang Hu (GSoC '24) which upgrade Mimalloc to work with Unikraft 0.17.0 (latest at the time) haven't been merged yet and applying them manually resulted in a recursive dependency error which I tackled by modifying `Config.uk`. I also kept running into vague build errors when applying [PR#1480](https://github.com/unikraft/unikraft/pull/1480) to Unikraft, which took a couple of tries to get right.
+
+Even though the new Nginx unikernel builds successfully and runs according to the instructions in catalog-core, it fails to run when plugged into the [qemu-guest](https://github.com/unikraft/eurosys21-artifacts/blob/master/tools/qemu-guest) wrapper script in eurosys21-artifacts due to failure to mount the filesystem whose method has changed since the script was written in 2021.
+
+The configuration of LwIP used in the eurosys21-artifacts for `fig_13_nginx-perf` relies on **memory pools** whereas Unikraft 0.19.0 uses **heap** and fails to build with memory pools enabled due to macro/preprocessor errors.
+
+## Next Steps
+
+My actionable steps for the next few weeks include -
+- Identify how the cpio filesystem mounting has changed since 2021 and upgrade qemu-guest script accordingly
+- Get LwIP to run with memory pools by fixing the macro/preprocessor issues.
+- Get the proper measurements for Nginx run on Unikraft 0.19.0 Pan.
+
+## Acknowledgement
+I would like to sincerely thank my mentors, [Hugo Lefeuvre](https://github.com/hlef) and [Stefan Jumarea](https://github.com/StefanJum), for their constant support and guidance throughout this project. I'm also grateful to the Unikraft community for their warm support and helpfulness.
+
+## About me
+
+I'm [Ashirvad Mohanty](https://github.com/ThestralWarrior/), an undergraduate student at Odisha University of Technology and Research, currently pursuing a B. Tech in Information Technology. After a brief stint with blockchain development, my passion for systems programming was ignited when I read the book "Computer Systems: A Programmer's Perspective" by Randal Bryant. As of now I am focused on building my skills in kernel development and learning about compilers on the side!
+Feel free to [connect](https://www.linkedin.com/in/ashirvad-mohanty-44048b201/)!
