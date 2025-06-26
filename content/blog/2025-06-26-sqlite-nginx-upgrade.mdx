@@ -1,0 +1,108 @@
+title: "Modernizing Unikraft Libraries: SQLite 3.50.1 and NGINX 1.28.0 with HTTP/2"
+description: This blog post documents the efforts during GSoC 2025 to update and enhance the lib-sqlite and lib-nginx libraries in Unikraft, ensuring compatibility with the latest upstream versions and supporting modern features like HTTP/2.
+publishedDate: 2025-06-26
+authors: Abhinav Kumar
+tags:
+
+libsqlite
+
+lib-nginx
+
+unikraft
+
+http2
+
+gsoc2025
+
+Modernizing Unikraft Libraries: SQLite 3.50.1 and NGINX 1.28.0
+
+In the first three weeks(02/06 - 23/06) of my GSoC 2025 project with Unikraft, I focused on updating two core user-space libraries: lib-sqlite and lib-nginx. This blog summarizes my work between June 2nd and June 23rd, covering both technical challenges and resolutions for these upgrades.
+
+Part 1: Upgrading lib-sqlite to Version 3.50.1
+
+Motivation
+
+The previous version of SQLite (3.45.3) used by Unikraft lacked recent performance improvements and features. My task was to upgrade it to 3.50.1 while ensuring full compatibility with Unikraft's build system.
+
+Key Changes
+
+Version Bump:
+
+Updated Library.uk with the new version, hash, and source URL.
+
+Moved the version, sha256, and URL fields to Makefile.uk as per maintainer guidance.
+
+Patch Regeneration:
+
+Rebased 0001-omit-math.patch to remove math.h and related dependencies.
+
+Reworked 0002-stub-syscalls.patch to handle unsupported POSIX syscalls like close, pread, and ftruncate.
+
+Config and Build Logic:
+
+Cleaned up Config.uk to add clear options like LIBSQLITE_ENABLE_SHELL and LIBSQLITE_MAIN_FUNCTION.
+
+Updated Makefile.uk to handle new includes, shell support, and optional dummy main() definition.
+
+Feedback Acknowledgment:
+
+Refactored paths and CFLAGS based on code review.
+
+Restored required dependencies (LIBUKMMAP, LIBPOSIX_SYSINFO, etc.) in Config.uk.
+
+Ensured SQLite builds cleanly and passes runtime validation with Unikraft test apps.
+
+Status
+
+The pull request is now in review, with all review comments addressed. SQLite 3.50.1 is building and linking correctly in Unikraft.
+
+Part 2: Upgrading lib-nginx to Version 1.28.0 with HTTP/2
+
+Why Upgrade?
+
+Unikraft’s existing lib-nginx was based on version 1.15.6. This older release lacked support for modern protocols and security patches. NGINX 1.28.0 brings HTTP/2 improvements and removes deprecated internals, notably the Huffman codec used in HTTP/2.
+
+Upgrade Steps
+
+Version Update:
+
+Updated Library.uk to 1.28.0 and changed the source URL.
+
+Cleaned old patches and created fresh ones for the new release.
+
+Patch Details:
+
+0001-omit-math.patch: Removed unsupported math functions.
+
+0002-stub-syscalls.patch: Stubbed out incompatible syscalls for Unikraft.
+
+HTTP/2 Huffman Codec Issue:
+
+New NGINX version removed ngx_http_huff_encode/decode.
+
+Instead of disabling HTTP/2, created stub implementations in src/nginx_huff_stubs.c:
+
+ngx_int_t ngx_http_huff_encode(...) { /* passthrough stub */ }
+ngx_int_t ngx_http_huff_decode(...) { /* passthrough stub */ }
+
+Integrated this stub into Makefile.uk for inclusion in the build.
+
+Build Success:
+
+Used kraft clean && kraft build to verify successful compilation.
+
+The app runs, although runtime configuration (e.g., port 8080 binding) needs minor debugging.
+
+Status
+
+The new NGINX 1.28.0 build is functional with HTTP/2 support enabled. The upgrade is complete from a binary and integration standpoint.
+
+Conclusion
+
+Over these three weeks, significant progress was made in modernizing Unikraft’s userland libraries:
+
+lib-sqlite is now up-to-date with modular build and clearer configuration.
+
+lib-nginx has been upgraded to 1.28.0 and supports HTTP/2 through minimal patching.
+
+Next steps include refining runtime behavior and supporting real-world applications using these upgraded libraries. Stay tuned for more updates!
