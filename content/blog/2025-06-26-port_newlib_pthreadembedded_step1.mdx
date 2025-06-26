@@ -101,6 +101,56 @@ We start by configuring Newlib with the desired options for our target architect
     --disable-newlib-iconv \
     --disable-newlib-mb
 ```
+#### 🔧 Explanation of `configure` Flags
+
+```bash
+--disable-multilib
+```
+Build only for 64-bit (`x86_64`); no need for multiple ABIs.
+
+```bash
+--enable-newlib-reent-thread-local
+```
+Enables use of thread-local storage for reentrancy. This is supported by Unikraft's thread model.
+
+```bash
+--enable-newlib-io-c99-formats
+```
+Enables C99 format specifiers in `printf` and `scanf` (e.g., `%ll`, `%z`, `%j`). Required for modern C compatibility.
+
+```bash
+--enable-newlib-io-long-long
+```
+Adds support for printing and scanning `long long` values (`%lld`, `%llu`).
+
+```bash
+--enable-newlib-elix-level=1
+```
+Enables EL/IX Level 1 compliance: small footprint with essential POSIX features. Higher levels may conflict with Unikraft and `pthread-embedded`.
+
+```bash
+--disable-libssp
+```
+Disables GCC’s Stack Smashing Protector runtime. Unikraft already provides this as a separate library.
+
+```bash
+--disable-newlib-complex-math
+```
+Disables complex math functions, which depend on newer compiler builtins. Avoids compatibility issues with older compilers.
+
+```bash
+--disable-newlib-supplied-syscalls
+```
+Prevents Newlib from defining its own syscall stubs (`_read`, `_write`, etc.). Unikraft provides its own syscall shim layer.
+
+```bash
+--disable-newlib-locale
+--disable-newlib-wide-orient
+--disable-newlib-iconv
+--disable-newlib-mb
+```
+These features are currently disabled to simplify the integration, but can be added in future updates if needed.
+
 
 This step creates a tailored build environment for just the features we want, eliminating unnecessary modules.
 
@@ -158,7 +208,7 @@ This script is designed to:
 
 ---
 
-## Moving Forward: Platform Integration
+## Next Steps
 
 Once the build system and file list have been transferred into Unikraft, the next step is the common one for any **Newlib port to a new platform**:
 1. **Implement required syscalls** that Newlib expects, or stub them when not needed.
@@ -166,5 +216,3 @@ Once the build system and file list have been transferred into Unikraft, the nex
 3. Ensure Unikraft’s build system can compile and link Newlib as part of a working unikernel image.
 
 With the foundation in place, we can now focus on compatibility, testing, and refinement — ensuring that Newlib works seamlessly alongside or as an alternative to musl within the Unikraft environment.
-
-
