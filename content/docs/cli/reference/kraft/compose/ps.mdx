@@ -20,16 +20,22 @@ $ kraft compose ps
 ## Options
 
 ```
-  -h, --help   help for ps
+  -a, --all             Show all machines (default shows just running)
+  -h, --help            help for ps
+  -l, --long            Show more information
+      --orphans         Include orphaned services (default: true)
+  -o, --output string   Set output format. Options: table,yaml,json,list (default "table")
+  -q, --quiet           Only display machine IDs
 ```
 
 ## Options inherited from parent commands
 
 ```
-  -f, --file string   Set the Compose file.
+      --env-file string   Set the environment file.
+  -f, --file string       Set the Compose file.
 ```
 
 ## See Also
 
-* [`kraft compose`](/docs/cli/reference/kraft/compose): compose
+* [`kraft compose`](/docs/cli/reference/kraft/compose): Build and run compose projects with Unikraft
 

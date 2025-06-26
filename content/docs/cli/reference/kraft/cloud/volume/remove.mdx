@@ -1,0 +1,44 @@
+---
+title: "kraft cloud volume remove"
+description: Permanently delete persistent volume(s)
+---
+
+```
+kraft cloud volume remove [FLAGS] [UUID|NAME [UUID|NAME]...]
+```
+
+### Examples
+
+```
+# Remove a volume by UUID
+$ kraft cloud volume remove fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Remove a volume by name
+$ kraft cloud volume remove my-vol-431342
+
+# Remove multiple volumes
+$ kraft cloud volume remove my-vol-431342 my-vol-other-2313
+
+# Remove all volumes
+$ kraft cloud volume remove --all
+
+```
+
+## Options
+
+```
+  -a, --all    Remove all volumes that are not attached
+  -h, --help   help for remove
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

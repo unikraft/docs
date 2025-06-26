@@ -1,0 +1,75 @@
+---
+title: "kraft cloud"
+description: Manage resources on Unikraft Cloud
+---
+
+Manage resources on Unikraft Cloud.
+
+Learn more & sign up at https://unikraft.cloud
+
+Quickly switch between metros using the `--metro` flag or use the
+`UKC_METRO` environmental variable.
+
+Set authentication by using `kraft login` or set
+`UKC_TOKEN` environmental variable.
+
+
+```
+kraft cloud [FLAGS] [SUBCOMMAND|DIR]
+```
+
+### Examples
+
+```
+# List all images in your account
+$ kraft cloud image list
+
+# List all instances in Frankfurt
+$ kraft cloud --metro fra0 instance list
+
+# Create a new NGINX instance in Frankfurt and start it immediately
+$ kraft cloud --metro fra0 instance create -S \
+	-p 80:443/http+redirect \
+	-p 443:8080/http+tls \
+	nginx:latest
+
+# Get the status of an instance based on its UUID and output as JSON
+$ kraft cloud --metro fra0 instance status -o json UUID
+
+# Stop an instance based on its UUID
+$ kraft cloud instance stop UUID
+
+# Start an instance based on its UUID
+$ kraft cloud instance start UUID
+
+# Get logs of an instance based on its UUID
+$ kraft cloud instance logs UUID
+
+# Delete an instance based on its UUID
+$ kraft cloud instance remove UUID
+
+```
+
+## Options
+
+```
+  -h, --help           help for cloud
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
+* [`kraft cloud cert`](/docs/cli/reference/kraft/cloud/cert): Manage TLS certificates
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+* [`kraft cloud deploy`](/docs/cli/reference/kraft/cloud/deploy): Deploy your application
+* [`kraft cloud img`](/docs/cli/reference/kraft/cloud/img): Manage images
+* [`kraft cloud instance`](/docs/cli/reference/kraft/cloud/instance): Manage instances
+* [`kraft cloud metro`](/docs/cli/reference/kraft/cloud/metro): Inspect Unikraft Cloud metros and regions
+* [`kraft cloud quotas`](/docs/cli/reference/kraft/cloud/quotas): View your resource quota on Unikraft Cloud
+* [`kraft cloud scale`](/docs/cli/reference/kraft/cloud/scale): Manage instance autoscale policies
+* [`kraft cloud service`](/docs/cli/reference/kraft/cloud/service): Manage services on KraftCloud
+* [`kraft cloud tunnel`](/docs/cli/reference/kraft/cloud/tunnel): Forward a local port to an unexposed instance
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

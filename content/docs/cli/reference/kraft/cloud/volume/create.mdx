@@ -1,0 +1,42 @@
+---
+title: "kraft cloud volume create"
+description: Create a persistent volume
+---
+
+Create a new persistent volume.
+
+
+```
+kraft cloud volume create [FLAGS]
+```
+
+### Examples
+
+```
+# Create a new persistent 100MiB volume named "my-volume"
+$ kraft cloud volume create --size 100 --name my-volume
+
+# Create a new persistent 10MiB volume with a random name
+$ kraft cloud volume create --size 10Mi
+
+```
+
+## Options
+
+```
+  -h, --help          help for create
+  -n, --name string   Name of the volume
+  -s, --size string   Size (MiB increments or suffixes like Mi, Gi, etc.)
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud volume`](/docs/cli/reference/kraft/cloud/volume): Manage persistent volumes on KraftCloud
+

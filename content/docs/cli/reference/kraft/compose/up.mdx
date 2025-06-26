@@ -1,9 +1,7 @@
 ---
 title: "kraft compose up"
-description: Run a compose project.
+description: Run a compose project
 ---
-
-Run a compose project.
 
 ```
 kraft compose up [FLAGS]
@@ -20,16 +18,19 @@ $ kraft compose up
 ## Options
 
 ```
-  -h, --help   help for up
+  -d, --detach           Run in background
+  -h, --help             help for up
+      --remove-orphans   Remove machines for services not defined in the Compose file.
 ```
 
 ## Options inherited from parent commands
 
 ```
-  -f, --file string   Set the Compose file.
+      --env-file string   Set the environment file.
+  -f, --file string       Set the Compose file.
 ```
 
 ## See Also
 
-* [`kraft compose`](/docs/cli/reference/kraft/compose): compose
+* [`kraft compose`](/docs/cli/reference/kraft/compose): Build and run compose projects with Unikraft
 

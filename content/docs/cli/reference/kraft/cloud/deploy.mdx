@@ -1,0 +1,96 @@
+---
+title: "kraft cloud deploy"
+description: Deploy your application
+---
+
+'kraft cloud deploy' combines a number of kraft cloud sub-commands
+to enable you to build, package, ship and deploy your application
+with a single command.
+
+
+```
+kraft cloud deploy [ARGS] [CONTEXT] [-- [APP ARGS]]
+```
+
+### Examples
+
+```
+# Deploy a working directory with a Kraftfile or Dockerfile:
+$ kraft cloud --metro fra0 deploy -p 443:8080
+
+# Run an image from Unikraft Cloud's image catalog:
+$ kraft cloud --metro fra0 deploy -p 443:8080 caddy:latest
+
+# Supply arguments to the instance of the existing image
+$ kraft cloud --metro fra0 deploy -p 443:8080 caddy:latest -- /bin/server --debug
+
+# Supply arguments to the instance of the project (appending to the cmd):
+$ kraft cloud --metro fra0 deploy -p 443:8080 . -- /bin/server --debug
+
+# Supply arguments to the instance of the project (overwriting the cmd):
+$ kraft cloud --metro fra0 deploy -p 443:8080 --entrypoint "/bin/server --debug" .
+
+# Immediately start following the log tail
+$ kraft cloud --metro fra0 deploy -p 443:8080 -f caddy:latest
+
+```
+
+## Options
+
+```
+  -D, --as string                         Set the deployment type
+      --build-log string                  Use the specified file to save the output from the build
+  -C, --certificate strings               Set the certificates to use for the service
+  -z, --compress                          Compress the initrd package (experimental)
+  -c, --config string                     Override the path to the KConfig .config file
+      --dbg                               Build the debuggable (symbolic) kernel image instead of the stripped image
+  -d, --domain strings                    Set the domain names for the service
+      --entrypoint strings                Set the entrypoint for the instance
+  -e, --env stringArray                   Environmental variables
+      --feature strings                   Specify the special features to enable
+  -f, --follow                            Follow the logs of the instance
+      --force-pull                        Force pulling packages before building
+  -h, --help                              help for deploy
+  -i, --image string                      Set the image name to use
+  -j, --jobs int                          Allow N jobs at once
+  -K, --kraftfile string                  Set the Kraftfile to use
+  -M, --memory string                     Specify the amount of memory to allocate (MiB increments)
+  -n, --name string                       Name of the deployment
+  -F, --no-cache                          Force a rebuild even if existing intermediate artifacts already exist
+      --no-configure                      Do not run Unikraft's configure step before building
+      --no-fast                           Do not use maximum parallelization when performing the build
+      --no-fetch                          Do not run Unikraft's fetch step before building
+  -S, --no-start                          Do not start the instance after creation
+      --no-update                         Do not update package index before running the build
+  -o, --output string                     Set output format
+  -p, --port strings                      Specify the port mapping between external to internal
+  -R, --replicas uint                     Number of replicas of the instance
+      --restart string                    Set the restart policy for the instance (never/always/on-failure) (default "never")
+      --rollout string                    Set the rollout strategy for an instance which has been previously run in the provided service. (default "prompt")
+      --rollout-qualifier string          Set the rollout qualifier used to determine which instances should be affected by the strategy in the supplied service. (default "image")
+      --rollout-wait duration             Time to wait before performing rolling out action (ms/s/m/h) (default 10s)
+      --rootfs string                     Specify a path to use as root filesystem
+      --runtime string                    Set an alternative project runtime
+      --scale-to-zero string              Scale to zero policy of the instance (on/off/idle) (default "off")
+      --scale-to-zero-cooldown duration   Cooldown period before scaling to zero (ms/s/m/h)
+      --scale-to-zero-stateful            Save state when scaling to zero
+  -g, --service string                    Attach the new deployment to an existing service
+      --strategy string                   When a package of the same name exists, use this strategy when applying targets. (default "overwrite")
+  -s, --subdomain strings                 Set the names to use when provisioning subdomains
+      --timeout duration                  Set the timeout for remote procedure calls (ms/s/m/h) (default 1m0s)
+  -V, --vcpus uint                        Specify the number of vCPUs to allocate
+  -v, --volume strings                    Specify the volume mapping(s) in the form NAME:DEST or NAME:DEST:OPTIONS
+  -w, --workdir string                    Set an alternative working directory (default is cwd)
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+

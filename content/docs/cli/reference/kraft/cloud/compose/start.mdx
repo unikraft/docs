@@ -1,0 +1,40 @@
+---
+title: "kraft cloud compose start"
+description: Start services in a Unikraft Cloud Compose project deployment
+---
+
+```
+kraft cloud compose start [FLAGS] [COMPONENT]
+```
+
+### Examples
+
+```
+# Start all services in a Unikraft Cloud Compose project.
+$ kraft cloud compose start
+
+# Start the nginx service
+$ kraft cloud compose start nginx
+
+```
+
+## Options
+
+```
+  -h, --help            help for start
+  -w, --wait duration   Timeout to wait for the instance to start (ms/s/m/h)
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

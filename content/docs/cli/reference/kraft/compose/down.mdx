@@ -1,6 +1,6 @@
 ---
 title: "kraft compose down"
-description: Stop and remove a compose project.
+description: Stop and remove a compose project
 ---
 
 Stop and remove a compose project.
@@ -20,16 +20,18 @@ $ kraft compose down
 ## Options
 
 ```
-  -h, --help   help for down
+  -h, --help             help for down
+      --remove-orphans   Remove machines for services not defined in the Compose file.
 ```
 
 ## Options inherited from parent commands
 
 ```
-  -f, --file string   Set the Compose file.
+      --env-file string   Set the environment file.
+  -f, --file string       Set the Compose file.
 ```
 
 ## See Also
 
-* [`kraft compose`](/docs/cli/reference/kraft/compose): compose
+* [`kraft compose`](/docs/cli/reference/kraft/compose): Build and run compose projects with Unikraft
 

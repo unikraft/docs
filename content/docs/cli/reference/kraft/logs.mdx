@@ -1,6 +1,6 @@
 ---
 title: "kraft logs"
-description: Fetch the logs of a unikernel.
+description: Fetch the logs of a unikernel
 ---
 
 Fetch the logs of a unikernel.
@@ -19,22 +19,18 @@ $ kraft logs my-machine
 # Fetch the logs of a unikernel and follow the output
 $ kraft logs --follow my-machine
 
-# Fetch the logs of a unikernel and prefix each line with the machine name
-$ kraft logs --prefix-name
-
-# Fetch the logs of a unikernel and prefix each line with the given string
-$ kraft logs --prefix "log: "
+# Fetch the logs of multiple unikernels and follow the output
+$ kraft logs --follow my-machine1 my-machine2
 
 ```
 
 ## Options
 
 ```
-  -f, --follow          Follow log output
-  -h, --help            help for logs
-  -p, --plat string     Set the platform virtual machine monitor driver.  Set to 'auto' to detect the guest's platform and 'host' to use the host platform. (default "auto")
-      --prefix string   Prefix each log line with the given string
-      --prefix-name     Prefix each log line with the machine name
+  -f, --follow        Follow log output
+  -h, --help          help for logs
+      --no-prefix     When logging multiple machines, do not prefix each log line with the name
+  -p, --plat string   Set the platform virtual machine monitor driver.  Set to 'auto' to detect the guest's platform and 'host' to use the host platform. (default "auto")
 ```
 
 ## See Also

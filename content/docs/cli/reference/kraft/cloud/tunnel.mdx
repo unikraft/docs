@@ -1,0 +1,97 @@
+---
+title: "kraft cloud tunnel"
+description: Forward a local port to an unexposed instance
+---
+
+Forward a local port to an unexposed instance through an intermediate TLS
+tunnel service.
+
+When you need to access an instance on Unikraft Cloud which is not
+publicly exposed to the internet, you can use the
+`kraft cloud tunnel` subcommand to forward from a local port to a
+port which the instance listens on.
+
+The `kraft cloud tunnel` subcommand creates a secure tunnel
+between your local machine and the private instance(s).  The tunnel is
+created using an intermediate TLS tunnel service which is another instance
+running as a sidecar along with the target instance in the same private
+network.  The tunnel service listens on a publicly exposed port on the
+cloud and forwards the traffic to the private instance.
+
+When you run the `kraft cloud tunnel` subcommand, you specify the
+local port to forward, the private instance to connect to, and the port on
+the private instance to connect to.
+
+It is also possible to customize the remote port which the tunnel service
+exposes and the command-and-control port used by the tunnel service.  By
+default, the remote port is `4444` and the command-and-control
+port is `4443`.
+
+
+```
+kraft cloud tunnel [FLAGS] [LOCAL_PORT:]<INSTANCE|PRIVATE_IP|PRIVATE_FQDN>:DEST_PORT[/TYPE] ...
+```
+
+### Examples
+
+```
+# Forward to the TCP port of `8080` of the unexposed instance
+# identified by its name "nginx" which then becomes locally accessible
+# also at `8080`:
+$ kraft cloud tunnel nginx:8080
+
+# Forward to the TCP port of 8080 of the unexposed instance based on its
+# private FQDN `nginx.internal` which then becomes locally
+# accessible also at `8080`:
+$ kraft cloud tunnel nginx.internal:8080
+
+# Forward to the TCP port of `8080` of the unexposed instance
+# based on its private IP `172.16.28.8` which then becomes locally
+# accessible also at `8080`:
+$ kraft cloud tunnel 172.16.28.8:8080
+
+# Forward to the UDP port of `8123` of the unexposed instance
+# based on its private IP `172.16.22.2` which then becomes locally
+# accessible also at `8123`:
+$ kraft cloud tunnel 172.16.22.2:8123/udp
+
+# Forward to the TCP port of `8080` of the unexposed instance by
+# its name "nginx" which then becomes locally accessible at
+# `8333`:
+$ kraft cloud tunnel 8333:nginx:8080
+
+# Forward multiple ports from multiple instances
+$ kraft cloud tunnel 8080:my-instance1:8080/tcp 8443:my-instance2:8080/tcp
+
+# In the circumstance where the port you wish to connect to of the
+# instance is the same as the remote port exposed by the tunnelling
+# service (or the the command-and-control port of the tunneling service),
+# you can use the -p and -P flag to set alternative relay and command-
+# and-control ports.
+#
+# Tunnel to the instance 'my-instance' on port 8080 via the intermediate
+# 5500 port
+$ kraft cloud tunnel -p 5500 my-instance:8080
+
+```
+
+## Options
+
+```
+  -h, --help                        help for tunnel
+  -P, --tunnel-control-port uint    Command-and-control port used by the tunneling service(s). (default 4443)
+      --tunnel-image string         Tunnel service image (default "official/utils/tunnel:1.0")
+  -p, --tunnel-proxy-port strings   Remote port exposed by the tunnelling service(s). (default start port is 4444)
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+

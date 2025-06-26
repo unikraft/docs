@@ -1,0 +1,83 @@
+---
+title: "kraft cloud instance create"
+description: Create an instance
+---
+
+Create an instance on Unikraft Cloud from an image.
+
+
+```
+kraft cloud instance create [FLAGS] IMAGE [-- ARGS]
+```
+
+### Examples
+
+```
+# Create a new NGINX instance in Frankfurt and start it immediately. Map the external
+# port 443 to the internal port 8080 which the application listens on.
+$ kraft cloud --metro fra0 instance create \
+	--start \
+	--port 443:8080 \
+	nginx:latest
+
+# This command is the same as above, however using the more elaborate port expression.
+# This is because in fact we need need to accept TLS and HTTP connections and redirect
+# port 8080 to port 443.  The above example exists only as a shortcut for what is written
+# below:
+$ kraft cloud --metro fra0 instance create \
+	--start \
+	--port 443:8080/http+tls \
+	--port 80:443/http+redirect \
+	nginx:latest
+
+# Attach two existing volumes to the vm, one read-write at /data
+# and another read-only at /config:
+$ kraft cloud --metro fra0 instance create \
+	--start \
+	--volume my-data-vol:/data \
+	--volume my-config-vol:/config:ro \
+	nginx:latest
+
+```
+
+## Options
+
+```
+  -c, --certificate strings               Set the certificates to use for the service
+  -d, --domain strings                    The domain names to use for the service
+      --entrypoint strings                Set the entrypoint for the instance
+  -e, --env stringArray                   Environmental variables
+  -f, --feature strings                   List of features to enable
+  -h, --help                              help for create
+  -M, --memory string                     Specify the amount of memory to allocate (MiB increments)
+  -n, --name string                       Specify the name of the instance
+  -o, --output string                     Set output format. Options: table,yaml,json,list,raw (default "list")
+  -p, --port strings                      Specify the port mapping between external to internal
+  -R, --replicas uint                     Number of replicas of the instance
+      --restart string                    Set the restart policy for the instance (never/always/on-failure) (default "never")
+      --rollout string                    Set the rollout strategy for an instance which has been previously run in the provided service (default "prompt")
+      --rollout-qualifier string          Set the rollout qualifier used to determine which instances should be affected by the strategy in the supplied service (default "image")
+      --rollout-wait duration             Time to wait before performing rolling out action (ms/s/m/h) (default 10s)
+      --scale-to-zero string              Scale to zero policy of the instance (on/off/idle) (default "off")
+      --scale-to-zero-cooldown duration   Cooldown period before scaling to zero (ms/s/m/h)
+      --scale-to-zero-stateful            Save state when scaling to zero
+  -g, --service string                    Attach this instance to an existing service
+  -S, --start                             Immediately start the instance after creation
+  -s, --subdomain strings                 Set the subdomains to use when creating the service
+  -V, --vcpus uint                        Specify the number of vCPUs to allocate
+  -v, --volume strings                    List of volumes to attach instance to
+  -w, --wait-for-image                    Wait for the image to be available before creating the instance
+      --wait-for-image-timeout duration   Time to wait before timing out when waiting for image (ms/s/m/h) (default 1m0s)
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud instance`](/docs/cli/reference/kraft/cloud/instance): Manage instances
+

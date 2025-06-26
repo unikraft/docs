@@ -29,7 +29,7 @@ Run a specific kernel binary with 1024 megabytes of memory:
 $ kraft run --arch x86_64 --plat qemu --memory 1Gi path/to/kernel-x86_64-qemu
 
 Run an OCI-compatible unikernel, mapping port 8080 on the host to port 80 in the unikernel:
-$ kraft run -p 8080:80 unikraft.org/nginx:latest
+$ kraft run -p 8080:80 unikraft.org/nginx:1.25
 
 Attach the unikernel to an existing network kraft0:
 $ kraft run --network kraft0
@@ -50,7 +50,7 @@ Supply a read-only root file system at / via initramfs CPIO archive and mount a 
 $ kraft run --rootfs ./initramfs.cpio --volume ./path/to/dir:/dir
 
 Customize the default content directory of the official Unikraft NGINX OCI-compatible unikernel and map port 8080 to localhost:
-$ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
+$ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:1.25
 
 ```
 
@@ -61,6 +61,7 @@ $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
       --as string              Force a specific runner
   -d, --detach                 Run unikernel in background
   -W, --disable-acceleration   Disable acceleration of CPU (usually enables TCG)
+  -e, --env stringArray        Set environment variables, int the format key[=value]
   -h, --help                   help for run
       --ip string              Assign the provided IP address
   -a, --kernel-arg strings     Set additional kernel arguments
@@ -76,6 +77,7 @@ $ kraft run -v ./path/to/html:/nginx/html -p 8080:80 unikraft.org/nginx:latest
       --prefix-name            Prefix each log line with the machine name
       --rm                     Automatically remove the unikernel when it shutsdown
       --rootfs string          Specify a path to use as root file system (can be volume or initramfs)
+  -r, --runtime string         Set an alternative unikernel runtime
       --symbolic               Use the debuggable (symbolic) unikernel
   -t, --target string          Explicitly use the defined project target
   -v, --volume strings         Bind a volume to the instance

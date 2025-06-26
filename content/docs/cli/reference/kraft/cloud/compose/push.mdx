@@ -1,0 +1,36 @@
+---
+title: "kraft cloud compose push"
+description: Push the images services to Unikraft Cloud from a Compose project
+---
+
+```
+kraft cloud compose push [FLAGS] [COMPONENT]
+```
+
+### Examples
+
+```
+# Push the nginx service image to Unikraft Cloud
+$ kraft cloud compose push nginx
+
+```
+
+## Options
+
+```
+  -h, --help   help for push
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

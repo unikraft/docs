@@ -1,0 +1,41 @@
+---
+title: "kraft cloud metro"
+description: Inspect Unikraft Cloud metros and regions
+---
+
+```
+kraft cloud metro
+```
+
+### Examples
+
+```
+# List metros available.
+$ kraft cloud metro list
+
+# List metros available in JSON format.
+$ kraft cloud metro list -o json
+
+# List metros available and their status.
+$ kraft cloud metro list --status
+
+```
+
+## Options
+
+```
+  -h, --help   help for metro
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+* [`kraft cloud metro list`](/docs/cli/reference/kraft/cloud/metro/list): List metros on KraftCloud
+

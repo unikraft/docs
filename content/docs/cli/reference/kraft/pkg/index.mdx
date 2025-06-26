@@ -22,28 +22,31 @@ kraft pkg [FLAGS] [SUBCOMMAND|DIR]
 
 ```
 # Package a project as an OCI archive and embed the target's KConfig.
-$ kraft pkg --as oci --name unikraft.org/nginx:latest	
+$ kraft pkg --as oci --name unikraft.org/nginx:1.25
 
 ```
 
 ## Options
 
 ```
-  -m, --arch string        Filter the creation of the package by architecture of known targets
+  -m, --arch string        Filter the creation of the package by architecture of known targets (x86_64/arm64/arm)
   -a, --args strings       Pass arguments that will be part of the running kernel's command line
   -M, --as string          Force the packaging despite possible conflicts (default "oci")
+  -c, --compress           Compress the initrd package (experimental)
       --dbg                Package the debuggable (symbolic) kernel image instead of the stripped image
+  -e, --env stringArray    Set environment variables to be packed into the package
       --force-format       Force the use of a packaging handler format
   -h, --help               help for pkg
   -k, --kernel string      Override the path to the unikernel image
   -K, --kraftfile string   Set an alternative path of the Kraftfile
+  -l, --label strings      Set labels to be packed into the package (k=v)
   -n, --name string        Specify the name of the package
       --no-kconfig         Do not include target .config as metadata
-      --no-pull            Do not pull package dependencies before packaging
   -o, --output string      Save the package at the following output
-  -p, --plat string        Filter the creation of the package by platform of known targets
+  -p, --plat string        Filter the creation of the package by platform of known targets (fc/qemu/xen/kraftcloud)
   -P, --push               Push the package on if successfully packaged
       --rootfs string      Specify a path to use as root file system (can be volume or initramfs)
+  -r, --runtime string     Set the runtime to use for the package
       --strategy string    When a package of the same name exists, use this strategy when applying targets. (default "overwrite")
   -t, --target string      Package a particular known target
   -w, --workdir string     Set an alternative working directory (default is cwd)

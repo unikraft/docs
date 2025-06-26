@@ -1,0 +1,37 @@
+---
+title: "kraft compose create"
+description: Create a compose project
+---
+
+Create the services and networks for a project.
+
+```
+kraft compose create [FLAGS]
+```
+
+### Examples
+
+```
+# Create the networks and services without running them
+$ kraft compose create 
+
+```
+
+## Options
+
+```
+  -h, --help             help for create
+      --remove-orphans   Remove machines for services not defined in the Compose file
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+  -f, --file string       Set the Compose file.
+```
+
+## See Also
+
+* [`kraft compose`](/docs/cli/reference/kraft/compose): Build and run compose projects with Unikraft
+

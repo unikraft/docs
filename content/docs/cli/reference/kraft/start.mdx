@@ -20,13 +20,12 @@ $ kraft start my-machine
 ## Options
 
 ```
-      --all             Start all machines
-  -d, --detach          Run in background
-  -h, --help            help for start
-  -p, --plat string     Set the platform virtual machine monitor driver.  Set to 'auto' to detect the guest's platform and 'host' to use the host platform. (default "auto")
-      --prefix string   Prefix each log line with the given string
-      --prefix-name     Prefix each log line with the machine name
-      --rm              Automatically remove the unikernel when it shutsdown
+      --all           Start all machines
+  -d, --detach        Run in background
+  -h, --help          help for start
+      --no-prefix     When starting multiple machines, do not prefix each log line with the name
+  -p, --plat string   Set the platform virtual machine monitor driver.  Set to 'auto' to detect the guest's platform and 'host' to use the host platform. (default "auto")
+      --rm            Automatically remove the unikernel when it shutsdown
 ```
 
 ## See Also

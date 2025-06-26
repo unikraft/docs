@@ -1,0 +1,97 @@
+---
+version: 0.19.0
+releaseDate: 2025-05-23
+codename: Pan
+commit: 03f108fbf4b836083c8cfe84334b7f5d6fb34f1d
+blogPost: /blog/2025-05-23-unikraft-releases-v0.19.0
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.18.0...RELEASE-0.19.0
+---
+
+We are proud to announce the latest version of Unikraft, `v0.19`!
+This release comes with plenty of new features and updates.
+
+⚠️  Be aware of the following potentially breaking changes:
+
+The config options of `libposix-process` have been updated as follows:
+
+* `CONFIG_LIBPOSIX_PROCESS_PIDS` and `CONFIG_LIBPOSIX_PROCESS_CLONE` are merged into a single option, `CONFIG_LIBPOSIX_PROCESS_MULTITHREADING`.
+* `CONFIG_LIBPOSIX_PROCESS_VFORK` is replaced by `CONFIG_LIBPOSIX_PROCESS_MULTIPROCESS`.
+* `CONFIG_LIBPOSIX_PROCESS_INIT_PIDS` is deprecated, and its functionality is enabled by default.
+
+Here is the full updates list:
+
+### 🚀 New Features
+
+* `lib/posix-process`: POSIX signals ([#1248](https://github.com/unikraft/unikraft/pull/1248)) by @michpappas
+* `lib/posix-process`: Add `vfork` & `execve` ([#1386](https://github.com/unikraft/unikraft/pull/1386)) by @michpappas
+* `[app-elfloader]`: Introduce ELF `binfmt` loader ([#79](https://github.com/unikraft/app-elfloader/pull/79)) by @michpappas
+* `lib/posix-process`: Supplementary changes for multiprocess ([#1627](https://github.com/unikraft/unikraft/pull/1627)) by @michpappas
+* `[app-elfloader]`: Supplementary changes for multiprocess ([#90](https://github.com/unikraft/app-elfloader/pull/90)) by @michpappas
+* `lib/posix-process`: `exit()` and `wait()` ([#1630](https://github.com/unikraft/unikraft/pull/1630)) by @michpappas
+* `drivers/ukps2`: Add Firecracker shutdown driver and some minor `Kconfig` fixups ([#1265](https://github.com/unikraft/unikraft/pull/1265)) by @mogasergiu
+* `lib/posix-process`: Graceful shutdown ([#1633](https://github.com/unikraft/unikraft/pull/1633)) by @michpappas
+* `[app-elfloader]`: POSIX process graceful shutdown ([#92](https://github.com/unikraft/app-elfloader/pull/92)) by @michpappas
+* `lib/posix-fdio`: Add internal implementations of `futime(n)s` ([#1575](https://github.com/unikraft/unikraft/pull/1575)) by @andreittr
+* `lib/{ukfile, posix-socket, posix-unixsocket}`: Add support for explicitly polled files & sockets ([#1446](https://github.com/unikraft/unikraft/pull/1446)) by @andreittr
+* `lib/posix-fdtab`: Support independent (per-process) fdtabs ([#1278](https://github.com/unikraft/unikraft/pull/1278)) by @andreittr
+* `lib/posix-fd`: Named open file descriptions ([#1592](https://github.com/unikraft/unikraft/pull/1592)) by @andreittr
+
+### 🐛 Bug Fixes & Improvements
+
+* `lib/posix-process`: Add `README.md` ([#1644](https://github.com/unikraft/unikraft/pull/1644)) by @michpappas
+* `lib/posix-process`: Make multiprocess config select `execve` ([#1642](https://github.com/unikraft/unikraft/pull/1642)) by @mogasergiu
+* `lib/posix-process/arch/arm64`: Save/restore `lr`/`fp` on clone asm stub ([#1641](https://github.com/unikraft/unikraft/pull/1641)) by @mogasergiu
+* `lib/posix-process`: Terminate underlying thread only if added to sched ([#1640](https://github.com/unikraft/unikraft/pull/1640)) by @mogasergiu
+* `lib/posix-process`: Make `rt_sigtimedwait` stub block ([#1639](https://github.com/unikraft/unikraft/pull/1639)) by @michpappas
+* `lib/ukvmem`: Return `ENOMEM` for invalid addresses ([#1638](https://github.com/unikraft/unikraft/pull/1638)) by @mogasergiu
+* `lib/ukrandom`: Validate `getrandom` input & rm assert ([#1637](https://github.com/unikraft/unikraft/pull/1637)) by @andreittr
+* `lib/vfscore`: Fix write const path in `automount` ([#1636](https://github.com/unikraft/unikraft/pull/1636)) by @andreittr
+* `lib/syscall_shim/arch/x86`: Properly fetch `curr_fp` in execenv entry ([#1635](https://github.com/unikraft/unikraft/pull/1635)) by @mogasergiu
+* `plat/xen`: Add initrd support for arm64 ([#1634](https://github.com/unikraft/unikraft/pull/1634)) by @andreistan26
+* `lib/posix-process/signal`: Add stub for `CLONE_SIGHAND` ([#1628](https://github.com/unikraft/unikraft/pull/1628)) by @michpappas
+* `lib/posix-process/signals`: Fix conditional for sigsetops ([#1626](https://github.com/unikraft/unikraft/pull/1626)) by @michpappas
+* `libposix-process`: Create PID1 from thread passed via init ([#1620](https://github.com/unikraft/unikraft/pull/1620)) by @michpappas
+* `lib/posix-process`: Add `signalfd`/`signalfd4` support ([#1619](https://github.com/unikraft/unikraft/pull/1619)) by @mogasergiu
+* `lib/posix-process`: Define `libc` wrappers for `clone`/`vfork` ([#1618](https://github.com/unikraft/unikraft/pull/1618)) by @mogasergiu
+* `lib/posix-fdtab`: Fix exec handler & ref leak on fdtab clone ([#1617](https://github.com/unikraft/unikraft/pull/1617)) by @andreittr
+* `lib/posix-pipe`: Add pipe stat support ([#1603](https://github.com/unikraft/unikraft/pull/1603)) by @andreittr
+* `lib/posix-fd`: Move heap-allocated open file descriptions out of fdtab ([#1602](https://github.com/unikraft/unikraft/pull/1602)) by @andreittr
+* `lib/syscall_shim`: Use global scope inline asm for execenv prologue ([#1598](https://github.com/unikraft/unikraft/pull/1598)) by @mogasergiu
+* `lib/posix-unixsocket`: Fix `NULL` crash on `accept4()` ([#1593](https://github.com/unikraft/unikraft/pull/1593)) by @andreittr
+* `lib/vfscore`: Use `uk_syscall_do` for syscall delegation ([#1591](https://github.com/unikraft/unikraft/pull/1591)) by @mogasergiu
+* `lib/ukcpio`: Add `syscall_shim` dep and use `uk_syscall_do` ([#1590](https://github.com/unikraft/unikraft/pull/1590)) by @mogasergiu
+* `lib/ramfs`: Use kernel internal `clock_gettime` variant ([#1587](https://github.com/unikraft/unikraft/pull/1587)) by @mogasergiu
+* `lib/vfscore`: Use kernel internal `clock_gettime` variant ([#1586](https://github.com/unikraft/unikraft/pull/1586)) by @mogasergiu
+* `lib/posix-process`: Define kernel internal `exit_group` ([#1585](https://github.com/unikraft/unikraft/pull/1585)) by @mogasergiu
+* `lib/posix-process`: Define kernel internal resource limit syscalls ([#1584](https://github.com/unikraft/unikraft/pull/1584)) by @mogasergiu
+* `lib/posix-process`: Define kernel internal `gettid`/`getppid`/`getpid` ([#1583](https://github.com/unikraft/unikraft/pull/1583)) by @mogasergiu
+* `lib/posix-fdio`: Adopt remaining file syscalls from vfscore ([#1581](https://github.com/unikraft/unikraft/pull/1581)) by @andreittr
+* `lib/ukfile`: API: Change file offset and iovec length to `size_t` ([#1580](https://github.com/unikraft/unikraft/pull/1580)) by @andreittr
+* `lib/ukfile`: Add try acquire operation ([#1579](https://github.com/unikraft/unikraft/pull/1579)) by @andreittr
+* `lib/posix-fdio`: Fix wrong computation of `dev_t` ([#1578](https://github.com/unikraft/unikraft/pull/1578)) by @andreittr
+* `lib/syscall_shim`: Autogenerate `uk_syscall_*` symbols at build time ([#1577](https://github.com/unikraft/unikraft/pull/1577)) by @mogasergiu
+* `lib/posix-fd`: Move open file descriptions into own lib ([#1574](https://github.com/unikraft/unikraft/pull/1574)) by @andreittr
+* `lib/ukvmem`: Use correct stack guard size macro for tests ([#1573](https://github.com/unikraft/unikraft/pull/1573)) by @mogasergiu
+* `lib/posix-timerfd`: Output correct `old_value` on set ([#1568](https://github.com/unikraft/unikraft/pull/1568)) by @andreittr
+* `lib/posix-timerfd`: Fix counter on subsequent reads ([#1567](https://github.com/unikraft/unikraft/pull/1567)) by @andreittr
+* `lib/posix-timerfd`: Validate `settime()` argument ([#1566](https://github.com/unikraft/unikraft/pull/1566)) by @andreittr
+* `plat/kvm`: Select `HAVE_IBMPC` only on x86_64 ([#1565](https://github.com/unikraft/unikraft/pull/1565)) by @shym
+* `lib/syscall-shim`: Do not dereference optional `clone()` parameters ([#1564](https://github.com/unikraft/unikraft/pull/1564)) by @michpappas
+* `lib/posix-*`: Remove hard dependency on posix-fdtab ([#1437](https://github.com/unikraft/unikraft/pull/1437)) by @andreittr
+* `lib/syscall_shim`: Introduce syscall enter/exit routines tables ([#1277](https://github.com/unikraft/unikraft/pull/1277)) by @mogasergiu
+* `lib/nolibc`: Update Musl-imported headers for signals ([#1244](https://github.com/unikraft/unikraft/pull/1244)) by @michpappas
+* `[app-elfloader]`: Silence unused argument warnings for /etc/hostname ([#93](https://github.com/unikraft/app-elfloader/pull/93)) by @andreittr
+* `[app-elfloader]`: Check return value of `uk_random_bytes()` ([#91](https://github.com/unikraft/app-elfloader/pull/91)) by @michpappas
+* `[app-elfloader]`: Config.uk: Imply stdio file descriptors ([#87](https://github.com/unikraft/app-elfloader/pull/87)) by @andreittr
+* `[app-elfloader]`: Remove `uk_syscall_` symbols from `exportsyms.uk` ([#86](https://github.com/unikraft/app-elfloader/pull/86)) by @mogasergiu
+* `[lib-libelf]`: Use Unikraft-provided `__offsetof` instead of own ([#5](https://github.com/unikraft/lib-elf/pull/5)) by @andreittr
+* `[lib-lwip]`: `init.c`: Remove no-op term function ([#62](https://github.com/unikraft/lib-musl/pull/62)) by @andreittr
+* `[lib-lwip]`: `sockets.c`: Use `size_t` for `iovec` length ([#61](https://github.com/unikraft/lib-musl/pull/61)) by @andreittr
+* `[lib-lwip]`: `socket.c`: Update to `posix-socket` poll setup API ([#58](https://github.com/unikraft/lib-musl/pull/58)) by @andreittr
+* `[lib-musl]`: `arch/arm64`: Save/restore link register on `clone` asm stub ([#89](https://github.com/unikraft/lib-musl/pull/89)) by @mogasergiu
+* `[lib-musl]`: Adapt to updated libposix-process config options ([#87](https://github.com/unikraft/lib-musl/pull/87)) by @michpappas
+* `[lib-musl]`: Replace `clone`/`vfork` assembly wrappers with our own ([#86](https://github.com/unikraft/lib-musl/pull/86)) by @mogasergiu
+* `[lib-musl]`: `Config.uk`: Add posix-tty as dependency to stdio ([#85](https://github.com/unikraft/lib-musl/pull/85)) by @andreittr
+* `[lib-musl]`: `Makefile.uk.musl.signal`: Fix arm64 architecture test ([#83](https://github.com/unikraft/lib-musl/pull/83)) by @shym
+
+A big thank you also to all those who helped in the [review process](unikraft.org/docs/contributing/review-process/): [Andrei Tatar](https://github.com/andreittr), [Cezar Crăciunoiu](https://github.com/craciunoiuc), [Teodor Țeugea](https://github.com/John-Ted), [Oleksii Moisieiev](https://github.com/oleksiimoisieiev), [Răzvan Deaconescu](https://github.com/razvand), [Sergiu Moga](https://github.com/mogasergiu), [Ștefan Jumărea](https://github.com/StefanJum).

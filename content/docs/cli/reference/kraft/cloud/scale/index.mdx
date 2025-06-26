@@ -1,0 +1,39 @@
+---
+title: "kraft cloud scale"
+description: Manage instance autoscale policies
+---
+
+```
+kraft cloud scale SUBCOMMAND
+```
+
+### Examples
+
+```
+# Add an autoscale configuration to a service
+$ kraft cloud scale add my-service my-policy
+
+```
+
+## Options
+
+```
+  -h, --help   help for scale
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+* [`kraft cloud scale add`](/docs/cli/reference/kraft/cloud/scale/add): Add an autoscale configuration policy
+* [`kraft cloud scale get`](/docs/cli/reference/kraft/cloud/scale/get): Get an autoscale configuration or policy
+* [`kraft cloud scale init`](/docs/cli/reference/kraft/cloud/scale/init): Initialize autoscale configuration for a service
+* [`kraft cloud scale remove`](/docs/cli/reference/kraft/cloud/scale/remove): Delete an autoscale configuration policy
+* [`kraft cloud scale reset`](/docs/cli/reference/kraft/cloud/scale/reset): Reset autoscale configuration of a service
+

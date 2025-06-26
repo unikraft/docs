@@ -7,7 +7,7 @@ description: |
 
 ## Reminder
 
-In the [previous session](/guides/intro), we have experimented with building and running several unikernels using instructions from the `README.md` files of the applications.
+In the [previous session](/guides/intro), we have experimented with building and running several unikernels using scripts.
 Today, we will explore the modular architecture of Unikraft, and how we can leverage that in order to setup, configure, build and run our unikernels from scratch, without the use of scripts or pre-defined configurations.
 
 Let's start by understanding the basic layout of the Unikraft working directory, its environment variables, as well as what the most common Unikraft specific files mean.
@@ -43,73 +43,63 @@ An architecture details the CPU and memory specifics that will run the resulting
 We can  use a lower-level configuration and build system (based on [Kconfig](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) and [make](https://www.gnu.org/software/make/)) to get a grasp of how everything works.
 The low-level system will be further detailed in the next session.
 
-## Setting up Helloworld
+## Setting up the repositories
 
-It is **heavily** recommended that for building and developing applications with Unikraft, you use a conventional folder structure.
-Namely, for the examples that we will be going through in this session, our working directory will look like this:
+For ease of use, Unikraft applications will follow a predefined folder structure.
+Namely, the one that is used in the [`catalog-core`](https://github.com/unikraft/catalog-core/) repository, that you are already familiar to.
 
 ```console
-workdir                     ---> working directory containing applications
-`-- helloworld/              ---> application directory
+catalog-core/               ---> working directory containing applications
+`-- c-hello/                ---> application directory
     |
     |
-    |-- main.c              ---> application code
+    |-- hello.c             ---> application code
     |-- Makefile            ---> makefile for specifying external library dependencies
-    |-- Config.uk           ---> unikraft configuration options for the application
+    |-- Config.uk           ---> optional, unikraft configuration options for the application
     |-- Makefile.uk         ---> the application's compiler flags and source files to build
     |
     |
     `-- workdir/
-        |-- libs/        ---> external libraries used by the application
-        `-- unikraft/    ---> unikraft core kernel, containing all the internal libraries
+        |-- build/          ---> will be created at build time, all build artifacts will be placed here
+        |-- libs/           ---> optional, external libraries used by the application
+        `-- unikraft/       ---> unikraft core kernel, containing all the internal libraries
 `-- nginx/
     |
     |
     |
-`-- python3/
+`-- redis/
     |
     |
     |
 ...
 ```
 
-Let's begin with the simplest app there is, `helloworld`.
-We first create the `workdir` folder where we will place all of our applications and clone the [`app-helloworld`](https://github.com/unikraft/app-helloworld/) repository, which contains the source files and the Makefiles necessary for bulding the `helloworld` application.
+This file structure (specifically the `workdir/` directory) is created by the `setup.sh` scripts from the first session, so you should already have it in your `catalog-core/` local clone.
+If not, run the `setup.sh` scripts again, for every application that you want to build.
+
+Let's begin with the simplest app there is, `c-hello`.
 
 ```console
-$ mkdir workdir
-
-$ cd workdir/
-
-$ git clone https://github.com/unikraft/app-helloworld helloworld
-
-$ cd helloworld/
-[...]
+$ cd catalog-core/c-hello/
 
 $ ls -F
-[...]  Makefile  Makefile.uk  README.md  main.c  [...]
+[...]  Makefile  README.md  hello.c  [...]
 ```
 
-Now, while inside the `helloworld/` directory, we create the `workdir/` folder, which will store the Unikraft core kernel from this [repository](https://github.com/unikraft/unikraft), along with the `libs/` directory which should store all of the external libraries the applications depends on, cloned from the `lib-` repos of the [Unikraft organization](https://github.com/unikraft/).
-Since the `helloworld` application is fairly simple, it does not use any external library, so we can leave the `libs/` directory empty.
-
-```console
-$ mkdir workdir/
-
-$ cd workdir/
-
-$ git clone https://github.com/unikraft/unikraft unikraft
-
-$ mkdir libs
-```
+Now, while inside the `c-hello/` directory, we run the `setup.sh` script to create the `workdir/` folder, which will store the Unikraft core kernel from this [repository](https://github.com/unikraft/unikraft), along with the `libs/` directory which should store all of the external libraries the applications depends on, cloned from the `lib-` repos of the [Unikraft organization](https://github.com/unikraft/).
+Since the `c-hello` application is fairly simple, it does not use any external library, so there will be no `libs/` directory.
 
 ### Configuration
 
-Now that we have our setup ready, we can head back to the `helloworld/` directory and start configuring our application!
+First we make sure we clean everything that was configured while running the scripts, so we can start from scratch:
 
 ```console
-$ cd ../
+$ make distclean
+```
 
+Now that we have our setup ready, we can start configuring our application!
+
+```console
 $ make menuconfig
 ```
 
@@ -145,25 +135,26 @@ $ make -j$(nproc)
 ```
 
 This command invokes the build system by compiling the application on `$(nproc)` different threads, for shorter build times.
-The compilation process includes all of the Unikraft core internal libraries selected by default for this app, along with the application source files (just `main.c` for `helloworld`).
+The compilation process includes all of the Unikraft core internal libraries selected by default for this app, along with the application source files (just `main.c` for `c-hello`).
 The process should end with the following output:
 
 ```console
 [...]
-  LD      helloworld_qemu-x86_64.dbg
-  UKBI    helloworld_qemu-x86_64.dbg.bootinfo
-  SCSTRIP helloworld_qemu-x86_64
-  GZ      helloworld_qemu-x86_64.gz
-make[1]: Leaving directory '/home/X/workdir/helloworld/workdir/unikraft'
+  LD      c-hello_qemu-x86_64.dbg
+  UKBI    c-hello_qemu-x86_64.dbg.bootinfo
+  SCSTRIP c-hello_qemu-x86_64
+  GZ      c-hello_qemu-x86_64.gz
+make[1]: Leaving directory '/projects/unikraft/catalog-core/repos/unikraft'
 ```
 Notice that each line in `make`'s output consists of an operation in the build process (i.e compiling, linking, symbol striping etc.) and a corresponding generated file.
 
 ### Running
 
 Now that the unikernel image has been sucessfully generated, we can finally run it using the QEMU Virtual Machine Monitor:
+We will **always** run the stripped image, in our case `c-hello_qemu-x86_64`.
 
 ```console
-$ qemu-system-x86_64 -kernel build/helloworld_qemu-x86_64 -nographic
+$ qemu-system-x86_64 -kernel workdir/build/c-hello_qemu-x86_64 -nographic
 ```
 
 The `-kernel` option is used for indicating the image to be booted by the machine, while the `-nographic` option is simply for using QEMU as a command-line program by redirecting all output to the terminal.
@@ -183,8 +174,8 @@ oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
 oOo oOO| | | | |   (| | | (_) |  _) :_
  OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
                   Atlas 0.13.1~5eb820bd
-Hello world!
-Arguments:  "build/helloworld_qemu-x86_64"
+Hello from Unikraft!
+Arguments:  "build/c-hello_qemu-x86_64"
 ```
 
 If everything went well, you should see the beautiful Unikraft banner and the "Hello world" message printed out.
@@ -192,7 +183,7 @@ Congratulations!
 
 ### Choosing another architecture
 
-Let's try to build the `helloworld` app for the ARM64 architecture, as well.
+Let's try to build the `c-hello` app for the ARM64 architecture, as well.
 All you need to do is head back into the configuration menu by running `make menuconfig`, after which you should go to the `Architecture Selection` menu where you can pick the `Armv8 compatible (64 bits)` target.
 Make sure to save your changes.
 When you exit the menu, you will most likely see this warning message:
@@ -221,7 +212,7 @@ $ make -j$(nproc)
 Since we are targeting a different architecture, we have to use QEMU to emulate an ARM64 CPU:
 
 ```console
-$ qemu-system-aarch64 -kernel build/helloworld_qemu-arm64 -nographic -machine virt -cpu cortex-a57
+$ qemu-system-aarch64 -kernel workdir/build/c-hello_qemu-arm64 -nographic -machine virt -cpu cortex-a57
 ```
 
 The `-kernel` and `-nographic` are the same as in the x86 case.
@@ -241,12 +232,11 @@ oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
 oOo oOO| | | | |   (| | | (_) |  _) :_
  OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
                   Atlas 0.13.1~5eb820bd
-Hello world!
-Arguments:  "helloworld"
+Hello from Unikraft!
 ```
 ### Enabling kernel logs
 
-We will now try to further configure our `helloworld` application.
+We will now try to further configure our `c-hello` application.
 For example, we can try to enable debug messages logged by the kernel to gain a better undersanding of the whole booting process.
 You can target either ARM64, or x86 - it's your choice.
 We can do this through the same `menuconfig` interface presented earlier, but first, it is recommended that you clean all of the application's build files in order to make sure that the changes are applied correctly.
@@ -254,9 +244,9 @@ We can do this through the same `menuconfig` interface presented earlier, but fi
 ```console
 $ make properclean
 
-make[1]: Entering directory '/home/X/workdir/helloworld/workdir/unikraft'
+make[1]: Entering directory '/projects/unikraft/catalog-core/repos/unikraft'
   RM      build/
-make[1]: Leaving directory '/home/X/workdir/helloworld/workdir/unikraft'
+make[1]: Leaving directory '/projects/unikraft/catalog-core/repos/unikraft'
 
 $ make menuconfig
 ```
@@ -279,10 +269,10 @@ We want to see all the messages (info, warnings, errors) logged by the kernel.
 
 As before, press the `Save` button and exit the configuration menu by repeatedly selecting `Exit`.
 
-Now, if we build and run the application in the same manner (i.e with `$ make -j $(nproc)`, followed by  `$ qemu-system-x86_64 -kernel build/helloworld_qemu-x86_64 -nographic`), we should see a more detailed output:
+Now, if we build and run the application in the same manner (i.e with `$ make -j $(nproc)`, followed by  `$ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic`), we should see a more detailed output:
 
 ```console
-$ qemu-system-x86_64 -kernel build/helloworld_qemu-x86_64 -nographic
+$ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic
 
 SeaBIOS (version Arch Linux 1.16.2-1-1)
 
@@ -292,56 +282,39 @@ iPXE (http://ipxe.org) 00:03.0 C900 PCI2.10 PnP PMM+06FD3260+06F33260 C900
 
 
 Booting from ROM..[    0.000000] Info: [libkvmplat] <setup.c @  245> Memory 00fd00000000-010000000000 outside mapped area
-[    0.000000] Info: [libkvmplat] <bootinfo.c @   56> Unikraft Atlas (0.13.1~5eb820bd)
-[    0.000000] Info: [libkvmplat] <bootinfo.c @   59> Architecture: x86_64
-[    0.000000] Info: [libkvmplat] <bootinfo.c @   62> Boot loader : qemu-multiboot
-[    0.000000] Info: [libkvmplat] <bootinfo.c @   67> Command line: build/helloworld_qemu-x86_64
-[    0.000000] Info: [libkvmplat] <bootinfo.c @   69> Boot memory map:
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000100000-00000011a000 00000001a000 r-x 0000000000100000 krnl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  00000011a000-000000121000 000000007000 r-- 000000000011a000 krnl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000121000-000000171000 000000050000 rw- 0000000000121000 krnl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  0000001200a0-0000001200a0 000000000000 rw- 00000000001200a0 krnl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000171000-00000017101d 00000000001d r-- 0000000000171000 cmdl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000172000-000000173000 000000001000 rw- 0000000000172000 cmdl
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000173000-000000183000 000000010000 rw- 0000000000173000 stck
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000000183000-000007fe0000 000007e5d000 rw- 0000000000183000
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  000007fe0000-000008000000 000000020000 r-- 0000000007fe0000 rsvd
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  0000fffc0000-000100000000 000000040000 r-- 00000000fffc0000 rsvd
-[    0.000000] Info: [libkvmplat] <bootinfo.c @  101>  00fd00000000-010000000000 000300000000 r-- 000000fd00000000 rsvd
-[    0.000000] Info: [libkvmplat] <setup.c @  374> Switch from bootstrap stack to stack @0x183000
-[    0.000000] Info: [libukboot] <boot.c @  251> Unikraft constructor table at 0x120000 - 0x120018
-[    0.000000] Info: [libukboot] <boot.c @  288> Initialize memory allocator...
-[    0.000000] Info: [libukallocbbuddy] <bbuddy.c @  515> Initialize binary buddy allocator 183000
-[    0.000000] Info: [libukboot] <boot.c @  313> Initialize IRQ subsystem...
-[    0.000000] Info: [libukboot] <boot.c @  320> Initialize platform time...
+[    0.000000] Info: [libukconsole] <console.c @  176> Registered con1: vgacons, flags: -O
+[    0.000000] Info: [libkvmplat] <memory.c @  498> Memory 00fd00000000-010000000000 outside mapped area
+[    0.000000] Info: [libkvmplat] <setup.c @   99> Switch from bootstrap stack to stack @0x11000
+[    0.000000] Info: [libukboot] <boot.c @  280> Unikraft constructor table at 0x138000 - 0x138018
+[    0.000000] Info: [libukboot] <boot.c @  289> Initialize memory allocator...
+[    0.000000] Info: [libukallocbbuddy] <bbuddy.c @  584> Initialize binary buddy allocator 11000
+[    0.000000] Info: [libukboot] <boot.c @  348> Initialize the IRQ subsystem...
+[    0.000000] Info: [libukboot] <boot.c @  355> Initialize platform time...
 [    0.000000] Info: [libkvmplat] <tscclock.c @  255> Calibrating TSC clock against i8254 timer
-[    0.100032] Info: [libkvmplat] <tscclock.c @  276> Clock source: TSC, frequency estimate is 3001267500 Hz
-[    0.100902] Info: [libukboot] <boot.c @  324> Initialize scheduling...
-[    0.101515] Info: [libukschedcoop] <schedcoop.c @  257> Initializing cooperative scheduler
-[    0.103719] Info: [libukboot] <boot.c @  339> Init Table @ 0x120018 - 0x120020
-[    0.104629] Info: [libukbus] <bus.c @  134> Initialize bus handlers...
-[    0.105286] Info: [libukbus] <bus.c @  136> Probe buses...
-[    0.105945] Info: [libkvmpci] <pci_bus_x86.c @  158> PCI 00:00.00 (0600 8086:1237): <no driver>
-[    0.106905] Info: [libkvmpci] <pci_bus_x86.c @  158> PCI 00:01.00 (0600 8086:7000): <no driver>
-[    0.107746] Info: [libkvmpci] <pci_bus_x86.c @  158> PCI 00:02.00 (0300 1234:1111): <no driver>
-[    0.108581] Info: [libkvmpci] <pci_bus_x86.c @  158> PCI 00:03.00 (0200 8086:100e): <no driver>
+[    0.100092] Info: [libkvmplat] <tscclock.c @  276> Clock source: TSC, frequency estimate is 2371711100 Hz
+[    0.100678] Info: [libukboot] <boot.c @  359> Initialize scheduling...
+[    0.101083] Info: [libukschedcoop] <schedcoop.c @  289> Initializing cooperative scheduler
+[    0.103501] Info: [libukboot] <boot.c @  392> Init Table @ 0x138018 - 0x138038
+[    0.104000] Info: [libukbus] <bus.c @  133> Initialize bus handlers...
+[    0.104424] Info: [libukbus] <bus.c @  135> Probe buses...
 Powered by
 o.   .o       _ _               __ _
 Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
 oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
 oOo oOO| | | | |   (| | | (_) |  _) :_
  OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
-                  Atlas 0.13.1~5eb820bd
-[    0.112301] Info: [libukboot] <boot.c @  369> Pre-init table at 0x120090 - 0x120090
-[    0.113121] Info: [libukboot] <boot.c @  380> Constructor table at 0x120090 - 0x120090
-[    0.114027] Info: [libukboot] <boot.c @  401> Calling main(1, ['build/helloworld_qemu-x86_64'])
-Hello world!
-Arguments:  "build/helloworld_qemu-x86_64"
-[    0.115738] Info: [libukboot] <boot.c @  410> main returned 0, halting system
-[    0.116550] Info: [libkvmplat] <shutdown.c @   35> Unikraft halted
+Pan 0.19.0~9603a4ab
+[    0.110409] Info: [libukboot] <boot.c @  472> Pre-init table at 0x138080 - 0x138080
+[    0.111628] Info: [libukboot] <boot.c @  483> Constructor table at 0x138080 - 0x138080
+[    0.112924] Info: [libukboot] <boot.c @  506> Calling main(1, ['workdir/build/c-hello_qemu-x86_64'])
+Hello from Unikraft!
+[    0.115008] Info: [libukboot] <boot.c @  516> main returned 0
+[    0.115729] Info: [libukboot] <boot.c @  432> Halting system (0)
+[    0.116478] Info: [libkvmplat] <shutdown.c @   59> Unikraft halted
 ```
 
 You can notice that the debug logs prove to be quite useful: they include information such as timestamp, debugging level (warning, info, error etc.), internal library component (`libkvmpci`, `libukschedcoop` etc.) and the source file along with the line in it.
+
 ### Enabling tests
 
 As an exercise, try to enable the `uktest` internal library from the configuration menu.
@@ -349,7 +322,7 @@ This should trigger the execution of a suite of tests for some of Unikraft's int
 You should get an output similar to this one:
 
 ```console
-$ qemu-system-x86_64 -kernel build/helloworld_qemu-x86_64 -nographic
+$ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic
 
 SeaBIOS (version Arch Linux 1.16.2-1-1)
 
@@ -392,9 +365,20 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
                   Atlas 0.13.1~5eb820bd
 [    0.142533] Info: [libukboot] <boot.c @  369> Pre-init table at 0x1220a8 - 0x1220a8
 [    0.143355] Info: [libukboot] <boot.c @  380> Constructor table at 0x1220a8 - 0x1220a8
-[    0.144165] Info: [libukboot] <boot.c @  401> Calling main(1, ['build/helloworld_qemu-x86_64'])
-Hello world!
-Arguments:  "build/helloworld_qemu-x86_64"
+[    0.144165] Info: [libukboot] <boot.c @  401> Calling main(1, ['build/c-hello_qemu-x86_64'])
+Hello from Unikraft!
+Arguments:  "build/c-hello_qemu-x86_64"
 [    0.145824] Info: [libukboot] <boot.c @  410> main returned 0, halting system
 [    0.146611] Info: [libkvmplat] <shutdown.c @   35> Unikraft halted
 ```
+
+### Tasks
+
+After you toy around with the `c-hello` application, move to a more complex application that will require external libraries (e.g `c-http`).
+See the differences in the `Makefile`s, in the `workdir/` directory and in the config `Library menu`.
+Try to make the `c-http` application build without errors.
+As a reference, you can run the build script from the first session, then run `make menuconfig` and see what the build script selected.
+Also look at the `c-http` run script to see how you can add networking to `qemu`.
+
+After you sucessfully build and run `c-http` manually, move to a more complex example, `nginx`.
+Nginx will also require a filesystem, check the build and run scripts to see how that works.

@@ -1,0 +1,47 @@
+---
+title: "kraft cloud scale get"
+description: Get an autoscale configuration or policy
+---
+
+Get an autoscale configuration or policy of a service.
+
+```
+kraft cloud scale get [FLAGS] UUID|NAME
+```
+
+### Examples
+
+```
+# Get an autoscale configuration by UUID of a service
+$ kraft cloud scale get fd1684ea-7970-4994-92d6-61dcc7905f2b
+
+# Get an autoscale configuration by name of a service
+$ kraft cloud scale get my-service
+
+# Get an autoscale policy by UUID of a service
+$ kraft cloud scale get fd1684ea-7970-4994-92d6-61dcc7905f2b --policy my-policy
+
+# Get an autoscale policy by name of a service
+$ kraft cloud scale get my-service --policy my-policy
+
+```
+
+## Options
+
+```
+  -h, --help            help for get
+  -o, --output string   Output format (default "list")
+  -p, --policy string   Get a policy instead of a configuration
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud scale`](/docs/cli/reference/kraft/cloud/scale): Manage instance autoscale policies
+

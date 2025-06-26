@@ -1,0 +1,43 @@
+---
+title: "kraft cloud compose log"
+description: View logs of services in a Unikraft Cloud Compose project deployment
+---
+
+```
+kraft cloud compose log [FLAGS]
+```
+
+### Examples
+
+```
+# Follow the logs of all service services in a Unikraft Cloud Compose
+# project deployment.
+$ kraft cloud compose logs -f
+
+# Follow the logs of a specific service
+$ kraft cloud compose logs -f nginx
+
+```
+
+## Options
+
+```
+  -f, --follow          Follow log output
+  -h, --help            help for log
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "table")
+  -t, --tail int        Number of lines to show from the end of the logs (default -1)
+```
+
+## Options inherited from parent commands
+
+```
+      --env-file string   Set the environment file.
+      --file string       Set the Compose file.
+      --metro string      Unikraft Cloud metro location
+      --token string      Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud compose`](/docs/cli/reference/kraft/cloud/compose): Manage Compose deployments on Unikraft Cloud
+

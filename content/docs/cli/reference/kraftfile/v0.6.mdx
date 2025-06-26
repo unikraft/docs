@@ -53,6 +53,19 @@ name: helloworld
 When no `name` attribute is specified, the directory's base name is used.
 In some cases, a `--name` flag can also be used, e.g. in [`kraft pkg`](/docs/cli/reference/kraft/pkg) and [`kraft cloud deploy`](/docs/cli/reference/kraft/cloud/deploy).
 
+## Top-level `outdir` attribute
+
+An output directory `outdir` CAN be specified, for example:
+
+```yaml ln={3}
+spec: v0.6
+
+outdir: ./out
+```
+
+This changes the location of build artifacts when running `kraft build` or `kraft pkg`.
+The default location when unspecified is set to `./.unikraft/build/`.
+
 
 ## Top-level `cmd` attribute
 
@@ -99,6 +112,44 @@ cmd:
 # Application arguments
 - -c
 - /nginx/conf/nginx.conf
+```
+
+
+## Top-level `env` attribute
+
+An `env` attribute CAN be provided which injects environmental variables to the application.
+
+Compared to when specifying them in the `cmd` attribute (as seen in [specifying kernel parameters](#specifying-kernel-parameters)), using the `env` attribute is a lot more context-aware.
+`kraft` recognizes where it can be best injected, for example, embedded as static variables during build-time, as OCI environmental variables when packaging, as command-line arguments, etc.
+
+### Specified as a list
+
+```yaml ln={3-5,4}
+spec: v0.6
+
+env:
+- HOME=/
+```
+
+### Specified as a dictionary
+
+```yaml ln={3-5,4}
+spec: v0.6
+
+env:
+  HOME: /
+```
+
+
+## Top-level `labels` attribute
+
+A `labels` attribute CAN be specified which injects arbitrary key-value labels which are set during the packaging step:
+
+```yaml ln={3-5,7-9}
+spec: v0.6
+
+labels:
+  key: value
 ```
 
 
@@ -157,6 +208,7 @@ The provided path to the `rootfs` element can be one of the following:
 - [A path to a directory](#specifying-a-directory) which is then dynamically serialized into a CPIO archive; or,
 - [A path to a `Dockerfile`](#specifying-a-dockerfile) which will be constructed via [BuildKit](https://github.com/moby/buildkit) and then dynamically serialized into a CPIO archive.
   [Learn more about how to enable this feature in KraftKit](/docs/cli/filesystem#using-a-dockerfile-as-a-static-root-filesystem).
+- [A path to a tarball](#specifying-a-tarball) which will extract and repackage the tarball as a CPIO archive.  In the future we plan to support [tarballs and other file system types directly as initramfs](https://github.com/unikraft/unikraft/issues/1571).
 
 When invoking `kraft build` or `kraft run` and the provided path of the `rootfs` is either a directory or a `Dockerfile`, the resulting filesystem will be dynamically serialized and stored in `.unikraft/build/initramfs.cpio`.
 
@@ -182,6 +234,18 @@ rootfs: ./rootfs/
 spec: v0.6
 
 rootfs: ./Dockerfile
+```
+
+### Specifying a tarball
+
+```yaml ln={3-4,6-7}
+spec: v0.6
+
+# An uncompressed tarball
+rootfs: ./rootfs.tar
+
+# A compressed tarball
+rootfs: ./rootfs.tar.gz
 ```
 
 

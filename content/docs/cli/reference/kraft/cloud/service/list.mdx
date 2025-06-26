@@ -1,0 +1,38 @@
+---
+title: "kraft cloud service list"
+description: List services
+---
+
+```
+kraft cloud service list [FLAGS]
+```
+
+### Examples
+
+```
+# List all service in your account.
+$ kraft cloud service list
+
+# List all service in your account in full table format.
+$ kraft cloud service list -o full
+
+```
+
+## Options
+
+```
+  -h, --help            help for list
+  -o, --output string   Set output format. Options: table,yaml,json,list,raw (default "table")
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud service`](/docs/cli/reference/kraft/cloud/service): Manage services on KraftCloud
+

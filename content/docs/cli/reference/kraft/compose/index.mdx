@@ -1,6 +1,6 @@
 ---
 title: "kraft compose"
-description: compose
+description: Build and run compose projects with Unikraft
 ---
 
 Build and run compose projects with Unikraft.
@@ -21,15 +21,25 @@ $ kraft compose up
 ## Options
 
 ```
-  -f, --file string   Set the Compose file.
-  -h, --help          help for compose
+      --env-file string   Set the environment file.
+  -f, --file string       Set the Compose file.
+  -h, --help              help for compose
 ```
 
 ## See Also
 
 * [`kraft`](/docs/cli/reference/kraft): Build and use highly customized and ultra-lightweight unikernels
-* [`kraft compose down`](/docs/cli/reference/kraft/compose/down): Stop and remove a compose project.
-* [`kraft compose ls`](/docs/cli/reference/kraft/compose/ls): List compose projects.
+* [`kraft compose build`](/docs/cli/reference/kraft/compose/build): Build or rebuild services
+* [`kraft compose create`](/docs/cli/reference/kraft/compose/create): Create a compose project
+* [`kraft compose down`](/docs/cli/reference/kraft/compose/down): Stop and remove a compose project
+* [`kraft compose logs`](/docs/cli/reference/kraft/compose/logs): Print the logs of services in a project
+* [`kraft compose ls`](/docs/cli/reference/kraft/compose/ls): List compose projects
+* [`kraft compose pause`](/docs/cli/reference/kraft/compose/pause): Pause a compose project
 * [`kraft compose ps`](/docs/cli/reference/kraft/compose/ps): List running services of current project
-* [`kraft compose up`](/docs/cli/reference/kraft/compose/up): Run a compose project.
+* [`kraft compose pull`](/docs/cli/reference/kraft/compose/pull): Pull images of services of current project
+* [`kraft compose push`](/docs/cli/reference/kraft/compose/push): Push images of services of current project
+* [`kraft compose start`](/docs/cli/reference/kraft/compose/start): Start a compose project
+* [`kraft compose stop`](/docs/cli/reference/kraft/compose/stop): Stop a compose project
+* [`kraft compose unpause`](/docs/cli/reference/kraft/compose/unpause): Unpause a compose project
+* [`kraft compose up`](/docs/cli/reference/kraft/compose/up): Run a compose project
 

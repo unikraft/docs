@@ -117,7 +117,7 @@ The first address in the CIDR network will become the gateway.
 Once a network has been identified, you can attach this network to the unikernel instance with the `-n|--network` flag:
 
 ```console
-kraft run --network bridge:kraft0 unikraft.org/nginx:latest
+kraft run --network bridge:kraft0 unikraft.org/nginx:1.25
 ```
 
 <AsciinemaPlayer src="/asciinema/kraft-run-network.cast" />
@@ -133,7 +133,7 @@ For example, when an NGINX unikernel exposes port `80` and you wish to map port 
 You can use the `-p` flag to achieve this affect as follows:
 
 ```console
-kraft run -p 8080:80 unikraft.org/nginx:latest
+kraft run -p 8080:80 unikraft.org/nginx:1.25
 ```
 
 <AsciinemaPlayer src="/asciinema/kraft-run-port.cast" />
@@ -158,13 +158,13 @@ The unikernel instance essentially has two types of command-lines:
 To set command-line arguments for either Unikraft or the application is done as the second positional argument to `kraft run` or via the `-a` flag:
 
 ```console
-kraft run unikraft.org/nginx:latest -c /nginx/conf/nginx.conf
+kraft run unikraft.org/nginx:1.25 -c /nginx/conf/nginx.conf
 ```
 
 To set command-line arguments for Unikraft, you simply need to separate with two dashes as a delimeter `--`, for example:
 
 ```console
-kraft run unikraft.org/nginx:latest netdev.ipv4_addr=172.88.0.2 -- -c /nginx/conf/nginx.conf
+kraft run unikraft.org/nginx:1.25 netdev.ipv4_addr=172.88.0.2 -- -c /nginx/conf/nginx.conf
 ```
 
 
@@ -179,7 +179,7 @@ kraft ps
 ```text nocopy=true
 NAME                KERNEL                           ARGS  CREATED      STATUS   MEM  PLAT
 beautiful_bintijua  project://helloworld                   1 hour ago   exited   64M  qemu/x86_64
-elastic_guy         oci://unikraft.org/nginx:latest        2 hours ago  running  64M  qemu/x86_64
+elastic_guy         oci://unikraft.org/nginx:1.25        2 hours ago  running  64M  qemu/x86_64
 ```
 
 The above command will display a `ps`-like output which displays the name, the "source" of the unikernel (whether from [a project context](#running-after-building-a-project), a [binary context](#running-a-unikraft-kernel-binary-image), an [ELF Loader context](#running-a-linux-userspace-application-via-a-loader) or an [OCI image context](#running-pre-built-oci-packaged-images)), any command-line arguments supplied to it, when it was created, its state, how much memory was assigned to the instance, and which platform/architecture it is.

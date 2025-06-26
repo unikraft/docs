@@ -1,0 +1,43 @@
+---
+title: "kraft cloud volume"
+description: Manage persistent volumes on KraftCloud
+---
+
+Manage persistent volumes on KraftCloud.
+
+```
+kraft cloud volume SUBCOMMAND
+```
+
+### Examples
+
+```
+# List all volumes in your account.
+$ kraft cloud volume list
+
+```
+
+## Options
+
+```
+  -h, --help   help for volume
+```
+
+## Options inherited from parent commands
+
+```
+      --metro string   Unikraft Cloud metro location
+      --token string   Unikraft Cloud access token
+```
+
+## See Also
+
+* [`kraft cloud`](/docs/cli/reference/kraft/cloud): Manage resources on Unikraft Cloud
+* [`kraft cloud volume attach`](/docs/cli/reference/kraft/cloud/volume/attach): Attach a persistent volume to an instance
+* [`kraft cloud volume create`](/docs/cli/reference/kraft/cloud/volume/create): Create a persistent volume
+* [`kraft cloud volume detach`](/docs/cli/reference/kraft/cloud/volume/detach): Detach a persistent volume from an instance
+* [`kraft cloud volume get`](/docs/cli/reference/kraft/cloud/volume/get): Retrieve the state of persistent volumes
+* [`kraft cloud volume import`](/docs/cli/reference/kraft/cloud/volume/import): Import local data to a persistent volume
+* [`kraft cloud volume list`](/docs/cli/reference/kraft/cloud/volume/list): List persistent volumes
+* [`kraft cloud volume remove`](/docs/cli/reference/kraft/cloud/volume/remove): Permanently delete persistent volume(s)
+
