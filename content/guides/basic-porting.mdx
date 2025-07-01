@@ -1,0 +1,231 @@
+---
+title: Porting Application to Unikraft
+description: |
+  We explore how to port an application on top of Unikraft.
+---
+
+As you have seen in the previous sessions, there are several applications already ported that you can use with Unikraft.
+Bu what if the application you need is not among them?
+We will focus today on how to port a new simple application.
+
+We will use the [`GNU coreutils`](https://github.com/coreutils/coreutils) applications bundle.
+It contains a bunch of commonly used applications, like `echo`, `cp`, `mv`, `mkdir`, `stat`, `tr`, etc.
+Since there are a lot of applications, we will not port all of them, we will just chose a few as an example.
+
+## Porting `echo`
+
+We will start with porting one of the simpler application from `coreutils`, **`echo`**.
+We will use the [`c-hello`](https://github.com/unikraft/catalog-core/tree/main/c-hello) application as a starting point.
+
+As you noticed in the previous sessions, there are several files that we are interested in when using the build system, namely `Makefile` and `Makefile.uk`.
+
+Since the `echo` command will use a libc, the first step is to add `Musl` to the build.
+For this, we have to follow few steps:
+
+1. Add the following lines in the `setup.sh` script, so we can have the `Musl` repository in our setup:
+
+```bash
+if ! test -d workdir/libs; then
+    mkdir workdir/libs
+fi
+
+check_exists_and_create_symlink "libs/musl"
+```
+
+1. Re-run the `setup.sh` script again, you should have a new directory: `workdir/libs/musl`.
+
+```console
+$ ls workdir/libs/musl
+abort.c          Makefile.rules            Makefile.uk.musl.errno     Makefile.uk.musl.locale ......
+```
+
+1. In the `Makefile`, change `UK_LIBS` to `UK_LIBS ?= $(LIBS_BASE)/musl`.
+   After all that, when you run `make menuconfig`, you should see `musl: A C standard library` under `Library Configuration -->`.
+
+After all that, we can start the actual porting.
+In order to not get confused between multiple files, we will create two directories, `include/` and `src/`, where we will copy the header and source files that we need.
+
+```console
+$ mkdir include/
+$ mkdir src/
+```
+
+After that, we can clone the `coreutils` and extract the files necessary for `echo`:
+
+```console
+$ git clone https://github.com/coreutils/coreutils coreutils
+$ cp coreutils/src/echo.c src/
+$ cp coreutils/src/*.h include/
+```
+
+To add the sources and header files to the buid, we must modify the `Makefile.uk` file, remove the `hello.c` line and add the following:
+
+```makefile
+APPCHELLO_SRCS-y += $(APPCHELLO_BASE)/src/echo.c
+APPCHELLO_CINCLUDES-y += -I$(APPCHELLO_BASE)/include
+```
+
+This tells the build system to use the `echo.c` file as a source file, and the `include/` directory as a path to search for header files.
+
+After all this is done, we can try to run `make`.
+We will receive a lor of build errors, as expected.
+We need to solve them one by one.
+
+First, we will receive some errors about missing headers, like `config.h`, `timespec.h`, etc.
+To solve this, we will use the very blunt approach, `kill them all`.
+We remove all the `#include` lines from the `echo.c` file, and go from there.
+
+**Note** that this is obviously a bad idea for most applications.
+We should find the headers and copy them, but in our case, since `echo` does not need much, we can figure out what to add on the way.
+
+For now, we leave only the `stdio.h` and `sys/types.h` as include statements.
+We will add more of them later.
+
+Now, we receive some errors regarding undeclared things:
+
+```text
+/projects/unikraft/catalog-core/c-hello/src/echo.c:29:30: error: ‘false’ undeclared here (not in a function)
+   29 | enum { DEFAULT_ECHO_TO_XPG = false };
+/projects/unikraft/catalog-core/c-hello/src/echo.c:37:21: error: ‘EXIT_SUCCESS’ undeclared (first use in this function)
+   37 |   affirm (status == EXIT_SUCCESS);
+   ......
+```
+
+This is fine, it happens because we removed all the headers, as expected.
+We can add some headers now.
+
+```c
+#include <stdbool.h>
+#include <stdlib.h>
+```
+
+This way we get rid of some of the undefined symbols.
+Next, we see some weird undefined functions called in the `usage()` function:
+
+```text
+/projects/unikraft/catalog-core/c-hello/src/echo.c:39:3: warning: implicit declaration of function ‘affirm’ [-Wimplicit-function-declaration]
+   39 |   affirm (status == EXIT_SUCCESS);
+      |   ^~~~~~
+/projects/unikraft/catalog-core/c-hello/src/echo.c:41:11: warning: implicit declaration of function ‘_’ [-Wimplicit-function-declaration]
+   41 |   printf (_("\
+      |           ^
+```
+
+Let's skip the usage function, we can just have the usage function exit.
+
+```c
+void
+usage (int status)
+{
+  exit (status);
+}
+```
+
+Finally, we only have one screen of errors to solve.
+We get an `LC_ALL undeclared` error, we need to `#include <locale.h>`.
+
+There are some more GNU-specific functions, like `version_etc`, `proper_name`, `bindtextdomain`, etc.
+They have to do just with the program medatada, like authors, licensing and versioning, so we can delete them (the following lines:)
+
+```c
+initialize_main (&argc, &argv);
+set_program_name (argv[0]);
+  ....
+bindtextdomain (PACKAGE, LOCALEDIR);
+textdomain (PACKAGE);
+  ....
+version_etc (stdout, PROGRAM_NAME, PACKAGE_NAME, Version, AUTHORS,
+       (char *) nullptr);
+```
+
+We can also remove the `FALLTHROUGH` line from the main switch statement, since it is used just to silence a warning.
+
+Finally, when we try to `make` again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit decalration of `c_isxdigit`.
+Other than that, there are the `FALLTHROUGH` warnings from above.
+
+For the `STREQ`, we can search that in the `coreutils` repo:
+
+```console
+$ grep -r STREQ coreutils
+...
+coreutils/tests/df/skip-duplicates.sh: #define STREQ(a, b) (strcmp (a, b) == 0)
+...
+```
+
+This makes sense, it's just a wrapper over `strcmp`, so let's copy it into our source file, after the `#include` lines:
+
+```c
+#define STREQ(a, b) (strcmp (a, b) == 0)
+```
+
+We also need to `#include <string.h>`, since we use `strcmp`.
+
+The `close_stdout` function is nowhere in the `coreutils/` repo, so we can assume that it's a function that closes the standard output descriptor, since it's called at the program exit.
+We add it to our source file:
+
+```c
+void close_stdout(void)
+{
+  close(STDOUT_FILENO);
+}
+```
+
+For this, we need to also include `unistd.h`.
+
+Now, the only thing left is the `c_isxdigit` function.
+Again, it's not found in the `coreutils` repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctypes.h` header.
+
+With all of this, out application finally build.
+We can run it as usual, using `qemu`:
+
+```console
+$ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                    Pan 0.19.0~9603a4ab
+[    2.467667] Info: [libukboot] <boot.c @  472> Pre-init table at 0x253148 - 0x253148
+[    2.468544] Info: [libukboot] <boot.c @  483> Constructor table at 0x253148 - 0x253148
+[    2.469429] Info: [libukboot] <boot.c @  498> Environment variables:
+[    2.469967] Info: [libukboot] <boot.c @  500>        PATH=/bin
+[    2.470469] Info: [libukboot] <boot.c @  506> Calling main(1, ['workdir/build/c-hello_qemu-x86_64'])
+(an empty newline here)
+```
+
+This will lead to nothing being printed, as we would run `echo` with no arguments.
+To pass arguments to our application, we can use the `-append` flag:
+
+```console
+$ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64 -append "Hello from Unikraft"
+Powered by
+o.   .o       _ _               __ _
+Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
+oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
+oOo oOO| | | | |   (| | | (_) |  _) :_
+ OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+                    Pan 0.19.0~9603a4ab
+[    2.470131] Info: [libukboot] <boot.c @  472> Pre-init table at 0x253148 - 0x253148
+[    2.470999] Info: [libukboot] <boot.c @  483> Constructor table at 0x253148 - 0x253148
+[    2.471872] Info: [libukboot] <boot.c @  498> Environment variables:
+[    2.472398] Info: [libukboot] <boot.c @  500>        PATH=/bin
+[    2.472891] Info: [libukboot] <boot.c @  506> Calling main(4, ['workdir/build/c-hello_qemu-x86_64', 'Hello', 'from', 'Unikraft'])
+Hello from Unikraft
+```
+
+So finally, `echo` works.
+
+## Porting `pwd`
+
+Using the same steps, try to port the `pwd` command, located in `pwd.c`.
+Some tips:
+
+* `#define nullptr NULL`
+* `typedef long int idx_t;`
+* You can remove everything related to `roubst_getcwd`, since Unikraft is posix-compatible, so it will not use those functions.
+* You can change the weird `x*alloc` functions to simple `malloc`s.
+
+When you run the unikernel, it should print `/`, as it is in the root directory.
+You can use a filesystem and change the working directory to test that it works fine, you can see the `nginx` example on how to run an application using a filesystem.
