@@ -1,0 +1,42 @@
+---
+title: Bincompat Applications
+description: |
+  Unikraft can be used to run POSIX applications, compiled for Linux, with no aditional changes, using the elfloader
+---
+
+We have seen in the previous session how difficult can be to port a simple application to Unikraft.
+This is an effort that does not scale well, as we don't want to go through the effort of porting every time we want to use a new application.
+Even more, if we want to use a closed-source application, we might not be able to port it since we can not make changes to the source code.
+
+In order to fix this, we ported an [`elfloader` application](https://github.com/unikraft/catalog-core/tree/main/elfloader-basic), that can load a binary application along with it's libraries and run it.
+This makes it a lot easier to port applications, since all we have to do is create a filesystem with the application binary and it's required libraries, on our usual Linux setup.
+
+We need to pass the filesystem to the Unikraft application at runtime.
+We will do that by creating a `cpio` archive.
+Also, we will give the program name that we want to run as an argument to elfloader, using `-append`.
+
+### Run a Simple `helloworld` in Bincompat Mode
+
+Follow the instructions from the `README` file of [`elfloader`](https://github.com/unikraft/catalog-core/tree/main/elfloader-basic) and run a simple application.
+The application code that will be compiled and run will be placed in `rootfs/`.
+
+### Modify the `helloworld` Applications
+
+Make some changes in the code from `rootfs/`.
+Make the application more complex, change it however you want.
+You can add more source files, but make sure to add them to the `Makefile`.
+
+### Use Networking in Bincompat Mode
+
+Aplications that need networking will need some extra libraries.
+Follow the instructions in the `README` file.
+For this, we will use the [`elfloader-net`](https://github.com/unikraft/catalog-core/tree/main/elfloader-net) application.
+As in the prevoius sessions, the IP address of the application will be `172.44.0.2`.
+
+### Use a Binary from Your System
+
+Choose an application from your system.
+You can use something similar to what we used in the last session, `ls`, `id`, `echo`, `cat`, etc.
+Everything that does not have to do with processes should work.
+Try as many applications as possible.
+If networking is needed, use the `elfloader-net` application as a starting base.
