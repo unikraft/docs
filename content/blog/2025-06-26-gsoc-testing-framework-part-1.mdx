@@ -1,0 +1,81 @@
+---
+title: "GSoC'25: Testing Framework for Unikraft Builds | Part I"
+description: |
+  This GSoC project is aimed to develop a testing framework that is able to multiplex the variety of configuration options, VMMs, hypervisors, architectures, boot protocols, to validate the successful building and running of unikernel images. 
+publishedDate: 2025-06-26
+tags:
+- gsoc
+- gsoc25
+- testing & validation
+- automation
+- devops
+authors:
+- Shashank Srivastava
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+The aim of this project is to develop a robust testing framework that can handle a wide range of configuration options—covering different VMMs, hypervisors, architectures, and boot protocols—to validate the successful build and execution of unikernel images. The framework, written in Python, is designed to configure, build, run, and test various Unikraft builds, and there’s scope for further improvements and refactoring as we go.
+
+The main focus is to enhance the existing testing infrastructure and make it smooth and intuitive for both Unikraft developers and users. To achieve this, I am working towards the following key goals:
+
+- Extract and consolidate the testing framework into a dedicated, standalone repository.
+
+- Ensure that the framework works seamlessly with the catalog and catalog-core repositories right out of the box.
+
+- Integrate the framework into the CI/CD pipeline used across Unikraft organization repositories, so that it can automatically validate builds whenever a pull request is opened.
+
+## Current Progress
+
+### Repository Extraction & Modularization
+
+- Migrated the in-development framework from [razvand/generator/new-design](https://github.com/unikraft-upb/catalog/tree/razvand/generator/new-design/utils/new-design) into its own [Git repository](https://github.com/shank250/testing-framework-uk-build/).
+- Split monolithic scripts into purpose-driven modules under `src/`, `scripts/`, `docs/` and `utils/`.
+- Introduced a fixture that handles the clean-up of the `.tests` directory before each run to ensure a consistent and isolated testing environment.
+
+### Code Quality & Formatting
+
+- Ran `pylint`, resolved high-severity warnings, and tuned its config to reduce noise.
+- Enforced consistent style with `black` and organized imports via `isort`.
+
+### Isolated Test Sandboxing (`.app`)
+
+- Implemented a “copy-to-.app” workflow: before testing, all application files are duplicated into a pristine `.app` folder.
+- Ensures true isolation, reproducibility, safe parallel runs, and easy cleanup of temporary artifacts.
+
+### Documentation
+
+- Added comprehensive docstrings to core classes/functions and “TODO” markers for known gaps.
+
+## WIP
+
+Currently, I’m actively working on the following two components:
+
+### Finalizing the `TestRunner` class  
+The `TestRunner` is responsible for building, running, and testing the final targets. The core implementation is done, but I’m now focusing on extensive testing across various applications to ensure everything works reliably.
+
+### README.md parser for dynamic configuration extraction  
+Implemented a parser that processes each application’s `README.md` to extract:
+- Memory usage requirements  
+- Port numbers (exposed/public)  
+- Corresponding `curl` command for functional verification  
+   
+These values are then used to automatically generate the `config.yaml` for each app, simplifying and scaling the test setup process.
+
+## Next Steps
+
+For the upcoming weeks, my focus is to complete the full testing pipeline of the framework and ensure that it works as expected across all applications in the `catalog/library`.
+
+Once that’s done, I will move forward with testing, modifying, and refactoring the framework further to safely integrate support for other application types like `native`, `examples`, and more—ensuring seamless compatibility and stability across the board.
+
+## Acknowledgement
+I would like to sincerely thank my mentors, [Razvan Deaconescu](https://github.com/razvand) and [Razvan Virtan](https://github.com/razvanvirtan), for their constant support and guidance throughout this project.
+
+I'm also grateful to the Unikraft community for their warm support and helpfulness.
+
+## About me
+
+I'm [Shashank Srivastava](https://github.com/shank250/) undergraduate student at GL Bajaj Institute of Technology and Management, B. Tech in Computer Science and Engineering with Specialisation in Artificial Intelligence and Machine Learning, with a strong passion for AI and Cloud.
+Feel free to [connect](https://www.linkedin.com/in/shashank-srivastava-375412250/)!
