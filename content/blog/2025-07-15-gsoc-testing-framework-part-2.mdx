@@ -40,8 +40,6 @@ Over the past three weeks, the framework has seen major enhancements in configur
 - **Directory alignment:** I now replicate the `catalog` and `catalog‑core` subdirectory layout under `test-app-config/`, not to duplicate source files, but to provide a clear, versioned home for each application’s `RunConfig.yaml` and `BuildConfig.yaml`. This organized approach ensures the correct configs are easy to locate and apply when testing the real applications in `catalog` and `catalog-core`.
 - **LLM‑driven defaults:** If an app doesn’t already ship its own `RunConfig.yaml`, we invoke an LLM (via a simple Python wrapper) to synthesize one from the `README.md` metadata—pulling out memory, exposed ports, and test commands in one shot.
 
-> **Why it matters:** automating config generation slashes onboarding friction whenever a new app lands in the catalog, and ensures every test starts with sane defaults.
-
 ### 2. Richer Test Categories & Refactored Execution Logic
 
 Tests are now explicitly classified into three types, each with its own execution path:
