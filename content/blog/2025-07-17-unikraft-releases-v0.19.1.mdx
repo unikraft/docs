@@ -1,0 +1,83 @@
+---
+title: "Unikraft releases v0.19.1 (Pan)"
+description: |
+  This release contains fixes and improvements to Unikraft.
+publishedDate: 2025-07-17
+authors:
+- Michalis Pappas
+- Răzvan Deaconescu
+tags:
+- release
+- announcement
+---
+
+We are proud to announce the latest release of Unikraft, `v0.19.1`.
+This release contains fixes that improve the stability and application support of Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.19.0...RELEASE-0.19.1).
+
+### Changes in `0.19.1`
+
+* `lib/vfscore`: Harmonize handling of paths in \*at syscalls ([#1647](https://github.com/unikraft/unikraft/pull/1647)) by @andreittr
+* `lib/posix-process`: Fix clone() return value on thread create ([#1649](https://github.com/unikraft/unikraft/pull/1649)) by @michpappas
+* `lib/uksched`: Rework waitqueues to use thread data ([#1651](https://github.com/unikraft/unikraft/pull/1651)) by @andreittr
+* `lib/ukbitops`: Rework bit find ops for consistency ([#1652](https://github.com/unikraft/unikraft/pull/1652)) by @andreittr
+* `lib/ukboot`: Skip graceful shutdown on last child release ([#1653](https://github.com/unikraft/unikraft/pull/1653)) by @michpappas
+* `lib/ukrandom`: Fix undefined behavior ([#1655](https://github.com/unikraft/unikraft/pull/1655)) by @michpappas
+* `lib/posix-process`: Fix stack corruption in signal delivery ([#1657](https://github.com/unikraft/unikraft/pull/1657)) by @michpappas
+* `lib/vfscore`: Fix uninitialized mutex in dentry ([#1675](https://github.com/unikraft/unikraft/pull/1675)) by @andreittr
+
+:warning:  Compatibility notice:
+
+In `libukbitops`:
+
+* `uk_ffs()` / `uk_ffsl()` have been updated to return values consistent with libc's `ffs()` / `ffsl()` and `__builtin_ffs()` / `__builtin_ffsl()`.
+* Previous exact behavior of `uk_ffs()` / `uk_ffsl()` is now provided by `uk_lssb()` / `uk_lssbl()`.
+* `uk_fls()` / `uk_flsl()` are replaced by `uk_mssb()` / `uk_mssbl()`.
+
+### Catalog Updates
+
+Both the [`catalog`](https://github.com/unikraft/catalog) and [`catalog-core`](https://github.com/unikraft/catalog-core) repositories have received updates, primarily from the [Community and Development Lab](https://cdl.rosedu.org/) event, from [Google Summer of Code](https://summerofcode.withgoogle.com/) applicants and from [Unikraft Summer Workshop](https://unikraft.org/hackathons/usw25).
+Types of updates are:
+
+* Adding a new application to the catalog.
+* Updating the application version in the catalog.
+* Updating the naming schema.
+* Updating the unikernel runtime used.
+* Updating the configuration or documentation to have the application working with recent versions of Unikraft.
+
+### Community Activities
+
+#### Unikraft Summer Workshop 2025
+
+[Unikraft Summer Workshop 2025 (*USW'25*)](https://unikraft.org/hackathons/usw25) is a **free and virtual** workshop held by members of the Unikraft community.
+It focuses on cloud-native applications and on the unikernel technology that powers efficient and high performance cloud deployments.
+
+USW'25 took place for the weeks, between June 23 and July 12, 2025.
+It ended with a contributor hackathon on Saturday, July 12, 2025, 9am-5pm CEST.
+
+22 participants from all over the world took part in the event.
+In the end, they worked on 5 projects that resulted in contributions to Unikraft community repositories:
+
+* Java on Unikraft
+* Click on Unikraft
+* WARM on Unikraft
+* Update Node Version in Applications
+* Update Python Version in Applications
+* FreeBSD Libc in Unikraft
+
+All participants received a diploma and premium access to [Unikraft Cloud](https://unikraft.cloud/).
+
+Congratulations to everyone and keep contributing 🤝
+
+#### GSoC'25 Projects
+
+Unikraft is part of [Google Summer of Code](https://summerofcode.withgoogle.com/programs/2025/organizations/unikraft) 🤩
+[5 projects](https://unikraft.org/blog/2025-05-22-unikraft-gsoc25) are currently under way in the Unikraft community:
+
+* Project: Expanding the Unikraft Software Support Ecosystem
+* Project: Fine-Tuning Unikraft's Performance
+* Project: Update Newlib and Pthread-embedded Libraries
+* Project: Testing Framework for Unikraft Builds
+* Project: Updating Unikraft Application Libraries
+
+Participants are being assisted in completing their projects and having useful contributions in the Unikraft repositories 🤝
