@@ -1,0 +1,31 @@
+---
+version: 0.19.1
+releaseDate: 2025-07-17
+codename: Pan
+commit: b6ef03c8c58ea0d234352947d9126dccdfe51d03
+blogPost: /blog/2025-07-17-unikraft-releases-v0.19.1
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.19.0...RELEASE-0.19.1
+---
+
+We are proud to announce the latest release of Unikraft, `v0.19.1`.
+This release contains fixes that improve the stability and application support of Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.19.0...RELEASE-0.19.1).
+
+### Changes in `0.19.1`
+
+* `lib/vfscore`: Harmonize handling of paths in \*at syscalls ([#1647](https://github.com/unikraft/unikraft/pull/1647)) by @andreittr
+* `lib/posix-process`: Fix clone() return value on thread create ([#1649](https://github.com/unikraft/unikraft/pull/1649)) by @michpappas
+* `lib/uksched`: Rework waitqueues to use thread data ([#1651](https://github.com/unikraft/unikraft/pull/1651)) by @andreittr
+* `lib/ukbitops`: Rework bit find ops for consistency ([#1652](https://github.com/unikraft/unikraft/pull/1652)) by @andreittr
+* `lib/ukboot`: Skip graceful shutdown on last child release ([#1653](https://github.com/unikraft/unikraft/pull/1653)) by @michpappas
+* `lib/ukrandom`: Fix undefined behavior ([#1655](https://github.com/unikraft/unikraft/pull/1655)) by @michpappas
+* `lib/posix-process`: Fix stack corruption in signal delivery ([#1657](https://github.com/unikraft/unikraft/pull/1657)) by @michpappas
+* `lib/vfscore`: Fix uninitialized mutex in dentry ([#1675](https://github.com/unikraft/unikraft/pull/1675)) by @andreittr
+
+:warning: Compatibility notice:
+
+In `libukbitops`:
+
+* `uk_ffs()` / `uk_ffsl()` have been updated to return values consistent with libc's `ffs()` / `ffsl()` and `__builtin_ffs()` / `__builtin_ffsl()`.
+* Previous exact behavior of `uk_ffs()` / `uk_ffsl()` is now provided by `uk_lssb()` / `uk_lssbl()`.
+* `uk_fls()` / `uk_flsl()` are replaced by `uk_mssb()` / `uk_mssbl()`.
