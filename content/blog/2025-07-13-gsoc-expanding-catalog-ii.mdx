@@ -1,0 +1,120 @@
+---
+title: "GSoC'25: Expanding the Unikraft Software Support Ecosystem"
+description: |
+  This GSoC project aims to expand Unikraft’s software support by adding new applications via binary-compatibility mode into the application catalog.
+publishedDate: 2025-07-13
+image: /images/gsoc25.jpeg
+authors:
+- Prasoon Kumar
+tags:
+- gsoc
+- gsoc25
+- catalog
+- etcd
+- influxdb
+- vault
+- traefik
+- minio
+- gitea
+- syncthing
+- netdata
+- tomcat
+- rabbitmq
+- deno
+---
+
+## Project Overview
+
+Unikraft makes it easy to run existing applications in two ways:
+1. **Musl libc support**
+
+2. [**Binary-compatibility mode**](https://unikraft.org/docs/concepts/compatibility):
+Unikraft can run unmodified Linux ELF binaries by using an ELF loader app and a system-call shim layer.
+When a binary-compatible unikernel starts, the app-elfloader parses and maps the ELF segments into memory, then transfers control to the application entry point.
+Whenever the application invokes a Linux system call, the syscall shim intercepts the call number and routes it to the corresponding Unikraft handler.
+Unimplemented calls return ENOSYS, which many applications can handle or fake because Unikraft follows Linux’s x86_64 ABI closely.
+This helps when running on hypervisors like KVM, QEMU, or Firecracker.
+
+## Adding an application in binary-compatibility mode
+
+In the last 3 weeks I continued relying on the same porting procedure described as part of my first blogpost.
+
+## Current Progress
+
+
+During the first 3 weeks, I worked on `sqlite`, `mosquitto`, `prometheus`, and `consul`.
+From weeks 4 to 6, I extended my investigation to ten more applications, identifying why some can’t yet be ported in binary‑compatibility mode and confirming that others work:
+
+1. **etcd**
+    - A distributed, reliable key‑value store used for service discovery and configuration.
+    - Fails to build in bincompat due to `socket(AF_NETLINK, ...)` not yet supported in Unikraft.
+
+2. **influxdb**
+    - A time‑series database optimized for high-write loads and real‑time queries.
+    - Also depends on `socket(AF_NETLINK, ...)`, which Unikraft currently lacks.
+
+3. **vault**
+    - A secrets management tool for securely storing and accessing tokens, passwords, certificates, and encryption keys.
+    - Calls `socket(AF_NETLINK, ...)`, so it cannot be added in bincompat yet.
+
+4. **traefik**
+    - A modern HTTP reverse proxy and load balancer with automatic service discovery.
+    - Builds and runs successfully in bincompat mode.
+    - Note: the `watch: true` configuration relies on `inotify_init1` and `inotify_add_watch`—this feature isn’t supported yet.
+    - Pull request: [catalog#210](https://github.com/unikraft/catalog/pull/210)
+
+5. **minio**
+    - A high-performance, S3-compatible object storage server.
+    - Porting blocked by `socket(AF_NETLINK, ...)` not supported.
+
+6. **gitea**
+    - A self-hosted Git service with pull requests, issues, and code review.
+    - Uses the `clone` system call without the `CLONE_VM` flag, which Unikraft's posix-process layer doesn't handle.
+
+7. **syncthing**
+    - A continuous file synchronization program that keeps files in sync across multiple devices.
+    - Makes call to `socket(AF_NETLINK)`, which is not supported.
+
+8. **tomcat**
+    - A widely used Java servlet container for running web applications.
+    - Depends on file‑backed `mmap(..., MAP_SHARED, ...)` and `socket(AF_NETLINK, ...)`, both not supported.
+
+9. **rabbitmq**
+    - A robust message broker implementing the AMQP protocol for distributed systems.
+    - Blocked by file-backed `mmap(..., MAP_SHARED, ...)` and `socket(AF_NETLINK)`.
+
+10. **deno**
+    - A secure JavaScript and TypeScript runtime build on V8 and Rust.
+    - Relies on file-backed `mmap(..., MAP_SHARED, ...)`, which isn't currently supported.
+
+Across these weeks, the netlink socket API and shared‑map mmap calls emerged as the main gaps preventing ports of `etcd`, `influxDB`, `vault`, `minIO`, `syncthing`, `tomcat`, `rabbitMQ`, and `deno`.
+Gitea’s use of `clone` system call without `CLONE_VM` also needs Unikraft support.
+Traefik remains the only one among these that builds and runs, though its inotify‑based watcher will require further work.
+I updated the internal [Unikraft community–maintained Google Sheet](https://docs.google.com/spreadsheets/d/1ktTuadF3p428GZKnhchsrr4ElrQqBvG-PPNcCwJdgpM/edit?gid=1739956327#gid=1739956327), which originally only had application names, by adding source links for each app, including catalog apps that weren’t listed before, adding the apps I worked on that were missing, adding remarks about the issues I faced when porting, and keeping the existing catalog links.
+
+## Next Steps
+
+**Week 7**:
+I will pick a few more applications from the [Google Sheet](https://docs.google.com/spreadsheets/d/1ktTuadF3p428GZKnhchsrr4ElrQqBvG-PPNcCwJdgpM/edit?gid=1739956327#gid=1739956327) and try to add them in binary‑compatibility mode.
+I’ll follow the same process of building each app, identifying missing syscalls or features, and documenting any issues in the sheet.
+
+**Weeks 8 onwards**: 
+I’ll shift focus to core Unikraft.
+I plan to work on implementing key features—like netlink sockets, shared‑map `mmap`, `inotify` support, and the missing `clone` flags—that are currently blocking more applications from running in binary‑compatibility mode.
+I don’t plan to tackle all missing features at once, but will start with these high‑impact ones.
+
+
+## Acknowledgement
+
+
+I would like to thank my mentors, [Razvan Virtan](https://github.com/razvanvirtan) and [Razvan Deaconescu](https://github.com/razvand), for their guidance throughout this project.
+I’m also grateful to the entire Unikraft community for being so welcoming and helpful.
+
+
+## About Me
+
+
+I am a first-year MTech student at IIT Bombay.
+I have experience across many areas of computer science, including operating systems, virtualization, Web3, web development, and algorithms.
+In my free time, I love solving challenging math and algorithmic problems.
+- Socials: [Linkedin](https://www.linkedin.com/in/prasoon054/)  [Twitter](https://x.com/prasoon054) [Github](https://github.com/prasoon054)
