@@ -1,0 +1,218 @@
+---
+title: "Update Newlib and Pthread-embedded Libraries - 1–4 Progress blog"
+description: |
+  Covert Newlib build system to Unikraft build system.
+publishedDate: 2025-06-26
+image: /images/gsoc25.jpeg
+authors:
+- Salar Samani
+tags:
+- gsoc25
+- newlib
+- libc
+- unikraft
+---
+
+<img src="https://summerofcode.withgoogle.com/assets/media/logo.svg"
+      alt="Google Summer of Code Logo" />
+
+## Motivation for Porting Newlib
+
+[Newlib](https://sourceware.org/newlib/) is a lightweight C standard library primarily used in embedded systems. It is designed with minimalism in mind and typically focuses on supporting the **ISO C standard (ANSI C)** rather than the full **POSIX** specification. This makes Newlib ideal for bare-metal systems or microcontrollers, where size and simplicity matter more than compatibility with full operating systems.
+
+However, **Unikraft**, as a unikernel development framework, aims to behave more like a fully functional operating system — especially when running Linux-like applications. This means Unikraft needs to support not only ISO C but also a wide range of **POSIX APIs**, which define system calls and interfaces commonly used in Unix-like operating systems.
+
+Currently, Unikraft uses **musl** as its default `libc` implementation. Musl is small, fast, and POSIX-compliant, making it a great fit for cloud-native and containerized environments. But musl is just one implementation of `libc`, and adding support for **Newlib** increases flexibility.
+
+In this project, we aim to **re-port a modern version of Newlib** into Unikraft. Previously, Unikraft supported Newlib version **2.5** (released in 2016), but this version is outdated and lacks many recent features and bug fixes. Additionally, older versions may contain security vulnerabilities or incompatibilities with modern tools.
+
+We therefore chose to port **Newlib 4.5 (released in 2024)** — the latest version at the time of writing — to ensure:
+- Access to the latest features
+- Better compatibility with upstream changes
+- Reduced risk of bugs and vulnerabilities
+
+This updated Newlib integration will make Unikraft more versatile and enable a wider range of lightweight C applications to run in unikernel environments.
+
+## Understanding the Build System Gap
+
+Newlib is designed to be highly **portable** and **configurable**, targeting a wide range of architectures and operating systems. This flexibility makes it a popular choice for embedded systems and cross-platform development, but it also brings significant **build system complexity**.
+
+Newlib uses the **GNU autotools build system**, which consists of tools like `autoconf`, `automake`, and `configure`. These tools allow developers to customize builds through a variety of configuration options (e.g., target architecture, OS, feature set). The result is a tailored `Makefile` that builds Newlib into a static library (`libc.a`) composed of hundreds or even over a thousand individual object files (`.o`), depending on the selected configuration.
+
+On the other hand, **Unikraft has its own custom build system**, which is fundamentally incompatible with autotools. Unikraft builds everything as **modular components** (libraries, platforms, applications), each defined via a `Makefile.uk` file. Therefore, directly reusing Newlib’s autotools setup inside Unikraft is not practical.
+
+### Why Not Just Use the `.a` File?
+
+Newlib’s original build process produces a `libc.a` archive — a collection of `.o` files — which works well for static linking in embedded toolchains. However, Unikraft compiles all libraries and the application into a **single monolithic ELF image**. This means we can't rely on the original object-level modularity of Newlib to avoid linking issues.
+
+A major problem here is that **Newlib sometimes contains multiple implementations of the same function**, designed for different platforms or configurations (e.g., multiple `open()` or `exit()` functions). Normally, this is fine: the linker selects only the relevant object file from `libc.a` based on the build configuration. But in Unikraft, if we compile all the source files directly without carefully selecting only the needed ones, we'll run into **"multiple definition" errors** during linking.
+
+### What We Needed To Do
+
+To integrate Newlib into Unikraft cleanly, we needed a way to:
+1. **Extract only the relevant source files** from Newlib’s source tree, based on our target architecture and desired features.
+2. **Recreate a build system compatible with Unikraft**, using `Makefile.uk` to define how each file should be compiled and linked.
+3. Ensure no conflicting symbols or duplicate function definitions are compiled.
+
+This requires analyzing Newlib’s configuration files and build logic to determine:
+- Which source files are used for a given configuration
+- Which header files and macros control conditional compilation
+- How to organize the code into Unikraft-compatible sub-libraries
+
+Manually handling this for 800–1200 source files would be highly error-prone, so part of our effort involves **automating** or simplifying this extraction and build definition process.
+
+## A Smarter Approach: Extracting the Minimal Build Set
+
+As discussed earlier, we can't simply copy all of Newlib's source files into Unikraft and compile them — doing so would not only be inefficient, but also result in duplicate symbol errors, configuration mismatches, and linker conflicts.
+
+Manually identifying and importing the correct subset of files (from a pool of around **800–1200 source files**, depending on configuration) is equally impractical.
+
+One possible (but extreme) idea would be to **rebuild Newlib’s build system from scratch inside Unikraft**, replicating its behavior using `Makefile.uk` syntax. But this would be a massive undertaking — essentially reverse-engineering all of Newlib’s `autotools` logic.
+
+## A Smarter Approach: Extracting the Minimal Build Set
+
+As discussed earlier, directly copying all of Newlib's source files into Unikraft and compiling them is not practical. This would lead to configuration mismatches, duplicate symbol errors, and excessive code inclusion. On the other hand, manually selecting the necessary 800–1200 source files would be extremely time-consuming and error-prone.
+
+One might consider re-implementing Newlib’s entire build logic using Unikraft’s build system (`Makefile.uk`), but that would essentially mean reverse-engineering Newlib’s complex autotools-based setup — a massive undertaking.
+
+## A Smarter Trick: Using Verbose Make Output
+
+Newlib's build system is powered by GNU autotools — specifically `autoconf` and `automake`. These tools generate Makefiles based on the configuration options passed in. This makes Newlib highly flexible, supporting many target platforms and feature sets.
+
+Here’s the insight: when Newlib is built in **verbose mode**, it prints every `gcc` invocation, showing exactly which source files are compiled, with which compiler flags and macro definitions.
+
+### 🛠️ Step 1: Configure Newlib
+
+We start by configuring Newlib with the desired options for our target architecture (in this case, `x86_64-elf`):
+
+```bash
+../newlib-4.5.0.20241231/configure --target=x86_64-elf \
+    --disable-multilib \
+    --enable-newlib-reent-thread-local \
+    --enable-newlib-io-c99-formats \
+    --enable-newlib-io-long-long \
+    --enable-newlib-elix-level=1 \
+    --disable-libssp \
+    --disable-newlib-complex-math \
+    --enable-newlib-posix \
+    --disable-newlib-supplied-syscalls \
+    --disable-newlib-locale \
+    --disable-newlib-wide-orient \
+    --disable-newlib-iconv \
+    --disable-newlib-mb
+```
+#### 🔧 Explanation of `configure` Flags
+
+```bash
+--disable-multilib
+```
+Build only for 64-bit (`x86_64`); no need for multiple ABIs.
+
+```bash
+--enable-newlib-reent-thread-local
+```
+Enables use of thread-local storage for reentrancy. This is supported by Unikraft's thread model.
+
+```bash
+--enable-newlib-io-c99-formats
+```
+Enables C99 format specifiers in `printf` and `scanf` (e.g., `%ll`, `%z`, `%j`). Required for modern C compatibility.
+
+```bash
+--enable-newlib-io-long-long
+```
+Adds support for printing and scanning `long long` values (`%lld`, `%llu`).
+
+```bash
+--enable-newlib-elix-level=1
+```
+Enables EL/IX Level 1 compliance: small footprint with essential POSIX features. Higher levels may conflict with Unikraft and `pthread-embedded`.
+
+```bash
+--disable-libssp
+```
+Disables GCC’s Stack Smashing Protector runtime. Unikraft already provides this as a separate library.
+
+```bash
+--disable-newlib-complex-math
+```
+Disables complex math functions, which depend on newer compiler builtins. Avoids compatibility issues with older compilers.
+
+```bash
+--disable-newlib-supplied-syscalls
+```
+Prevents Newlib from defining its own syscall stubs (`_read`, `_write`, etc.). Unikraft provides its own syscall shim layer.
+
+```bash
+--disable-newlib-locale
+--disable-newlib-wide-orient
+--disable-newlib-iconv
+--disable-newlib-mb
+```
+These features are currently disabled to simplify the integration, but can be added in future updates if needed.
+
+
+This step creates a tailored build environment for just the features we want, eliminating unnecessary modules.
+
+### 🛠️ Step 2: Build in Verbose Mode
+
+Then we run the build using:
+
+```bash
+make V=1 -j$(nproc)
+```
+
+The `V=1` flag enables verbose output, showing the exact compilation steps for each source file.
+
+Example output line:
+
+```bash
+x86_64-elf-gcc -B... -isystem ... -DHAVE_CONFIG_H -D_LIBC -D__NO_SYSCALLS__ ... \
+    -c -o libc/stdlib/libc_a-malloc.o newlib/libc/stdlib/malloc.c
+```
+
+From this, we can extract:
+- ✅ The list of actual source files compiled
+- ✅ Important macro definitions (`-D` flags)
+- ✅ Header include paths (`-I`, `-isystem`)
+- ✅ Any internal assumptions about system call behavior
+
+### 🎯 Why This Matters
+
+This trick allows us to:
+- Accurately identify the **minimal required set of source files**
+- Collect all necessary compiler flags and include paths
+- Avoid conflicts due to overlapping implementations in different directories
+- Build a clean and compatible Newlib integration into Unikraft
+
+By reusing this compile-time information, we avoid rewriting Newlib’s build system from scratch and instead create an efficient and reliable integration workflow that aligns with Unikraft’s modular build process.
+
+## Automating the Integration with a Script
+
+To efficiently transport Newlib’s build logic into Unikraft and avoid manual effort, we developed a Python script that **parses the verbose build output** and extracts:
+- The list of source files that were actually compiled
+- The relevant include directories
+- The macro definitions required for successful compilation
+
+This script then uses that data to generate entries for a Unikraft-style `Makefile.uk`, which is used to define how the library should be built inside Unikraft’s ecosystem.
+
+By automating this process, we eliminate the need to manually sift through hundreds of compiler commands or reverse-engineer Newlib’s complex configuration system. The script ensures we only include exactly what’s needed — nothing more, nothing less.
+
+A sample version of this script is included in the [`lib-newlib`](https://github.com/unikraft/lib-newlib) repository under the `scripts/` directory and is named:
+
+This script is designed to:
+- Read and parse verbose `make` logs
+- Identify the required `.c` files
+- Extract include paths and defines
+- Output valid `Makefile.uk` entries
+
+---
+
+## Next Steps
+
+Once the build system and file list have been transferred into Unikraft, the next step is the common one for any **Newlib port to a new platform**:
+1. **Implement required syscalls** that Newlib expects, or stub them when not needed.
+2. **Resolve conflicts** between Newlib’s symbols and existing Unikraft components.
+3. Ensure Unikraft’s build system can compile and link Newlib as part of a working unikernel image.
+
+With the foundation in place, we can now focus on compatibility, testing, and refinement — ensuring that Newlib works seamlessly alongside or as an alternative to musl within the Unikraft environment.
