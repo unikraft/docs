@@ -1,0 +1,139 @@
+---
+title: "Unikraft Filesystem Stack"
+description: This blog post provides a technical overview of the new VFS stack introduced in Unikraft 0.20.0.
+publishedDate: 2025-09-09
+image:
+authors:
+- Andrei Tatar
+tags:
+- filesystem
+- vfs
+- libukfs
+- libposix-vfs
+- libvfscore
+---
+
+# The Unikraft Filesystem Stack
+
+Files play a pivotal role in how applications and the kernel interact.
+As the old adage goes, "everything is a file".
+Indeed, on POSIX systems one can scarcely interact with the broader system without a file of some sort being involved.
+This ubiquity is not accidental, as files offer an appealing abstraction over a large and diverse number of resources external to an application.
+Whether representing persistent storage media, network connections, serial consoles, or kernel state, files are central to applications talking to the outside world.
+Furthermore, all but the most trivial of applications make extensive use of the filesystem -- a tree-like abstraction that maps hierarchies of file names ("paths") to actual files.
+
+In Unikraft the file(system) stack has been traditionally handled by the fairly monolithic `vfscore` library, whose design and history saddle us with some unfortunate limitations.
+With Unikraft release 0.16.0 Telesto we started addressing these fundamental issues, migrating sockets and pseudofiles to a new, more modular file stack built around `ukfile`.
+Filesystems however required more careful consideration (and a lot more dev work) to get right, and as such, we have since been hard at work behind the scenes to bring the new VFS stack to life.
+That is, until now.
+
+We are excited to release this modernized filesystem stack as part of [Unikraft 0.20.0 Kiviuq](https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0), bringing with it new features, better performance, and a solid base for future improvements.
+
+## Status Quo, `vfscore` & its Limitations
+
+While vfscore has [quite the storied past](https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore) and it has served the project well for many years, over time fundamental limitations of its design have become more and more apparent, limiting and sometimes outright hindering new development.
+Here we attempt to give a non-exhaustive overview of the most relevant of these limitations, following up with how we addressed these in the design of the new stack.
+
+#### Insufficient Abstraction
+
+In vfscore, a file's open state (e.g., `lseek` position) and file descriptor are tightly bound to the file object, appearing as fields in its struct.
+In addition to being a redundant source of truth with the fdtab, this tight coupling suggests a 1:1 relationship that is not really there.
+In truth, files, open file descriptions, and file descriptors are three different concepts, and vfscore's design masks two 1:N relationships -- a file may be referenced by any number of open file descriptions, each of which in turn can be referenced by any number of file descriptors.
+This limitation is addressed in the ukfile stack by `posix-fd` + `posix-fdtab`, with the feature now available to filesystem nodes as well.
+
+#### Files == Paths
+
+In a similar limitation to the above, vfscore views the filesystem as a _reversible_ mapping of paths to files, implying another 1:1 relationship that does not exist in practice.
+Hardlinks are a trivial counterexample to this assumption, and a feature lacking in previous versions.
+Another, more subtle consequence is the inability of vfscore to mount on top of a non-empty directory, or to handle bind mounts.
+
+#### Absolute Lookups
+
+Building on its assumptions about the mapping of paths to files, vfscore treats all lookups as absolute, roughly following two steps: (1) look up absolute path prefix in mount table to determine mount root, and (2) delegate lookup relative to mount root to driver.
+This becomes most unfortunate when doing relative lookups, as the VFS code must spend considerable time building an absolute path before doing anything else, a process that resets and repeats every time when encountering a symlink.
+With the recent proliferation of `*at` syscalls in Linux that focus on relative lookup & operations, coupled with encouragement of their use over their legacy absolute path counterparts, this extra overhead becomes more and more unavoidable.
+
+#### Monolithic Nature
+
+Unlike most Unikraft core libraries, and counter to the unikernel philosophy, vfscore is unusually monolithic, bearing responsibility across many abstraction layers.
+While the inherent complexity of a VFS warrants some level of tight coupling, the amount of vertical integration in vfscore is excessive and the overall architecture would benefit from clearly defined and documented interfaces between layers.
+
+## Unikraft Filesystem Stack
+
+To address vfscore's issues, as well as to lay the groundwork for future development, we introduce the Unikraft filesystem stack, anchored by two core libraries:
+
+- `ukfs` - what is _a_ filesystem; driver registration & lookup
+- `posix-vfs` what is _the_ filesystem (VFS); all userspace-facing operations
+
+Describing the entire design in detail would take far more than one blog post, but we would like to highlight some of the more pertinent or unique considerations.
+
+### Modularity, Mechanism, and Policy
+
+A first important issue is breaking up vfscore's responsibilities into dedicated orthogonal components.
+Compile-time driver registration, global VFS state, and the fstab loaded at boot are all entirely different concepts that should be separated by defined interfaces.
+
+Informing the decision on where to draw boundaries between components, we focused on having ukfs drivers provide _mechanism_ -- how to interact with a filesystem -- with higher layers focused on _policy_ -- when to interact and how to interpret the result.
+
+### Cheap Path Handling
+
+In direct contrast to vfscore's lookup logic, operations across the new filesystem stack aim to never copy data unless strictly needed.
+Lookups exclusively use the constant path provided by callers, directly passing (slices of) it down to driver code.
+As a complementary measure, `readlink` is also internally zero-copy, guaranteeing that all lookups can be performed without any temporary buffers.
+
+This mindset goes beyond memory usage, with all filenames or paths in the ukfs API being passed and returned non-terminated along with their length, as opposed to common NUL-terminated C strings.
+In addition to enabling elegant slicing of const strings, this permits us to use a single `str(n)len` at the appropriate abstraction level where C strings are received from userspace, avoiding the current excess of iterations over the same string that would make [Shlemiel the painter](https://www.joelonsoftware.com/2001/12/11/back-to-basics/) proud.
+
+### Locality & Lookups
+
+On the topic of paths, and again in direct contrast with vfscore, the concept of an "absolute path" is completely foreign to a ukfs driver.
+Indeed, a filesystem driver need not know or care about higher level concepts like `/` or the VFS; its responsibilities begin and end at "how to lookup a path below one of its nodes".
+As such, all lookups in `ukfs` are relative to a base node, without exceptions.
+This natively supports relative lookups used by modern syscalls without the compute and space overhead of building a "real absolute path".
+
+This focus on locality goes beyond relative paths: all `ukfs` operations are relative to a target node, and each node is the authoritative source of its "ops table".
+Higher levels (such as `posix-vfs`) are responsible for global concepts like "the filesystem root" required for absolute paths, or "current working directory" required for implicit relative paths.
+
+Mounts in particular are an interesting case, as live filesystems need to know, at least to some degree, whether a node of theirs is a mount point, in which case lookup stops and the condition is signalled.
+What precisely to do in response is entirely up to the caller: whether to traverse the mount point, signal error, or something entirely different, all fall under the umbrella of "policy" and thus outside the scope of what a filesystem driver cares about.
+This separation ensures relative lookups behave as expected after a mount without needing complex bookkeeping on part of the higher VFS layer.
+
+### Driver Templates
+
+The `ukfs` API has all operations output filesystem nodes as raw `ukfile` instances, giving drivers considerable power and freedom to dictate the behaviour of their files.
+But with great power comes great responsibility, one that some drivers may not wish to burden themselves with; a non-exhaustive list of these responsibilities is:
+
+- volume-wide state
+- volume lifetime management
+- driver-internal node representation
+- public runtime state (locks, etc.)
+- lifetime management (refcounting semantics)
+- ukfs runtime volatile state (mounts, etc.)
+
+For such cases, `ukfs` provides driver templates -- code generation macros that provide generic boilerplate code and "impedance match" between the `ukfile`/`ukfs` API and a more natural, bespoke interface for the driver in question.
+This allows a driver to focus on the abstraction layer it most naturally works at, without compromising its performance, nor the flexibility of other drivers in the stack.
+
+## New Libraries
+
+As part of this full-stack release, we introduced several new core libraries:
+
+- `ukfs` -- filesystem API; compile-time driver registration; runtime driver lookup
+- `ukfs-ramfs` -- memory-resident volatile filesystem
+- `ukfs-devfs` -- dedicated ramfs for special/device files
+- `posix-vfs` -- Virtual File System (VFS) API
+- `posix-vfs-fstab` -- mount filesystems at boot
+- `uksparsebuf` -- utility lib for managing sparse buffers; used by filesystem drivers
+- `ukpod` -- utility lib for managing demand-paged memory decoupled from `ukvmem`; used by filesystem drivers
+
+Their `README.md` files offer a more detailed explanation of their design for the technically curious, as well as pointing to the relevant API headers for the _very_ technically curious.
+
+## Limitations
+
+While we encourage users to migrate to the new VFS stack, there are two important limitations to take into account at this time:
+
+- No shimming with `vfscore` -- unlike existing logic in `posix-fdtab`, which seamlessly shims between legacy vfscore files and new ukfiles, there is no similar support for `ukfs` and `vfscore` filesystems to coexist in the same build. A user must choose one VFS stack or the other; this point is especially relevant since
+- No persistent drivers -- this release does not include `ukfs` drivers for any host-persistent filesystems (equivalent to legacy `9pfs`). Users of these should stick to vfscore for now.
+
+## Ending Thoughts
+
+The new VFS stack included in 0.20 is the culmination of almost 2 years of development and marks an important milestone -- real-world applications running entirely on the new stack.
+This is merely the groundwork for more to come, and we are excited to continue the work on more features, performance improvements, and the long-awaited deprecation and retirement of vfscore.
