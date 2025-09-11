@@ -1,0 +1,89 @@
+---
+version: 0.20.0
+releaseDate: 2025-09-08
+codename: Kiviuq
+commit: 07044e69cb3d1c91f83ebe5eff3b6715d5b6a50d
+blogPost: /blog/2025-09-08-unikraft-releases-v0.20.0
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.19.1...RELEASE-0.20.0
+---
+
+We are proud to announce the latest version of Unikraft, `v0.20.0`!
+This release comes with the much anticipated redesign and implementation of VFS, which brings enhanced performance, better maintainability, and improved compatibility with modern applications.
+For more info refer to [the accompanying blog post](https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0).
+
+> [!IMPORTANT]
+> **DEPRECATION NOTICE:** The old VFS, vfscore, will be deprecated in Unikraft 0.22.0 (early 2026).
+> For help on transitioning, consult the migration guide or join us on Discord.
+
+> [!IMPORTANT]
+> **COMPATIBILITY NOTICE:** The implementation of `arch_prctl` system call has been migrated from `app-elfloader` to `libposix-process`.
+> Configurations using `CONFIG_APPELFLOADER_ARCH_PRCTL` should now use `CONFIG_LIBPOSIX_PROCESS_ARCH_PRCTL`.
+
+A summary of the most important changes follows.
+For the full list of changes see the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.19.1...RELEASE-0.20.0).
+
+### 🚀 New Features
+
+### Filesystem & Storage
+
+- `libukfs`: New library for the filesystem interface, driver templates and utilities
+- `libukfs-ramfs`: `ukfs` memory-resident volatile filesystem
+- `libukfs-devfs`: `ukfs` pseudo-filesystem that provides files under /dev
+- `libukfs-pseudo`: New library home to pseudo-files previously provided by `posix-tty`; also provides pseudo-files under devfs
+- `posix-vfs`: New library for POSIX-compliant virtual filesystem layer on top of `ukfs`
+- `posix-vfs-fstab`: New library for mounting filesystems at boot according to predefined tables (fstabs)
+- `libukpod`: Utility library for managing pages-on-demand - used by filesystem drivers
+- `libuksparsebuf`: Utility library for efficient management of sparse buffers - used by filesystem drivers
+- `libukfile`: Add interface to expose & manage file backing memory
+
+#### Context Management
+
+- `lcpu`: Enhanced exception handling with context escape trampolines
+
+#### System Call and Process
+
+- `libposix-fdio`: Support the `sendfile()` syscall
+- `libposix-process`: Signal the application on system error (`SIGSEGV`, `SIGILL` etc.)
+
+#### Networking
+
+- `virtio-net`, `liblwip`: Support Mergeable RX buffers (`VIRTIO_NET_F_MRG_RXBUF`)
+- `virtio-net`, `liblwip`: Support Large Receive Offload (LRO)
+
+### 🐛 Bug Fixes & Improvements
+
+#### Memory Management
+
+- `libukallocbuddy`: Refactor to support asymmetric `palloc()` / `pfree()` operations
+- `ukallocpool`: Various improvements to enhance performance
+- `libukvmem`: Fix VMA stack population logic
+- `libukalloc`: Ensure sufficient memory allocation for region metadata
+- `libukallocregion`: Various enhancements and improvements
+
+#### Context Management
+
+- `libuksched`: Remove unnecessary ECTX saving/restoration for cooperative thread switching
+
+#### System Call and Process
+
+- `libposix-process`: Refactor the kernel event API
+- `libposix-process`: Fix exit code propagation to termination context
+
+#### Architecture and Platform
+
+- `lcpu`: Align exception handling stacks across architectures
+
+#### Synchronization & Atomics
+
+- `libuklock`: Optimize `ukmutex` and allow opt-out of atomics in the fast patch.
+- `libuklock`: Introduce semaphore operation to consume all tokens at once
+
+#### Network Stack
+
+- `virtio-net`: Use single descriptor for packets
+- `virtio-net`: Keep event suppression mechanism internal
+- `virtio-net`: Split feature probing and negotiation
+
+#### Development & Debugging
+
+- `libsyscall-shim`: Enhance syscall tracing with pretty-print decoding for socket, filesystem, and process syscalls

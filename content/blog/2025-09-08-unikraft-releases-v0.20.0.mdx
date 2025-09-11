@@ -1,0 +1,124 @@
+---
+title: "Unikraft releases v0.20.0 (Pan)"
+description: |
+  This release comes with the much anticipated redesign and implementation of VFS, which brings enhanced performance, better maintainability, and improved compatibility with modern applications.
+publishedDate: 2025-09-08
+authors:
+- Michalis Pappas
+- Andrei Tatar
+- Răzvan Deaconescu
+tags:
+- release
+- announcement
+---
+
+We are proud to announce the latest release of Unikraft, v0.20.0.
+
+This release comes with the much anticipated redesign and implementation of VFS, which brings enhanced performance, better maintainability, and improved compatibility with modern applications.
+It also contains plenty of fixes that improve the stability and application support of Unikraft.
+
+In this blog post, we present the new features available in Unikraft.
+For a full breakdown, please check out the [changelog](https://github.com/unikraft/unikraft/compare/RELEASE-0.19.1...RELEASE-0.20.0).
+
+> [!IMPORTANT]
+> **DEPRECATION NOTICE:** The old VFS, vfscore, will be deprecated in Unikraft 0.22.0 (early 2026).
+> For help on transitioning, consult the migration guide or join us on Discord.
+
+> [!IMPORTANT]
+> **COMPATIBILITY NOTICE:** The implementation of `arch_prctl` system call has been migrated from `app-elfloader` to `libposix-process`.
+> Configurations using `CONFIG_APPELFLOADER_ARCH_PRCTL` should now use `CONFIG_LIBPOSIX_PROCESS_ARCH_PRCTL`.
+
+### New VFS
+
+This release marks a milestone in the ongoing effort to replace `vfscore` and modernize the Unikraft file and filesystem stack with the introduction of `ukfs` -- the Unikraft filesystem interface -- as well as a new full-stack VFS implementation.
+
+Building upon the `ukfile` interface introduced in 0.16, `ukfs` exists as a separation layer between filesystem drivers and higher level consumers.
+Filesystem nodes exist as special instances of ukfiles, integrating seamlessly with existing filesystem-agnostic code, such as `posix-fd*`, while providing the `ukfs` API for interested consumers.
+
+A key such consumer is `posix-vfs`, a core library providing the familiar *nix virtual filesystem (VFS) anchored at `/`, along with all related state, operations, and syscalls.
+
+On the other end of the stack this release also introduces `ukfs-ramfs`, a memory-resident volatile filesystem, replacing legacy vfscore `ramfs`, along with `uksparsebuf` and `ukpod`, two internal utility libraries supporting file drivers.
+
+Among the many performance and compatibility benefits of the new VFS stack and ramfs, a few notable ones are: sparse files, multiple hardlinks, bind mounts, and mounting on top of a non-empty directory (shadowing its previous contents until unmount).
+
+As a consequence of the extensive rewrite done across the past four releases, the responsibilities of `vfscore` are now handled by dedicated libraries in the `ukfile`/`ukfs` stack:
+
+- `ukfile` -- core abstraction for "a file"
+- `ukfs` -- core abstraction for "a filesystem node"
+- `posix-fd` -- open file descriptions, state held by open files
+- `posix-fdio` -- POSIXey I/O & control operations on open files
+- `posix-fdtab` -- file descriptors & their management
+- `posix-vfs` -- *the* filesystem (VFS) anchored at root, everything to do with paths
+- `posix-vfs-fstab` -- constructing the VFS at boot
+
+All had their `README.md` files updated to better describe their design and interactions.
+Consult these for a more in-depth overview of the new file(system) stack.
+
+#### Migrating
+
+All changes relating to the new VFS stack are opt-in, with existing configs that use vfscore continuing to work.
+
+We encourage users to migrate their configurations as soon as practical, as vfscore is likely to be deprecated in the near future.
+This can be easily done following these steps:
+
+1. Replace all hard dependencies to `vfscore` with soft dependencies in your application’s [`Config.uk`](http://Config.uk) (`select LIBVFSCORE` → `imply LIBVFSCORE`)
+   - This will maintain compatibility while allowing you to test migrating
+   - Do this for all vfscore drivers as well (`LIB9PFS`, `LIBDEVFS`, `LIBRAMFS`)
+
+   From interactive config prompt (e.g., `make menuconfig`):
+
+1. Disable `vfscore`.
+
+1. Enable `posix-vfs`; under its menu:
+   - Enable "Provide filesystem syscalls" (`CONFIG_LIBPOSIX_VFS_SYSCALLS`)
+
+1. Enable `posix-vfs-fstab`; under its menu:
+   - Configure the builtin / user / fallback fstabs similar to vfscore
+   - (OPTIONAL) If using devfs, enable it as a mount for `/dev`
+
+**NOTE**: Filesystems other than ramfs & devfs are not yet supported.
+Continue using the vfscore stack for now.
+
+### Updates on Application Support
+
+Application support has improved based on the updates of the Unikraft core.
+And together with additions and improvements to the [`catalog`](https://github.com/unikraft/catalog) and [`catalog-core`](https://github.com/unikraft/catalog-core) repositories.
+
+An important milestone is the now functional support of the [Java runtime](https://github.com/unikraft/catalog/tree/main/library/java/17).
+
+### Community Activities
+
+#### Unikraft Summer Workshop 2025
+
+[Unikraft Summer Workshop 2025 (*USW'25*)](https://unikraft.org/hackathons/usw25), a **free and virtual** workshop held by members of the Unikraft community, took part for 3 weeks, between June 23 and July 4, 2025.
+It consisted of 6 sessions filled with tutorials and workshops on how to configure, build, run and debug applications using Unikraft.
+
+The final hackathon took place on Saturday, 12 July 2025, 9am-5pm CEST.
+22 participants, split into 6 teams, contributed to the [`catalog-core`](https://github.com/unikraft/catalog-core) and [`catalog`](https://github.com/unikraft/catalog) repositories, and to various libraries and other components of the Unikraft ecosystem.
+
+#### GSoC'25 Projects
+
+GSoC'25 projects are almost done.
+We are very happy with the results of our GSoC participants.
+Check out their work products:
+
+**[Prasoon Kumar](https://github.com/prasoon054/) from [Indian Institute of Technology Bombay](https://www.iitb.ac.in/) in Mumbai, India**
+
+- Project: Expanding the Unikraft Software Support Ecosystem
+- Mentors: [Răzvan Vîrtan](https://github.com/razvanvirtan), [Răzvan Deaconescu](https://github.com/razvand)
+- [Work product](https://github.com/unikraft/gsoc/tree/staging/gsoc-2025/work-product/Prasoon-Kumar-Expanding-Software-Support-Ecosystem)
+
+**[Abolfazl Soltani](https://github.com/SalarSamani) from [Vrije Universiteit Amsterdam](https://vu.nl/nl) in Amsterdam, The Netherlands**
+
+- Project: Update Newlib and Pthread-embedded Libraries
+- Mentors: [Ștefan Jumărea](https://github.com/StefanJum), [Cezar Crăciunoiu](https://github.com/craciunoiuc)
+- [Work product](https://github.com/unikraft/gsoc/blob/staging/gsoc-2025/work-product/Salar-Samani-Newlib-Pthread-Unikraft.md)
+
+**[Shashank Srivastava](https://github.com/shank250) from [GL Bajaj Institute of Technology and Management](https://www.glbimr.ac.in/) in Greater Noida, India**
+
+- Project: Testing Framework for Unikraft Builds
+- Mentors: [Răzvan Deaconescu](https://github.com/razvand), [Răzvan Vîrtan](https://github.com/razvanvirtan)
+- Work product under way
+
+Thanks so much for your involvement!
+And keep contributing! 🤝
