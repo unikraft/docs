@@ -205,7 +205,7 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Go' src={`/logos/lang-go.svg`} maxW='28' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/hugo'
+            href='https://github.com/unikraft/catalog/tree/main/examples/hugo/0.122'
             accentColor='black'
             name='Gohugo'
           >
