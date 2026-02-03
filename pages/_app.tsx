@@ -1,13 +1,25 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import Head from 'next/head'
-import React from 'react'
+import React, { useEffect } from 'react'
 import FontFace from 'components/font-face'
 import theme from 'theme'
 import '../src/global.css' // TODO(nderjung): Non-relative path.
 import 'asciinema-player/dist/bundle/asciinema-player.css'
 import 'components/asciinema-player.css'
+import { PostHogProvider } from 'posthog-js/react'
+import posthog from 'posthog-js'
 
 const App = ({ Component, pageProps }) => {
+  useEffect(() => {
+    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+      defaults: '2025-11-30',
+      loaded: (posthog) => {
+        if (process.env.NODE_ENV === 'development') posthog.debug()
+      }
+    })
+  }, [])
+
   return (
     <>
       <Head>
@@ -22,9 +34,11 @@ const App = ({ Component, pageProps }) => {
         <meta name="msapplication-TileColor" content="#032b59" />
         <link rel="manifest" href="/site.webmanifest" />
       </Head>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <PostHogProvider client={posthog}>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </PostHogProvider>
       <FontFace />
     </>
   )
