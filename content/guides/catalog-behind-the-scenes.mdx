@@ -13,7 +13,7 @@ It is aimed for those more technically inclined who would be interested in under
 Similar to the [guide on using the application catalog](/guides/using-the-app-catalog), we will use two applications:
 
 - [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
-- [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
+- [the `httpserver-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/httpserver-go1.21)
 
 ## NGINX
 
@@ -170,14 +170,14 @@ To close the running QEMU instance, use `Ctrl+a x` in the QEMU console.
 
 ## HTTP Go Server
 
-For the [`http-go1.21` bincompat example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21), there is no build phase, only a run phase.
+For the [`httpserver-go1.21` bincompat example](https://github.com/unikraft/catalog/tree/main/examples/httpserver-go1.21), there is no build phase, only a run phase.
 The example is using a prebuilt kernel image.
 The prebuilt [`base` kernel image](https://github.com/unikraft/catalog/tree/main/library/base) is pulled from the registry, from `unikraft.org/base`.
 This happens during the run phase.
 
 ### Configuration
 
-The run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/examples/http-go1.21/Kraftfile):
+The run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/examples/httpserver-go1.21/Kraftfile):
 
 ```yaml
 spec: v0.6

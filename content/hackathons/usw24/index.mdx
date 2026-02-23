@@ -151,7 +151,7 @@ All of them will be cloned by `kraft`, so we don't have to worry about that.
 
 #### `helloworld-c`
 
-Let's start with the [`helloworld-c`](https://github.com/unikraft/catalog/tree/main/examples/helloworld-c) application.
+Let's start with the [`helloworld-gcc13.2`](https://github.com/unikraft/catalog/tree/main/examples/helloworld-gcc13.2) application.
 We need to update the `Kraftfile`, so it build a kernel image locally, whithout pulling it directly from the registry.
 You can copy the [`Nginx` Kraftfile](https://github.com/unikraft/catalog/blob/main/library/nginx/1.25/Kraftfile), change the `name:` to `helloworld` and the `cmd:` to `["/helloworld"]`.
 
@@ -275,15 +275,15 @@ Create a `Makefile`, build the application and then run it.
 
 #### `hugo`
 
-Follow the same steps with [`hugo`](https://github.com/unikraft/catalog/tree/main/library/redis/0.122).
+Follow the same steps with [`hugo`](https://github.com/unikraft/catalog/tree/main/library/hugo/0.122).
 Create a `Makefile`, build the application and then run it.
 
-#### `redis`
+#### `node/21`
 
 Follow the same steps with [`node/21`](https://github.com/unikraft/catalog/tree/main/library/node/21).
 Create a `Makefile`, build the application and then run it.
 
-#### `redis`
+#### `PHP`
 
 Follow the same steps with [`PHP`](https://github.com/unikraft/catalog/tree/main/library/php/8.2).
 Create a `Makefile`, build the application and then run it.
@@ -519,7 +519,7 @@ Remove the `Dockerfile`, start from the `node:21-alpine` image and follow the sa
 
 #### `memcached`
 
-Do the same for [`memcached`](https://github.com/unikraft/catalog/blob/main/library/memcached/1.6/).
+Do the same for [`memcached`](https://github.com/unikraft/catalog/blob/main/library/memcached/1.6).
 Remove the `Dockerfile` and start from `memcached:1.6.23-bookworm`.
 
 ### Session Recordings

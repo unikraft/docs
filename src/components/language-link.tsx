@@ -45,49 +45,49 @@ export const LanguageLinks = () => {
       }}
     >
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-c'
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-gcc13.2'
         accentColor='#A9BACD'
         name='C'
       >
         <Image alt='C' src='/logos/lang-c.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-cpp'
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-g++13.2'
         accentColor='#659AD2'
         name='C++'
       >
         <Image alt='C++' src='/logos/lang-cpp.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-rs'
+        href='https://github.com/unikraft/catalog/tree/main/examples/helloworld-rust1.75'
         accentColor={theme == 'dark' ? 'black' : 'white'}
         name='Rust'
       >
         <Image alt='Rust' src={`/logos/lang-rust-${theme}.svg`} maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/http-go1.21'
+        href='https://github.com/unikraft/catalog/tree/main/examples/httpserver-go1.21'
         accentColor='#01ADD7'
         name='Go'
       >
         <Image alt='Go' src={`/logos/lang-go.svg`} maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10'
+        href='https://github.com/unikraft/catalog/tree/main/examples/httpserver-python3.10'
         accentColor='#3772A4'
         name='Python3'
       >
         <Image alt='Python 3' src='/logos/lang-python3.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/http-python3.10-flask3.0'
+        href='https://github.com/unikraft/catalog/tree/main/examples/flask3.0-python3.10'
         accentColor='#37A7BD'
         name='Flask'
       >
         <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
       </LanguageLink>
       <LanguageLink
-        href='https://github.com/unikraft/catalog/tree/main/examples/http-node18'
+        href='https://github.com/unikraft/catalog/tree/main/examples/httpserver-nodejs18'
         accentColor='#74AB63'
         name='Node'
       >
