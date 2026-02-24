@@ -212,7 +212,7 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Gohugo' src={`/logos/framework-hugo.svg`} maxW='32' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/library/lua'
+            href='https://github.com/unikraft/catalog/tree/main/library/lua/5.4'
             accentColor='#070080'
             name='Lua'
           >
@@ -270,7 +270,7 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Python 3' src='/logos/lang-python3.svg' maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/library/redis'
+            href='https://github.com/unikraft/catalog/tree/main/examples/database-redis7.2'
             accentColor='#D82B1F'
             name='Redis'
           >

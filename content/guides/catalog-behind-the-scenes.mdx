@@ -23,17 +23,16 @@ The build phase creates the output kernel, and the run phase launches a Unikraft
 The kernel is a join of the actual Unikraft kernel and the application filesystem, packed as an initial ramdisk.
 We call the packed initial ramdisk the **embedded initial ramdisk** or **embedded initrd**.
 
-### Configuration
+### NGINX configuration
 
 The build and run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/library/nginx/1.25/Kraftfile).
-
 The `Kraftfile` defines the:
 
 - resulting image name: `nginx`
 - the command line to start the application: `/usr/bin/nginx`
 - path to the template `app-elfloader`
 - paths and versions of repositories (`unikraft`, `lwip`, `libelf`)
-- configuration options: i.e. the `CONFIG_...` option enables the emdedded initrd build
+- configuration options: the `CONFIG_...` option enables the embedded initrd build
 - build and run targets: currently only x86_64-based builds are available, and only KVM-based builds, using QEMU or Firecracker
 - root filesystem used to build the (embedded) initrd
 
@@ -109,7 +108,8 @@ The resulting embedded kernel image is `.unikraft/build/nginx_qemu-x86_64`:
 ```bash
 $ ls -lh .unikraft/build/nginx_qemu-x86_64
 ```
-```
+
+```text
 -rwxr-xr-x 2 razvand docker 15M Jan  2 21:23 .unikraft/build/nginx_qemu-x86_64
 ```
 
@@ -175,7 +175,7 @@ The example is using a prebuilt kernel image.
 The prebuilt [`base` kernel image](https://github.com/unikraft/catalog/tree/main/library/base) is pulled from the registry, from `unikraft.org/base`.
 This happens during the run phase.
 
-### Configuration
+### Run configuration
 
 The run configuration is part of the [`Kraftfile`](https://github.com/unikraft/catalog/blob/main/examples/httpserver-go1.21/Kraftfile):
 
@@ -191,7 +191,7 @@ cmd: ["/server"]
 
 The `Kraftfile` defines:
 
-- the runtime image to use, containing the kernel: `unikraft.org/base:latest' (it can be summarized as just `base:latest`)
+- the runtime image to use, containing the kernel: `unikraft.org/base:latest` (it can be summarized as just `base:latest`)
 - the root filesystem used, defined in a `Dockerfile`
 - the command line to start the application: `/server`
 - the available run targets: currently only x86_64-based builds are available, and only KVM-based builds, using QEMU or Firecracker
@@ -224,7 +224,7 @@ COPY --from=build /lib64/ld-linux-x86-64.so.2 /lib64/
 
 The Dockerfile is being interpreted via [BuildKit](https://docs.docker.com/build/buildkit/), hence the need to set up the BuildKit container.
 
-### Run Phase
+### HTTP Go Server run phase
 
 The run command requires the `BuildKit` container to be configured beforehand:
 
@@ -253,7 +253,8 @@ The resulting initrd image is `.unikraft/build/initramfs.cpio`.
 ```bash
 $ ls -lh .unikraft/build/initramfs.cpio
 ```
-```
+
+```text
 -rw-r--r-- 1 root root 8.9M Jan  4 18:16 .unikraft/build/initramfs-x86_64.cpio
 ```
 
@@ -262,7 +263,8 @@ To view the contents of the root filesystem you can use `cpio`:
 ```bash
 $ cpio -itv < .unikraft/build/initramfs.cpio
 ```
-```
+
+```text
 d---------   0 root     root            0 Jan  1  1970 /lib
 d---------   0 root     root            0 Jan  1  1970 /lib/x86_64-linux-gnu
 -rwxr-xr-x   1 root     root      1922136 Sep 30 11:31 /lib/x86_64-linux-gnu/libc.so.6
