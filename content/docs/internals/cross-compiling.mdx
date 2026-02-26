@@ -1,5 +1,5 @@
 ---
-title: Cross-compilig Unikraft
+title: Cross-compiling Unikraft
 ---
 
 ## Cross-compiling `AArch64` apps
@@ -33,7 +33,7 @@ There are two ways of cross-compiling your app based off the toolchain you'll ch
 there's either `aarch64-linux-gnu` or `aarch64-none-linux-gnu`.
 The first one can be installed via your default package manager (the `gcc-aarch64-linux-gnu` package on Ubuntu), while the second one should be fetched from the [official Arm development site](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-x86_64-aarch64-none-linux-gnu.tar.xz?rev=33c6e30e5ac64e6dba8f0431f2c35f1b&hash=AE0C3F32FC140B87A05846EBF9494722).
 
-To configure your app keep your regular configuartions and dissable all the `erratums` from the `Architecture Selection`.
+To configure your app keep your regular configurations and disable all the `erratums` from the `Architecture Selection`.
 
 * If you choose to use `aarch64-linux-gnu`, build your application with:
 
