@@ -1,0 +1,137 @@
+---
+title: "GSoC'25: Fine-tuning Unikraft's Performance | Part II"
+description: |
+  This GSoC project is aimed at improving the performance of the latest version of Unikraft (Unikraft 0.19.0 Pan), by taking performance measurements, identifying bottlenecks, and making patches that address them.
+publishedDate: 2025-07-15
+tags:
+- gsoc
+- gsoc25
+- performance
+- benchmarking
+- optimization
+authors:
+- Ashirvad Mohanty
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+Over the past releases, Unikraft has focused on compatibility with existing codebases and adding new OS features. This means less efforts were put into performance-testing Unikraft which has resulted in a drop in the performance in latest releases. Now that Unikraft has reached a certain level of maturity, it is essential that we go back to evaluating and fine-tuning its performance. To do this,
+
+- Evaluate the current performance of Unikraft - Evaluation of the Unikraft EuroSys paper, re-running experiments with the latest release of Unikraft.
+
+- Identify potential performance bottlenecks - Performance bottlenecks to be identified which can lie in any Unikraft component, and to be reported in the form of GitHub issues.
+
+- Address these bottlenecks through targeted patches - Provide self-contained targeted fixes for these bottlenecks in the form of GitHub pull requests.
+
+## Recap of challenges mentioned in the 1st blog post
+
+- Unikraft's Nginx build using Mimalloc + Musl failed to boot when plugged into `qemu-guest` script
+- Unikraft failed to build with `Memory pools` enabled in lwip
+
+## Current Progress
+
+### Fixed the failure to mount cpio filesystem in `qemu-guest`
+Even though the new Nginx unikernel builds successfully and runs according to the instructions in catalog-core, it failed to run when plugged into the wrapper script [qemu-guest](https://github.com/unikraft/eurosys21-artifacts/blob/master/tools/qemu-guest) in eurosys21-artifacts due to failure to mount the filesystem whose method has changed since 2021. I fixed the issue by adding an additional vfs.fstab entry to the kernel command line (-append) to mount the initrd as ramfs.
+
+### Made a PR to allow Unikraft to build with memory pools enabled in lwip
+Unikraft’s build failed when enabling memory pools in lwIP due to macro and preprocessor issues. I opened [PR#64](https://github.com/unikraft/lib-lwip/pull/64) to fix these build errors.
+
+### Made a PR fixing a linker build warning
+When trying to build Unikraft, it kept giving the following build warning for several .o files that were generated.
+```
+/usr/bin/ld: warning: ...../libinfo.libuklibid.o: missing .note.GNU-stack section implies executable stack
+/usr/bin/ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+```
+I took it up as an additional challenge and made [PR#1670](https://github.com/unikraft/unikraft/pull/1670) to get rid of the warning as well as prevent future build failures due to removal of the default deprecated behaviour in a future version of the linker. I also tested the PR using applications in catalog-core to ensure it wasn't causing any errors.
+
+## Problems encountered
+
+- Even after fixing the filesystem mount issue, Nginx still failed to run via qemu-guest, with no clear hints in the outputs of the script. I eventually traced it to the guest VM failing to get a DHCP IP because a stale dnsmasq process was still bound to the bridge (unikraft0), blocking the new one. Killing the stale process and removing the old bridge let the script restart dnsmasq cleanly and serve DHCP properly.
+
+- When stress tested with `wrk`, Nginx has an incredibly low throughput and ends up crashing after a few seconds with the following output:
+```
+[    9.508057] CRIT: [libukvmem] <pagefault.c @   43> Cannot handle write page fault at 0x43f66f800 (ec: 0x2): Out of memory (12).
+[    9.509258] CRIT: [libkvmplat] <trace.c @   41> RIP: 0000000000161205 CS: 0008
+[    9.509492] CRIT: [libkvmplat] <trace.c @   42> RSP: 000000000000ffc0 SS: 0010 EFLAGS: 00000202
+[    9.509761] CRIT: [libkvmplat] <trace.c @   44> RAX: 0000000000000000 RBX: 000000043f66f800 RCX: 000000000000000c
+[    9.510073] CRIT: [libkvmplat] <trace.c @   46> RDX: 000000043f66f010 RSI: 0000000000000800 RDI: 000000043f66f800
+[    9.510382] CRIT: [libkvmplat] <trace.c @   48> RBP: 000000000000ffc0 R08: 0000000000000000 R09: 0000000000000000
+[    9.511397] CRIT: [libkvmplat] <trace.c @   50> R10: 000000043f66f800 R11: 000000043f66f000 R12: 0000000400000000
+[    9.512136] CRIT: [libkvmplat] <trace.c @   52> R13: 0000000000000000 R14: 0000000000000010 R15: 0000000000000000
+[    9.512871] CRIT: [libkvmplat] <trace.c @   86> base is 0xffc0 caller is 0x161383
+[    9.513503] CRIT: [libkvmplat] <trace.c @   86> base is 0xffe0 caller is 0x16144d
+[    9.514105] CRIT: [libkvmplat] <trace.c @   86> base is 0x10030 caller is 0x25def3
+[    9.514711] CRIT: [libkvmplat] <trace.c @   86> base is 0x10060 caller is 0x260bbf
+[    9.515304] CRIT: [libkvmplat] <trace.c @   86> base is 0x100c0 caller is 0x253ba2
+[    9.515902] CRIT: [libkvmplat] <trace.c @   86> base is 0x10130 caller is 0x256ad0
+[    9.516498] CRIT: [libkvmplat] <trace.c @   86> base is 0x10180 caller is 0x25871e
+[    9.517099] CRIT: [libkvmplat] <trace.c @   86> base is 0x101a0 caller is 0x25992c
+[    9.517700] CRIT: [libkvmplat] <trace.c @   86> base is 0x101c0 caller is 0x255fc7
+[    9.518300] CRIT: [libkvmplat] <trace.c @   86> base is 0x10230 caller is 0x25be96
+[    9.518908] CRIT: [libkvmplat] <trace.c @   86> base is 0x10280 caller is 0x25c34f
+[    9.519508] CRIT: [libkvmplat] <trace.c @   86> base is 0x102d0 caller is 0x247414
+[    9.520105] CRIT: [libkvmplat] <trace.c @   86> base is 0x102e0 caller is 0x133937
+[    9.520737] CRIT: [libkvmplat] <trace.c @   86> base is 0x10350 caller is 0x11f0b7
+[    9.521412] CRIT: [libkvmplat] <trace.c @   86> base is 0x10460 caller is 0x12288f
+[    9.522013] CRIT: [libkvmplat] <trace.c @   86> base is 0x104c0 caller is 0x1a9ebf
+[    9.522604] CRIT: [libkvmplat] <trace.c @   86> base is 0x104d0 caller is 0x1f6945
+[    9.523194] CRIT: [libkvmplat] <trace.c @   86> base is 0x10500 caller is 0x1f2caf
+[    9.523791] CRIT: [libkvmplat] <trace.c @   86> base is 0x109a0 caller is 0x21157c
+[    9.524385] CRIT: [libkvmplat] <trace.c @   86> base is 0x10a00 caller is 0x1df931
+[    9.525007] CRIT: [libkvmplat] <trace.c @   86> base is 0x10a70 caller is 0x227940
+[    9.525603] CRIT: [libkvmplat] <trace.c @   86> base is 0x10aa0 caller is 0x1fd233
+[    9.526203] CRIT: [libkvmplat] <trace.c @   86> base is 0x10ac0 caller is 0x228792
+[    9.526803] CRIT: [libkvmplat] <trace.c @   86> base is 0x10ba0 caller is 0x1fd496
+[    9.527456] CRIT: [libkvmplat] <trace.c @   86> base is 0x10be0 caller is 0x1f8eb5
+[    9.528049] CRIT: [libkvmplat] <trace.c @   86> base is 0x10c00 caller is 0x204e67
+[    9.528662] CRIT: [libkvmplat] <trace.c @   86> base is 0x10c30 caller is 0x205210
+[    9.529258] CRIT: [libkvmplat] <trace.c @   86> base is 0x10c70 caller is 0x1f0dc5
+[    9.529863] CRIT: [libkvmplat] <trace.c @   86> base is 0x10c90 caller is 0x1f5bf8
+[    9.530455] CRIT: [libkvmplat] <trace.c @   86> base is 0x10cb0 caller is 0x1d1d76
+[    9.531053] CRIT: [libkvmplat] <trace.c @   86> base is 0x10f70 caller is 0x157728
+[    9.531649] CRIT: [libkvmplat] <trace.c @   86> base is 0x10fe0 caller is 0x1187b9
+[    9.532248] CRIT: [libkvmplat] <trace.c @   86> base is 0x10ff0 caller is 0
+[    9.532690] CRIT: [libkvmplat] <trace.c @   66>
+[    9.533049] CRIT: [libkvmplat] <trace.c @   66> ffb0: 46 02 00 00 00 00 00 00 33 83 24 00 00 00 00 00
+[    9.533756] CRIT: [libkvmplat] <trace.c @   66> ffc0: e0 ff 00 00 00 00 00 00 83 13 16 00 00 00 00 00
+[    9.534590] CRIT: [libkvmplat] <trace.c @   66> ffd0: 00 00 01 00 00 00 00 00 60 08 00 00 00 00 00 00
+[    9.535432] CRIT: [libkvmplat] <trace.c @   66> ffe0: 30 00 01 00 00 00 00 00 4d 14 16 00 00 00 00 00
+[    9.536171] CRIT: [libkvmplat] <trace.c @   66>
+[    9.536579] CRIT: [libkvmplat] <trace.c @   66> ffb0: 46 02 00 00 00 00 00 00 33 83 24 00 00 00 00 00
+[    9.537381] CRIT: [libkvmplat] <trace.c @   66> ffc0: e0 ff 00 00 00 00 00 00 83 13 16 00 00 00 00 00
+[    9.538105] CRIT: [libkvmplat] <trace.c @   66> ffd0: 00 00 01 00 00 00 00 00 60 08 00 00 00 00 00 00
+[    9.538797] CRIT: [libkvmplat] <trace.c @   66> ffe0: 30 00 01 00 00 00 00 00 4d 14 16 00 00 00 00 00
+[    9.539634] CRIT: [libkvmplat] <trace.c @   66>
+[    9.539979] CRIT: [libkvmplat] <trace.c @   66> 1611f0: 0f b7 d1 48 39 d6 72 68 31 c0 4c 89 d7 b9 0c 00
+[    9.540804] CRIT: [libkvmplat] <trace.c @   66> 161200: 00 00 4c 01 da f3 48 ab 49 89 52 18 b8 01 00 00
+[    9.541638] CRIT: [libkvmplat] <trace.c @   66> 161210: 00 4d 89 42 28 4d 89 5a 30 49 89 72 38 4d 89 4a
+[    9.542407] CRIT: [libkvmplat] <trace.c @   66> 161220: 48 41 87 42 24 5d c3 66 0f 1f 84 00 00 00 00 00
+[    9.543162] CRIT: [libkvmplat] <traps.c @  113> Crashing
+```
+On further investigation, I observed that the address at which the write page fault occurs falls within the expected virtual address range (0x400000000–0x43fb0a000). Despite this, an Out of Memory (12) error is reported, suggesting a potential issue in memory management in Unikraft 0.19.0.
+
+Disabling `ukvmem` prevents a crash, but results in a significant performance degradation each time wrk is run on the unikernel. Below are the results from different configuration permutations:
+
+**With ukvmem enabled**:
+- mimalloc: crashes with Out of Memory (12)
+- buddy: significant performance drop after each wrk run
+
+**With ukvmem disabled**:
+- mimalloc: wrk fails to connect on the second run
+- buddy: significant performance drop after each wrk run
+
+## Next Steps
+
+After discussions with [Razvan Deaconescu](https://github.com/razvand) and [Stefan Jumarea](https://github.com/StefanJum), we realized it would take a really long time to investigate the memory issues and might not be feasible within the time period remaining for GSoC '25 while also conducting other experiments in eurosys21-artifacts. Hence we are considering changes to the original plan.
+Instead of trying to fix the issue causing Nginx to crash, I am going to be working on creating a benchmarking framework that can be run with Unikraft 0.17.0+ including future versions of Unikraft. The benchmarking framework will be based on experiments from eurosys21-artifacts as well as the applications in catalog-core, which can be used by the developers of Unikraft to conduct performance analysis based on parameters like throughput, boot time, and image size.
+
+## Acknowledgement
+
+I would like to sincerely thank my mentors, [Hugo Lefeuvre](https://github.com/hlef) and [Stefan Jumarea](https://github.com/StefanJum), for their constant support and guidance throughout this project. I'm also grateful to the Unikraft community for their warm support and helpfulness.
+
+## About me
+
+I'm [Ashirvad Mohanty](https://github.com/ThestralWarrior/), an undergraduate student at Odisha University of Technology and Research, currently pursuing a B. Tech in Information Technology. After a brief stint with blockchain development, my passion for systems programming was ignited when I read the book "Computer Systems: A Programmer's Perspective" by Randal Bryant. As of now I am focused on building my skills in kernel development and learning about compilers on the side!
+Feel free to [connect](https://www.linkedin.com/in/ashirvad-mohanty-44048b201/)!
