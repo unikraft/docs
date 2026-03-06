@@ -50,7 +50,7 @@ Providing `posix-socket` opens up new possibilities for "mixing and matching" AF
 Now the developer has the power to easily choose which implementation underlies a particular AF.
 
 
-#### Usage 
+#### Usage
 
 This library allows for the registration of socket interfaces, listed within [`struct posix_socket_ops`](#), and exposes unikernel-wide POSIX prototypes for `socket()`, `accept()`, `bind()`, `listen()`, `connect()`, `send()`, `recv()` and friends in order to access them via a  corresponding AF number.
 
@@ -163,10 +163,10 @@ _This feature was championed by [Simon Kuenzer](https://github.com/skuenzer) and
 
 In v0.10.0 we mark the start of a transition for better support of [musl](https://www.musl-libc.org/) via [`lib-musl`](https://github.com/unikraft/lib-musl) to Unikraft.
 Musl is a feature-rich and performant standard C library (_libc_) alternative to [newlib](https://github.com/unikraft/lib-newlib).
-With this initial introduction of musl into Unikraft s a major milestone for the project as many important OS primitives, including scheduling were refactored to become more generic and general-purpose for the 
+With this initial introduction of musl into Unikraft s a major milestone for the project as many important OS primitives, including scheduling were refactored to become more generic and general-purpose for the
 
 The introduction of musl will facilitate the running of applications under binary-compatibility mode (i.e. running unmodified Linux ELFs with Unikraft) where future versions of Unikraft will need only to be statically linked against existing applications.
-With Musl, external application and library porting will be easier too.  
+With Musl, external application and library porting will be easier too.
 
 <Info>
 **The road to full musl**
@@ -181,7 +181,7 @@ Changes to the Unikraft core include a rewrite of the internal threading impleme
 ### SMP implementation for x86_64
 
 _This feature was championed by [Marc Rittinghaus](https://github.com/marcrittinghaus) and [Cristian Vijelie](https://github.com/cristian-vijelie) with extensive input from [Sairaj Kodilkar](https://github.com/Sairajkodilkar), [Răzvan Deaconescu](https://github.com/razvand) and [Răzvan Vîrtan](https://github.com/razvanvirtan)._
- 
+
 In v0.10.0, we also add the x86_64 implementation on top of [Unikraft's abstract the SMP API introduced in v0.9.0](https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion/#a-new-common-smp-api), which provides the means to initialize and execute code on secondary CPU cores.
 
 #### Implementation
@@ -369,7 +369,7 @@ This is due to the fact that these two functions are more complex to implement a
 #### Future Work
 
 There are the `capget` and `capset` system calls which are currently implemented in `posix-user` although they are probably better moved to [`posix-process`](https://github.com/unikraft/unikraft/tree/staging/lib/posix-process) as they are related to the capabilities of threads.
-For now, we keep them here so that we do not collide with changes to `posix-process` that are about to be published by [Simon Kuenzer](https://github.com/skuenzer] for musl compatibility.
+For now, we keep them here so that we do not collide with changes to `posix-process` that are about to be published by [Simon Kuenzer](https://github.com/skuenzer) for musl compatibility.
 
 
 ### Community Activities
@@ -380,7 +380,7 @@ Our 3 students are currently working on their GSoC projects:
 - [Maria Sfîrăială](https://github.com/mariasfiraiala): Shadow Stack Support in Unikraft
 - [Xiangyi Meng](https://github.com/xymeng16): Isolating Unikraft with Intel SGX
 
-See their latest blog posts with updates: https://unikraft.org/blog/
+See their latest blog posts with updates: <https://unikraft.org/blog/>
 
 Also, we continued our hackathons series with the [Unikraft Aachen Hackathon](https://unikraft.org/community/hackathons/2022-06-aachen/) during June 25-26, 2022, and presented to participants the exciting world of unikernels and Unikraft.
 Participants were able to solve technical challenges and make their first PRs to the Unikraft GitHub repositories.
