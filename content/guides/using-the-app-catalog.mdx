@@ -55,7 +55,7 @@ kraft run -W unikraft.org/helloworld
 ```
 
 This will default to the `x86_64` architecture and to the `qemu` platform.
-It will pull and run run the application from the registry:
+It will pull and run the application from the registry:
 
 ```
  i  using arch=x86_64 plat=qemu
@@ -192,7 +192,7 @@ The `catalog` repository contains two types of entries:
 
 The end-user appplications are built, packaged and published periodically in the registry.
 
-We present the steps to building application and running them locally for:
+We present the steps to building applications and running them locally for:
 
 - [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
 - [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
@@ -263,7 +263,7 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
    ```
 
 To close the running `kraft` instance, remove the corresponding `kraft` process.
-Run, as `root` (prefix with `sudo` if required):
+Run as `root` (prefix with `sudo` if required):
 
 ```bash
 kraft rm --all
@@ -320,7 +320,7 @@ If, instead of port mapping, you want to use bridge networking, follow the steps
    ```
 
 To close the running `kraft` instance, remove the corresponding `kraft` process.
-Run, as `root` (prefix with `sudo` if required):
+Run as `root` (prefix with `sudo` if required):
 
 ```bash
 kraft rm --all
