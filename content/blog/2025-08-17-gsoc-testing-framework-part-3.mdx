@@ -1,0 +1,129 @@
+---
+title: "GSoC'25: Testing Framework for Unikraft Builds | Part III"
+description: |
+  This GSoC project is aimed to develop a testing framework that is able to multiplex the variety of configuration options, VMMs, hypervisors, architectures, boot protocols, to validate the successful building and running of unikernel images. 
+publishedDate: 2025-08-17
+tags:
+- gsoc
+- gsoc25
+- testing & validation
+- automation
+- devops
+authors:
+- Shashank Srivastava
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+The aim of this project is to develop a robust testing framework that can handle a wide range of configuration options—covering different VMMs, hypervisors, architectures, and boot protocols—to validate the successful build and execution of unikernel images. The framework, written in Python, is designed to configure, build, run, and test various Unikraft builds, and there’s scope for further improvements and refactoring as we go.
+
+The main focus is to enhance the existing testing infrastructure and make it smooth and intuitive for both Unikraft developers and users. To achieve this, I am working towards the following key goals:
+
+- Extract and consolidate the testing framework into a dedicated, standalone repository.
+
+- Ensure that the framework works seamlessly with the catalog repositories right out of the box.
+
+- Integrate the framework into the CI/CD pipeline used across Unikraft organization repositories, so that it can automatically validate builds whenever a pull request is opened.
+
+
+## Recap (Parts I & II)
+
+- **Part I**: extracted the framework into a standalone repository, added isolated `.app` sandboxing, modularized code, and added a README parser to generate app configs.
+- **Part II**: introduced LLM-powered `RunConfig` generation, richer test categories (`curl`, `list-of-command`, `no-command`), structured logging, and CSV reporting (`build_report.csv`, `run_report.csv`). Also prepared `test-app-config/` and started creating `BuildConfig.yaml` / `RunConfig.yaml` for library apps.
+
+## Current Progress (Part III)
+
+This phase focused on reliability, observability, and expanding support for examples and prebuilt runtimes so example tests can reliably run.
+
+### 1. Persistent `.sessions` support — per-run logs & reports
+
+I added a `.sessions/` mechanism to keep logs and CSV reports for every run. Each run can optionally use a custom session name; otherwise a timestamped session directory is created automatically. Example structure:
+
+```
+.sessions/
+└── catalog
+    ├── examples
+    │   ├── httpserver-go1.21
+    │   └── ...
+    ├── library
+    │   ├── nginx
+    │   └── session_18_07_2025_04_10
+    │       ├── reports
+    │       │   ├── build_report.csv
+    │       │   └── run_report.csv
+    │       └── tests
+    │           ├── 00001
+    │           ├── 00002
+    │           └── 00003
+```
+
+Why this helps:
+
+- Easy per-run inspection and debugging.
+- Clean separation of historical runs (useful for CI artifacts).
+
+### 2. Improved resource cleanup
+
+- Reworked the cleanup script to reliably remove `.app` and `.tests` folders, ensuring no stale artifacts interfere with subsequent runs.
+- Fixed edge-cases where interrupted runs left partial state (e.g., incomplete `.app` copies or dangling `buildkit` processes).
+
+### 3. Stabilization & fixes for `catalog/library`
+
+Several targeted fixes and refactors to make library runs reliable:
+
+- Corrected root filesystem path resolution used in kraft-based runs so kernels and rootfs are located and mounted correctly.
+- The previous `tester_config.yaml` is split into two files — `config.yaml` and `variants.yaml` — so the main configuration and test variants can be defined and managed separately.
+- Updated the Python requirements so optional LLM support can be installed and used when desired.
+- Ensured build-related helper processes are terminated cleanly after kraft builds to avoid leftover processes blocking future builds.
+- Added a new `-t` CLI parameter to allow running a specific test target only — useful for rapid iteration and debugging.
+- Created and updated `BuildConfig.yaml` and `RunConfig.yaml` entries for all library applications so they can be tested end-to-end with minimal manual setup.
+
+
+### 4. Full support for `catalog/examples` & runtime kernels
+
+Examples require prebuilt runtime kernels to run reliably. I implemented:
+
+- CLI flags to control behavior:
+
+  - `--test-dir` to set a custom test directory name.
+  - `--app-dir-name` to set custom app directory naming.
+  - `-g / --generate-only` to generate target setup without executing the tests (useful to prebuild runtimes or validate configs).
+- Prebuilding of all required runtimes and storing them under `runtime_kernels/` with a deterministic kernel naming scheme built from the config (architecture, build system, tool, VMM, etc.). Example structure:
+
+```
+runtime_kernels/
+├── base
+│   ├── x86_64_multiboot_kraft_gcc_none_qemu
+│   └── x86_64_multiboot_make_gcc_none_qemu
+└── ...
+```
+
+- For **kraft**-based builds: used a local Docker registry to `pkg push` / `pkg pull` runtime kernels for targets related to kraft. The kernel files are also stored  under `runtime_kernels/` for vmm based runs.
+
+Why this matters:
+
+- Examples require specific runtime kernels, prebuilding ensures deterministic runtime availability and faster test runs.
+
+### 5. Documentation & README updates
+
+- Updated `README.md` with latest setup steps, CLI flags, and recommended workflows.
+
+## Next Steps
+
+In the coming weeks I’ll be focusing on:
+
+- **Fix remaining edge-case bugs for `examples`** — a few example apps need small tweaks or additional `RunConfig` entries to run reliably.
+- **CI/CD integration:** once catalog support is rock‑solid, hooking the framework into GitHub Actions so each PR runs the full test suite and publishes CSV reports.
+
+## Acknowledgement
+
+Huge thanks to my mentors, [Razvan Deaconescu](https://github.com/razvand) and [Razvan Virtan](https://github.com/razvanvirtan), for continued guidance. Their feedback helped me design the session tracking and runtime prebuild flow. 
+I’m additionally grateful to the entire Unikraft community for their warm support and helpfulness throughout this journey.
+
+## About me
+
+I'm [Shashank Srivastava](https://github.com/shank250/) undergraduate student at GL Bajaj Institute of Technology and Management, B. Tech in Computer Science and Engineering with Specialisation in Artificial Intelligence and Machine Learning, with a strong passion for AI and Cloud.
+
+Feel free to [connect](https://www.linkedin.com/in/shashank-srivastava-375412250/)!
