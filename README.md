@@ -2,29 +2,42 @@
 
 This is the repository hosting Unikraft documentation.
 It is deployed on the [Unikraft website](https://unikraft.org/)
-It provides information for the latest version of [Unikraft](https://github.com/unikraft/unikraft) and [KraftKit](https://kraftkit.sh).
+
+To access the latest Unikraft documentation, visit https://unikraft.org/docs and [KraftKit](https://kraftkit.sh).
 
 Documentation is written in [MDX](https://mdxjs.com/) format.
-Building and deploying it requires Node and NPM.
+> 💡 Make sure [Node.js](https://nodejs.org/) and `npm` are installed on your system before proceeding.
+
+You can check if they are installed with:
+```bash
+node -v
+npm -v
+```
 You can build and run either natively or using Docker.
 
 ## Building and Testing Natively
 
-```console
-npm install
+You can build and run the documentation locally by following these steps:
 
-npm run search-meta:gen
-
-npm run dev
-```
-
+1. Install the dependencies:
+   ```bash
+   npm install
+    ```
+2. Generate metadata for the search feature:
+   ```bash
+   npm run search-meta:gen
+    ```
+3. Start the development server:
+   ```bash
+   npm run dev
+    ```
 See also [contributing/docs#building-the-website](https://unikraft.org/docs/contributing/docs#building-the-website).
 
 ## Using Docker
 
 In order to use Docker, follow [the instructions](https://docs.docker.com/get-started/).
 
-For local development:
+### For Local Development
 
 ```console
 docker build -t ghcr.io/unikraft/docs:dev --target dev .
@@ -32,7 +45,7 @@ docker build -t ghcr.io/unikraft/docs:dev --target dev .
 docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
 ```
 
-For production deployment:
+### For Production Deployment
 
 ```console
 docker build -t ghcr.io/unikraft/docs:runner --target runner .
@@ -42,4 +55,4 @@ docker run -it --rm -p 3000:3000 ghcr.io/unikraft/docs:runner
 
 ## Contributing
 
-Please see our [Contribution Guide](https://unikraft.org/docs/contributing/docs) for more details.
+If you would like to contribute, please read our [Contribution Guidelines](https://unikraft.org/docs/contributing/).
