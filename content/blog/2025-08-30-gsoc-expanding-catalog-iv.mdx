@@ -1,0 +1,59 @@
+---
+title: "GSoC'25: Expanding the Unikraft Software Support Ecosystem Part-IV"
+description: |
+  This GSoC project aims to expand Unikraft’s software support by adding new applications via binary-compatibility mode into the application catalog.
+publishedDate: 2025-08-05
+image: /images/gsoc25.jpeg
+authors:
+- Prasoon Kumar
+tags:
+- gsoc
+- gsoc25
+- catalog
+- MAP_SHARED
+- loki
+---
+
+## Project Overview
+
+Unikraft makes it easy to run existing applications in two ways:
+1. **Musl libc support**
+
+2. [**Binary-compatibility mode**](https://unikraft.org/docs/concepts/compatibility):
+Unikraft can run unmodified Linux ELF binaries by using an ELF loader app and a system-call shim layer.
+When a binary-compatible unikernel starts, the app-elfloader parses and maps the ELF segments into memory, then transfers control to the application entry point.
+Whenever the application invokes a Linux system call, the syscall shim intercepts the call number and routes it to the corresponding Unikraft handler.
+Unimplemented calls return ENOSYS, which many applications can handle or fake because Unikraft follows Linux’s x86_64 ABI closely.
+This helps when running on hypervisors like KVM, QEMU, or Firecracker.
+
+## Current Progress
+
+In the last three weeks I continued work on the writable `MAP_SHARED` workaround.
+After a discussion with [Andrei Tatar](https://github.com/andreittr), we decided to make this behavior configurable under the option `CONFIG_LIBVFSCORE_MMAP_SHARED_PRIVATE_FALLBACK` and move it to `vfscore` from `posix-mmap`.
+With this option enabled, Unikraft will transparently fall back to `MAP_PRIVATE` when an application requests a writable `MAP_SHARED` mapping.
+I also tested an application in binary compatibility mode to evaluate how it behaves with the current syscall layer.
+
+1. **Loki**
+    - Loki is a log aggregation system that indexes and queries logs efficiently, similar to Prometheus but for log data.
+    - It fails to build in bincompat because `socket(AF_NETLINK, ...)` is not yet supported in Unikraft.
+
+## Next Steps
+
+For the next steps, I plan to:
+    - Follow up on feedback and resolve comments on the PRs I created during GSoC.
+    - Work towards merging the configurable MAP_SHARED workaround.
+    - Continue testing applications in binary compatibility mode to identify more missing syscalls.
+I also plan to continue contributing to Unikraft beyond GSoC and build on the work I started during the program.
+
+## Acknowledgement
+
+I would like to thank my mentors, [Razvan Virtan](https://github.com/razvanvirtan) and [Razvan Deaconescu](https://github.com/razvand), for their constant guidance and support throughout this project.
+I’m also thankful to the entire Unikraft community for being so welcoming and always ready to help - it made the whole experience much more enjoyable.
+In particular, the help I received from [Andrei Tatar](https://github.com/andreittr) and the discussions with [Sergiu Moga](https://github.com/mogasergiu) when I was stuck building the Prometheus example were really valuable and encouraging.
+
+## About Me
+
+I am a second-year MTech student at IIT Bombay.
+I have experience across many areas of computer science, including operating systems, virtualization, Web3, web development, and algorithms.
+In my free time, I love solving challenging math and algorithmic problems.
+- Socials: [Linkedin](https://www.linkedin.com/in/prasoon054/)  [Twitter](https://x.com/prasoon054) [Github](https://github.com/prasoon054)
