@@ -1,26 +1,27 @@
 ---
+
 title: Porting Application to Unikraft
 description: |
   We explore how to port an application on top of Unikraft.
 ---
 
 As you have seen in the previous sessions, there are several applications already ported that you can use with Unikraft.
-Bu what if the application you need is not among them?
+But what if the application you need is not among them?
 We will focus today on how to port a new simple application.
 
 We will use the [`GNU coreutils`](https://github.com/coreutils/coreutils) applications bundle.
 It contains a bunch of commonly used applications, like `echo`, `cp`, `mv`, `mkdir`, `stat`, `tr`, etc.
-Since there are a lot of applications, we will not port all of them, we will just chose a few as an example.
+Since there are a lot of applications, we will not port all of them, we will just choose a few as an example.
 
 ## Porting `echo`
 
-We will start with porting one of the simpler application from `coreutils`, **`echo`**.
+We will start with porting one of the simpler applications from `coreutils`, **`echo`**.
 We will use the [`c-hello`](https://github.com/unikraft/catalog-core/tree/main/c-hello) application as a starting point.
 
 As you noticed in the previous sessions, there are several files that we are interested in when using the build system, namely `Makefile` and `Makefile.uk`.
 
 Since the `echo` command will use a libc, the first step is to add `Musl` to the build.
-For this, we have to follow few steps:
+For this, we have to follow a few steps:
 
 1. Add the following lines in the `setup.sh` script, so we can have the `Musl` repository in our setup:
 
@@ -58,7 +59,7 @@ $ cp coreutils/src/echo.c src/
 $ cp coreutils/src/*.h include/
 ```
 
-To add the sources and header files to the buid, we must modify the `Makefile.uk` file, remove the `hello.c` line and add the following:
+To add the sources and header files to the build, we must modify the `Makefile.uk` file, remove the `hello.c` line and add the following:
 
 ```makefile
 APPCHELLO_SRCS-y += $(APPCHELLO_BASE)/src/echo.c
@@ -68,7 +69,7 @@ APPCHELLO_CINCLUDES-y += -I$(APPCHELLO_BASE)/include
 This tells the build system to use the `echo.c` file as a source file, and the `include/` directory as a path to search for header files.
 
 After all this is done, we can try to run `make`.
-We will receive a lor of build errors, as expected.
+We will receive a lot of build errors, as expected.
 We need to solve them one by one.
 
 First, we will receive some errors about missing headers, like `config.h`, `timespec.h`, etc.
@@ -125,7 +126,7 @@ Finally, we only have one screen of errors to solve.
 We get an `LC_ALL undeclared` error, we need to `#include <locale.h>`.
 
 There are some more GNU-specific functions, like `version_etc`, `proper_name`, `bindtextdomain`, etc.
-They have to do just with the program medatada, like authors, licensing and versioning, so we can delete them (the following lines:)
+They have to do just with the program metadata, like authors, licensing and versioning, so we can delete them (the following lines:)
 
 ```c
 initialize_main (&argc, &argv);
@@ -140,7 +141,7 @@ version_etc (stdout, PROGRAM_NAME, PACKAGE_NAME, Version, AUTHORS,
 
 We can also remove the `FALLTHROUGH` line from the main switch statement, since it is used just to silence a warning.
 
-Finally, when we try to `make` again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit decalration of `c_isxdigit`.
+Finally, when we try to `make` again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit declaration of `c_isxdigit`.
 Other than that, there are the `FALLTHROUGH` warnings from above.
 
 For the `STREQ`, we can search that in the `coreutils` repo:
@@ -173,9 +174,9 @@ void close_stdout(void)
 For this, we need to also include `unistd.h`.
 
 Now, the only thing left is the `c_isxdigit` function.
-Again, it's not found in the `coreutils` repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctypes.h` header.
+Again, it's not found in the `coreutils` repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctype.h` header.
 
-With all of this, out application finally build.
+With all of this, our application finally builds.
 We can run it as usual, using `qemu`:
 
 ```console
@@ -224,7 +225,7 @@ Some tips:
 
 * `#define nullptr NULL`
 * `typedef long int idx_t;`
-* You can remove everything related to `roubst_getcwd`, since Unikraft is posix-compatible, so it will not use those functions.
+* You can remove everything related to `robust_getcwd`, since Unikraft is POSIX-compatible, so it will not use those functions.
 * You can change the weird `x*alloc` functions to simple `malloc`s.
 
 When you run the unikernel, it should print `/`, as it is in the root directory.
