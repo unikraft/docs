@@ -1,37 +1,37 @@
 ---
 title: Porting Advanced Applications to Unikraft
-description: |
+description:
   We explore how to port a complex application on top of Unikraft.
 ---
 
 In the previous sessions, we have explored porting a simple application to Unikraft.
 That required heavily changing the source code, which can lead to broken behavior.
-Today, we will learn how to properly port a more complex application, using multiple source file and build steps.
+Today, we will learn how to properly port a more complex application using multiple source file and build steps.
 
-We will use [`iperf3`](https://github.com/esnet/iperf/tree/master) as an example, a network benchmarking tool.
+We will use [`iperf3`](https://github.com/esnet/iperf) as an example, a network benchmarking tool.
 
 ### The Unikraft Build Lifecycle
 
 The lifecycle of the construction of a Unikraft unikernel includes several distinct steps:
 
-1. Configuring the Unikraft unikernel application with compile-time options
-1. Fetching the remote "origin" code of libraries
-1. Preparing the remote "origin" code of libraries
-1. Compiling the libraries and the core Unikraft code
-1. Finally, linking a final unikernel executable binary together
+1. **Configuring:**the Unikraft unikernel application with compile-time options
+2. **Fetching:** the remote "origin" code of libraries
+3. **Preparing:** the remote "origin" code of libraries
+4. **Compiling:** the libraries and the core Unikraft code
+5. **Linking:** linking a final unikernel executable binary together
 
 The steps in the lifecycle above are discussed in this tutorial in greater depth.
 Particularly, we cover `fetching`, `preparing` and compiling (`building`) external code which is to be used as a Unikraft unikernel application (or library for that matter).
 
-For the sake of simplicity, this tutorial will only be targeting applications which are C/C++-based.
+For the sake of simplicity, this tutorial will only be targeting applications which are **C/C++-based**.
 Unikraft supports other compile-time languages, such as Golang, Rust and WASM.
 However, the scope of this tutorial only follows an example with a C/C++-based program.
 Many of the principles in this tutorial, however, can be applied in the same way for said languages, with a bit of context-specific work.
 Namely, this may include additional build rules for target files, using specific compilers and linkers, etc.
 
-It is worth noting that we are only targeting compile-time applications in this tutorial.
+It is worth noting that we are only targeting **compile-time applications** in this tutorial.
 Applications written a runtime language, such as Python or Lua, require an interpreter which must be brought to Unikraft first.
-There are already lots of these high-level languages supported by Unikraft.(e.g., [python](https://github.com/unikraft/catalog-core/python3-hello))
+There are already lots of these high-level languages supported by Unikraft and can be found in the [Unikraft Application Catalog](https://github.com/unikraft/catalog).
 If you wish to run an application written in such a language, please check out the list of available applications.
 However, if the language you wish to run is interpreted and not yet available on Unikraft, porting the interpreter would be in the scope of this tutorial, as the steps here would cover the ones needed to bring the interpreter, which is a program after all, as a Unikraft unikernel application.
 
@@ -65,15 +65,15 @@ Let's walk through the build process of `iperf3` from its `README`:
 1. First we obtain the source code of the application:
 
    ```console
-   git clone https://github.com/esnet/iperf.git
+   $ git clone https://github.com/esnet/iperf.git
    ```
 
 1. Then, we are asked to configure and build the application:
 
    ```console
-   cd ./iperf
-   ./configure;
-   make
+  $ cd iperf
+  $ ./configure
+  $ make
    ```
 
    This will generate the `iperf3` executable, located in `src/iperf3`.
@@ -93,7 +93,7 @@ If this has worked for you, your terminal will be greeted with several pieces of
    **If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.**
    The remainder of this tutorial also applies to porting libraries to Unikraft.
 
-1. When we next run `make` in the sequence above, we can see the intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application.
+2. When we next run `make` in the sequence above, we can see the intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application.
    It can be useful to note these files down, as we will be compiling these files with respect to Unikraft's build system.
 
 You have now built `iperf3` for Linux user space and we have walked through the build process for the application itself.
@@ -107,78 +107,65 @@ They are a single component which interact with other components, have their own
 The main difference between actual libraries and applications, is that we later invoke the application's `main` method.
 The different ways to do this are covered later in this tutorial.
 
-To get started, we must create a new library for our application.
-The premise here is that we are going to wrap or decorate the source code of `iperf3` with the _lingua franca_ of Unikraft's build system.
-That is, when we eventually build the application, the Unikraft build system will understand where to get the source code files from, which ones to compile and how, with respect to the rest of Unikraft's internals and other dependencies.
+To get started, we must create a workspace for our application. The premise here is that we are going to wrap or decorate the source code of `iperf3` with the *lingua franca* of Unikraft's build system. That is, when we eventually build the application, the Unikraft build system will understand where to get the source code files from, which ones to compile and how, with respect to the rest of Unikraft's internals and other dependencies.
 
-We will start from the [`nginx`](https://github.com/unikraft/catalog-core/tree/main/nginx) application, since it has the same requirements as `iperf3`, as in a libc and a networking stack.
-First, create an empty directory under `workdir/libs/`, called `iperf3`:
+We will start by looking at requirements similar to the [`nginx`](https://github.com/unikraft/catalog-core/tree/main/nginx) application, since it has the same requirements as `iperf3`, such as a libc and a networking stack.
+
+### Initializing the Project with KraftKit
+
+In modern Unikraft development, we use **KraftKit** to manage this process. Instead of manually creating multiple directories and `Makefile.uk` files, we use a single `Kraftfile` to define our application's environment.
+
+1. **Create and enter your project directory:**
+
+   ```console
+   $ mkdir iperf3-port && cd iperf3-port
+   ```
+2. **Initialize the application:**
+iperf3 requires a standard C library and a networking stack. We can initialize our workspace with these basic requirements using:
+    ```console
+    $ kraft init -t base .
+    ```
+
+3. **Defining the Kraftfile:**
+Open the generated Kraftfile and ensure it includes the necessary libraries (musl for libc and lwip for networking).
+ Your Kraftfile should look like this:
+
+```yaml
+spec: v0.6
+name: iperf3
+unikraft:
+  version: stable
+  libs:
+    musl: stable
+    lwip: stable
+targets:
+  - architecture: x86_64
+    platform: qemu
+```
+    
+###Registering the Application and Fetching Sources:
+In the traditional Unikraft workflow, you would manually register the library in a `Makefile.uk` and define configuration options in a `Config.uk` file. However, with KraftKit, this process is consolidated into the Kraftfile, making the project much easier to manage.
+
+1. **Adding Sources to the Kraftfile**
+Instead of using complex Make macros to fetch the code, we define the remote source directly. Update your Kraftfile to include the sources section for iperf3 version 3.19:
+
+```yaml
+sources:
+  last: true
+source:
+  destination: src/
+```
+
+2. Fetching the Source Code
+In the past, you had to run "make menuconfig" to select the library and then "make fetch". Now, you can perform both steps with a single command:
 
 ```console
-$ mkdir wordir/libs/iperf3/
+$ kraft build --fetch-only
 ```
 
-Next, we need to create the 2 most relevant files for the Unikraft build system, `Config.uk` and `Makefile.uk`:
+This command automatically downloads the iperf3 archive and extracts it into the src/ directory. You can verify the source code by checking your workspace:
 
-```console
-$ touch workdir/libs/iperf3/Config.uk
-$ touch workdir/libs/iperf3/Makefile.uk
-```
-
-The `Makefile.uk` should have minimal details about the location of the `iperf3` archive online:
-
-```make
-################################################################################
-# Library registration
-################################################################################
-$(eval $(call addlib_s,libiperf3,$(CONFIG_LIBIPERF3)))
-
-################################################################################
-# Original sources
-################################################################################
-LIBIPERF3_VERSION=3.19
-LIBIPERF3_BASENAME=iperf-$(LIBIPERF3_VERSION)
-LIBIPERF3_URL=https://github.com/esnet/iperf/archive/refs/tags/$(LIBIPERF3_VERSION).tar.gz
-$(eval $(call fetch,libiperf3,$(LIBIPERF3_URL)))
-```
-
-The `Config.uk` file will contain one option that will allow us to later select the library from the `menuconfig` screen:
-
-```kconfig
-config LIBIPERF3
-bool "lib iperf 3.14"
-default y
-```
-
-## Fetching the Application Source Code
-
-Now, we can modify the `nginx` [`Makefile`](https://github.com/unikraft/catalog-core/blob/main/nginx/Makefile) and replace `$(LIBS_BASE)/nginx` with `$(LIBS_BASE)/iperf3`, which will load the `iperf3` `Makefile.uk` file.
-After that, if we run `make menuconfig`, we should have a `iperf3` option under `Library Configuration -->`.
-
-If we select that, we can run `make fetch` to download the source code of `iperf` for our application:
-
-```console
-$ make menuconfig
-
-# Select Library Configuration --> lib iperf 3.14 and save
-
-$ make fetch
-make[1]: Entering directory ...
-LN      Makefile
-WGET    libiperf3: https://github.com/esnet/iperf/archive/refs/tags/3.14.tar.gz
-.../app-iperf/build/libiperf3/3.14.tar.gz          [  <=>                                                                                                                 ] 635,38K  2,66MB/s    in 0,2s
-UNTAR   libiperf3: 3.14.tar.gz
-make[1]: Leaving directory ...
-
-$ tree -L 2 workdir/build/libiperf3/
-workdir/build/libiperf3/
-|-- 3.14.tar.gz
-|-- origin
-|   `-- iperf-3.14
-`-- uk_clean_list
-
-2 directories, 2 files
-```
+$ tree -L 2 src/
 
 ## Provide Build Sources to the Build System
 
@@ -189,33 +176,25 @@ We can start an iterative process of building the target unikernel with the appl
 This process is usually very iterative because it requires building the unikernel step-by-step, including new files to the build, making adjustments, and re-building, etc.
 
 1. The first thing we must do before we start is to check that fetching the remote code for `iperf3` worked.
-   The directory with the extracted contents should be located at:
+   when you run `kraft build --fetch-only`, the source code is typically extracted into a local directory defined in your Kraftfile or within the unikraft staging area.
+
+Checking the extracted contents (typically in src/ or the build directory):
 
    ```console
-   $ ls -lsh workdir/build/libiperf3/origin/iperf-3.14/
+   $ ls -lsh src/
    total 1,0M
-   372K -rw-r--r-- 1 stefan stefan 367K iul  8 00:47 aclocal.m4
-   4,0K -rwxr-xr-x 1 stefan stefan 1,5K iul  8 00:47 bootstrap.sh
-   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 config
-   504K -rwxr-xr-x 1 stefan stefan 499K iul  8 00:47 configure
-   12K -rw-r--r-- 1 stefan stefan  11K iul  8 00:47 configure.ac
-   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 contrib
-   4,0K drwxr-xr-x 3 stefan stefan 4,0K iul  8 00:47 docs
-   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 examples
-   12K -rw-r--r-- 1 stefan stefan 9,3K iul  8 00:47 INSTALL
-   4,0K -rw-r--r-- 1 stefan stefan 1,5K iul  8 00:47 iperf3.spec.in
-   12K -rw-r--r-- 1 stefan stefan  12K iul  8 00:47 LICENSE
-   4,0K -rw-r--r-- 1 stefan stefan   23 iul  8 00:47 Makefile.am
-   28K -rw-r--r-- 1 stefan stefan  26K iul  8 00:47 Makefile.in
-   4,0K -rwxr-xr-x 1 stefan stefan 1,2K iul  8 00:47 make_release
-   8,0K -rw-r--r-- 1 stefan stefan 6,4K iul  8 00:47 README.md
-   36K -rw-r--r-- 1 stefan stefan  36K iul  8 00:47 RELNOTES.md
-   4,0K drwxr-xr-x 2 stefan stefan 4,0K iul  8 00:47 src
-   4,0K -rwxr-xr-x 1 stefan stefan 2,0K iul  8 00:47 test_commands.sh
+   372K -rw-r--r-- 1 user user 367K Jul  8 00:47 aclocal.m4
+   4,0K -rwxr-xr-x 1 user user 1,5K Jul  8 00:47 bootstrap.sh
+   4,0K drwxr-xr-x 2 user user 4,0K Jul  8 00:47 config
+   504K -rwxr-xr-x 1 user user 499K Jul  8 00:47 configure
+   12K -rw-r--r-- 1 user user  11K Jul  8 00:47 configure.ac
+   ...
+   4,0K drwxr-xr-x 2 user user 4,0K Jul  8 00:47 src
    ```
 
-   If this has not worked, you must fiddle with the preamble at the top of the library's `Makefile.uk` to ensure that correct paths are being set.
-   Remove the `build/` directory and try `make fetch` again.
+   if the files are not there, ensure your Kraftfile has the correct source URL and version.
+    You can re-trigger the process by running:
+      $ kraft build --fetch-only --force
 
 1. Now that we can fetch the remote sources, `cd` into this directory and perform the `./configure` step as above.
    This will do two things for us.
