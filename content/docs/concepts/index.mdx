@@ -12,7 +12,7 @@ Unikraft.  This text serves to fully conceptualize all information to help you
 understand the reasoning behind Unikraft's design and implementation, as well as
 serve as reference for its architecture.
 
-> For more information on [how build your application with
+> For more information on [how to build your application with
 > Unikraft](/docs/cli/building) or [how to manage unikernel applications in
 > production](/docs/cli/running) please see the [getting started
 > documentation](/docs/getting-started).
@@ -39,13 +39,13 @@ Unikernels are specifically designed for use in cloud environments.  In most
 production systems often the standard unit of isolation is the VM since this
 provides the greatest degree of security for the enclosed application(s).  Its
 isolation is made possible directly by hardware primitives instead of OS-level
-(software) primitives.  However, a fully virtualized traditional VMs is too
+(software) primitives.  However, a fully virtualized traditional VM is too
 heavy for most applications which has led to the container-based model.
 Naturally, the evolution of running applications in the cloud has led to the
 model where containers are deployed within VMs due to the properties of each
 system (seen in (c) in Figure 1).  Kubernetes is a prime example of such
 deployment model (nodepools are generally deployed as VMs) and is the _de facto_
-orchestration framework container applications.
+orchestration framework for container applications.
 
 Unikernels find parallels from the themes developed in early microkernel design
 efforts.  For instance, virtualisation techniques offered by [Type-1
@@ -75,7 +75,7 @@ of an Ubuntu VM), Containers and Unikernels, represented by Unikraft:
 ## Componenization
 
 At the heart of the unikernel model lies with the collection of composable,
-inter-changable and interoperable OS components which are formed into a library,
+interchangeable and interoperable OS components which are formed into a library,
 known as a library OS (libOS).  These components can be logically organized in
 two types.  The first set of functionalities which enable essential runtime
 services, such as system resource virtualisation and device drivers.  The second
@@ -83,7 +83,7 @@ type of OS service is discussed in the next section, offering added-value
 capabilities to applications, like IP networking and file system access.
 
 In Unikraft, libraries are first-class and all libraries in the core are
-inter-changable, from the scheduler to the memory allocator and more.  To
+interchangeable, from the scheduler to the memory allocator and more.  To
 facilitate the use of the wider ecosystem, Unikraft allows for wrapping
 pre-existing libraries such as OpenSSL.
 
@@ -96,7 +96,8 @@ pre-existing libraries such as OpenSSL.
 To meet the needs of a large variety of different use cases, KPIs and contexts,
 configuration of library components allow users to tune specific attributes to
 their liking.  This ability to configure all parts of the unikernel is
-first-class in Unikraft and enables developers to develop the best-in-class 
+first-class in Unikraft and enables developers to develop the best-in-class
+applications.
 
 In Unikraft, this system is enabled by a custom port of [Linux's KConfig
 system](#) which allows users to quickly and easily pick and choose which
