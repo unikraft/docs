@@ -61,16 +61,16 @@ The complete schedule for USW'24 is (all times in CEST - Central European Summer
 
 | Date | Interval | Activity |
 |------|----------|----------|
-| Tue, 02.07.2023 | 3:30pm-4pm<br/> 4pm-7pm| Opening Ceremony<br/> Session 01: Overview of Unikraft |
-| Thu, 04.07.2023 | 4pm-7pm | Session 02: Baby Steps |
-| Fri, 05.07.2023 | 4pm-7pm | Session 03: Behind the Scenes |
-| Tue, 09.07.2023 | 4pm-7pm | Session 04: Binary Compatibility |
-| Thu, 11.07.2023 | 4pm-7pm | Session 05: Debugging in Unikraft |
-| Fri, 12.07.2023 | 4pm-7pm | Session 06: Application Porting |
-| Tue, 16.07.2023 | 4pm-7pm | Support Session 01 |
-| Thu, 18.07.2023 | 4pm-7pm | Support Session 02 |
-| Fri, 19.07.2023 | 4pm-7pm | Support Session 03 |
-| Sat, 20.07.2023 | 9am-5pm | Final Hackathon |
+| Tue, 02-07-2023 | 3:30pm-4pm<br/> 4pm-7pm| Opening Ceremony<br/> Session 01: Overview of Unikraft |
+| Thu, 04-07-2023 | 4pm-7pm | Session 02: Baby Steps |
+| Fri, 05-07-2023 | 4pm-7pm | Session 03: Behind the Scenes |
+| Tue, 09-07-2023 | 4pm-7pm | Session 04: Binary Compatibility |
+| Thu, 11-07-2023 | 4pm-7pm | Session 05: Debugging in Unikraft |
+| Fri, 12-07-2023 | 4pm-7pm | Session 06: Application Porting |
+| Tue, 16-07-2023 | 4pm-7pm | Support Session 01 |
+| Thu, 18-07-2023 | 4pm-7pm | Support Session 02 |
+| Fri, 19-07-2023 | 4pm-7pm | Support Session 03 |
+| Sat, 20-07-2023 | 9am-5pm | Final Hackathon |
 
 ### Registration Challenges
 
@@ -81,9 +81,9 @@ The goal is to create an environment where these services can interact seamlessl
 
 Services Overview:
 
- * Database Service: You can use whatever database suits you.
- * Stats Service: A service that computes and provides statistical data (e.g. Grafana).
- * Query Service: A simple API that interacts with the database (can be done in any programming language you like).
+* Database Service: You can use whatever database suits you.
+* Stats Service: A service that computes and provides statistical data (e.g. Grafana).
+* Query Service: A simple API that interacts with the database (can be done in any programming language you like).
 
 Be creative, use networks, volume, everything you like.
 You can extend the stack as much as you like.
@@ -151,7 +151,7 @@ All of them will be cloned by `kraft`, so we don't have to worry about that.
 
 #### `helloworld-c`
 
-Let's start with the [`helloworld-c`](https://github.com/unikraft/catalog/tree/main/examples/helloworld-c) application.
+Let's start with the [`helloworld-gcc13.2`](https://github.com/unikraft/catalog/tree/main/examples/helloworld-gcc13.2) application.
 We need to update the `Kraftfile`, so it build a kernel image locally, whithout pulling it directly from the registry.
 You can copy the [`Nginx` Kraftfile](https://github.com/unikraft/catalog/blob/main/library/nginx/1.25/Kraftfile), change the `name:` to `helloworld` and the `cmd:` to `["/helloworld"]`.
 
@@ -171,8 +171,11 @@ First, we will see some messages that look like this:
 This tells us that `kraft` successfully cloned all the required dependencies to build the kernel.
 They are placed under `.unikraft/`:
 
-```console
+```bash
 $ tree -L 1 .unikraft/
+```
+
+```text
 .unikraft/
 |-- apps/
 |-- build/
@@ -217,9 +220,11 @@ To build the image, we run `make C=$(pwd)/.config.helloworld_qemu-x86_64 -j$(npr
 The final image will be placed under `.unikraft/build/elfloader_qemu-x86_64`.
 We can run it manually, using `qemu-system-x86`, which is what `kraft` does behind the scenes.
 
-```console
+```bash
 $ qemu-system-x86_64 -cpu max -nographic -kernel .unikraft/build/elfloader_qemu-x86_64 --append "/helloworld"
+```
 
+```text
 [...]
 [    0.431128] dbg:  [appelfloader] brk @ 0x407821000 (brk heap region: 0x407800000-0x407a00000)
 [    0.432070] dbg:  [libposix_fdio] (ssize_t) uk_syscall_r_write((int) 0x1, (const void *) 0x4078002a0, (size_t) 0xc)
@@ -275,15 +280,15 @@ Create a `Makefile`, build the application and then run it.
 
 #### `hugo`
 
-Follow the same steps with [`hugo`](https://github.com/unikraft/catalog/tree/main/library/redis/0.122).
+Follow the same steps with [`hugo`](https://github.com/unikraft/catalog/tree/main/library/hugo/0.122).
 Create a `Makefile`, build the application and then run it.
 
-#### `redis`
+#### `node/21`
 
 Follow the same steps with [`node/21`](https://github.com/unikraft/catalog/tree/main/library/node/21).
 Create a `Makefile`, build the application and then run it.
 
-#### `redis`
+#### `PHP`
 
 Follow the same steps with [`PHP`](https://github.com/unikraft/catalog/tree/main/library/php/8.2).
 Create a `Makefile`, build the application and then run it.
@@ -310,7 +315,7 @@ They are identical, since the application is run unmodified on Linux and on Unik
 ### Session 05: Debugging
 
 Many times, when we try to port an application and to use it on top of Unikraft, we will run into issues, as we do when we use any other platform.
-Unikernels can seem harder to debug, since they function as virtual machines, but having the kernel code in the same address space as the application makes it easy to jump from the application code to the kernel code..
+Unikernels can seem harder to debug, since they function as virtual machines, but having the kernel code in the same address space as the application makes it easy to jump from the application code to the kernel code.
 In this sessions, we will look at different ways we can debug our Unikraft applications, from simple debug messages to using `gdb` to attach to the guest.
 
 #### Enable Debug Messages
@@ -360,7 +365,7 @@ To do that, we need to update the run script accordingly.
 Let's start with the [`helloworld` application](https://unikraft.org/hackathons/usw24#session-04-binary-compatibility) that we used in the last session.
 The new run command will be:
 
-```console
+```bash
 qemu-system-x86_64 -cpu max -nographic -kernel .unikraft/build/elfloader_qemu-x86_64 --append "/helloworld" -S -s
 ```
 
@@ -368,7 +373,7 @@ Notice the extra `-S -s` flags.
 The `-S` option will start the application in a paused state, while the `-s` will open a gdbserver on TCP port 1234.
 After that, we can open another terminal and run gdb:
 
-```console
+```bash
 gdb --eval-command="target remote :1234" .unikraft/build/elfloader_qemu-x86_64.dbg
 ```
 
@@ -382,17 +387,17 @@ When debugging, instead of the usual breakpoints, use `hb` (hardware breakpoints
 Follow the same steps on the `nginx` application.
 Attach gdb, toy around, place some breakpoints and see how the application flows.
 
-#### `redis`
+#### Debug: redis
 
 Follow the steps for debugging messages and gdb for [`redis`](https://github.com/unikraft/catalog/tree/main/library/redis/7.2).
 Use the `redis` setup from the last session.
 
-#### `hugo`
+#### Debug: hugo
 
 Follow the steps for debugging messages and gdb for [`hugo`](https://github.com/unikraft/catalog/tree/main/library/hugo/0.122).
 Use the `hugo` setup from the last session.
 
-#### `node`
+#### Debug: node
 
 Follow the steps for debugging messages and gdb for [`node`](https://github.com/unikraft/catalog/tree/main/library/node/21).
 Use the `node` setup from the last session.
@@ -408,14 +413,17 @@ We start from the already existing [`nginx` port](https://github.com/unikraft/ca
 
 Next, we start a docker container from the `nginx` official image:
 
-```console
+```bash
 docker run --rm -it nginx:1.25.3-bookworm /bin/bash
 ```
 
 We use `ldd` to get the dependencies:
 
-```console
+```bash
 $ ldd /usr/sbin/nginx
+```
+
+```text
         linux-vdso.so.1 (0x00007ffdf39e8000)
         libcrypt.so.1 => /lib/x86_64-linux-gnu/libcrypt.so.1 (0x000073162deb9000)
         libpcre2-8.so.0 => /lib/x86_64-linux-gnu/libpcre2-8.so.0 (0x000073162de1f000)
@@ -512,14 +520,14 @@ COPY ./wwwroot /wwwroot
 
 After that, everything should work properly.
 
-#### `node`
+#### Porting: node
 
 Now that you have seen how porting an application works, you can try it yourself with the [`node`](https://github.com/unikraft/catalog/tree/main/library/node/21) application.
 Remove the `Dockerfile`, start from the `node:21-alpine` image and follow the same steps as above.
 
 #### `memcached`
 
-Do the same for [`memcached`](https://github.com/unikraft/catalog/blob/main/library/memcached/1.6/).
+Do the same for [`memcached`](https://github.com/unikraft/catalog/blob/main/library/memcached/1.6).
 Remove the `Dockerfile` and start from `memcached:1.6.23-bookworm`.
 
 ### Session Recordings

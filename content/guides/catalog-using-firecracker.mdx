@@ -35,7 +35,7 @@ sudo cp release-v1.4.0-x86_64/firecracker-v1.4.0-x86_64 /usr/local/bin/firecrack
 Similar to the ["Application Catalog: Behind the Scenes" guide](/guides/catalog-behind-the-scenes), we will use two applications:
 
 - [the `nginx/1.25` application](https://github.com/unikraft/catalog/tree/main/library/nginx/1.25)
-- [the `http-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/http-go1.21)
+- [the `httpserver-go1.21` example](https://github.com/unikraft/catalog/tree/main/examples/httpserver-go1.21)
 
 ## NGINX
 
@@ -143,7 +143,7 @@ Use the steps below to build and run the HTTP Go server as a binary-compatible a
 1. Enter the HTTP Go server example directory:
 
    ```bash
-   cd catalog/examples/http-go1.21/
+   cd catalog/examples/httpserver-go1.21/
    ```
 
 1. Pull the unikernel `base` image for the Firecracker (`fc`) platform:
@@ -169,7 +169,8 @@ Use the steps below to build and run the HTTP Go server as a binary-compatible a
    ```bash
    $ ls -lh .unikraft/build/initramfs-x86_64.cpio
    ```
-   ```
+
+   ```text
    -rw-r--r-- 1 razvand razvand 9.7M Jan 26 18:50 .unikraft/build/initramfs-x86_64.cpio
    ```
 
