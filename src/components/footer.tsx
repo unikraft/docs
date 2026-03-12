@@ -12,7 +12,7 @@ import React from 'react'
 import {
   BsGithub,
   BsLinkedin,
-  BsTwitter,
+  BsTwitterX,
   BsDiscord,
   BsYoutube,
 } from 'react-icons/bs'
@@ -44,9 +44,9 @@ const socials = [
     href: 'https://www.linkedin.com/company/unikraft-sdk/',
   },
   {
-    icon: BsTwitter,
-    label: 'Twitter',
-    href: 'https://twitter.org/UnikraftSDK',
+    icon: BsTwitterX,
+    label: 'X',
+    href: 'https://x.com/UnikraftSDK',
   },
   {
     icon: BsDiscord,
