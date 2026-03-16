@@ -1,0 +1,85 @@
+---
+title: "GSoC'25: Testing Framework for Unikraft Builds | Part IV"
+description: |
+  This GSoC project is aimed to develop a testing framework that is able to multiplex the variety of configuration options, VMMs, hypervisors, architectures, boot protocols, to validate the successful building and running of unikernel images.
+publishedDate: 2025-09-25
+tags:
+- gsoc
+- gsoc25
+- testing & validation
+- automation
+- devops
+authors:
+- Shashank Srivastava
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+The aim of this project is to develop a robust testing framework that can handle a wide range of configuration options—covering different VMMs, hypervisors, architectures, and boot protocols to validate the successful build and execution of unikernel images.
+The framework, written in Python, is designed to configure, build, run, and test various Unikraft builds, and there’s scope for further improvements and refactoring as we go.
+
+The main focus is to enhance the existing testing infrastructure and make it smooth and intuitive for both Unikraft developers and users.
+To achieve this, I am working towards the following key goals:
+
+- Extract and consolidate the testing framework into a dedicated, standalone repository.
+
+- Ensure that the framework works seamlessly with the catalog repositories right out of the box.
+
+- Integrate the framework into the CI/CD pipeline used across Unikraft organization repositories, so that it can automatically validate builds whenever a pull request is opened.
+
+## Recap (Parts I, II & III)
+
+- **Part I**: extracted the framework into a standalone repository, added isolated `.app` sandboxing, modularized code, and added a README parser to generate app configs.
+- **Part II**: introduced LLM-powered `RunConfig` generation, richer test categories (`curl`, `list-of-command`, `no-command`), structured logging, and CSV reporting (`build_report.csv`, `run_report.csv`). Also prepared `test-app-config/` and started creating `BuildConfig.yaml` / `RunConfig.yaml` for library apps.
+- **Part III**: Focused on reliability and observability by introducing persistent `.sessions/` directories for per-run logs and reports, stronger resource cleanup, stabilized catalog/library runs, and prebuilt runtime kernels for examples. Also updated CLI flags and documentation for smoother workflows.
+
+## Current Progress
+
+### CI & GitHub workflow
+
+- Designed and implemented a GitHub Actions workflow to run the testing framework for PRs, including steps to clone the catalog, prepare environment, install dependencies, and dispatch PR metadata to the workflow.
+- Added support for cloning the `catalog` repository and setting up `maintainers-tool` inside the workflow so library builds can be produced automatically.
+- Integrated the workflow with a GitHub App for PR status updates and improved artifact handling (collection and upload of test artifacts).
+
+### Test orchestration & automation
+
+- Created `overall_test.py` — a wrapper script that runs tests across all `catalog/library` applications, intended for use by workflows to automatically exercise the whole catalog.
+- Added the ability for the workflow and framework to run limited sets of apps/targets (faster, targeted runs) to speed up CI iterations.
+
+### CI reporting & results collection
+
+- Introduced generation of a CI summary file (`.sessions/ci_report.json`) to capture overall test results.
+- Improved the CI report structure (`detail_report`) to better store per-application build and run information produced by `overall_test.py`.
+- Implemented mechanisms in the workflow to collect, store and upload test results and artifacts for PR review.
+
+### Documentation & setup
+
+- Improved README formatting and setup instructions (one-sentence-per-line, clearer code blocks, recommended `.venv/` usage).
+- Added a Requirements section detailing packages and configuration needed for the testing framework and workflows.
+- Updated README links and setup commands to reflect repository and workflow changes.
+
+### Reliability fixes, small features & cleanup
+
+- Simplified test result status logic (removed partial-pass state) to make test outcomes clearer.
+- Removed the `main.sh` helper in favor of the more flexible `src/main.py` CLI, reducing maintenance duplication.
+- Corrected curl/port usage for bridge & tap networking to use the configured `ExposedPort`.
+- Multiple hotfixes to improve robustness of kernel selection and runtime creation.
+- Rewrote repository git history to improve commit hygiene and ensure commit messages clearly describe what changed and why.
+
+# Next steps
+
+- The CI workflow is currently stable for building libraries. Moving forward, I will work on adding support to also run tests within the workflow.
+- I plan to extend the CI workflow to include examples, as right now it only covers catalog/library applications.
+- I will continue to address and fix any issues that arise from the usage of the testing framework.
+
+## Acknowledgement
+
+Huge thanks to my mentors, [Razvan Deaconescu](https://github.com/razvand) and [Razvan Virtan](https://github.com/razvanvirtan), for continued guidance. I’m additionally grateful to the entire Unikraft community for their warm support and helpfulness throughout this journey.
+
+## About me
+
+I'm [Shashank Srivastava](https://github.com/shank250/) undergraduate student at GL Bajaj Institute of Technology and Management, B Tech in Computer Science and Engineering with Specialisation in Artificial Intelligence and Machine Learning, with a strong passion for AI and Cloud.
+
+Feel free to [connect](https://www.linkedin.com/in/shashank-srivastava-375412250/)!
