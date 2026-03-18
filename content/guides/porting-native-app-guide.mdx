@@ -1,0 +1,201 @@
+---
+title: Porting Native Application To Unikraft Ecosystem
+description: |
+In this guide, we dive into the ways in which you can bring an application which does not already exist within the Unikraft ecosystem.
+---
+
+## Unikraft ecosystem:
+
+Run your native linux applications as unikernels by wrapping its source code around the Unikraft build system. Unikernels are smaller, faster, and more secure. They don’t carry the potential vulnerabilities that would have come with the standard Operating System.
+
+To check the applications supported by [Unikraft's Github organization](https://github.com/unikraft) and are prefixed with `app-` (known colloquially as *app repos* or `app-*` as *app star repos*).
+
+This tutorial will only be targeting applications which are C/C++-based. Unikraft supports other compile-time languages, such as Golang, Rust and WASM. However, the scope of this tutorial only follows an example with a C/C++-based program called [iperf3](https://github.com/esnet/iperf). Many of the principles in this tutorial, however, can be applied in the same way for said languages, with a bit of context-specific work. Namely, this may include additional build rules for target files, using specific compilers and linkers, etc. 
+
+## Build application for Linux User Space
+
+1.  We obtain the source code of the application:
+```console
+$ git clone https://github.com/esnet/iperf.git```
+
+2. Configure and build the application:
+```console
+cd ./iperf
+./configure;
+make```
+
+By running `./configure` type program will raise any issues when it finds something missing.
+It checks all the shared libraries (e.g. .so files) installed on your system which are necessary for the application to run. The application will be dynamically linked to these shared libraries and they will be referenced at runtime in a traditional Linux user space manner. If something is missing, usually you must use your Linux-distro's package manager to install this dependency, such as via `apt-get`.
+Check the `./configure --help` command to learn about the features we would like to turn on and off before the build.
+This information will be taken as build options when porting applications to the Unikraft ecosystem. For `iperf3`, we only need [OpenSSL](https://github.com/openssl/openssl). Unikraft already has a port of OpenSSL, which means we do not have to port this before starting.
+If, however, there are library dependencies for the target application which do not exist within the Unikraft ecosystem, then these library dependencies will need to be ported first before continuing.
+
+After running `make` we can see the  intermediate object files which are compiled during the compilation process before `iperf3` is finally linked together to form a final Linux user space binary application. It can be useful to note these files down, as we will be compiling these files with respect to Unikraft's build system.
+
+In the next section, we prepare ourselves to bring this application to Unikraft.
+
+## Creating a Boilerplate Microlibrary for your Application
+
+First we have to wrap the source code of our application with the unikraft build system so we have to create a new library for our application. That is, when we eventually build the application, the Unikraft build system will understand where to get the source code files from, which ones to compile and how, with respect to the rest of Unikraft's internals and other dependencies.
+
+1. Let's create a workspace with a typical Unikraft structure:
+
+```console
+$ cd ~/workspace/
+$ mkdir app-iperf
+$ cd app-iperf/
+$ git clone https://github.com/unikraft/unikraft .unikraft/unikraft
+```
+This will generate the necessary directory structure to build a new Unikraft application. When we list the directories, we should get something like this:
+
+```console
+$ tree -a -L 3 --charset=ascii
+.
+`-- .unikraft
+	`-- unikraft
+    	|-- ADOPTERS.md
+    	|-- arch
+    	|-- .checkpatch.conf
+    	|-- .clang-format
+    	|-- Config.uk
+    	|-- CONTRIBUTING.md
+    	|-- COPYING.md
+    	|-- drivers
+    	|-- .editorconfig
+    	|-- .git
+    	|-- .github
+    	|-- .gitignore
+    	|-- include
+    	|-- lib
+    	|-- Makefile
+    	|-- Makefile.uk
+    	|-- plat
+    	|-- README.md
+    	|-- support
+    	`-- version.mk
+
+10 directories, 12 files
+```
+
+2. Let's now create a library for `iperf3`. To do this, we must first retrieve some information about the program itself. First, we need to identify the latest version number of `iperf3` that is `3.16`(as of the time of writing this tutorial).
+
+Unikraft relies on the ability to download the source code of the origin code which is about to be compiled. Usually these are tarballs or zips. Ideally, we want to have a version number in the URL, so we can safely know the version being downloaded.
+
+We will initialize an empty external library by creating a very basic `Makefile.uk` file, containing our name and email, along with the library source code link and version, and a `Config.uk` file that will allow us to select the library from the `menuconfig` screen:
+
+
+```console
+$ cd ~/workspace/app-iperf
+$ mkdir -p .unikraft/libs/iperf
+$ cd .unikraft/libs/iperf
+$ touch Makefile.uk
+$ touch Config.uk
+```
+
+The `Makefile.uk` file should look something like this (you can use the [lib-bzip2](https://github.com/unikraft/lib-bzip2/blob/staging/Makefile.uk) library as a starting point, since it's `Makefile.uk` file it's quite minimal):
+
+```console
+################################################################################
+# Library registration
+################################################################################
+$(eval $(call addlib_s,libperf3,$(CONFIG_LIBPERF3)))
+
+################################################################################
+# Original sources
+################################################################################
+LIBPERF3_VERSION=3.16
+LIBPERF3_BASENAME=iperf3-$(LIBPERF3_VERSION)
+LIBPERF3_URL=https://github.com/esnet/iperf/archive/refs/tags/$(LIBPERF3_VERSION).tar.gz
+$(eval $(call fetch,libperf3,$(LIBPERF3_URL)))
+```
+
+The `Config.uk` file will contain one option that will allow us to later select the library from the menuconfig screen:
+
+```console
+config LIBPERF3
+  bool "lib iperf 3.16"
+  default y
+```
+3. We can now create a simple application that will use the `iperf3` external library. We will create a `Makefile` file for our application:
+
+```console
+$ cd ~/workspace/app-iperf/
+$ touch Makefile
+```
+
+The `Makefile` should look similar to the one in the [app-helloworld](https://github.com/unikraft/app-helloworld/blob/staging/Makefile) repository.
+
+```console
+UK_ROOT ?= $(PWD)/.unikraft/unikraft
+UK_LIBS ?= $(PWD)/.unikraft/libs
+LIBS := $(UK_LIBS)/iperf
+
+all:
+ 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS)
+
+$(MAKECMDGOALS):
+ 	@$(MAKE) -C $(UK_ROOT) A=$(PWD) L=$(LIBS) $(MAKECMDGOALS)
+```
+
+The application will also need a `Makefile.uk` file, but we can leave that empty for now.
+
+```console
+$ touch Makefile.uk
+```
+4. Finally, we can now see the `libperf3` option in the make menuconfig menu.
+
+```console
+$ make menuconfig
+
+# Select Library Configuration --> lib iperf 3.16 and save
+
+$ make fetch
+make[1]: Entering directory '/home/ukiyo/workspace/app-iperf/.unikraft/unikraft'
+  LN  	Makefile
+  WGET	libperf3: https://github.com/esnet/iperf/archive/refs/tags/3.16.tar.gz
+/home/ukiyo/workspace/app-i 	[	<=>                              	] 653.96K   614KB/s	in 1.1s    
+  UNTAR   libperf3: 3.16.tar.gz
+make[1]: Leaving directory '/home/ukiyo/workspace/app-iperf/.unikraft/unikraft'
+
+
+```
+
+
+You can see that running `make fetch` downloaded the source code of `libperf3`.
+
+```console
+$ tree -L 2 build/libperf3/
+uild/libperf3/
+├── 3.16.tar.gz
+└── origin
+	└── iperf-3.16
+
+2 directories, 1 file
+```
+The next thing we need to do is provide source files that need to be built for `libperf3` to work.
+
+Before you use Unikraft, you can access the source files of the application and compile the application natively for Linux user space. You wish to compile this application against the Unikraft core and any auxiliary necessary third-party libraries in order to make it a unikernel.
+you must be able to access the source files and the build system before you can begin.
+
+Traditionally, and by explicit design, Linux user space code invokes a main method (or symbol) for the start-of-execution of application logic. Unikraft is similar and invokes a [weak-ly attributed symbol](https://gcc.gnu.org/onlinedocs/gcc-4.3.5/gcc/Function-Attributes.html) for `main` in its [main](https://github.com/unikraft/unikraft/blob/staging/lib/ukboot/boot.c#L75) thread. This is done so that it can be easily overwritten so as to invoke true application-level functionality. Without any main method, the unikernel will simply boot and exit.
+
+All applications must implement the following standard prototype for `main`:
+
+```console
+/* Definition 1 */
+int main(__((attribute unused))__ int argc, __((attribute unused))__ char *argv[]);
+/* Definition 2 */
+int main(int argc, char *argv[]);
+/* Definition 3 */
+int main(void);
+```
+There are two ways to invoke the functionality of the application being ported to Unikraft.
+
+
+
+
+
+
+
+
+
