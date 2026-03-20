@@ -22,7 +22,7 @@ Virtual machines rely on hypervisors to run properly.
 
 A hypervisor incorporates hardware-enabled multiplexing and segmentation of
 compute resources in order to better utilize, better secure and better
-facilitate the instantenous runtime of user-defined programs.
+facilitate the instantaneous runtime of user-defined programs.
 By the means of a virtual machine, an operating system is unaware of the
 multiplexing which happens to facilitate its existence.
 The hypervisor emulates devices on behalf of the guest OS, including
@@ -35,14 +35,14 @@ The hypervisors can be classified in 2 categories: Type 1 and Type 2:
   access to the hardware and controls all the operating systems that are running
   on the system.
   The guest OSes have access to the physical hardware, and the hypervisor
-  arbiters this accesses.
-  KVM is an example of Type 1 hypervisor.
+  arbitrates this accesses.
+  KVM is an example of a Type 1 hypervisor.
 
 * The **Type 2 hypervisor**, also known as **hosted hypervisor**, has to go
   through the host operating system to reach the hardware.
   Access to the hardware is emulated, using software components that behave
   in the same way as the hardware ones.
-  An example of Type 2 hypervisor is VirtualBox.
+  An example of a Type 2 hypervisor is VirtualBox.
 
 <Image
   border
@@ -55,7 +55,7 @@ The hypervisors can be classified in 2 categories: Type 1 and Type 2:
 In Figure 1 a comparison between different virtualization systems is illustrated
 and demonstrates how the degree of separation between a "guest application" and
 the hardware and “host” becomes further removed.
-The defined job of the host OS and kernel or hypervisor became that of 1) to
+The defined job of the host OS and kernel or hypervisor became: 1) to
 juggle the runtime of multiple applications and environments; 2) to present a
 subset or non-contiguous representation of hardware resources virtually and
 translate operations, and provide emulation and compatibility between guest and
