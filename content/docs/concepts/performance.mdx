@@ -11,7 +11,7 @@ You can find the full evaluation details and the description of Unikraft in gene
 
 ## Image Size
 
-In order to quantify image sizes in Unikraft, we generate a number of images for all combinations of DCE (Dead Code Elimnation) and LTO (Link Time Optimization), and for a helloworld VM and three other applications: nginx, Redis and SQLite.
+In order to quantify image sizes in Unikraft, we generate a number of images for all combinations of DCE (Dead Code Elimination) and LTO (Link Time Optimization), and for a helloworld VM and three other applications: nginx, Redis and SQLite.
 The results in Figure 1 show that Unikraft images are all under 2MBs for all of these applications.
 We further compare these results with other unikernels and Linux in Figure 2.
 As shown, Unikraft images are smaller than all other unikernel projects and comparable to Linux userspace binaries (note that the Linux sizes are just for the application;
@@ -96,7 +96,7 @@ Surprisingly, Unikraft is also 10%-60% faster than Native Linux in both cases.
 We attribute these results to the cost of system calls (aggravated by the presence of KPTI — the gap between native Linux and Unikraft narrows to 0-50% without KPTI), and possibly the presence of Mimalloc as system-wide allocator in Unikraft;
 unfortunately it is not possible to use Mimalloc as kernel allocator in Linux without heavy code changes.
 Note that we did try to LD_PRELOAD Mimalloc into Redis, but the performance improvement was not significant.
-We expect that the improvement would be more notable if Mimalloc were present at compile time instead of relying on the preloading mechanism (making the compiler aware of the allocator allows it to perform compile/link time optimizations) but we could not perform this experiment since Mimalloc is not natively supported by the current Redis code base.
+We expect that the improvement would be more notable if Mimalloc were present at compile time instead of relying on the preloading mechanism (making the compiler aware of the allocator allows it to perform compile/link time optimizations) but we could not perform this experiment since Mimalloc is not natively supported by the current Redis codebase.
 
 <Image
   border
@@ -108,7 +108,7 @@ We expect that the improvement would be more notable if Mimalloc were present at
 />
 
 Compared to Lupine on QEMU/KVM, Unikraft is around 50% faster on both Redis and Nginx.
-These results may be due to overcutting in Lupine's official configuration, scheduling differences (we select Unikraft's cooperative scheduler since it fits well with Redis's single threaded approach), or remaining bloat in Lupine that could not be removed via configuration options.
+These results may be due to overcutting in Lupine's official configuration, scheduling differences (we select Unikraft's cooperative scheduler since it fits well with the Redis's single threaded approach), or remaining bloat in Lupine that could not be removed via configuration options.
 Compared to OSv, Unikraft is about 35% faster on Redis and 25% faster for Nginx.
 Rump exhibits poorer performance: it has not been maintained for a while, effectively limiting the number of configurations we could apply.
 For instance, we could not set the file limits because the program that used to do it (rumpctrl) does not compile anymore.
