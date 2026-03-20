@@ -1,7 +1,7 @@
 ---
 title: Design Principles
 description: |
-  Unikraft is designed to highly modular, enabling the best-in-class performance
+  Unikraft is designed to be highly modular, enabling the best-in-class performance
   and security guarantees for your application.  To discover the right approach
   and achieve these goals, understanding the limitations modern OSes was
   necessary.
@@ -74,7 +74,7 @@ This admittedly non-exhaustive list of application-specific optimizations
 implies that for each core functionality that a standard OS provides, there
 exists at least one or a few applications that do not need it. Removing such
 functionality would reduce code size and resource usage but would often require
-an important re-engineering effort.
+a significant re-engineering effort.
 
 
 ## Approaches to building a unikernel
@@ -127,9 +127,9 @@ task.
 />
 
 While full modularization is difficult, modularizing certain parts of a
-monolithic kernel has been done succesfully by Rump. There, the NetBSD kernel
+monolithic kernel has been done successfully by Rump. There, the NetBSD kernel
 was split into base layers (which must be used by all kernels), functions
-provided by the host (scheduling, memory allocation,etc) and so-called factions
+provided by the host (scheduling, memory allocation, etc.) and so-called factions
 that can be run on their own (e.g.  network or filesystem support). Rump goes
 some way towards achieving our goals, however there are still many dependencies
 left which require that all kernels have the base and hypercall layers.
@@ -172,13 +172,13 @@ reinvent the wheel (eg x86_64 KVM boot).
 
 Unikraft consists of three basic components:
 
-* **Library Components.** Unikraft modules TODO, each of which provides some
-  piece of functionality. As is expected of a library, they are the core
-  building blocks of an application. Libraries can be arbitrarily small (e.g., a
-  small library providing a proof-of-concept scheduler) or as large as standard
-  libraries like libc. However, libraries in Unikraft often wrap pre-existing
-  libraries, such as openssl, and as such existing applications can still make
-  use of relevant, existing systems without having to re-work anything.
+* **Library Components.** Unikraft relies on modular components, each of which
+  provides some piece of functionality. As is expected of a library, they are the
+  core building blocks of an application. Libraries can be arbitrarily small
+  (e.g., a small library providing a proof-of-concept scheduler) or as large as
+  standard libraries like libc. However, libraries in Unikraft often wrap
+  pre-existing libraries, such as openssl, and as such existing applications can
+  still make use of relevant, existing systems without having to re-work anything.
 
 * **Configuration.** Inspired by [Linux's KConfig
   system](https://www.kernel.org/doc/html/next/kbuild/kconfig-language.html),
@@ -187,12 +187,12 @@ Unikraft consists of three basic components:
   configure options for each of them, where available. Like KConfig, the menu
   keeps track of dependencies and automatically selects them where applicable.
 
-* **Build Tools.** To seamlessly build and manage Unikraft, its components,
-  configuration and its execution is a suite of tools ... core of Unikraft is a
-  suite of tools which aid in the creation of the final unikernel image.  Based
-  on [GNU Make](https://www.gnu.org/software/make/), it takes care of compiling
-  and linking all the relevant modules and of producing images for the different
-  platforms selected via the configuration menu.
+* **Build Tools.** To seamlessly build and manage Unikraft, its components, and
+  its configuration, Unikraft provides a dedicated suite of tools which aid in
+  the creation of the final unikernel image. Based on [GNU Make]
+  (https://www.gnu.org/software/make/), it takes care of compiling and linking
+  all the relevant modules and of producing images for the different platforms
+  selected via the configuration menu.
 
 
 Unikraft libraries are grouped into two large groups: core (or internal)
