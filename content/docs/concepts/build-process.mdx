@@ -21,7 +21,7 @@ bind them togheter.
   the build process to generate a unikernel image."
 />
 
-The lifecycle of the construction of a Unikraft unikernel includes several
+The construction lifecycle of a Unikraft unikernel includes several
 distinct steps:
 
 1. Configuring the Unikraft unikernel application with compile-time options;
@@ -32,13 +32,13 @@ distinct steps:
 ## GNU Make-based build system
 
 Unikraft is a configurable operating system, where each component can be
-modified, configured, according to the user’s needs. This configuration is done
+modified and configured, according to the user’s needs. This configuration is done
 using a version of Kconfig, through the Config.uk files. In these files, options
 are added to enable libraries, applications and different components of the
 Unikraft core. The user can then apply those configuration options, using make
 menuconfig, which generates an internal configuration file that can be
 understood by the build system, .config. Once configured, the Unikraft image can
-be built, using make, and run, using the appropriate method (Linux ELF loader,
+be built using make and run, using the appropriate method (Linux ELF loader,
 qemu-kvm, xen, others).
 
 <Image
@@ -48,6 +48,6 @@ qemu-kvm, xen, others).
   src="/diagrams/build-process-makefile.svg"
   title="Figure 1"
   description="Overview of Unikraft's build process with respect to the
-  intermediate artfacts generated considered from the perspective of its GNU
+  intermediate artifacts generated, considered from the perspective of its GNU
   Make-based build system."
 />

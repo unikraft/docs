@@ -6,7 +6,7 @@ description: |
 ---
 
 <Info>
-Parts of this document contains extracts from [an article published to **USENIX
+Parts of this document contain extracts from [an article published to **USENIX
 ;login**](https://www.usenix.org/publications/loginonline/unikraft-and-coming-age-unikernels)
 about Unikraft.
 </Info>
@@ -28,12 +28,12 @@ This is the default build mode for the majority of Linux distributions, so it sh
 </Warning>
 
 <Info>
-Note that, because Linux binaries are included, constructing new Linux binaries requires a Linux or Linux-compatible development environement (such as WSL - _Windows Subsystem for Linux_).
+Note that, because Linux binaries are included, constructing new Linux binaries requires a Linux or Linux-compatible development environment (such as WSL - _Windows Subsystem for Linux_).
 This is only the case for building binaries -- prebuilt binaries can be used and the ELF loader app itself can be built on multiple platforms (Linux, Windows, macOS).
 </Info>
 
 Binary-compatible apps are located in the Unikraft [application `catalog` repository](https://github.com/unikraft/catalog).
-Follow the guides below to know how to use and develop for the application catalog:
+Follow the guides below to learn how to use and develop for the application catalog:
 
 - [Using the Application Catalog](/guides/using-the-app-catalog)
 - [Behind the Scenes with the Application Catalog](/guides/catalog-behind-the-scenes)
@@ -88,10 +88,10 @@ applications, respectively, suggesting that a large implementation effort would
 be required for an OS aiming at supporting even a small number of applications.
 
 However, in the process of implementing POSIX system calls and checking whether
-applications where actually running, we gathered anecdotal evidence that these
+applications were actually running, we gathered anecdotal evidence that these
 requirements were not as stringent as they seemed: whenever a system call is
 missing, the default behavior of Unikraft's system call shim layer is to stub it
-by returning `ENOSYS`; the result of this was that some applications where
+by returning `ENOSYS`; the result of this was that some applications were
 correctly running despite not having some of the system calls they invoked
 implemented, so we decided to take a closer look.
 
@@ -144,7 +144,7 @@ would suggest, and much less than the total system calls in the Linux API.
 To confirm this, we took a look at the applications' source code: in cases where
 the failure of a system call is non-critical for the execution of the program,
 the program can detect the error and decide to continue as usual, in which case
-stubbing works. This snippet from the Redis code-base is a good example:
+stubbing works. This snippet from the Redis codebase is a good example:
 
 ```clike
 if (getrlimit(RLIMIT_NOFILE,&limit) == -1) {
@@ -182,7 +182,7 @@ applications is relatively limited, and is even lower when considering partial
 support i.e. traditional workloads. We observe that the system calls that can be
 stubbed/faked vary among applications. As an indication, the number of system
 calls that would need to be effectively implemented for all these 5 applications
-to be supported is 78 for test suites and only 37 for traditional benchmarks
+to be supported is 78 for test suites and only 37 for traditional benchmarks.
 
 A second observation is that static analysis produces many false positives and
 as such yields a large overestimation of the system calls made by an
