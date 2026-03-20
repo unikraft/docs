@@ -8,12 +8,12 @@ description: |
 
 As a proof of concept, we have ported Unikraft to the Raspberry Pi 3 B+ and the
 Xilinx Ultra96-V2 devices. We compare Unikraft with off-the-shelf Alpine Linux
-and Raspbian OS as well as a specialized, stripped down Raspbian (removing
+and Raspbian OS as well as a specialized, stripped-down Raspbian (removing
 non-essential build tools, system packages and docs).
 
 We evaluate power consumption versus Linux when idle and when running a
 CPU-intensive calculation of π (see figure below); as shown, Unikraft can
-provide important power reduction in both scenarios in comparison to Linux
+provide significant power reduction in both scenarios compared to Linux
 (running only on a single core and with networking modules disabled, for fair
 comparison).
 
@@ -23,7 +23,7 @@ comparison).
   ratio={5/3}
   src="/diagrams/unikraft-energy-consumption.svg"
   title="Figure 1"
-  description="Rasberry Pi power use with Unikraft vs. Alpine and Raspbian when idle and when calculating π"
+  description="Raspberry Pi power use with Unikraft vs. Alpine and Raspbian when idle and when calculating π"
 />
 
 Note that while these tests were run on small ARM devices, the
