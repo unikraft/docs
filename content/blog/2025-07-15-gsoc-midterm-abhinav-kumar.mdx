@@ -1,0 +1,134 @@
+---
+title: 'GSoC 2025 Midterm Progress: Modernizing NGINX, Lua, and Python Support in Unikraft'
+author: Abhinav Kumar
+date: 2025-07-15
+tags:
+  - gsoc
+  - unikraft
+  - lib-nginx
+  - lib-lua
+  - lib-python3
+  - midterm
+---
+
+This blog post summarizes my progress during the first half of Google Summer of Code 2025 with the Unikraft organization. My GSoC project focuses on modernizing Unikraft’s support for popular user-space libraries by upgrading:
+
+1. [`lib-nginx`](https://github.com/unikraft/lib-nginx) to NGINX 1.28.0  
+2. [`lib-lua`](https://github.com/unikraft/lib-lua) to Lua 5.4.8  
+3. [`lib-python3`](https://github.com/unikraft/lib-python3) to Python 3.13.3
+
+Below is a detailed log of my work on each of these efforts.
+
+---
+
+## lib-nginx: Upgrading to NGINX 1.28.0
+
+Over the past few weeks, I focused on updating and integrating the latest NGINX 1.28.0 into Unikraft as a clean and maintainable library.
+
+### Key Achievements
+
+- Cleaned and rebased the `nginx-1.28.0-U` branch  
+  - Removed outdated patches.  
+  - Upstreamed syscall stubs and replaced in-tree hacks.  
+- Verified library layout  
+  - Checked Config.uk, Makefile.uk, and Library.uk for correctness.  
+- Created and tested an application: `app-nginx`  
+  - Confirmed builds on the stable branch of Unikraft.  
+  - Verified compatibility with catalog-core application structure.  
+- Adopted upstream `catalog-core` workflow  
+  - Used catalog-style Makefile and initramfs (`initrd`) with /nginx/*, /dev/console, and /dev/null.  
+  - Verified that /dev nodes were present.  
+
+### Current Status
+
+The application builds successfully, but at runtime, the unikernel fails with the following:
+[libdevfs] Failed to create /dev: 20
+[libukboot] Init function … returned error -1
+
+Despite verifying that all /dev nodes and rootfs files are correct and menuconfig options (`LIBDEVFS`, LIBVFSCORE_AUTOMOUNT, etc.) are enabled, the error persists.
+
+### Next Steps
+
+- Debug the libdevfs error with help from upstream maintainers.  
+- Propose potential fixes or enhancements to Unikraft’s lib-devfs or VFS layers.  
+- Finalize and document the full build & run workflow for reproducibility.  
+
+---
+
+## lib-lua: Upgrading to Lua 5.4.8
+
+The goal here was to modernize Unikraft’s Lua support by upgrading from an older version to Lua 5.4.8, ensuring compatibility with nolibc, and enabling support for newer Lua features in unikernels.
+
+### Challenges Faced
+
+- Build failures due to strict libc checks:  
+  - The macro udatamemoffset() in lobject.h uses offsetof() on incomplete structs Udata and Udata0.  
+  - This is accepted by glibc but rejected by Unikraft’s nolibc (due to ISO C compliance).
+
+#define udatamemoffset(nuv) \
+  ((nuv) == 0 ? offsetof(Udata0, bindata) : offsetof(Udata, uv) + (sizeof(UValue) * (nuv)))
+
+### Solution & Patch
+
+- Forward declarations were not sufficient.  
+- After analyzing the internal memory layout of the structs, I rewrote the macro to manually compute fixed offsets, avoiding offsetof() entirely.  
+- This preserved correctness while satisfying Unikraft's stricter build rules.
+
+### Current Status
+
+- Successfully patched and built Lua 5.4.8 against Unikraft.  
+- Opened a pull request with all necessary changes and validations.
+
+### Next Steps
+
+- Continue testing the Lua REPL and scripts inside the application.  
+- Review community feedback and finalize the upstream PR.
+
+---
+
+## lib-python3: Upgrading to Python 3.13.3
+
+Upgrading lib-python3 involved modernizing the Python runtime to 3.13.3, improving compatibility, and validating minimal unikernel usage.
+
+### Achievements
+
+- Forked and cloned the latest lib-python3 repo into my personal GitHub.  
+- Created the upgrade branch: python3-3.13.3-upgrade.  
+- Updated Library.uk to:
+  - Set version to 3.13.3.
+  - Use the correct upstream tarball.
+  - Adjust LIBPYTHON3_SOURCE to reflect new folder layout.
+- Created a dedicated test application: app-python3.
+- Updated kraft.yaml (spec v0.6) and added explicit paths to local dependencies:
+  - lib-lwip
+  - lib-musl
+  - lib-compiler-rt
+
+### Work in Progress
+
+- Initial build issues were solved by using local paths for dependencies.  
+- The upgrade is not yet fully built or tested — currently in integration phase.  
+- REPL or Python script execution is yet to be validated.
+
+### Next Steps
+
+- Attempt a complete build of app-python3.  
+- Apply necessary patches to fix any compilation/runtime issues.  
+- Submit a fully working PR with test instructions.
+
+---
+
+## Final Thoughts
+
+So far, the midterm phase has been highly productive. Each library upgrade presented unique technical challenges — from strict nolibc compliance issues to complex build integrations using catalog-core. I’ve worked closely with upstream maintainers to ensure that each component is cleanly integrated, reproducible, and future-proof.
+
+In the second half of GSoC, I aim to:
+
+- Finalize the NGINX and Python upgrades with working applications.  
+- Submit complete documentation and PRs.  
+- Continue with the next phase of the project: upgrading lib-redis and lib-libgo.
+- Explore integration with GitHub CI workflows for easier testing and validation.
+
+Having already begun integrating lib-python3, I am now moving forward with the remaining libraries as outlined in my project timeline.
+
+Thanks to the Unikraft community and mentors for their continued support!
