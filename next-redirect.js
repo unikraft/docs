@@ -62,6 +62,11 @@ async function redirect() {
       permanent: true,
     },
     {
+      source: '/docs/usage/install',
+      destination: '/docs/cli/install',
+      permanent: true,
+    },
+    {
       source: '/docs/concepts/architecture',
       destination: '/docs/internals/architecture',
       permanent: true,

@@ -76,6 +76,10 @@ curl -fsSL https://deb.pkg.kraftkit.sh/gpg.key | \
   sudo gpg --dearmor -o /etc/apt/keyrings/unikraft.gpg
 ```
 
+If you are following older instructions and see a `522` error for
+`https://releases.unikraft.org/linux/gpg`, use
+`https://deb.pkg.kraftkit.sh/gpg.key` instead.
+
 Use the following command to set up the APT repository:
 
 ```console
