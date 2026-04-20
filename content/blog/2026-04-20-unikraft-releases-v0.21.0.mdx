@@ -1,0 +1,116 @@
+---
+title: "Unikraft releases v0.21.0 (Ijiraq)"
+description: |
+  This release introduces a new Platform Abstraction Layer, support for VirtioFS, an overhauled printing subsystem including a dmesg-style log buffer, an improved crash screen and crash management, the ability to reseed the CSPRNG, an implementation of brk() / sbrk() syscalls, basic netlink socket support, and native build system support for JSON Compilation Database.
+publishedDate: 2026-04-20
+authors:
+- Michalis Pappas
+- Andrei Tatar
+- Răzvan Deaconescu
+tags:
+- release
+- announcement
+---
+
+We are proud to announce the latest version of Unikraft, v0.21.0!
+
+This release introduces a new Platform Abstraction Layer, support for VirtioFS, an overhauled printing subsystem including a dmesg-style log buffer, an improved crash screen and crash management, the ability to reseed the CSPRNG, an implementation of `brk()`/`sbrk()` syscalls, basic netlink socket support, and native build system support for [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html).
+
+<Warning title="DEPRECATION NOTICE">
+  **DEPRECATION NOTICE:** The old VFS, vfscore, is now marked as deprecated and will be fully removed from the codebase in a forthcoming release.
+  For help on transitioning, consult [the migration guide](https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0#migrating) or [join us on Discord](https://unikraft.org/discord).
+</Warning>
+
+### The Unikraft Platform Abstraction Layer
+
+Unikraft `0.21.0` introduces the Unikraft Platform Abstraction Layer (UKPAL), the first and largest part of a major platform rearchitecture effort that will continue in upcoming releases.
+The PAL defines a clean interface for the core abstractions required for bare platform execution: CPU context and register management, exception handling, paging and address translation, separating architecture- and platform-specific implementations from the rest of the system.
+As part of this effort, architecture primitives have been reorganized under a new generic arch API, a per-CPU variables library has been introduced, and CPU, memory, and power management have been reworked on top of the new abstractions.
+
+Central to this rearchitecture is `plat/native`, a new platform that implements the PAL for native (baremetal) systems.
+Since paravirtualized platforms like Xen and KVM are largely variations of a native platform, `plat/native` also provides the shared primitives that other platforms build upon, enabling significant code reuse across the platform layer.
+As part of this release, the Xen platform has been fully adapted to the PAL and delegates functionality as necessary to `plat/native` on both `x86_64` and `arm64`.
+The KVM platform is in the midst of a transition, and full adoption is anticipated in upcoming releases.
+
+### Virtio-fs
+
+Unikraft `0.21.0` introduces a VirtioFS filesystem driver (`ukfs-virtiofs`), built on top of the new VFS stack.
+VirtioFS is a host-to-guest shared filesystem based on the FUSE protocol over the virtio transport, and is intended as the replacement for the 9pfs functionality provided by the now-deprecated `vfscore`.
+Users relying on 9pfs for host filesystem access should plan to migrate to VirtioFS, as `vfscore` is marked deprecated and will be removed in a future release.
+
+Enable the driver with `CONFIG_LIBUKFS_VIRTIOFS`.
+The filesystem is registered under the `virtiofs` fstype and can be mounted via the standard fstab mechanism.
+For workloads that benefit from local file caches (and, in the future, shared file mappings), enable `CONFIG_LIBUKFS_VIRTIOFS_IOMEM`, which adds local file caching and support for the `mem()` file operation.
+
+### Printing subsystem overhaul
+
+Unikraft `0.21.0` introduces `libukprint`, a new library dedicated to printing and logging.
+Printing code previously scattered across `libukdebug` now lives in a single, purpose-built library.
+The console verbosity level can be selected at build time via `menuconfig` under `Library Configuration > ukprint > Kernel messages > Verbosity`, with options ranging from `Debug` (most verbose) to `Critical` (least verbose).
+The default remains `Error`.
+Beyond build-time configuration, the log level can now be adjusted at runtime through `libukstore`, paving the way for future `/proc/sys/kernel/printk`-style control.
+
+A major addition is the kernel log buffer, providing `dmesg`-like functionality to Unikraft.
+Enable it with `CONFIG_LIBUKPRINT_LOGBUF` and set the maximum message length with `CONFIG_LIBUKPRINT_LOGBUF_SIZE`.
+The log buffer operates as a circular buffer and can be enabled independently of the kernel console.
+Applications can dump the contents of the log buffer to the console at any time by calling `uk_print_dmesg()`.
+Additionally, `libukprint` headers are now always included in the build, so libraries no longer need to conditionally compile calls to kernel printing facilities or explicitly select `LIBUKPRINT` in their `Config.uk`.
+
+### Improved crash screen and crash management
+
+The crash screen has been reworked and decoupled from the rest of the kernel.
+It is now implemented as an exception handler provided by `libukdebug`, registered at the lowest priority for the `UNHANDLED_EXCEPTION` event.
+When an unhandled exception occurs, the crash screen produces a crashdump and then executes a predefined action -- shutdown by default, or reboot if the platform supports it (`CONFIG_HAVE_REBOOT`).
+
+A new `UK_CRASH_EX()` macro allows triggering a crash from a location different from where the error originated while preserving the original execution context, which is useful for deferred error handling.
+Libraries that need to perform cleanup or logging after a crash can subscribe to the `UK_CRASH_EVENT`, which is raised after the crashdump is produced.
+This event is also raised for crashes triggered via `UK_CRASH_EX()`, which bypasses the normal exception route.
+
+### CSPRNG reseed
+
+Unikraft's cryptographically secure random number generator now supports reseeding, an important property for forward secrecy.
+Without periodic reseeding, an attacker who obtains the CSPRNG's internal state could derive all past and future outputs.
+The CSPRNG is now also automatically reseeded when its internal counter reaches its maximum value.
+
+To enable periodic reseeding, set `CONFIG_LIBUKRANDOM_RESEED=y`.
+The reseed interval is controlled by `CONFIG_LIBUKRANDOM_RESEED_INTERVAL` and defaults to 5 minutes.
+This option requires `libukrandom` to be backed by a hardware device driver as the entropy source.
+Additionally, the new `uk_random_reseed()` API function allows external components to trigger a reseed on demand -- for example, after a system resumes from suspend.
+
+### Compilation Database
+
+Unikraft's build system can now generate a [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html) (`compile_commands.json`), a standardized format that enables a range of post-build tooling such as `clang-tidy`, CodeChecker, and IDE features like code navigation and auto-completion.
+The database is generated compiler-agnostically from the `.cmd` files produced during the build, so it works with both GCC and Clang.
+
+After a successful build, the compilation database is available at `build/compile_commands.json`.
+No additional configuration is required -- the file is generated automatically during the build process.
+
+### Community Activities
+
+#### GSoC
+
+For the 5th year in a row, Unikraft is part of [Google Summer of Code](https://summerofcode.withgoogle.com/).
+We are happy to add more new contributors to the Unikraft community via GSoC.
+
+We are currently reviewing applications and will submit them to Google.
+We will announce shortly who will be our mentees during summer 2026.
+
+#### Unikraft Workshop at WSOS'26
+
+Unikraft was part of the [Winter School of Operating Systems](https://www.betriebssysteme.org/aktivitaeten/winterschools/wsos2026/index.html), held at Schloss Zell an der Pram, Austria, on March 16-20, 2026.
+We organized a workshop where participants took their first steps in the Unikraft ecosystem, particularly the binary compatibility layer and application porting.
+About 20 PhD students with excellent skills in operating systems and low-level programming took part in the workshop.
+It was a great experience, and a wonderful way to connect to the high-quality systems research community in Europe.
+
+#### Unikraft at Open Source Hack Day at UPB
+
+Unikraft took part in the [Open Source Hack Day](https://www.facebook.com/rosedu.org/posts/ne-vedem-s%C3%A2mb%C4%83t%C4%83-4-aprilie-2026-la-open-source-hack-day-powered-by-keysight-tech/1255192063433304/), organized at the Faculty of Automatic Control and Computers, POLITEHNICA Bucharest on April 4, 2026.
+The event gathers open source projects and brings together newcomers and veterans to contribute to the projects - and share a slice of pizza (or more).
+
+About 15 students took part in the workshop and then made their first contributions to the Unikraft catalog and application repositories.
+
+#### Unikraft at the Community Development Lab (ROSEdu, UPB)
+
+Unikraft is an active project at the [Community and Development Lab](https://cdl.rosedu.org/), an extracurricular course organized by ROSEdu and taking place at POLITEHNICA Bucharest, Romania.
+Unikraft has been part of CDL autumn 2025 and is currently part of CDL spring 2026.
+As part of the event, newcomers can make their first contributions to the Unikraft ecosystem and gain first-hand experience with the open-source ecosystem.

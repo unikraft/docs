@@ -1,0 +1,133 @@
+---
+version: 0.21.0
+releaseDate: 2026-04-20
+codename: Ijiraq
+commit: 7351f8b563c9e6773da9fdd5bacde6ac91e32112
+blogPost: /blog/2026-04-20-unikraft-releases-v0.21.0
+changelog: https://github.com/unikraft/unikraft/compare/RELEASE-0.20.0...RELEASE-0.21.0
+---
+
+We are proud to announce the latest version of Unikraft, v0.21.0!
+
+This release introduces a new Platform Abstraction Layer, support for VirtioFS, an overhauled printing subsystem including a dmesg-style log buffer, an improved crash screen and crash management, the ability to reseed the CSPRNG, an implementation of `brk()`/`sbrk()` syscalls, basic netlink socket support, and native build system support for [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html).
+
+> [!WARNING]
+**DEPRECATION NOTICE:** The old VFS, vfscore, is now marked as deprecated and will be fully removed from the codebase in a forthcoming release.
+For help on transitioning, consult [the migration guide](https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0#migrating) or [join us on Discord](https://unikraft.org/discord).
+>
+
+A summary of the most important changes follows.
+
+For more info refer to the accompanying blog post.
+
+## 🚀 New Features
+
+### Platform Abstraction Layer (PAL) & Architecture Rework
+
+- `arch:` Introduce new generic arch API.
+- `lib/ukpal:` Introduce the Platform Abstraction Layer.
+- `plat/native:` Introduce libukplat_native.
+- `plat/xen:` Adapt to PAL (arm64 & x86_64).
+
+### Per-CPU Variables & CPU Management
+
+- `lib/ukpcpuvar:` Introduce per-CPU variables library.
+- `lib/uklcpu:` Introduce CPU management library.
+
+### Paging
+
+- `lib/ukpaging`: Introduce paging library.
+
+### Power Management
+
+- `lib/ukpm`: Introduce system-wide power management library.
+
+### Firmware Drivers
+
+- `drivers/firmware/ukefi`: Implement power management driver for EFI platforms.
+- `drivers/firmware/uksmccc`: Introduce SMC Calling Convention library.
+- `drivers/firmware/ukpsci`: Introduce PSCI library.
+- `drivers/firmware/ukacpi`: Add MADT-based CPU idx/id map filler; migrate ACPI code from plat/ to drivers/firmware.
+
+### Filesystem & Storage
+
+- `lib/ukfs-virtiofs`: Introduce VirtioFS filesystem driver.
+- `drivers/virtio/fs`: Add Virtio FS device driver.
+- `lib/ukfs`: Introduce node driver template.
+
+### Printing
+
+- `lib/ukprint`: Overhaul printing subsystem with dedicated console management, optional dmesg-style kernel log buffer, raw printing facilities, and runtime console loglevel adjustment via ukstore.
+
+### System Call and Process
+
+- `lib/posix-process`: Add per-process sbrk/brk implementations.
+
+### Random Number Generation
+
+- `lib/ukrandom`: Add manual and periodic CSPRNG reseed mechanism.
+
+### Crash Handling
+
+- `lib/ukdebug`: Add crash handling facilities with crashdump support.
+- `arch`: Add support for nested exception handling.
+
+### Time
+
+- `lib/posix-time`: Provide the `times()` syscall and `CLOCK_THREAD_CPUTIME_ID`; support `clock_getres()` for all clocks.
+
+### Networking
+
+- `lib/posix-netlink`: Add basic Netlink socket support (route and link discovery).
+
+### Build System
+
+- `support/build`: Add native [JSON Compilation Database](https://clang.llvm.org/docs/JSONCompilationDatabase.html) support for IDE and tooling integration (GCC & Clang).
+
+## 🐛 Bug Fixes & Improvements
+
+### Architecture & Platform
+
+- `arch/x86`: Handle ectx in AVX512 cases;
+- `plat/common/arm64`: Enable FP/SIMD on secondary cores
+- `plat/kvm/arm`: Do not check for system calls on IRQ entry
+- `plat/kvm/x86`: Enable AVX512 if available; fix lxboot do_uk_reloc call stack alignment; do hardcoded ACPI port/value write as shutdown fallback
+
+### System Call and Process
+
+- `lib/posix-process`: Use exit_signal from clone(); raise clone event on PID1; update PID allocation policy
+- `lib/syscall_shim`: Don't inline syscall enter/exit tab wrapper; fix strace build error
+
+### Filesystem
+
+- `lib/posix-vfs`: Fix off-by-1 in return of getcwd; fully support typed vopen
+- `lib/posix-fstab`: Tolerate mkdir failures; correctly handle mounting initrd
+- `lib/ukfs`: Fix handling of lookup returns, live template type assumption, pathutil assert; allow readlink operation to fail; update typed vopen API
+- `lib/devfs`: Make device name size configurable; Expose `device_destroy` to other link targets
+- `lib/vfscore`: Mark vfscore as deprecated in Kconfig
+
+### Random Number Generation
+
+- `lib/ukrandom`: Fix incorrect size parameters; decouple crypto implementation from swrandom API; improve efficiency of `chacha_rand32()`; add end-to-end tests
+
+### Memory Management
+
+- `lib/ukvmem`: Do not assert on uninitialized DMA VMA creation
+- `lib/ukfallocbuddy`: Fix definition of `BFA_DIRECT_MAPPED`
+- `lib/ukallocregion`: Fix variable name in allocregion_posix_memalign
+
+### Networking
+
+- `lib/posix-socket`: Don't block if `MSG_DONTWAIT` is set in flags
+
+### Debugging
+
+- `lib/ukdebug`: Make `UK_BUG` an unconditional halt; mark crash function noreturn; deprecate asmdump
+
+### Boot
+
+- `lib/ukboot`: Halt system instead of crashing on init_mainlike return
+
+### Printing
+
+- `lib/posix-tty`: Fix truncated device names; fix TTY devfs initcall priority typo
