@@ -14,7 +14,7 @@ Let's start by understanding the basic layout of the Unikraft working directory,
 We are also going to take a look at how we can build basic applications and how we can extend their functionality and support by adding ported external libraries.
 
 Before everything, we shall take a bird's eye view of what Unikraft is and what we can do with it.
-Unikraft is a unikernel [SDK](https://en.wikipedia.org/wiki/Software_development_kit), meaning it offers you the blocks (source code, configuration and build system, runtime support) to build and run unikernels (i.e. applications such as `redis`, `nginx` or `sqlite`).
+Unikraft is a unikernel [SDK](https://en.wikipedia.org/wiki/Software_development_kit), meaning it offers you the blocks (source code, configuration and build system, runtime support) to build and run unikernels (i.e., applications such as `redis`, `nginx` or `sqlite`).
 A unikernel is a single image file that can be loaded and run as a separate running instance, most often a virtual machine.
 
 Summarily, the Unikraft components are shown in the image below:
@@ -37,8 +37,8 @@ It typically provides the `main()` function (or equivalent) and is reliant on Un
 Applications that have been ported on top of Unikraft are located in repositories in the [Unikraft organization](https://github.com/unikraft/), those whose names start with `app-`.
 
 An important role of the core Unikraft component is providing support for different platforms and architectures.
-A platform is the virtualization / runtime environment used to run the resulting image (i.e QEMU, Firecracker, VMWare etc.).
-An architecture details the CPU and memory specifics that will run the resulting image (i.e. x86, ARM).
+A platform is the virtualization / runtime environment used to run the resulting image (i.e., QEMU, Firecracker, VMWare etc.).
+An architecture details the CPU and memory specifics that will run the resulting image (i.e., x86, ARM).
 
 We can  use a lower-level configuration and build system (based on [Kconfig](https://www.kernel.org/doc/html/latest/kbuild/kconfig-language.html) and [make](https://www.gnu.org/software/make/)) to get a grasp of how everything works.
 The low-level system will be further detailed in the next session.
@@ -105,7 +105,8 @@ $ make menuconfig
 
 This will open a menu-driven user interface in which you can choose the target architecture, virtualization platform, and configuration options for both internal and external libraries of the resulting unikernel image.
 
-We are met with the following configuration menu. Let's pick the x86 architecture:
+We are met with the following configuration menu.
+Let's pick the x86 architecture:
 
 ![arch selection menu](/images/menuconfig_select_arch.png)
 
@@ -146,7 +147,9 @@ The process should end with the following output:
   GZ      c-hello_qemu-x86_64.gz
 make[1]: Leaving directory '/projects/unikraft/catalog-core/repos/unikraft'
 ```
-Notice that each line in `make`'s output consists of an operation in the build process (i.e compiling, linking, symbol striping etc.) and a corresponding generated file.
+
+Notice that each line in `make`'s output consists of an operation in the build process (i.e., compiling, linking, symbol stripping etc.)
+and a corresponding generated file.
 
 ### Running
 
@@ -196,7 +199,9 @@ When you exit the menu, you will most likely see this warning message:
 *** This is to ensure that the new setting is applied
 *** to every compilation unit.
 ```
-This is a very good recommandation and you'll use it a lot when configuring and building applications - so make sure to run
+
+This is a very good recommendation and you'll use it a lot when configuring and building applications.
+So make sure to run
 
 ```console
 $ make properclean
@@ -209,7 +214,8 @@ $ make -j$(nproc)
 ```
 
 ...to finally build an ARM64 unikernel.
-Since we are targeting a different architecture, we have to use QEMU to emulate an ARM64 CPU:
+Since we are targeting a different architecture,
+we have to use QEMU to emulate an ARM64 CPU:
 
 ```console
 $ qemu-system-aarch64 -kernel workdir/build/c-hello_qemu-arm64 -nographic -machine virt -cpu cortex-a57
@@ -217,7 +223,9 @@ $ qemu-system-aarch64 -kernel workdir/build/c-hello_qemu-arm64 -nographic -machi
 
 The `-kernel` and `-nographic` are the same as in the x86 case.
 The `-machine` option is used to specify which `ARM` board we want to emulate.
-We can choose among Raspberry PI, Siemens, NXP boards and so on, but we are instead using the generic platform `virt`, which does not correspond to real hardware and is the board [recommended by QEMU](https://www.qemu.org/docs/master/system/arm/virt.html) to run guests.
+We can choose among Raspberry PI, Siemens, NXP boards and so on,
+but we are instead using the generic platform `virt`,
+which does not correspond to real hardware and is the board [recommended by QEMU](https://www.qemu.org/docs/master/system/arm/virt.html) to run guests.
 Lastly, the `-cpu` option is used for specifying the CPU whose ISA we want to emulate.
 Some CPUs differ, for example, with regards to the [extensions](https://sourceware.org/binutils/docs/as/AArch64-Extensions.html) they implement.
 The `cortex-a57` is sufficient for our examples.
@@ -234,6 +242,7 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
                   Atlas 0.13.1~5eb820bd
 Hello from Unikraft!
 ```
+
 ### Enabling kernel logs
 
 We will now try to further configure our `c-hello` application.
@@ -256,7 +265,8 @@ To do this, we can proceed to the `Library Configuration` menu:
 
 ![library selection menu](/images/menuconfig_select_library.png)
 
-We can then see all of Unikraft's internal libraries listed. Scroll down to `ukdebug`, and hit enter:
+We can then see all of Unikraft's internal libraries listed.
+Scroll down to `ukdebug`, and hit enter:
 
 ![ukdebug select1](/images/menuconfig_select_ukdebug.png)
 
@@ -269,11 +279,14 @@ We want to see all the messages (info, warnings, errors) logged by the kernel.
 
 As before, press the `Save` button and exit the configuration menu by repeatedly selecting `Exit`.
 
-Now, if we build and run the application in the same manner (i.e with `$ make -j $(nproc)`, followed by  `$ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic`), we should see a more detailed output:
+Now, if we build and run the application in the same manner (i.e., with `$ make -j $(nproc)`, followed by  `$ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic`),
+we should see a more detailed output:
 
 ```console
 $ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic
+```
 
+```text
 SeaBIOS (version Arch Linux 1.16.2-1-1)
 
 
@@ -323,7 +336,9 @@ You should get an output similar to this one:
 
 ```console
 $ qemu-system-x86_64 -kernel build/c-hello_qemu-x86_64 -nographic
+```
 
+```text
 SeaBIOS (version Arch Linux 1.16.2-1-1)
 
 
