@@ -19,7 +19,8 @@ You can list the applications in the registry by using:
 ```bash
 kraft pkg ls --apps --all --update
 ```
-```
+
+```text
 TYPE  NAME                     VERSION  FORMAT  MANIFEST  INDEX    PLAT
 app   unikraft.org/base        latest   oci     18cd70e   af5c5ed  qemu/x86_64
 app   unikraft.org/base        latest   oci     ac5efa1   af5c5ed  fc/x86_64
@@ -57,7 +58,7 @@ kraft run -W unikraft.org/helloworld
 This will default to the `x86_64` architecture and to the `qemu` platform.
 It will pull and run run the application from the registry:
 
-```
+```text
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/helloworld
 o.   .o       _ _               __ _
@@ -84,7 +85,8 @@ Similarly, we can pull and run Nginx:
 ```bash
 kraft run -W unikraft.org/nginx:1.15
 ```
-```
+
+```text
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 o.   .o       _ _               __ _
@@ -101,7 +103,8 @@ In order to connect to it, we need to pass a port mapping, similar to [`docker` 
 ```bash
 kraft run -W -p 8080:80 unikraft.org/nginx:1.15
 ```
-```
+
+```text
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 Powered by
@@ -112,7 +115,6 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
  OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
                  Telesto 0.16.1~b1fa7c5
 ```
-
 
 <Info>
 You can use Nginx version 1.25 instead of version 1.15 by appending `:1.25` to the `kraft run` command.
@@ -125,7 +127,8 @@ Query the server to get the index page:
 ```bash
 curl localhost:8080
 ```
-```
+
+```text
 <!DOCTYPE html>
 <html>
 <head>
@@ -148,7 +151,8 @@ First create a bridge interface, as `root` (prefix with `sudo` if required):
 ```bash
 sudo kraft run --network virbr0 unikraft.org/nginx:1.15
 ```
-```
+
+```text
  i  using arch=x86_64 plat=qemu
 [+] pulling unikraft.org/nginx
 en1: Interface is up
@@ -166,7 +170,8 @@ The IP address used is typically the first available address (`172.44.0.2`, if t
 ```bash
 curl 172.44.0.2
 ```
-```
+
+```text
 <!DOCTYPE html>
 <html>
 <head>
