@@ -1,27 +1,20 @@
 ---
-
-title: Porting Application to Unikraft
+title: Porting Application and Libraries to Unikraft
 description: |
-  We explore how to port an application on top of Unikraft.
+  We explore how to port a new application and its external library dependencies on top of Unikraft.
 ---
 
-As you have seen in the previous sessions, there are several applications already ported that you can use with Unikraft.
-But what if the application you need is not among them?
-We will focus today on how to port a new simple application.
+As you have seen in the previous sessions, there are several applications already ported that you can use with Unikraft. But what if the application you need is not among them? We will focus today on how to port a new simple application and the external libraries it might require.
 
-We will use the [`GNU coreutils`](https://github.com/coreutils/coreutils) applications bundle.
-It contains a bunch of commonly used applications, like `echo`, `cp`, `mv`, `mkdir`, `stat`, `tr`, etc.
-Since there are a lot of applications, we will not port all of them, we will just choose a few as an example.
+We will use the [`GNU coreutils`](https://github.com/coreutils/coreutils) applications bundle. It contains a bunch of commonly used applications, like `echo`, `cp`, `mv`, `mkdir`, `stat`, `tr`, etc. Since there are a lot of applications, we will not port all of them, we will just choose a few as an example.
 
 ## Porting `echo`
 
-We will start with porting one of the simpler applications from `coreutils`, **`echo`**.
-We will use the [`c-hello`](https://github.com/unikraft/catalog-core/tree/main/c-hello) application as a starting point.
+We will start with porting one of the simpler applications from `coreutils`, **`echo`**. We will use the [`c-hello`](https://github.com/unikraft/catalog-core/tree/main/c-hello) application as a starting point.
 
 As you noticed in the previous sessions, there are several files that we are interested in when using the build system, namely `Makefile` and `Makefile.uk`.
 
-Since the `echo` command will use a libc, the first step is to add `Musl` to the build.
-For this, we have to follow a few steps:
+Since the `echo` command will use a libc, the first step is to add `Musl` to the build. For this, we have to follow a few steps:
 
 1. Add the following lines in the `setup.sh` script, so we can have the `Musl` repository in our setup:
 
@@ -33,27 +26,25 @@ fi
 check_exists_and_create_symlink "libs/musl"
 ```
 
-1. Re-run the `setup.sh` script again, you should have a new directory: `workdir/libs/musl`.
+Re-run the setup.sh script again, you should have a new directory: `workdir/libs/musl`.
 
-```console
+```shell
 $ ls workdir/libs/musl
 abort.c          Makefile.rules            Makefile.uk.musl.errno     Makefile.uk.musl.locale ......
 ```
 
-1. In the `Makefile`, change `UK_LIBS` to `UK_LIBS ?= $(LIBS_BASE)/musl`.
-   After all that, when you run `make menuconfig`, you should see `musl: A C standard library` under `Library Configuration -->`.
+In the Makefile, change `UK_LIBS` to `UK_LIBS ?= $(LIBS_BASE)/musl`.
 
-After all that, we can start the actual porting.
-In order to not get confused between multiple files, we will create two directories, `include/` and `src/`, where we will copy the header and source files that we need.
+After all that, when you run `make menuconfig`, you should see `musl: A C standard library` under Library Configuration. After all that, we can start the actual porting. In order to not get confused between multiple files, we will create two directories, `include/` and `src/`, where we will copy the header and source files that we need.
 
-```console
+```shell
 $ mkdir include/
 $ mkdir src/
 ```
 
-After that, we can clone the `coreutils` and extract the files necessary for `echo`:
+After that, we can clone the coreutils and extract the files necessary for echo:
 
-```console
+```shell
 $ git clone https://github.com/coreutils/coreutils coreutils
 $ cp coreutils/src/echo.c src/
 $ cp coreutils/src/*.h include/
@@ -66,53 +57,41 @@ APPCHELLO_SRCS-y += $(APPCHELLO_BASE)/src/echo.c
 APPCHELLO_CINCLUDES-y += -I$(APPCHELLO_BASE)/include
 ```
 
-This tells the build system to use the `echo.c` file as a source file, and the `include/` directory as a path to search for header files.
+This tells the build system to use the echo.c file as a source file, and the include/ directory as a path to search for header files. After all this is done, we can try to run make.
 
-After all this is done, we can try to run `make`.
-We will receive a lot of build errors, as expected.
-We need to solve them one by one.
+We will receive a lot of build errors, as expected. We need to solve them one by one. First, we will receive some errors about missing headers, like config.h, timespec.h, etc. To solve this, we will use the very blunt approach, kill them all. We remove all the #include lines from the echo.c file, and go from there.
 
-First, we will receive some errors about missing headers, like `config.h`, `timespec.h`, etc.
-To solve this, we will use the very blunt approach, `kill them all`.
-We remove all the `#include` lines from the `echo.c` file, and go from there.
-
-**Note** that this is obviously a bad idea for most applications.
-We should find the headers and copy them, but in our case, since `echo` does not need much, we can figure out what to add on the way.
-
-For now, we leave only the `stdio.h` and `sys/types.h` as include statements.
-We will add more of them later.
+Note that this is obviously a bad idea for most applications. We should find the headers and copy them, but in our case, since echo does not need much, we can figure out what to add on the way. For now, we leave only the stdio.h and sys/types.h as include statements. We will add more of them later.
 
 Now, we receive some errors regarding undeclared things:
 
-```text
-/projects/unikraft/catalog-core/c-hello/src/echo.c:29:30: error: ‘false’ undeclared here (not in a function)
+```plaintext
+/projects/unikraft/catalog-core/c-hello/src/echo.c:29:30: error: 'false' undeclared here (not in a function)
    29 | enum { DEFAULT_ECHO_TO_XPG = false };
-/projects/unikraft/catalog-core/c-hello/src/echo.c:37:21: error: ‘EXIT_SUCCESS’ undeclared (first use in this function)
-   37 |   affirm (status == EXIT_SUCCESS);
+/projects/unikraft/catalog-core/c-hello/src/echo.c:37:21: error: 'EXIT_SUCCESS' undeclared (first use in this function)
+   37 | affirm (status == EXIT_SUCCESS);
    ......
 ```
 
-This is fine, it happens because we removed all the headers, as expected.
-We can add some headers now.
+This is fine, it happens because we removed all the headers, as expected. We can add some headers now.
 
 ```c
 #include <stdbool.h>
 #include <stdlib.h>
 ```
 
-This way we get rid of some of the undefined symbols.
-Next, we see some weird undefined functions called in the `usage()` function:
+This way we get rid of some of the undefined symbols. Next, we see some weird undefined functions called in the `usage()` function:
 
-```text
-/projects/unikraft/catalog-core/c-hello/src/echo.c:39:3: warning: implicit declaration of function ‘affirm’ [-Wimplicit-function-declaration]
-   39 |   affirm (status == EXIT_SUCCESS);
+```plaintext
+/projects/unikraft/catalog-core/c-hello/src/echo.c:39:3: warning: implicit declaration of function 'affirm' [-Wimplicit-function-declaration]
+   39 | affirm (status == EXIT_SUCCESS);
       |   ^~~~~~
-/projects/unikraft/catalog-core/c-hello/src/echo.c:41:11: warning: implicit declaration of function ‘_’ [-Wimplicit-function-declaration]
-   41 |   printf (_("\
+/projects/unikraft/catalog-core/c-hello/src/echo.c:41:11: warning: implicit declaration of function '_' [-Wimplicit-function-declaration]
+   41 | printf (_("\
       |           ^
 ```
 
-Let's skip the usage function, we can just have the usage function exit.
+Let's skip the `usage` function, we can just have the `usage` function exit.
 
 ```c
 void
@@ -122,11 +101,9 @@ usage (int status)
 }
 ```
 
-Finally, we only have one screen of errors to solve.
-We get an `LC_ALL undeclared` error, we need to `#include <locale.h>`.
+Finally, we only have one screen of errors to solve. We get an `LC_ALL` undeclared error, we need to `#include <locale.h>`.
 
-There are some more GNU-specific functions, like `version_etc`, `proper_name`, `bindtextdomain`, etc.
-They have to do just with the program metadata, like authors, licensing and versioning, so we can delete them (the following lines:)
+There are some more GNU-specific functions, like `version_etc`, `proper_name`, `bindtextdomain`, etc. They have to do just with the program metadata, like authors, licensing and versioning, so we can delete them (the following lines:)
 
 ```c
 initialize_main (&argc, &argv);
@@ -139,14 +116,11 @@ version_etc (stdout, PROGRAM_NAME, PACKAGE_NAME, Version, AUTHORS,
        (char *) nullptr);
 ```
 
-We can also remove the `FALLTHROUGH` line from the main switch statement, since it is used just to silence a warning.
+We can also remove the FALLTHROUGH line from the main switch statement, since it is used just to silence a warning.
 
-Finally, when we try to `make` again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit declaration of `c_isxdigit`.
-Other than that, there are the `FALLTHROUGH` warnings from above.
+Finally, when we try to make again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit declaration of `c_isxdigit`. Other than that, there are the `FALLTHROUGH` warnings from above. For the `STREQ`, we can search that in the coreutils repo:
 
-For the `STREQ`, we can search that in the `coreutils` repo:
-
-```console
+```shell
 $ grep -r STREQ coreutils
 ...
 coreutils/tests/df/skip-duplicates.sh: #define STREQ(a, b) (strcmp (a, b) == 0)
@@ -159,10 +133,7 @@ This makes sense, it's just a wrapper over `strcmp`, so let's copy it into our s
 #define STREQ(a, b) (strcmp (a, b) == 0)
 ```
 
-We also need to `#include <string.h>`, since we use `strcmp`.
-
-The `close_stdout` function is nowhere in the `coreutils/` repo, so we can assume that it's a function that closes the standard output descriptor, since it's called at the program exit.
-We add it to our source file:
+We also need to `#include <string.h>`, since we use `strcmp`. The `close_stdout` function is nowhere in the `coreutils/` repo, so we can assume that it's a function that closes the standard output descriptor, since it's called at the program exit. We add it to our source file:
 
 ```c
 void close_stdout(void)
@@ -171,15 +142,9 @@ void close_stdout(void)
 }
 ```
 
-For this, we need to also include `unistd.h`.
+For this, we need to also include `unistd.h`. Now, the only thing left is the `c_isxdigit` function. Again, it's not found in the coreutils repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctype.h` header. With all of this, our application finally builds. We can run it as usual, using qemu:
 
-Now, the only thing left is the `c_isxdigit` function.
-Again, it's not found in the `coreutils` repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctype.h` header.
-
-With all of this, our application finally builds.
-We can run it as usual, using `qemu`:
-
-```console
+```shell
 $ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64
 Powered by
 o.   .o       _ _               __ _
@@ -193,13 +158,12 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 [    2.469429] Info: [libukboot] <boot.c @  498> Environment variables:
 [    2.469967] Info: [libukboot] <boot.c @  500>        PATH=/bin
 [    2.470469] Info: [libukboot] <boot.c @  506> Calling main(1, ['workdir/build/c-hello_qemu-x86_64'])
-(an empty newline here)
 ```
 
-This will lead to nothing being printed, as we would run `echo` with no arguments.
-To pass arguments to our application, we can use the `-append` flag:
+This will lead to nothing being printed, as we would run `echo` with no arguments. To pass arguments to our application, we can use the `-append` flag:
 
-```console
+```shell
+
 $ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64 -append "Hello from Unikraft"
 Powered by
 o.   .o       _ _               __ _
@@ -217,16 +181,166 @@ Hello from Unikraft
 ```
 
 So finally, `echo` works.
-
 ## Porting `pwd`
 
-Using the same steps, try to port the `pwd` command, located in `pwd.c`.
-Some tips:
+Using the same steps, try to port the `pwd` command, located in `pwd.c`. Some tips:
 
-* `#define nullptr NULL`
-* `typedef long int idx_t;`
-* You can remove everything related to `robust_getcwd`, since Unikraft is POSIX-compatible, so it will not use those functions.
-* You can change the weird `x*alloc` functions to simple `malloc`s.
+- `#define nullptr NULL`
+- `typedef long int idx_t;`
+- You can remove everything related to `robust_getcwd`, since Unikraft is POSIX-compatible, so it will not use those functions.
+- You can change the weird `x*alloc` functions to simple `malloc`s.
 
-When you run the unikernel, it should print `/`, as it is in the root directory.
-You can use a filesystem and change the working directory to test that it works fine, you can see the `nginx` example on how to run an application using a filesystem.
+When you run the unikernel, it should print `/`, as it is in the root directory. You can use a filesystem and change the working directory to test that it works fine, you can see the nginx example on how to run an application using a filesystem.
+Porting External Libraries
+
+Being a library operating system, Unikraft unikernels are mainly a collection of internal and external libraries, alongside the ported application. As a consequence, a large library pool is mandatory in order to make the project compatible with as many applications as possible.
+
+An application ported on top of Unikraft is essentially a library with an already provided main() function. External libraries require files specific to the Unikraft build system (Config.uk, Makefile.uk, Makefile) together with glue code that might be missing from the Unikraft ecosystem.
+Directory Structure
+
+External libraries should be placed in the `.unikraft/libs` folder. The standard working directory structure looks like this:
+
+```plaintext
+app-directory/
+|-- Makefile
+|-- Makefile.uk
+`-- .unikraft/
+    |-- libs/
+    |   `-- lib-mylib/
+    `-- unikraft/
+```
+
+Examining a Ported Library: libhogweed
+
+Let's examine core components of an existing port, such as lib-libhogweed.
+Glue Code
+
+Sometimes, an external library's requirements are not fully present in Unikraft. The solution is to add "glue code" manually to the library's sources. Glue code is also useful when a library includes test modules; you can wrap them into a single function that Unikraft can invoke.
+Configuration: Config.uk
+
+The `Config.uk` file defines the menu configuration for `make menuconfig`:
+
+```plaintext
+menuconfig LIBHOGWEED
+    bool "libhogweed - Public-key algorithms"
+    default n
+    select LIBMUSL # Include dependencies
+```
+
+You can also create auxiliary menus for test cases:
+
+```plaintext
+config TESTSUITE
+    bool "testsuite - tests for libhogweed"
+    default n
+    if TESTSUITE
+        config TEST_X
+            bool "test x functionality"
+            default y
+    endif
+```
+
+Build Rules: Makefile.uk
+
+The `Makefile.uk` sets header search paths and can trigger configuration scripts like `./configure`:
+
+```makefile
+# Include glue header paths
+LIBHOGWEED_COMMON_INCLUDES-y += -I$(LIBHOGWEED_BASE)/include
+
+# Trigger internal configuration scripts
+$(LIBHOGWEED_EXTRACTED)/config.h: $(LIBHOGWEED_BUILD)/.origin
+    $(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
+        cd $(LIBHOGWEED_EXTRACTED) && ./configure --enable-mini-gmp \
+    )
+LIBHOGWEED_PREPARED_DEPS = $(LIBHOGWEED_EXTRACTED)/config.h
+```
+
+## Practical Work: Porting kdtree
+
+Now that you understand the process of porting libraries, let's practice by porting the kdtree library. This exercise will help you apply what you've learned about the Unikraft build system and glue code.
+
+### Step 1: Set up the Library Structure
+
+First, define helper variables in your `Makefile.uk` to point to the extracted archive. After running `make prepare`, the library content will be under `build/libkdtree/origin/`. Use variables to reference these paths consistently:
+
+```makefile
+LIBKDTREE_BASE = $(UK_LIBS)/libkdtree
+LIBKDTREE_EXTRACTED = $(LIBKDTREE_BUILD)/origin
+```
+
+### Step 2: Add Headers to the Build
+
+Identify where the library's header files are located and add them to the build system's include paths:
+
+```makefile
+LIBKDTREE_COMMON_INCLUDES-y += -I$(LIBKDTREE_EXTRACTED)/include
+```
+
+This tells the build system where to find the library's public headers.
+
+### Step 3: Register Source Files
+
+Add the library's C source code files to the build system. Identify the core source files and register them in `Makefile.uk`:
+
+```makefile
+LIBKDTREE_SRCS-y += $(LIBKDTREE_EXTRACTED)/src/kdtree.c
+LIBKDTREE_SRCS-y += $(LIBKDTREE_EXTRACTED)/src/kdutil.c
+```
+
+### Step 4: Verify Initial Compilation
+
+Run `make` to check if there are any compilation errors:
+
+```shell
+$ make
+```
+
+If you encounter unresolved dependencies, try adding `musl` to your `Config.uk`:
+
+```plaintext
+select LIBMUSL
+```
+
+A successful compilation will show libkdtree objects in the build output.
+
+### Step 5: Add Test Configurations
+
+If the library includes test cases, add configuration variables for them in `Config.uk`:
+
+```plaintext
+config LIBKDTREE_TESTS
+    bool "kdtree tests"
+    default n
+```
+
+### Step 6: Register Test Sources
+
+In your `Makefile.uk`, register the test source files. Use compiler flags (`-D`) to rename main functions and avoid conflicts:
+
+```makefile
+LIBKDTREE_SRCS-$(CONFIG_LIBKDTREE_TESTS) += $(LIBKDTREE_EXTRACTED)/tests/test_kdtree.c
+LIBKDTREE_CFLAGS-$(CONFIG_LIBKDTREE_TESTS) += -Dmain=test_kdtree_main
+```
+
+### Step 7: Integrate Tests with Your Application
+
+In your application's `main.c`, call the test wrapper function:
+
+```c
+#ifdef CONFIG_LIBKDTREE_TESTS
+extern int test_kdtree_main(void);
+test_kdtree_main();
+#endif
+```
+
+### Success Criteria
+
+When you run the unikernel with the tests enabled, you should see output like:
+
+```plaintext
+Total tests : 2
+Total errors: 0
+```
+
+This indicates that the library has been successfully ported and all tests are passing.
