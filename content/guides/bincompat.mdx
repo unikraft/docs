@@ -15,25 +15,25 @@ We need to pass the filesystem to the Unikraft application at runtime.
 We will do that by creating a `cpio` archive.
 Also, we will give the program name that we want to run as an argument to elfloader, using `-append`.
 
-### Run a Simple `helloworld` in Bincompat Mode
+## Run a Simple `helloworld` in Bincompat Mode
 
 Follow the instructions from the `README` file of [`elfloader`](https://github.com/unikraft/catalog-core/tree/main/elfloader-basic) and run a simple application.
 The application code that will be compiled and run will be placed in `rootfs/`.
 
-### Modify the `helloworld` Applications
+## Modify the `helloworld` Applications
 
 Make some changes in the code from `rootfs/`.
 Make the application more complex, change it however you want.
 You can add more source files, but make sure to add them to the `Makefile`.
 
-### Use Networking in Bincompat Mode
+## Use Networking in Bincompat Mode
 
 Aplications that need networking will need some extra libraries.
 Follow the instructions in the `README` file.
 For this, we will use the [`elfloader-net`](https://github.com/unikraft/catalog-core/tree/main/elfloader-net) application.
 As in the prevoius sessions, the IP address of the application will be `172.44.0.2`.
 
-### Use a Binary from Your System
+## Use a Binary from Your System
 
 Choose an application from your system.
 You can use something similar to what we used in the last session, `ls`, `id`, `echo`, `cat`, etc.
