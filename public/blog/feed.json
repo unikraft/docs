@@ -1,0 +1,703 @@
+{
+    "version": "https://jsonfeed.org/version/1",
+    "title": "Unikraft Blog",
+    "home_page_url": "https://unikraft.org/blog",
+    "description": "A fast, secure and open-source Unikernel Development Kit.",
+    "icon": "https://unikraft.org/logo.png",
+    "author": {
+        "name": "UniKernels",
+        "url": "https://unikraft.org"
+    },
+    "items": [
+        {
+            "id": "https://unikraft.org/blog/2025-09-09-unikraft-filesystem-stack",
+            "url": "https://unikraft.org/blog/2025-09-09-unikraft-filesystem-stack",
+            "title": "Unikraft Filesystem Stack",
+            "summary": "This blog post provides a technical overview of the new VFS stack introduced in Unikraft 0.20.0.",
+            "date_modified": "2025-09-09T00:00:00.000Z",
+            "author": {
+                "name": "Andrei Tatar"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0",
+            "url": "https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0",
+            "title": "Unikraft releases v0.20.0 (Kiviuq)",
+            "summary": "This release comes with the much anticipated redesign and implementation of VFS, which brings enhanced performance, better maintainability, and improved compatibility with modern applications.\n",
+            "date_modified": "2025-09-08T00:00:00.000Z",
+            "author": {
+                "name": "Michalis Pappas"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2025-07-17-unikraft-releases-v0.19.1",
+            "url": "https://unikraft.org/blog/2025-07-17-unikraft-releases-v0.19.1",
+            "title": "Unikraft releases v0.19.1 (Pan)",
+            "summary": "This release contains fixes and improvements to Unikraft.\n",
+            "date_modified": "2025-07-17T00:00:00.000Z",
+            "author": {
+                "name": "Michalis Pappas"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2025-05-23-unikraft-releases-v0.19.0",
+            "url": "https://unikraft.org/blog/2025-05-23-unikraft-releases-v0.19.0",
+            "title": "Unikraft releases v0.19.0 (Pan)",
+            "summary": "This release contains features and improvements to Unikraft.\n",
+            "date_modified": "2025-05-23T00:00:00.000Z",
+            "author": {
+                "name": "Michalis Pappas"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2025-05-22-unikraft-gsoc25",
+            "url": "https://unikraft.org/blog/2025-05-22-unikraft-gsoc25",
+            "title": "Five Unikraft Projects Selected at Google Summer of Code 2025",
+            "summary": "It is our pleasure to announce that 5 Unikraft projects are part of Google Summer of Code 2025 (GSoC'25).\n",
+            "date_modified": "2025-05-22T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2025-05-15-multiprocess",
+            "url": "https://unikraft.org/blog/2025-05-15-multiprocess",
+            "title": "Multiprocess support on Unikraft",
+            "summary": "This blog post provides technical details on the implementation of multiprocess support introduced in Unikraft 0.19.0.",
+            "date_modified": "2025-05-15T00:00:00.000Z",
+            "author": {
+                "name": "Simon Kuenzer"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-12-21-unikraft-releases-v0.18.0",
+            "url": "https://unikraft.org/blog/2024-12-21-unikraft-releases-v0.18.0",
+            "title": "Unikraft releases v0.18.0 (Helene)",
+            "summary": "This release contains features and improvements to Unikraft.\n",
+            "date_modified": "2024-12-21T00:00:00.000Z",
+            "author": {
+                "name": "Michalis Pappas"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-22-gsoc-multiboot2",
+            "url": "https://unikraft.org/blog/2024-08-22-gsoc-multiboot2",
+            "title": "Multiboot2 Support in Unikraft",
+            "summary": "In this blog post, I discuss the final weeks of my GSoC project, highlighting the process of testing Nuktiboot2 support on the helloworld and nginx applications, and reflecting on the progress made in enhancing the boot process.\n",
+            "date_modified": "2024-08-22T00:00:00.000Z",
+            "author": {
+                "name": "Maria Pana"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-22-gsoc-uefi-gop",
+            "url": "https://unikraft.org/blog/2024-08-22-gsoc-uefi-gop",
+            "title": "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part IV",
+            "summary": "This is the fourth post in a series of posts where I talk about my progress with the project.\n",
+            "date_modified": "2024-08-22T00:00:00.000Z",
+            "author": {
+                "name": "Sriprad Potukuchi"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-22-unikraft-gsoc-benchmarking-mimalloc",
+            "url": "https://unikraft.org/blog/2024-08-22-unikraft-gsoc-benchmarking-mimalloc",
+            "title": "GSoC'24: Benchmarking mimalloc",
+            "summary": "Different applications have different memory usage patterns and perform better\nwhen using dedicated memory allocators. Right now, the buddy allocator is the only\navailable memory allocator used in Unikraft, so this GSoC project aims to \nport more memory allocators to it, starting with mimalloc.\n",
+            "date_modified": "2024-08-22T00:00:00.000Z",
+            "author": {
+                "name": "Yang Hu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-07-gsoc-uefi-gop",
+            "url": "https://unikraft.org/blog/2024-08-07-gsoc-uefi-gop",
+            "title": "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part III",
+            "summary": "This is the third post in a series of posts where I talk about my progress with the project.\n",
+            "date_modified": "2024-08-07T00:00:00.000Z",
+            "author": {
+                "name": "Sriprad Potukuchi"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-02-unikraft-gsoc-lxboot_x86",
+            "url": "https://unikraft.org/blog/2024-08-02-unikraft-gsoc-lxboot_x86",
+            "title": "GSoC'24: Linux x86 Boot Protocol Support",
+            "summary": "The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.\n",
+            "date_modified": "2024-08-02T00:00:00.000Z",
+            "author": {
+                "name": "Mihnea Firoiu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-01-gsoc-multiboot2",
+            "url": "https://unikraft.org/blog/2024-08-01-gsoc-multiboot2",
+            "title": "Multiboot2 Support in Unikraft",
+            "summary": "In this blog post, I go over the debugging process and the progress made in the implementation of Multiboot2 support these past three weeks of GSoC.\n",
+            "date_modified": "2024-08-01T00:00:00.000Z",
+            "author": {
+                "name": "Maria Pana"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-08-01-unikraft-gsoc-debugging-mimalloc",
+            "url": "https://unikraft.org/blog/2024-08-01-unikraft-gsoc-debugging-mimalloc",
+            "title": "GSoC'24: Debugging the Multithreaded Memory Allocation Interface",
+            "summary": "Different applications have different memory usage patterns and perform better\nwhen using dedicated memory allocators. Right now, the buddy allocator is the only\navailable memory allocator used in Unikraft, so this GSoC project aims to \nport more memory allocators to it, starting with mimalloc.\n",
+            "date_modified": "2024-08-01T00:00:00.000Z",
+            "author": {
+                "name": "Yang Hu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft",
+            "url": "https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft",
+            "title": "GSoC'24: Testing the mimalloc Memory Allocator on Unikraft",
+            "summary": "Different applications have different memory usage patterns and perform better\nwhen using dedicated memory allocators. Right now, the buddy allocator is the only\navailable memory allocator used in Unikraft, so this GSoC project aims to \nport more memory allocators to it, starting with mimalloc.\n",
+            "date_modified": "2024-07-12T00:00:00.000Z",
+            "author": {
+                "name": "Yang Hu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-07-10-gsoc-multiboot2",
+            "url": "https://unikraft.org/blog/2024-07-10-gsoc-multiboot2",
+            "title": "Multiboot2 Support in Unikraft",
+            "summary": "In my previous blog post, I focused on the first steps of the project: understanding the Multiboot2 protocol and preparing the development environment. Over the following three weeks, I progressed to implementing the necessary changes/additions and then testing the code.\n",
+            "date_modified": "2024-07-10T00:00:00.000Z",
+            "author": {
+                "name": "Maria Pana"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop",
+            "url": "https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop",
+            "title": "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part II",
+            "summary": "This is the second post in a series of posts where I talk about my progress with the project.\n",
+            "date_modified": "2024-07-10T00:00:00.000Z",
+            "author": {
+                "name": "Sriprad Potukuchi"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-07-10-unikraft-gsoc-lxboot_x86",
+            "url": "https://unikraft.org/blog/2024-07-10-unikraft-gsoc-lxboot_x86",
+            "title": "GSoC'24: Linux x86 Boot Protocol Support",
+            "summary": "The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.\n",
+            "date_modified": "2024-07-10T00:00:00.000Z",
+            "author": {
+                "name": "Mihnea Firoiu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-19-gsoc-environment-variables",
+            "url": "https://unikraft.org/blog/2024-06-19-gsoc-environment-variables",
+            "title": "GSoC'24: Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds",
+            "summary": "The goal of this project is to improve Unikraft's tooling, more especially, the `kraft` command-line tool, so that it can dynamically inject user-supplied variables into the build system. \n",
+            "date_modified": "2024-06-19T00:00:00.000Z",
+            "author": {
+                "name": "Ujjwal Mahar"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop",
+            "url": "https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop",
+            "title": "GSoC'24: UEFI Graphics Output Protocol Support in Unikraft",
+            "summary": "This project aims to add support for the modern UEFI GOP interface in Unikraft.\n",
+            "date_modified": "2024-06-18T00:00:00.000Z",
+            "author": {
+                "name": "Sriprad Potukuchi"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-18-unikraft-gsoc-lxboot_x86",
+            "url": "https://unikraft.org/blog/2024-06-18-unikraft-gsoc-lxboot_x86",
+            "title": "GSoC'24: Linux x86 Boot Protocol Support",
+            "summary": "The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.\n",
+            "date_modified": "2024-06-18T00:00:00.000Z",
+            "author": {
+                "name": "Mihnea Firoiu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-17-gsoc-multiboot2",
+            "url": "https://unikraft.org/blog/2024-06-17-gsoc-multiboot2",
+            "title": "Multiboot2 Support in Unikraft",
+            "summary": "Multiboot2, an enhanced version of Multiboot, solves some of the limitations of the original protocol, such as the lack of support for 64-bit UEFI systems. It also provides a more accurate and detailed communication during the bootstrapping process and offers a standardized tag system for easier configuration.\n",
+            "date_modified": "2024-06-17T00:00:00.000Z",
+            "author": {
+                "name": "Maria Pana"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-16-unikraft-gsoc-port-mimalloc-to-unikraft",
+            "url": "https://unikraft.org/blog/2024-06-16-unikraft-gsoc-port-mimalloc-to-unikraft",
+            "title": "GSoC'24: Porting the mimalloc Memory Allocator to Unikraft",
+            "summary": "Different applications have different memory usage patterns and perform better\nwhen using dedicated memory allocators. Right now, the buddy allocator is the only\navailable memory allocator used in Unikraft, so this GSoC project aims to \nport more memory allocators to it, starting with mimalloc.\n",
+            "date_modified": "2024-06-16T00:00:00.000Z",
+            "author": {
+                "name": "Yang Hu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-06-07-unikraft-releases-v0.17.0",
+            "url": "https://unikraft.org/blog/2024-06-07-unikraft-releases-v0.17.0",
+            "title": "Unikraft releases v0.17.0 (Calypso)",
+            "summary": "This release contains features and improvements to Unikraft.\n",
+            "date_modified": "2024-06-07T00:00:00.000Z",
+            "author": {
+                "name": "Razvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-05-10-unikraft-gsoc24",
+            "url": "https://unikraft.org/blog/2024-05-10-unikraft-gsoc24",
+            "title": "Five Unikraft Projects Selected at Google Summer of Code 2024",
+            "summary": "It is our pleasure to announce that 5 Unikraft projects are part of Google Summer of Code 2024 (GSoC'24).\n",
+            "date_modified": "2024-05-10T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-03-20-unikraft-releases-v0.16.3",
+            "url": "https://unikraft.org/blog/2024-03-20-unikraft-releases-v0.16.3",
+            "title": "Unikraft releases v0.16.3 (Telesto)",
+            "summary": "This release contains fixes, documentation and application updates.\n",
+            "date_modified": "2024-03-20T00:00:00.000Z",
+            "author": {
+                "name": "Razvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-02-13-unikraft-releases-v0.16.2",
+            "url": "https://unikraft.org/blog/2024-02-13-unikraft-releases-v0.16.2",
+            "title": "Unikraft releases v0.16.2 (Telesto)",
+            "summary": "This release contains fixes primarily related to platform and application support.\n",
+            "date_modified": "2024-02-13T00:00:00.000Z",
+            "author": {
+                "name": "Razvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-01-18-unikraft-releases-v0.16.1",
+            "url": "https://unikraft.org/blog/2024-01-18-unikraft-releases-v0.16.1",
+            "title": "Unikraft releases v0.16.1 (Telesto)",
+            "summary": "This release contains both important and breaking changes related to the KConfig and syntax when statically specifying network interface information as well as the list of fstab (automount) entries at the kernel command-line.\n",
+            "date_modified": "2024-01-18T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2024-01-02-unikraft-releases-telesto",
+            "url": "https://unikraft.org/blog/2024-01-02-unikraft-releases-telesto",
+            "title": "Unikraft releases v0.16.0 (Telesto)",
+            "summary": "This release is the result of extensive hard work during the last months in\nthe entire community.\n",
+            "date_modified": "2024-01-02T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-11-15-kraftkit-v0.7.0-released",
+            "url": "https://unikraft.org/blog/2023-11-15-kraftkit-v0.7.0-released",
+            "title": "KraftKit v0.7.0 Release",
+            "summary": "A massive update to a unikernel developer's best friend.\n",
+            "date_modified": "2023-11-15T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-10-22-unikraft-releases-pandora",
+            "url": "https://unikraft.org/blog/2023-10-22-unikraft-releases-pandora",
+            "title": "Unikraft releases v0.15.0 (Pandora)",
+            "summary": "This release is the result of extensive hard work during the last months in\nthe entire community.\n",
+            "date_modified": "2023-10-22T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-08-18-unikraft-releases-prometheus",
+            "url": "https://unikraft.org/blog/2023-08-18-unikraft-releases-prometheus",
+            "title": "Unikraft releases v0.14.0 (Prometheus)",
+            "summary": "This release is the result of extensive hard work during the last months in\nthe entire community.\n",
+            "date_modified": "2023-08-17T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-07-10-unikraft-gsoc23",
+            "url": "https://unikraft.org/blog/2023-07-10-unikraft-gsoc23",
+            "title": "Five Unikraft Projects Selected at Google Summer of Code 2023",
+            "summary": "It is our pleasure to announce that five Unikraft projects are part of Google\nSummer of Code 2023 (GSoC'23).\n",
+            "date_modified": "2023-07-10T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-arm-cca-1",
+            "url": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-arm-cca-1",
+            "title": "GSoC'23: Arm CCA Support for Unikraft (Part 1)",
+            "summary": "This project  aims to bring Arm Confidential Computing Architecture (CCA)\nfeature to Unikraft.\n",
+            "date_modified": "2023-06-23T00:00:00.000Z",
+            "author": {
+                "name": "Xingjian Zhang"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-enhancing-vscode-developer-experience",
+            "url": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-enhancing-vscode-developer-experience",
+            "title": "GSoC'23: Enhancing VS Code Developer Experience",
+            "summary": "The VS Code Extension for Unikraft enables developers to quickly and\npainlessly build unikernels from the VS Code IDE.\n",
+            "date_modified": "2023-06-23T00:00:00.000Z",
+            "author": {
+                "name": "Afsar Sahil"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-packaging-libs-1",
+            "url": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-packaging-libs-1",
+            "title": "Packaging Pre-built Micro-libraries for Faster and More Secure Builds",
+            "summary": "Progress on my GSoC'23 project.\n",
+            "date_modified": "2023-06-23T00:00:00.000Z",
+            "author": {
+                "name": "Zeyu Li"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-22-unikraft-gsoc-plat-rearch",
+            "url": "https://unikraft.org/blog/2023-06-22-unikraft-gsoc-plat-rearch",
+            "title": "re:Arch Unikraft",
+            "summary": "The goal of this GSoC'23 project is to optimize and clearly define drivers and \nplatform support.\n",
+            "date_modified": "2023-06-22T00:00:00.000Z",
+            "author": {
+                "name": "Rares Miculescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-app-compat-1",
+            "url": "https://unikraft.org/blog/2023-06-23-unikraft-gsoc-app-compat-1",
+            "title": "Expanding Binary Compatibility Mode (Part 1)",
+            "summary": "This project aims to enhance the binary compatibility of Unikraft. Including \nenabling the libc dynamic library to directly access kernel functions, \nimplementing VDSO,  improving application compatibility and enhancing CI/CD.\n",
+            "date_modified": "2023-06-20T00:00:00.000Z",
+            "author": {
+                "name": "Tianyi Liu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore",
+            "url": "https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore",
+            "title": "Tales of Open Source: vfscore",
+            "summary": "The beauty of open source is the immediate availability of source code that \nyou can use to create or improve your software. Of course, this relies on\ncompatible licensing...\n",
+            "date_modified": "2023-06-08T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-05-15-unikraft-releases-atlas",
+            "url": "https://unikraft.org/blog/2023-05-15-unikraft-releases-atlas",
+            "title": "Unikraft releases v0.13.0 (Atlas)",
+            "summary": "In this blog post, we describe some of the new features available in Unikraft.\n",
+            "date_modified": "2023-05-15T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2023-02-07-unikraft-releases-epimetheus",
+            "url": "https://unikraft.org/blog/2023-02-07-unikraft-releases-epimetheus",
+            "title": "Unikraft releases v0.12.0 (Epimetheus)",
+            "summary": "With this relese, we aim to bring more stability to the Musl support\nintegrated in 0.11, but also come with a lot of exciting features.\n",
+            "date_modified": "2023-02-07T00:00:00.000Z",
+            "author": {
+                "name": "Răzvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-12-01-unikraft-on-morello",
+            "url": "https://unikraft.org/blog/2022-12-01-unikraft-on-morello",
+            "title": "Building the Future of Security and Isolation with Unikraft on Morello!",
+            "summary": "I have recently ported a proof-of-concept version of Unikraft to run \nbare metal on the Morello machine, and I am in the process of \nexploring the cool security properties that combining CHERI with a \nmodern unikernel such as Unikraft can bring.\n",
+            "date_modified": "2022-12-01T00:00:00.000Z",
+            "author": {
+                "name": "Alistair Kressel"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-12-02-unikraft-releases-janus",
+            "url": "https://unikraft.org/blog/2022-12-02-unikraft-releases-janus",
+            "title": "Unikraft releases v0.11.0 (Janus)",
+            "summary": "This release is the result of around 3 months of hard work in the entire \ncommunity, with a focus on integrating the long awaited musl support.\n",
+            "date_modified": "2022-12-01T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-10-25-unikraft-munich-2022",
+            "url": "https://unikraft.org/blog/2022-10-25-unikraft-munich-2022",
+            "title": "Unikraft Munich Hackathon '22",
+            "summary": "Last weekend, we had yet another successful hackathon with plenty of \nhard work.  But this one was special since it was organized in München.\n",
+            "date_modified": "2022-10-26T00:00:00.000Z",
+            "author": {
+                "name": "Radu Nichita"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-10-19-ukl-vs-unikraft",
+            "url": "https://unikraft.org/blog/2022-10-19-ukl-vs-unikraft",
+            "title": "Unikraft vs. UKL: What's the Difference?",
+            "summary": "You may have seen recent news about a set of patches] hitting the \nLinux kernel mailing list for Unikernel Linux (UKL), \"... a research \nproject aimed at integrating application-specific optimizations to the \nLinux kernel.\n",
+            "date_modified": "2022-10-19T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-10-14-unikraft-community-meetup",
+            "url": "https://unikraft.org/blog/2022-10-14-unikraft-community-meetup",
+            "title": "Unikraft Community Meet-up '22",
+            "summary": "We are excited to tell you about the first in-person Unikraft community meet-\nup, a long awaited event which was painfully postponed by the pandemic.\n",
+            "date_modified": "2022-10-14T00:00:00.000Z",
+            "author": {
+                "name": "Andrei Mutu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-10-14-unikraft-reaches-1k-github-stars",
+            "url": "https://unikraft.org/blog/2022-10-14-unikraft-reaches-1k-github-stars",
+            "title": "Unikraft Reaches 1K+ GitHub Stars! (and 500 Discord Users)",
+            "summary": "We're ecstatic to announce that a week ago Unikraft reached 1K stars \non Github on its main repository!\n",
+            "date_modified": "2022-10-14T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-10-08-unikraft-hacktoberfest",
+            "url": "https://unikraft.org/blog/2022-10-08-unikraft-hacktoberfest",
+            "title": "Unikraft Hacktoberfest '22",
+            "summary": "As tradition dictates, if it's Saturday then it is definitely another\nhackathon we are proud to host at Unikraft. Even so, the last one was a bit\nspecial.\n",
+            "date_modified": "2022-10-08T00:00:00.000Z",
+            "author": {
+                "name": "Radu Nichita"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-08-22-unikraft-gsoc-intel-sgx-3",
+            "url": "https://unikraft.org/blog/2022-08-22-unikraft-gsoc-intel-sgx-3",
+            "title": "Radix-Tree: Internal data structures for SGX EPC Page Management",
+            "summary": "In this article, we explore Radix tree's in the context of SGC EPC page\nmanagement.\n",
+            "date_modified": "2022-08-22T00:00:00.000Z",
+            "author": {
+                "name": "Xiangyi Meng"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-08-21-unikraft-ioapic",
+            "url": "https://unikraft.org/blog/2022-08-21-unikraft-ioapic",
+            "title": "Adding I/O APIC support",
+            "summary": "This blog describes the ongoing work on the I/O APIC integration in unikraft.\nCurrently Unikraft is using the traditional 8259 PIC interrupt controller.\n",
+            "date_modified": "2022-08-21T00:00:00.000Z",
+            "author": {
+                "name": "Sairaj Kodilkar"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-08-20-unikraft-releases-phoebe",
+            "url": "https://unikraft.org/blog/2022-08-20-unikraft-releases-phoebe",
+            "title": "Unikraft releases v0.10.0 (Phoebe)",
+            "summary": "We're very excited to announce the latest edition of Unikraft, v0.10.0\n(Phoebe), and to show off many of the things the community has been working on\nover the last two months.\n",
+            "date_modified": "2022-08-20T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-08-19-unikraft-gsoc-shadow-stack",
+            "url": "https://unikraft.org/blog/2022-08-19-unikraft-gsoc-shadow-stack",
+            "title": "Shadow Stack (Part 3)",
+            "summary": "This third blog post presents the efforts that were made in the \ndirection of testing and perfecting complex apps (such as `SQLite`, \n`redis` and `nginx`) on `AArch64` using `gcc`, `clang` and `gcc-12` as \ncompilers.\n",
+            "date_modified": "2022-08-19T00:00:00.000Z",
+            "author": {
+                "name": "Maria Sfiraiala"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-07-20-unikraft-gsoc-intel-sgx-2",
+            "url": "https://unikraft.org/blog/2022-07-20-unikraft-gsoc-intel-sgx-2",
+            "title": "Leveraging Intel SGX in Unikraft: Challenges and Recent progress",
+            "summary": "In this post, we will take an in-depth investigation of how SGX supported is\nimplemented in Linux, and what we need to implement in Unikraft to achieve the\nsame object.\n",
+            "date_modified": "2022-07-20T00:00:00.000Z",
+            "author": {
+                "name": "Xiangyi Meng"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-07-20-unikraft-gsoc-shadow-stack",
+            "url": "https://unikraft.org/blog/2022-07-20-unikraft-gsoc-shadow-stack",
+            "title": "Shadow Stack (Part 2)",
+            "summary": "While the previous blog post described the first steps took into the direction\nof familiarizing myself with Unikraft and an initial attempt to using\n`clang`'s ShadowCallStack, in this post, we will take a look into some\nimplementations that were tried in the meantime.\n",
+            "date_modified": "2022-07-20T00:00:00.000Z",
+            "author": {
+                "name": "Maria Sfiraiala"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-07-19-unikraft-synchronization",
+            "url": "https://unikraft.org/blog/2022-07-19-unikraft-synchronization",
+            "title": "Adding SMP support",
+            "summary": "The previous blog on the SMP support explained different \nsynchronization primitives for the unikraft.  As a part of the next \nstep, I started exploring some of the lockless data structures. There \nhas been an extensive amount of research to optimize this lockless \ndata structure.\n",
+            "date_modified": "2022-07-19T00:00:00.000Z",
+            "author": {
+                "name": "Sairaj Kodilkar"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-06-27-unikraft-synchronization",
+            "url": "https://unikraft.org/blog/2022-06-27-unikraft-synchronization",
+            "title": "Adding SMP support",
+            "summary": "This project aims to add the SMP safe synchronization premitives as well as\nremove the race conditions in the kernel.\n",
+            "date_modified": "2022-07-07T00:00:00.000Z",
+            "author": {
+                "name": "Sairaj Kodilkar"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-07-05-unikraft-gsoc-shadow-stack",
+            "url": "https://unikraft.org/blog/2022-07-05-unikraft-gsoc-shadow-stack",
+            "title": "Shadow Stack (Part 1)",
+            "summary": "While Unikraft provides great security advantages through strong \ncross-application isolation, traditional means of securing one's \napplication shouldn't be overlooked.\n",
+            "date_modified": "2022-07-05T00:00:00.000Z",
+            "author": {
+                "name": "Maria Sfiraiala"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion",
+            "url": "https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion",
+            "title": "Unikraft releases v0.9.0 (Hyperion)",
+            "summary": "We're excited to announce Unikraft v0.9.0 (Hyperion) and to show off \nmany of the things the community has been working on over the last two \nmonths.\n",
+            "date_modified": "2022-06-13T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-07-05-unikraft-gsoc-intel-sgx",
+            "url": "https://unikraft.org/blog/2022-07-05-unikraft-gsoc-intel-sgx",
+            "title": "Improving security and isolation of Unikraft with Intel SGX",
+            "summary": "Trusted execution environment (TEE), especially Intel SGX, is a \npopular and powerful tool to provide hardware-based isolation for \nhighly sensitive code and data. \n",
+            "date_modified": "2022-06-13T00:00:00.000Z",
+            "author": {
+                "name": "Xiangyi Meng"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-05-21-unikraft-gsoc-org",
+            "url": "https://unikraft.org/blog/2022-05-21-unikraft-gsoc-org",
+            "title": "Three Unikraft projects selected at Google Summer of Code 2022",
+            "summary": "We're excited to announce that three Unikraft projects will be part of \nGoogle Summer of Code, with three students funded during the summer of \n2022.\n",
+            "date_modified": "2022-05-21T00:00:00.000Z",
+            "author": {
+                "name": "Razvan Deaconescu"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-03-16-unikraft-gsoc-org",
+            "url": "https://unikraft.org/blog/2022-03-16-unikraft-gsoc-org",
+            "title": "Unikraft accepted as Google Summer of Code Organization!",
+            "summary": "We are extremely proud to have been accepted as an organization for Google\nSummer of Code 2022 (GSoC'22)\n",
+            "date_modified": "2022-03-16T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-03-24-unikraft-security",
+            "url": "https://unikraft.org/blog/2022-03-24-unikraft-security",
+            "title": "Interested in Security for Unikraft?",
+            "summary": "We have finally gotten around to documenting all of the security features that\nmake Unikraft and exciting platform for those interested in security work and\nsecure deployments.\n",
+            "date_modified": "2022-03-16T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-03-29-unikraft-releases-enceladus",
+            "url": "https://unikraft.org/blog/2022-03-29-unikraft-releases-enceladus",
+            "title": "Unikraft releases v0.8.0 (Enceladus)",
+            "summary": "We're excited to announce Unikraft v0.8.0 (Enceladus) and to show off many of\nthe things the community has been working on over the last two months.\n",
+            "date_modified": "2022-03-01T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-02-17-unikraft-at-asplos22",
+            "url": "https://unikraft.org/blog/2022-02-17-unikraft-at-asplos22",
+            "title": "Unikraft and more at ASPLOS’22",
+            "summary": "Unikraft will appear at the International Conference on Architectural Support\nfor Programming Languages and Operating Systems (ASPLOS'22) with both a paper\nand a workshop.\n",
+            "date_modified": "2022-02-17T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2022-02-05-new-site-and-unikraft-at-fosdem22",
+            "url": "https://unikraft.org/blog/2022-02-05-new-site-and-unikraft-at-fosdem22",
+            "title": "Kicking off 2022 with a new site and release at FOSDEM!",
+            "summary": "As the new year begins, we're excited to show off many of the things the\ncommunity has been working over the last two months. \n",
+            "date_modified": "2022-02-04T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2021-04-26-unikraft-at-eurosys",
+            "url": "https://unikraft.org/blog/2021-04-26-unikraft-at-eurosys",
+            "title": "Unikraft: Fast, Specialized Unikernels the Easy Way",
+            "summary": "The open source Unikraft project is proud to announce that its paper titled\n\"Unikraft: Fast, Specialized Unikernels the Easy Way\" has not only been\naccepted at Eurosys.\n",
+            "date_modified": "2021-04-26T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2020-02-17-building-powerful-unikernels",
+            "url": "https://unikraft.org/blog/2020-02-17-building-powerful-unikernels",
+            "title": "Unikraft: Building Powerful Unikernels Has Never Been Easier!",
+            "summary": "Two years ago, the Xen Project introduced Unikraft as an incubation project.\nOver the past two years, the Unikraft project has seen some great momentum.\n",
+            "date_modified": "2020-02-17T00:00:00.000Z",
+            "author": {
+                "name": "Alexander Jung"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2019-01-31-xen-project-celebrates",
+            "url": "https://unikraft.org/blog/2019-01-31-xen-project-celebrates",
+            "title": "Xen Project Celebrates Unikraft Unikernel Project's One Year Anniversary",
+            "summary": "It has been one year since the Xen Project introduced Unikraft as an incubator\nproject. In that time, the team has made great strides in simplifying the\nprocess of building unikernels through a unified and customizable code base.\n",
+            "date_modified": "2019-01-31T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        },
+        {
+            "id": "https://unikraft.org/blog/2017-12-05-unleashing-unikernels",
+            "url": "https://unikraft.org/blog/2017-12-05-unleashing-unikernels",
+            "title": "Unleasing the Power of Unikernels",
+            "summary": "The team at NEC Laboratories Europe spent quite a bit of time over the last\nfew years developing unikernels (specialized virtual machine images targeting\nspecific applications).\n",
+            "date_modified": "2017-12-05T00:00:00.000Z",
+            "author": {
+                "name": "Felipe Huici"
+            }
+        }
+    ]
+}

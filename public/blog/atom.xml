@@ -1,0 +1,1032 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://unikraft.org/blog</id>
+    <title>Unikraft Blog</title>
+    <updated>2026-03-29T08:58:26.456Z</updated>
+    <generator>UniKernels RSS Generator</generator>
+    <author>
+        <name>UniKernels</name>
+        <uri>https://unikraft.org</uri>
+    </author>
+    <link rel="alternate" href="https://unikraft.org/blog"/>
+    <link rel="self" href="https://unikraft.org/blog/atom.xml"/>
+    <subtitle>A fast, secure and open-source Unikernel Development Kit.</subtitle>
+    <logo>https://unikraft.org/logo.png</logo>
+    <icon>https://unikraft.org/favicon.ico</icon>
+    <rights>Copyright © 2026 Unikraft GmbH. All Rights Reserved.</rights>
+    <entry>
+        <title type="html"><![CDATA[Unikraft Filesystem Stack]]></title>
+        <id>https://unikraft.org/blog/2025-09-09-unikraft-filesystem-stack</id>
+        <link href="https://unikraft.org/blog/2025-09-09-unikraft-filesystem-stack"/>
+        <updated>2025-09-09T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This blog post provides a technical overview of the new VFS stack introduced in Unikraft 0.20.0.]]></summary>
+        <author>
+            <name>Andrei Tatar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.20.0 (Kiviuq)]]></title>
+        <id>https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0</id>
+        <link href="https://unikraft.org/blog/2025-09-08-unikraft-releases-v0.20.0"/>
+        <updated>2025-09-08T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release comes with the much anticipated redesign and implementation of VFS, which brings enhanced performance, better maintainability, and improved compatibility with modern applications.
+]]></summary>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Andrei Tatar</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.19.1 (Pan)]]></title>
+        <id>https://unikraft.org/blog/2025-07-17-unikraft-releases-v0.19.1</id>
+        <link href="https://unikraft.org/blog/2025-07-17-unikraft-releases-v0.19.1"/>
+        <updated>2025-07-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains fixes and improvements to Unikraft.
+]]></summary>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.19.0 (Pan)]]></title>
+        <id>https://unikraft.org/blog/2025-05-23-unikraft-releases-v0.19.0</id>
+        <link href="https://unikraft.org/blog/2025-05-23-unikraft-releases-v0.19.0"/>
+        <updated>2025-05-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains features and improvements to Unikraft.
+]]></summary>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Andrei Tatar</name>
+        </author>
+        <author>
+            <name>Sergiu Moga</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Ștefan Jumărea</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Five Unikraft Projects Selected at Google Summer of Code 2025]]></title>
+        <id>https://unikraft.org/blog/2025-05-22-unikraft-gsoc25</id>
+        <link href="https://unikraft.org/blog/2025-05-22-unikraft-gsoc25"/>
+        <updated>2025-05-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[It is our pleasure to announce that 5 Unikraft projects are part of Google Summer of Code 2025 (GSoC'25).
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Multiprocess support on Unikraft]]></title>
+        <id>https://unikraft.org/blog/2025-05-15-multiprocess</id>
+        <link href="https://unikraft.org/blog/2025-05-15-multiprocess"/>
+        <updated>2025-05-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This blog post provides technical details on the implementation of multiprocess support introduced in Unikraft 0.19.0.]]></summary>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.18.0 (Helene)]]></title>
+        <id>https://unikraft.org/blog/2024-12-21-unikraft-releases-v0.18.0</id>
+        <link href="https://unikraft.org/blog/2024-12-21-unikraft-releases-v0.18.0"/>
+        <updated>2024-12-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains features and improvements to Unikraft.
+]]></summary>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Ștefan Jumărea</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Multiboot2 Support in Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-08-22-gsoc-multiboot2</id>
+        <link href="https://unikraft.org/blog/2024-08-22-gsoc-multiboot2"/>
+        <updated>2024-08-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In this blog post, I discuss the final weeks of my GSoC project, highlighting the process of testing Nuktiboot2 support on the helloworld and nginx applications, and reflecting on the progress made in enhancing the boot process.
+]]></summary>
+        <author>
+            <name>Maria Pana</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part IV]]></title>
+        <id>https://unikraft.org/blog/2024-08-22-gsoc-uefi-gop</id>
+        <link href="https://unikraft.org/blog/2024-08-22-gsoc-uefi-gop"/>
+        <updated>2024-08-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This is the fourth post in a series of posts where I talk about my progress with the project.
+]]></summary>
+        <author>
+            <name>Sriprad Potukuchi</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Benchmarking mimalloc]]></title>
+        <id>https://unikraft.org/blog/2024-08-22-unikraft-gsoc-benchmarking-mimalloc</id>
+        <link href="https://unikraft.org/blog/2024-08-22-unikraft-gsoc-benchmarking-mimalloc"/>
+        <updated>2024-08-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Different applications have different memory usage patterns and perform better
+when using dedicated memory allocators. Right now, the buddy allocator is the only
+available memory allocator used in Unikraft, so this GSoC project aims to 
+port more memory allocators to it, starting with mimalloc.
+]]></summary>
+        <author>
+            <name>Yang Hu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part III]]></title>
+        <id>https://unikraft.org/blog/2024-08-07-gsoc-uefi-gop</id>
+        <link href="https://unikraft.org/blog/2024-08-07-gsoc-uefi-gop"/>
+        <updated>2024-08-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This is the third post in a series of posts where I talk about my progress with the project.
+]]></summary>
+        <author>
+            <name>Sriprad Potukuchi</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Linux x86 Boot Protocol Support]]></title>
+        <id>https://unikraft.org/blog/2024-08-02-unikraft-gsoc-lxboot_x86</id>
+        <link href="https://unikraft.org/blog/2024-08-02-unikraft-gsoc-lxboot_x86"/>
+        <updated>2024-08-02T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.
+]]></summary>
+        <author>
+            <name>Mihnea Firoiu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Multiboot2 Support in Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-08-01-gsoc-multiboot2</id>
+        <link href="https://unikraft.org/blog/2024-08-01-gsoc-multiboot2"/>
+        <updated>2024-08-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In this blog post, I go over the debugging process and the progress made in the implementation of Multiboot2 support these past three weeks of GSoC.
+]]></summary>
+        <author>
+            <name>Maria Pana</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Debugging the Multithreaded Memory Allocation Interface]]></title>
+        <id>https://unikraft.org/blog/2024-08-01-unikraft-gsoc-debugging-mimalloc</id>
+        <link href="https://unikraft.org/blog/2024-08-01-unikraft-gsoc-debugging-mimalloc"/>
+        <updated>2024-08-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Different applications have different memory usage patterns and perform better
+when using dedicated memory allocators. Right now, the buddy allocator is the only
+available memory allocator used in Unikraft, so this GSoC project aims to 
+port more memory allocators to it, starting with mimalloc.
+]]></summary>
+        <author>
+            <name>Yang Hu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Testing the mimalloc Memory Allocator on Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft</id>
+        <link href="https://unikraft.org/blog/2024-07-12-unikraft-gsoc-test-mimalloc-on-unikraft"/>
+        <updated>2024-07-12T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Different applications have different memory usage patterns and perform better
+when using dedicated memory allocators. Right now, the buddy allocator is the only
+available memory allocator used in Unikraft, so this GSoC project aims to 
+port more memory allocators to it, starting with mimalloc.
+]]></summary>
+        <author>
+            <name>Yang Hu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Multiboot2 Support in Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-07-10-gsoc-multiboot2</id>
+        <link href="https://unikraft.org/blog/2024-07-10-gsoc-multiboot2"/>
+        <updated>2024-07-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In my previous blog post, I focused on the first steps of the project: understanding the Multiboot2 protocol and preparing the development environment. Over the following three weeks, I progressed to implementing the necessary changes/additions and then testing the code.
+]]></summary>
+        <author>
+            <name>Maria Pana</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: UEFI Graphics Output Protocol Support in Unikraft, Part II]]></title>
+        <id>https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop</id>
+        <link href="https://unikraft.org/blog/2024-07-10-gsoc-uefi-gop"/>
+        <updated>2024-07-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This is the second post in a series of posts where I talk about my progress with the project.
+]]></summary>
+        <author>
+            <name>Sriprad Potukuchi</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Linux x86 Boot Protocol Support]]></title>
+        <id>https://unikraft.org/blog/2024-07-10-unikraft-gsoc-lxboot_x86</id>
+        <link href="https://unikraft.org/blog/2024-07-10-unikraft-gsoc-lxboot_x86"/>
+        <updated>2024-07-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.
+]]></summary>
+        <author>
+            <name>Mihnea Firoiu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Supporting User-provided, Long-lived Environmental Variables for Unikraft Builds]]></title>
+        <id>https://unikraft.org/blog/2024-06-19-gsoc-environment-variables</id>
+        <link href="https://unikraft.org/blog/2024-06-19-gsoc-environment-variables"/>
+        <updated>2024-06-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The goal of this project is to improve Unikraft's tooling, more especially, the `kraft` command-line tool, so that it can dynamically inject user-supplied variables into the build system. 
+]]></summary>
+        <author>
+            <name>Ujjwal Mahar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: UEFI Graphics Output Protocol Support in Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop</id>
+        <link href="https://unikraft.org/blog/2024-06-18-gsoc-uefi-gop"/>
+        <updated>2024-06-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This project aims to add support for the modern UEFI GOP interface in Unikraft.
+]]></summary>
+        <author>
+            <name>Sriprad Potukuchi</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Linux x86 Boot Protocol Support]]></title>
+        <id>https://unikraft.org/blog/2024-06-18-unikraft-gsoc-lxboot_x86</id>
+        <link href="https://unikraft.org/blog/2024-06-18-unikraft-gsoc-lxboot_x86"/>
+        <updated>2024-06-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The Linux boot protocol plays an important role in the initialization of the Linux operating system, emphasizing the importance of system optimization and scalability.
+]]></summary>
+        <author>
+            <name>Mihnea Firoiu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Multiboot2 Support in Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-06-17-gsoc-multiboot2</id>
+        <link href="https://unikraft.org/blog/2024-06-17-gsoc-multiboot2"/>
+        <updated>2024-06-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Multiboot2, an enhanced version of Multiboot, solves some of the limitations of the original protocol, such as the lack of support for 64-bit UEFI systems. It also provides a more accurate and detailed communication during the bootstrapping process and offers a standardized tag system for easier configuration.
+]]></summary>
+        <author>
+            <name>Maria Pana</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'24: Porting the mimalloc Memory Allocator to Unikraft]]></title>
+        <id>https://unikraft.org/blog/2024-06-16-unikraft-gsoc-port-mimalloc-to-unikraft</id>
+        <link href="https://unikraft.org/blog/2024-06-16-unikraft-gsoc-port-mimalloc-to-unikraft"/>
+        <updated>2024-06-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Different applications have different memory usage patterns and perform better
+when using dedicated memory allocators. Right now, the buddy allocator is the only
+available memory allocator used in Unikraft, so this GSoC project aims to 
+port more memory allocators to it, starting with mimalloc.
+]]></summary>
+        <author>
+            <name>Yang Hu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.17.0 (Calypso)]]></title>
+        <id>https://unikraft.org/blog/2024-06-07-unikraft-releases-v0.17.0</id>
+        <link href="https://unikraft.org/blog/2024-06-07-unikraft-releases-v0.17.0"/>
+        <updated>2024-06-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains features and improvements to Unikraft.
+]]></summary>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Andrei Tatar</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Sergiu Moga</name>
+        </author>
+        <author>
+            <name>Alexandru Apostolescu</name>
+        </author>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Five Unikraft Projects Selected at Google Summer of Code 2024]]></title>
+        <id>https://unikraft.org/blog/2024-05-10-unikraft-gsoc24</id>
+        <link href="https://unikraft.org/blog/2024-05-10-unikraft-gsoc24"/>
+        <updated>2024-05-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[It is our pleasure to announce that 5 Unikraft projects are part of Google Summer of Code 2024 (GSoC'24).
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.16.3 (Telesto)]]></title>
+        <id>https://unikraft.org/blog/2024-03-20-unikraft-releases-v0.16.3</id>
+        <link href="https://unikraft.org/blog/2024-03-20-unikraft-releases-v0.16.3"/>
+        <updated>2024-03-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains fixes, documentation and application updates.
+]]></summary>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.16.2 (Telesto)]]></title>
+        <id>https://unikraft.org/blog/2024-02-13-unikraft-releases-v0.16.2</id>
+        <link href="https://unikraft.org/blog/2024-02-13-unikraft-releases-v0.16.2"/>
+        <updated>2024-02-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains fixes primarily related to platform and application support.
+]]></summary>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Oleksii Moiseiev</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.16.1 (Telesto)]]></title>
+        <id>https://unikraft.org/blog/2024-01-18-unikraft-releases-v0.16.1</id>
+        <link href="https://unikraft.org/blog/2024-01-18-unikraft-releases-v0.16.1"/>
+        <updated>2024-01-18T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release contains both important and breaking changes related to the KConfig and syntax when statically specifying network interface information as well as the list of fstab (automount) entries at the kernel command-line.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.16.0 (Telesto)]]></title>
+        <id>https://unikraft.org/blog/2024-01-02-unikraft-releases-telesto</id>
+        <link href="https://unikraft.org/blog/2024-01-02-unikraft-releases-telesto"/>
+        <updated>2024-01-02T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release is the result of extensive hard work during the last months in
+the entire community.
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Andrei Tătar</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Sergiu Moga</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[KraftKit v0.7.0 Release]]></title>
+        <id>https://unikraft.org/blog/2023-11-15-kraftkit-v0.7.0-released</id>
+        <link href="https://unikraft.org/blog/2023-11-15-kraftkit-v0.7.0-released"/>
+        <updated>2023-11-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[A massive update to a unikernel developer's best friend.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Cezar Craciunoiu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.15.0 (Pandora)]]></title>
+        <id>https://unikraft.org/blog/2023-10-22-unikraft-releases-pandora</id>
+        <link href="https://unikraft.org/blog/2023-10-22-unikraft-releases-pandora"/>
+        <updated>2023-10-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release is the result of extensive hard work during the last months in
+the entire community.
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Rareș Miculescu</name>
+        </author>
+        <author>
+            <name>Andrei Tătar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.14.0 (Prometheus)]]></title>
+        <id>https://unikraft.org/blog/2023-08-18-unikraft-releases-prometheus</id>
+        <link href="https://unikraft.org/blog/2023-08-18-unikraft-releases-prometheus"/>
+        <updated>2023-08-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release is the result of extensive hard work during the last months in
+the entire community.
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Ștefan Jumărea</name>
+        </author>
+        <author>
+            <name>Martin Kröning</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Sergiu Moga</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Maria Sfîrăială</name>
+        </author>
+        <author>
+            <name>Andrei Tătar</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Five Unikraft Projects Selected at Google Summer of Code 2023]]></title>
+        <id>https://unikraft.org/blog/2023-07-10-unikraft-gsoc23</id>
+        <link href="https://unikraft.org/blog/2023-07-10-unikraft-gsoc23"/>
+        <updated>2023-07-10T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[It is our pleasure to announce that five Unikraft projects are part of Google
+Summer of Code 2023 (GSoC'23).
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'23: Arm CCA Support for Unikraft (Part 1)]]></title>
+        <id>https://unikraft.org/blog/2023-06-23-unikraft-gsoc-arm-cca-1</id>
+        <link href="https://unikraft.org/blog/2023-06-23-unikraft-gsoc-arm-cca-1"/>
+        <updated>2023-06-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This project  aims to bring Arm Confidential Computing Architecture (CCA)
+feature to Unikraft.
+]]></summary>
+        <author>
+            <name>Xingjian Zhang</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[GSoC'23: Enhancing VS Code Developer Experience]]></title>
+        <id>https://unikraft.org/blog/2023-06-23-unikraft-gsoc-enhancing-vscode-developer-experience</id>
+        <link href="https://unikraft.org/blog/2023-06-23-unikraft-gsoc-enhancing-vscode-developer-experience"/>
+        <updated>2023-06-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The VS Code Extension for Unikraft enables developers to quickly and
+painlessly build unikernels from the VS Code IDE.
+]]></summary>
+        <author>
+            <name>Afsar Sahil</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Packaging Pre-built Micro-libraries for Faster and More Secure Builds]]></title>
+        <id>https://unikraft.org/blog/2023-06-23-unikraft-gsoc-packaging-libs-1</id>
+        <link href="https://unikraft.org/blog/2023-06-23-unikraft-gsoc-packaging-libs-1"/>
+        <updated>2023-06-23T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Progress on my GSoC'23 project.
+]]></summary>
+        <author>
+            <name>Zeyu Li</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[re:Arch Unikraft]]></title>
+        <id>https://unikraft.org/blog/2023-06-22-unikraft-gsoc-plat-rearch</id>
+        <link href="https://unikraft.org/blog/2023-06-22-unikraft-gsoc-plat-rearch"/>
+        <updated>2023-06-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The goal of this GSoC'23 project is to optimize and clearly define drivers and 
+platform support.
+]]></summary>
+        <author>
+            <name>Rares Miculescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Expanding Binary Compatibility Mode (Part 1)]]></title>
+        <id>https://unikraft.org/blog/2023-06-23-unikraft-gsoc-app-compat-1</id>
+        <link href="https://unikraft.org/blog/2023-06-23-unikraft-gsoc-app-compat-1"/>
+        <updated>2023-06-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This project aims to enhance the binary compatibility of Unikraft. Including 
+enabling the libc dynamic library to directly access kernel functions, 
+implementing VDSO,  improving application compatibility and enhancing CI/CD.
+]]></summary>
+        <author>
+            <name>Tianyi Liu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Tales of Open Source: vfscore]]></title>
+        <id>https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore</id>
+        <link href="https://unikraft.org/blog/2023-06-09-tales-of-open-source-vfscore"/>
+        <updated>2023-06-08T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The beauty of open source is the immediate availability of source code that 
+you can use to create or improve your software. Of course, this relies on
+compatible licensing...
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.13.0 (Atlas)]]></title>
+        <id>https://unikraft.org/blog/2023-05-15-unikraft-releases-atlas</id>
+        <link href="https://unikraft.org/blog/2023-05-15-unikraft-releases-atlas"/>
+        <updated>2023-05-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In this blog post, we describe some of the new features available in Unikraft.
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Marco Schlumpp</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.12.0 (Epimetheus)]]></title>
+        <id>https://unikraft.org/blog/2023-02-07-unikraft-releases-epimetheus</id>
+        <link href="https://unikraft.org/blog/2023-02-07-unikraft-releases-epimetheus"/>
+        <updated>2023-02-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[With this relese, we aim to bring more stability to the Musl support
+integrated in 0.11, but also come with a lot of exciting features.
+]]></summary>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Marc Rittinghaus</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Building the Future of Security and Isolation with Unikraft on Morello!]]></title>
+        <id>https://unikraft.org/blog/2022-12-01-unikraft-on-morello</id>
+        <link href="https://unikraft.org/blog/2022-12-01-unikraft-on-morello"/>
+        <updated>2022-12-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[I have recently ported a proof-of-concept version of Unikraft to run 
+bare metal on the Morello machine, and I am in the process of 
+exploring the cool security properties that combining CHERI with a 
+modern unikernel such as Unikraft can bring.
+]]></summary>
+        <author>
+            <name>Alistair Kressel</name>
+        </author>
+        <author>
+            <name>Pierre Olivier</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.11.0 (Janus)]]></title>
+        <id>https://unikraft.org/blog/2022-12-02-unikraft-releases-janus</id>
+        <link href="https://unikraft.org/blog/2022-12-02-unikraft-releases-janus"/>
+        <updated>2022-12-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This release is the result of around 3 months of hard work in the entire 
+community, with a focus on integrating the long awaited musl support.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Florin Postolache</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft Munich Hackathon '22]]></title>
+        <id>https://unikraft.org/blog/2022-10-25-unikraft-munich-2022</id>
+        <link href="https://unikraft.org/blog/2022-10-25-unikraft-munich-2022"/>
+        <updated>2022-10-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Last weekend, we had yet another successful hackathon with plenty of 
+hard work.  But this one was special since it was organized in München.
+]]></summary>
+        <author>
+            <name>Radu Nichita</name>
+        </author>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft vs. UKL: What's the Difference?]]></title>
+        <id>https://unikraft.org/blog/2022-10-19-ukl-vs-unikraft</id>
+        <link href="https://unikraft.org/blog/2022-10-19-ukl-vs-unikraft"/>
+        <updated>2022-10-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[You may have seen recent news about a set of patches] hitting the 
+Linux kernel mailing list for Unikernel Linux (UKL), "... a research 
+project aimed at integrating application-specific optimizations to the 
+Linux kernel.
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft Community Meet-up '22]]></title>
+        <id>https://unikraft.org/blog/2022-10-14-unikraft-community-meetup</id>
+        <link href="https://unikraft.org/blog/2022-10-14-unikraft-community-meetup"/>
+        <updated>2022-10-14T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We are excited to tell you about the first in-person Unikraft community meet-
+up, a long awaited event which was painfully postponed by the pandemic.
+]]></summary>
+        <author>
+            <name>Andrei Mutu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft Reaches 1K+ GitHub Stars! (and 500 Discord Users)]]></title>
+        <id>https://unikraft.org/blog/2022-10-14-unikraft-reaches-1k-github-stars</id>
+        <link href="https://unikraft.org/blog/2022-10-14-unikraft-reaches-1k-github-stars"/>
+        <updated>2022-10-14T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We're ecstatic to announce that a week ago Unikraft reached 1K stars 
+on Github on its main repository!
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft Hacktoberfest '22]]></title>
+        <id>https://unikraft.org/blog/2022-10-08-unikraft-hacktoberfest</id>
+        <link href="https://unikraft.org/blog/2022-10-08-unikraft-hacktoberfest"/>
+        <updated>2022-10-08T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[As tradition dictates, if it's Saturday then it is definitely another
+hackathon we are proud to host at Unikraft. Even so, the last one was a bit
+special.
+]]></summary>
+        <author>
+            <name>Radu Nichita</name>
+        </author>
+        <author>
+            <name>Andrei Mutu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Radix-Tree: Internal data structures for SGX EPC Page Management]]></title>
+        <id>https://unikraft.org/blog/2022-08-22-unikraft-gsoc-intel-sgx-3</id>
+        <link href="https://unikraft.org/blog/2022-08-22-unikraft-gsoc-intel-sgx-3"/>
+        <updated>2022-08-22T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In this article, we explore Radix tree's in the context of SGC EPC page
+management.
+]]></summary>
+        <author>
+            <name>Xiangyi Meng</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Adding I/O APIC support]]></title>
+        <id>https://unikraft.org/blog/2022-08-21-unikraft-ioapic</id>
+        <link href="https://unikraft.org/blog/2022-08-21-unikraft-ioapic"/>
+        <updated>2022-08-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This blog describes the ongoing work on the I/O APIC integration in unikraft.
+Currently Unikraft is using the traditional 8259 PIC interrupt controller.
+]]></summary>
+        <author>
+            <name>Sairaj Kodilkar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.10.0 (Phoebe)]]></title>
+        <id>https://unikraft.org/blog/2022-08-20-unikraft-releases-phoebe</id>
+        <link href="https://unikraft.org/blog/2022-08-20-unikraft-releases-phoebe"/>
+        <updated>2022-08-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We're very excited to announce the latest edition of Unikraft, v0.10.0
+(Phoebe), and to show off many of the things the community has been working on
+over the last two months.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Marc Rittinghaus</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Răzvan Deaconescu</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Shadow Stack (Part 3)]]></title>
+        <id>https://unikraft.org/blog/2022-08-19-unikraft-gsoc-shadow-stack</id>
+        <link href="https://unikraft.org/blog/2022-08-19-unikraft-gsoc-shadow-stack"/>
+        <updated>2022-08-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This third blog post presents the efforts that were made in the 
+direction of testing and perfecting complex apps (such as `SQLite`, 
+`redis` and `nginx`) on `AArch64` using `gcc`, `clang` and `gcc-12` as 
+compilers.
+]]></summary>
+        <author>
+            <name>Maria Sfiraiala</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Leveraging Intel SGX in Unikraft: Challenges and Recent progress]]></title>
+        <id>https://unikraft.org/blog/2022-07-20-unikraft-gsoc-intel-sgx-2</id>
+        <link href="https://unikraft.org/blog/2022-07-20-unikraft-gsoc-intel-sgx-2"/>
+        <updated>2022-07-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[In this post, we will take an in-depth investigation of how SGX supported is
+implemented in Linux, and what we need to implement in Unikraft to achieve the
+same object.
+]]></summary>
+        <author>
+            <name>Xiangyi Meng</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Shadow Stack (Part 2)]]></title>
+        <id>https://unikraft.org/blog/2022-07-20-unikraft-gsoc-shadow-stack</id>
+        <link href="https://unikraft.org/blog/2022-07-20-unikraft-gsoc-shadow-stack"/>
+        <updated>2022-07-20T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[While the previous blog post described the first steps took into the direction
+of familiarizing myself with Unikraft and an initial attempt to using
+`clang`'s ShadowCallStack, in this post, we will take a look into some
+implementations that were tried in the meantime.
+]]></summary>
+        <author>
+            <name>Maria Sfiraiala</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Adding SMP support]]></title>
+        <id>https://unikraft.org/blog/2022-07-19-unikraft-synchronization</id>
+        <link href="https://unikraft.org/blog/2022-07-19-unikraft-synchronization"/>
+        <updated>2022-07-19T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The previous blog on the SMP support explained different 
+synchronization primitives for the unikraft.  As a part of the next 
+step, I started exploring some of the lockless data structures. There 
+has been an extensive amount of research to optimize this lockless 
+data structure.
+]]></summary>
+        <author>
+            <name>Sairaj Kodilkar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Adding SMP support]]></title>
+        <id>https://unikraft.org/blog/2022-06-27-unikraft-synchronization</id>
+        <link href="https://unikraft.org/blog/2022-06-27-unikraft-synchronization"/>
+        <updated>2022-07-07T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[This project aims to add the SMP safe synchronization premitives as well as
+remove the race conditions in the kernel.
+]]></summary>
+        <author>
+            <name>Sairaj Kodilkar</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Shadow Stack (Part 1)]]></title>
+        <id>https://unikraft.org/blog/2022-07-05-unikraft-gsoc-shadow-stack</id>
+        <link href="https://unikraft.org/blog/2022-07-05-unikraft-gsoc-shadow-stack"/>
+        <updated>2022-07-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[While Unikraft provides great security advantages through strong 
+cross-application isolation, traditional means of securing one's 
+application shouldn't be overlooked.
+]]></summary>
+        <author>
+            <name>Maria Sfiraiala</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.9.0 (Hyperion)]]></title>
+        <id>https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion</id>
+        <link href="https://unikraft.org/blog/2022-06-13-unikraft-releases-hyperion"/>
+        <updated>2022-06-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We're excited to announce Unikraft v0.9.0 (Hyperion) and to show off 
+many of the things the community has been working on over the last two 
+months.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+        <author>
+            <name>Simon Kuenzer</name>
+        </author>
+        <author>
+            <name>Marc Rittinghaus</name>
+        </author>
+        <author>
+            <name>Răzvan Vîrtan</name>
+        </author>
+        <author>
+            <name>Michalis Pappas</name>
+        </author>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Improving security and isolation of Unikraft with Intel SGX]]></title>
+        <id>https://unikraft.org/blog/2022-07-05-unikraft-gsoc-intel-sgx</id>
+        <link href="https://unikraft.org/blog/2022-07-05-unikraft-gsoc-intel-sgx"/>
+        <updated>2022-06-13T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Trusted execution environment (TEE), especially Intel SGX, is a 
+popular and powerful tool to provide hardware-based isolation for 
+highly sensitive code and data. 
+]]></summary>
+        <author>
+            <name>Xiangyi Meng</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Three Unikraft projects selected at Google Summer of Code 2022]]></title>
+        <id>https://unikraft.org/blog/2022-05-21-unikraft-gsoc-org</id>
+        <link href="https://unikraft.org/blog/2022-05-21-unikraft-gsoc-org"/>
+        <updated>2022-05-21T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We're excited to announce that three Unikraft projects will be part of 
+Google Summer of Code, with three students funded during the summer of 
+2022.
+]]></summary>
+        <author>
+            <name>Razvan Deaconescu</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft accepted as Google Summer of Code Organization!]]></title>
+        <id>https://unikraft.org/blog/2022-03-16-unikraft-gsoc-org</id>
+        <link href="https://unikraft.org/blog/2022-03-16-unikraft-gsoc-org"/>
+        <updated>2022-03-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We are extremely proud to have been accepted as an organization for Google
+Summer of Code 2022 (GSoC'22)
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Interested in Security for Unikraft?]]></title>
+        <id>https://unikraft.org/blog/2022-03-24-unikraft-security</id>
+        <link href="https://unikraft.org/blog/2022-03-24-unikraft-security"/>
+        <updated>2022-03-16T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We have finally gotten around to documenting all of the security features that
+make Unikraft and exciting platform for those interested in security work and
+secure deployments.
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft releases v0.8.0 (Enceladus)]]></title>
+        <id>https://unikraft.org/blog/2022-03-29-unikraft-releases-enceladus</id>
+        <link href="https://unikraft.org/blog/2022-03-29-unikraft-releases-enceladus"/>
+        <updated>2022-03-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We're excited to announce Unikraft v0.8.0 (Enceladus) and to show off many of
+the things the community has been working on over the last two months.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft and more at ASPLOS’22]]></title>
+        <id>https://unikraft.org/blog/2022-02-17-unikraft-at-asplos22</id>
+        <link href="https://unikraft.org/blog/2022-02-17-unikraft-at-asplos22"/>
+        <updated>2022-02-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Unikraft will appear at the International Conference on Architectural Support
+for Programming Languages and Operating Systems (ASPLOS'22) with both a paper
+and a workshop.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Kicking off 2022 with a new site and release at FOSDEM!]]></title>
+        <id>https://unikraft.org/blog/2022-02-05-new-site-and-unikraft-at-fosdem22</id>
+        <link href="https://unikraft.org/blog/2022-02-05-new-site-and-unikraft-at-fosdem22"/>
+        <updated>2022-02-04T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[As the new year begins, we're excited to show off many of the things the
+community has been working over the last two months. 
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft: Fast, Specialized Unikernels the Easy Way]]></title>
+        <id>https://unikraft.org/blog/2021-04-26-unikraft-at-eurosys</id>
+        <link href="https://unikraft.org/blog/2021-04-26-unikraft-at-eurosys"/>
+        <updated>2021-04-26T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The open source Unikraft project is proud to announce that its paper titled
+"Unikraft: Fast, Specialized Unikernels the Easy Way" has not only been
+accepted at Eurosys.
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unikraft: Building Powerful Unikernels Has Never Been Easier!]]></title>
+        <id>https://unikraft.org/blog/2020-02-17-building-powerful-unikernels</id>
+        <link href="https://unikraft.org/blog/2020-02-17-building-powerful-unikernels"/>
+        <updated>2020-02-17T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Two years ago, the Xen Project introduced Unikraft as an incubation project.
+Over the past two years, the Unikraft project has seen some great momentum.
+]]></summary>
+        <author>
+            <name>Alexander Jung</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Xen Project Celebrates Unikraft Unikernel Project's One Year Anniversary]]></title>
+        <id>https://unikraft.org/blog/2019-01-31-xen-project-celebrates</id>
+        <link href="https://unikraft.org/blog/2019-01-31-xen-project-celebrates"/>
+        <updated>2019-01-31T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[It has been one year since the Xen Project introduced Unikraft as an incubator
+project. In that time, the team has made great strides in simplifying the
+process of building unikernels through a unified and customizable code base.
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Unleasing the Power of Unikernels]]></title>
+        <id>https://unikraft.org/blog/2017-12-05-unleashing-unikernels</id>
+        <link href="https://unikraft.org/blog/2017-12-05-unleashing-unikernels"/>
+        <updated>2017-12-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[The team at NEC Laboratories Europe spent quite a bit of time over the last
+few years developing unikernels (specialized virtual machine images targeting
+specific applications).
+]]></summary>
+        <author>
+            <name>Felipe Huici</name>
+        </author>
+    </entry>
+</feed>
