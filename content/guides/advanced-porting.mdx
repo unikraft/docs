@@ -10,7 +10,7 @@ Today, we will learn how to properly port a more complex application, using mult
 
 We will use [`iperf3`](https://github.com/esnet/iperf/tree/master) as an example, a network benchmarking tool.
 
-### The Unikraft Build Lifecycle
+## The Unikraft Build Lifecycle
 
 The lifecycle of the construction of a Unikraft unikernel includes several distinct steps:
 
@@ -243,14 +243,14 @@ This process is usually very iterative because it requires building the unikerne
    Make an `include/` directory in the library's repository and copy the file:
 
    ```console
-   mkdir ~/workdir/app-iperf/workdir/libs/iperf3/include
-   cp workdir/build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workdir/app-iperf/.unikraft/libs/iperf3/include
+   $ mkdir ~/workdir/app-iperf/workdir/libs/iperf3/include
+   $ cp workdir/build/libiperf3/origin/iperf-3.10.1/src/iperf_config.h ~/workdir/app-iperf/.unikraft/libs/iperf3/include
    ```
 
    Let's indicate in the `Makefile.uk` of the Unikraft library for `iperf3` that this directory exists, and should be used as a location to look for header files:
    Add this line in the `workdir/libs/iperf3/Makefile.uk` file:
 
-   ```Makefile
+   ```make
    LIBIPERF3_CINCLUDES-y += -I$(LIBIPERF3_BASE)/include
    ```
 
@@ -261,8 +261,8 @@ This process is usually very iterative because it requires building the unikerne
    The `make` might give an error at the end, but it's fine, we can ignore it.
 
    ```console
-   cd workdir/build/libiperf3/origin/iperf-3.14/
-   make -n
+   $ cd workdir/build/libiperf3/origin/iperf-3.14/
+   $ make -n
    ```
 
    This flag, `-n`, has just shown us what `make` will run, the full commands for `gcc` including flags.
@@ -283,14 +283,14 @@ This process is usually very iterative because it requires building the unikerne
    However, in a later step, we'll find out that we can set some flags.
    If you do have flags which are immediately obvious, you set them like so in the library port's `Makefile.uk`, for example:
 
-   ```Makefile
+   ```make
    LIBIPERF3_CFLAGS-y += -Wno-unused-parameter
    ```
 
 1. We have a full list of files for `iperf3` from the previous step.
    We can add them as known source files like so to the Unikraft port of `iperf3`'s `Makefile.uk`:
 
-   ```Makefile
+   ```make
    LIBIPERF3_SRCS-y += $(LIBIPERF3_SRC)/main.c
    LIBIPERF3_SRCS-y += $(LIBIPERF3_SRC)/cjson.c
    LIBIPERF3_SRCS-y += $(LIBIPERF3_SRC)/iperf_api.c
@@ -311,8 +311,8 @@ This process is usually very iterative because it requires building the unikerne
    Because the application has been configured and we have fetched the contents, we can simply try running the build in the Unikraft application directory:
 
    ```console
-   cd ~/workdir/app-iperf3
-   make
+   $ cd ~/workdir/app-iperf3
+   $ make
    ```
 
 1. (Optional) This step occurs less frequently, but is still useful to discuss in the context of porting an application to Unikraft.
@@ -328,13 +328,13 @@ This process is usually very iterative because it requires building the unikerne
 
    Preparation is done by adding Make targets to the `UK_PREPARE` variable:
 
-   ```Makefile
+   ```make
    UK_PREPARE += mytarget
    ```
 
    Checking whether the library has been prepared or adding a target which requires preparation before it can be executed is as simple as checking whether the following target exists:
 
-   ```Makefile
+   ```make
    $(LIBIPERF3_BUILD)/.patched
    ```
 
@@ -342,7 +342,7 @@ This process is usually very iterative because it requires building the unikerne
    However, it can be called separately from `make` via:
 
    ```console
-   make prepare
+   $ make prepare
    ```
 
 The steps outlined above helped us begin the process of porting a simple application to Unikraft.
@@ -404,18 +404,19 @@ As such, if you update the library or application's code (i.e. by updating, for 
 To make a patch:
 
 1. First, ensure that the remote origin code has been downloaded to the application's `build/` folder:
+
    ```console
-   cd ~/workspace/apps/iperf3
-   make fetch
+   $ cd ~/workspace/apps/iperf3
+   $ make fetch
    ```
 
 1. Once the source files have been downloaded, turn it into a Git repository and save everything to an initial commit, in the case of `iperf3`:
 
    ```console
-   cd workdir/build/libiperf3/origin/iperf-3.10.1
-   git init
-   git add .
-   git commit -m "Initial commit"
+   $ cd workdir/build/libiperf3/origin/iperf-3.10.1
+   $ git init
+   $ git add .
+   $ git commit -m "Initial commit"
    ```
 
    This will allow us to make changes to the source files and save those differences.
@@ -427,21 +428,128 @@ To make a patch:
    For example, if you have made one (`1`) patch only, export it like so:
 
    ```console
-   git format-patch HEAD~1
+   $ git format-patch HEAD~1
    ```
 
-   This will save a new `.patch` file in the current directory; which should be the origin source files of `iperf3`.
+   This will save a new `.patch` file in the current directory;
+   which should be the origin source files of `iperf3`.
 
 1. The next step is to create a `patches/` folder within the Unikraft port of the library and to move the new `.patch` file into this folder:
 
    ```console
-   mkdir ~/workspace/libs/iperf3/patches
-   mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
+   $ mkdir ~/workspace/libs/iperf3/patches
+   $ mv ~/workspace/apps/iperf3/build/libiperf3/origin/iperf-3.10.1/*.patch ~/workspace/libs/iperf3/patches
    ```
 
 1. To register patches against Unikraft's build system such that they are applied before the compilation of all source files, simply indicate it in the library's `Makefile.uk`:
 
-   ```Makefile
+   ```make
    # Add or edit ~/workspace/libs/iperf3/Makefile.uk
    LIBIPERF3_PATCHDIR = $(LIBIPERF3_BASE)/patches
    ```
+
+## Registering Components via ELF Sections
+
+There are situations in which we want to add new sections in the executable file (ELF format) for our application or library.
+These sections are useful for making components much easier to configure.
+For example, the Unikraft virtual filesystem (`vfscore`) uses such a section to register filesystems (like `ramfs` or `9pfs`), and the scheduler uses them to register functions at build time.
+
+To add such a section, you can define a linker script with the `.ld` extension (e.g., `extra.ld`):
+
+```ld
+SECTIONS
+{
+    .my_section : {
+        PROVIDE(my_section_start = .);
+        KEEP (*(.my_section_entry))
+        PROVIDE(my_section_end = .);
+    }
+}
+INSERT AFTER .text;
+```
+
+Then, register the linker script in your `Makefile.uk`:
+
+```make
+LIBYOURAPPNAME_SRCS-$(CONFIG_LIBYOURAPPNAME) += $(LIBYOURAPPNAME_BASE)/extra.ld
+```
+
+Data can be registered in this section using macros that leverage compiler attributes like `__section` and `__used`.
+These macros are typically found in `uk/essentials.h`:
+
+```c
+#define MY_REGISTER(s, f) static const struct my_structure      \
+        __section(".my_section_entry")                          \
+        __my_section_var __used =                               \
+                {.name = (s),                                   \
+                .func = (f)};
+```
+
+Iterating through these registered entries involves using the boundary symbols defined in the linker script:
+
+```c
+extern const struct my_structure my_section_start;
+extern const struct my_structure my_section_end;
+
+#define for_each_entry(iter)                                    \
+        for (iter = &my_section_start;                          \
+                iter < &my_section_end;                         \
+                iter++)
+```
+
+## Integrating with Unikraft Internal APIs
+
+Some applications require direct interaction with Unikraft's internal system APIs.
+For each category of internal library (e.g., memory allocators, schedulers, filesystems, network drivers), Unikraft defines an API that libraries in that category must comply with, allowing different implementations to be plugged in easily.
+
+### The Virtual Filesystem API (vfscore)
+
+The `vfscore` internal library provides the implementation for filesystem-related system calls.
+It maps generic calls like `read` or `write` to specific implementations using function pointers defined in two primary structures:
+
+- `struct vfsops`: Defines filesystem-level operations such as mounting.
+- `struct vnops`: Defines operations on specific file nodes (vnodes).
+
+Filesystems register themselves with `vfscore` using the `vfscore_fs_type` structure and the `UK_FS_REGISTER` macro:
+
+```c
+struct vfscore_fs_type {
+        const char      *vs_name;       /* name of file system */
+        int             (*vs_init)(void); /* initialize routine */
+        struct vfsops   *vs_op;         /* pointer to vfs operation */
+};
+
+UK_FS_REGISTER(fs_ramfs);
+```
+
+Within `vfscore`, files are abstracted as `vnode` structures, which maintain metadata such as operations, permissions, and size.
+They also include a `void *v_data` field for filesystem-specific private data.
+Other key structures include `dentry` for path abstractions and `mount` for associated mount points.
+
+To make a new filesystem configurable, its registration must also be reflected in the `Config.uk` of the `vfscore` library, allowing it to be selected as a root filesystem in `menuconfig`.
+
+## Generic List API in Unikraft
+
+Unikraft includes a generic doubly-linked list implementation, similar to the Linux kernel's, available via `<uk/list.h>`.
+This API uses the `uk_list_head` structure, which can be embedded within any container structure:
+
+```c
+struct car {
+        char name[50];
+        struct uk_list_head list;
+};
+```
+
+Common routines in this API include:
+
+- `UK_LIST_HEAD(name)`: Declares the sentinel of a list globally.
+
+- `UK_INIT_LIST_HEAD(struct uk_list_head *list)`: Initializes a list head dynamically.
+
+- `uk_list_add(struct uk_list_head *new_entry, struct uk_list_head *head)`: Adds an entry.
+
+- `uk_list_entry(ptr, type, field)`: Returns the structure containing the list element.
+
+- `uk_list_for_each(p, head)`: Iterates over a list.
+
+- `uk_list_for_each_safe(p, n, head)`: Iterates safely, allowing for entry deletion.
