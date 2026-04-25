@@ -21,7 +21,7 @@ Below you can see a list of useful commands.
 
 Today we'll make use of `gdb`.
 We recommend the [following cheat sheet](https://darkdust.net/files/GDB%20Cheat%20Sheet.pdf) for the most common commands.
-A quick crash course on GDB may be found [here](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf).
+A quick crash course on GDB may be found in this [GDB tutorial](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf).
 
 ## Debugging
 
@@ -132,11 +132,11 @@ If you want to dereference a pointer and actually see the value, you can use the
 (gdb) p *addr
 ```
 
-You can find more GDB commands [here](https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf)
-Also, if you are unfamiliar with X86_64 calling convention you can read more about it [here](https://en.wikipedia.org/wiki/X86_calling_conventions).
+You can find more GDB commands in this [GDB reference card](https://users.ece.utexas.edu/~adnan/gdb-refcard.pdf).
+Also, if you are unfamiliar with X86_64 calling convention you can read more about it in this [X86_64 calling convention article](https://en.wikipedia.org/wiki/X86_calling_conventions).
 
 Now, let's get back to the task.
-Download the target kernel image from [here](https://github.com/unikraft-upb/guides-exercises/raw/refs/heads/master/debugging/02-secret/mystery_kvm-x86_64.dbg).
+Download the target kernel image from the [guides-exercises repository](https://github.com/unikraft-upb/guides-exercises/raw/refs/heads/master/debugging/02-secret/mystery_kvm-x86_64.dbg).
 
 Use `qemu` and `gdb` to navigate through the `mystery_kvm-x86_64.dbg` file.
 
@@ -155,15 +155,18 @@ gdb --eval-command="target remote :1234" mystery_kvm-x86_64.dbg
 Do you think you can find out the **secret**?
 
 1. Look through the assembly code and see what it does.
-   Follow the `test eax, eax` instructions and see what needs to happen to pass those tests and get to the last point where the secret is printed (i.e. be able to advance to address `0x000000000018a4ae`).
+   Follow the `test eax, eax` instructions and see what needs to happen to pass those tests and get to the last point where the secret is printed.
+   This will allow you to advance to address `0x000000000018a4ae`.
 
-1. Investigate memory addresses (using the `x` instruction - such as `x/s $rbp-0x120`), do instruction stepping (`stepi` or `nexti`), use breakpoints (`break *<address>`) and find out the secret.
+1. Investigate memory addresses (using the `x` instruction - such as `x/s $rbp-0x120`), do instruction stepping (`stepi` or `nexti`),
+   use breakpoints (`break *<address>`) and find out the secret.
 
 ### 03. Nginx with or without main? That's the question
 
 Let's try a new application based on networking, **Nginx**.
 
-Use the same setup from the last session, follow the instructions in the [`README.md` file from the catalog repository](https://github.com/unikraft/catalog-core/tree/main/nginx) and build `Nginx` for Qemu/KVM.
+Use the same setup from the last session,
+follow the instructions in the [`README.md` file from the catalog repository](https://github.com/unikraft/catalog-core/tree/main/nginx) and build `Nginx` for Qemu/KVM.
 Do you observe something strange?
 Where is the `main.c` file?
 
