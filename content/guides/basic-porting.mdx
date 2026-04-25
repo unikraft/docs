@@ -1,8 +1,7 @@
 ---
-
 title: Porting Application to Unikraft
 description: |
-  We explore how to port an application on top of Unikraft.
+  We explore how to port a new application on top of Unikraft.
 ---
 
 As you have seen in the previous sessions, there are several applications already ported that you can use with Unikraft.
@@ -33,16 +32,16 @@ fi
 check_exists_and_create_symlink "libs/musl"
 ```
 
-1. Re-run the `setup.sh` script again, you should have a new directory: `workdir/libs/musl`.
+Re-run the `setup.sh` script again, you should have a new directory: `workdir/libs/musl`.
 
 ```console
 $ ls workdir/libs/musl
 abort.c          Makefile.rules            Makefile.uk.musl.errno     Makefile.uk.musl.locale ......
 ```
 
-1. In the `Makefile`, change `UK_LIBS` to `UK_LIBS ?= $(LIBS_BASE)/musl`.
-   After all that, when you run `make menuconfig`, you should see `musl: A C standard library` under `Library Configuration -->`.
+In the Makefile, change `UK_LIBS` to `UK_LIBS ?= $(LIBS_BASE)/musl`.
 
+After all that, when you run `make menuconfig`, you should see `musl: A C standard library` under Library Configuration.
 After all that, we can start the actual porting.
 In order to not get confused between multiple files, we will create two directories, `include/` and `src/`, where we will copy the header and source files that we need.
 
@@ -51,7 +50,7 @@ $ mkdir include/
 $ mkdir src/
 ```
 
-After that, we can clone the `coreutils` and extract the files necessary for `echo`:
+After that, we can clone the coreutils and extract the files necessary for echo:
 
 ```console
 $ git clone https://github.com/coreutils/coreutils coreutils
@@ -67,28 +66,26 @@ APPCHELLO_CINCLUDES-y += -I$(APPCHELLO_BASE)/include
 ```
 
 This tells the build system to use the `echo.c` file as a source file, and the `include/` directory as a path to search for header files.
+After all this is done, we can try to run make.
 
-After all this is done, we can try to run `make`.
 We will receive a lot of build errors, as expected.
 We need to solve them one by one.
-
 First, we will receive some errors about missing headers, like `config.h`, `timespec.h`, etc.
-To solve this, we will use the very blunt approach, `kill them all`.
+To solve this, we will use the very blunt approach, kill them all.
 We remove all the `#include` lines from the `echo.c` file, and go from there.
 
-**Note** that this is obviously a bad idea for most applications.
-We should find the headers and copy them, but in our case, since `echo` does not need much, we can figure out what to add on the way.
-
+Note that this is obviously a bad idea for most applications.
+We should find the headers and copy them, but in our case, since echo does not need much, we can figure out what to add on the way.
 For now, we leave only the `stdio.h` and `sys/types.h` as include statements.
 We will add more of them later.
 
 Now, we receive some errors regarding undeclared things:
 
-```text
-/projects/unikraft/catalog-core/c-hello/src/echo.c:29:30: error: ‘false’ undeclared here (not in a function)
+```plaintext
+/projects/unikraft/catalog-core/c-hello/src/echo.c:29:30: error: 'false' undeclared here (not in a function)
    29 | enum { DEFAULT_ECHO_TO_XPG = false };
-/projects/unikraft/catalog-core/c-hello/src/echo.c:37:21: error: ‘EXIT_SUCCESS’ undeclared (first use in this function)
-   37 |   affirm (status == EXIT_SUCCESS);
+/projects/unikraft/catalog-core/c-hello/src/echo.c:37:21: error: 'EXIT_SUCCESS' undeclared (first use in this function)
+   37 | affirm (status == EXIT_SUCCESS);
    ......
 ```
 
@@ -103,16 +100,16 @@ We can add some headers now.
 This way we get rid of some of the undefined symbols.
 Next, we see some weird undefined functions called in the `usage()` function:
 
-```text
-/projects/unikraft/catalog-core/c-hello/src/echo.c:39:3: warning: implicit declaration of function ‘affirm’ [-Wimplicit-function-declaration]
-   39 |   affirm (status == EXIT_SUCCESS);
+```plaintext
+/projects/unikraft/catalog-core/c-hello/src/echo.c:39:3: warning: implicit declaration of function 'affirm' [-Wimplicit-function-declaration]
+   39 | affirm (status == EXIT_SUCCESS);
       |   ^~~~~~
-/projects/unikraft/catalog-core/c-hello/src/echo.c:41:11: warning: implicit declaration of function ‘_’ [-Wimplicit-function-declaration]
-   41 |   printf (_("\
+/projects/unikraft/catalog-core/c-hello/src/echo.c:41:11: warning: implicit declaration of function '_' [-Wimplicit-function-declaration]
+   41 | printf (_("\
       |           ^
 ```
 
-Let's skip the usage function, we can just have the usage function exit.
+Let's skip the `usage` function, we can just have the `usage` function exit.
 
 ```c
 void
@@ -123,7 +120,7 @@ usage (int status)
 ```
 
 Finally, we only have one screen of errors to solve.
-We get an `LC_ALL undeclared` error, we need to `#include <locale.h>`.
+We get an `LC_ALL` undeclared error, we need to `#include <locale.h>`.
 
 There are some more GNU-specific functions, like `version_etc`, `proper_name`, `bindtextdomain`, etc.
 They have to do just with the program metadata, like authors, licensing and versioning, so we can delete them (the following lines:)
@@ -143,8 +140,7 @@ We can also remove the `FALLTHROUGH` line from the main switch statement, since 
 
 Finally, when we try to `make` again, we only have 3 main errors left: undefined reference to `STREQ`, undefined reference to `close_stdout`, and implicit declaration of `c_isxdigit`.
 Other than that, there are the `FALLTHROUGH` warnings from above.
-
-For the `STREQ`, we can search that in the `coreutils` repo:
+For the `STREQ`, we can search that in the coreutils repo:
 
 ```console
 $ grep -r STREQ coreutils
@@ -160,7 +156,6 @@ This makes sense, it's just a wrapper over `strcmp`, so let's copy it into our s
 ```
 
 We also need to `#include <string.h>`, since we use `strcmp`.
-
 The `close_stdout` function is nowhere in the `coreutils/` repo, so we can assume that it's a function that closes the standard output descriptor, since it's called at the program exit.
 We add it to our source file:
 
@@ -172,12 +167,10 @@ void close_stdout(void)
 ```
 
 For this, we need to also include `unistd.h`.
-
 Now, the only thing left is the `c_isxdigit` function.
-Again, it's not found in the `coreutils` repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctype.h` header.
-
+Again, it's not found in the coreutils repository, but we can assume it's just the `isxdigit` function from libc, so we replace `c_isxdigit` with `isxdigit` and we include the `ctype.h` header.
 With all of this, our application finally builds.
-We can run it as usual, using `qemu`:
+We can run it as usual, using qemu:
 
 ```console
 $ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64
@@ -193,20 +186,16 @@ oOo oOO| | | | |   (| | | (_) |  _) :_
 [    2.469429] Info: [libukboot] <boot.c @  498> Environment variables:
 [    2.469967] Info: [libukboot] <boot.c @  500>        PATH=/bin
 [    2.470469] Info: [libukboot] <boot.c @  506> Calling main(1, ['workdir/build/c-hello_qemu-x86_64'])
-(an empty newline here)
 ```
 
 This will lead to nothing being printed, as we would run `echo` with no arguments.
 To pass arguments to our application, we can use the `-append` flag:
 
 ```console
+
 $ qemu-system-x86_64 -nographic -kernel workdir/build/c-hello_qemu-x86_64 -append "Hello from Unikraft"
 Powered by
-o.   .o       _ _               __ _
-Oo   Oo  ___ (_) | __ __  __ _ ' _) :_
-oO   oO ' _ `| | |/ /  _)' _` | |_|  _)
-oOo oOO| | | | |   (| | | (_) |  _) :_
- OoOoO ._, ._:_:_,\_._,  .__,_:_, \___)
+[... Unikraft Banner ...]
                     Pan 0.19.0~9603a4ab
 [    2.470131] Info: [libukboot] <boot.c @  472> Pre-init table at 0x253148 - 0x253148
 [    2.470999] Info: [libukboot] <boot.c @  483> Constructor table at 0x253148 - 0x253148
@@ -223,10 +212,10 @@ So finally, `echo` works.
 Using the same steps, try to port the `pwd` command, located in `pwd.c`.
 Some tips:
 
-* `#define nullptr NULL`
-* `typedef long int idx_t;`
-* You can remove everything related to `robust_getcwd`, since Unikraft is POSIX-compatible, so it will not use those functions.
-* You can change the weird `x*alloc` functions to simple `malloc`s.
+- `#define nullptr NULL`
+- `typedef long int idx_t;`
+- You can remove everything related to `robust_getcwd`, since Unikraft is POSIX-compatible, so it will not use those functions.
+- You can change the weird `x*alloc` functions to simple `malloc`s.
 
 When you run the unikernel, it should print `/`, as it is in the root directory.
-You can use a filesystem and change the working directory to test that it works fine, you can see the `nginx` example on how to run an application using a filesystem.
+You can use a filesystem and change the working directory to test that it works fine, you can see the nginx example on how to run an application using a filesystem.
