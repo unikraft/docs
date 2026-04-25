@@ -1,0 +1,259 @@
+---
+title: High-Performance Networking
+description: |
+  Developing highly specialized and performance-optimized unikernels with Unikraft by bypassing traditional OS layers and interacting directly with network drivers.
+---
+
+## Overview
+
+In this guide, we explore the development of highly specialized and performance-optimized unikernels.
+Traditionally, network-based applications in Unikraft are built on top of the socket API, which requires a multi-layered library stack:
+
+```text
+.---------------------------.
+(     Socket application    )
+'---------------------------'
+              |
+              V
++---------------------------+
+|         libvfscore        |
++---------------------------+
++---------------------------+
+|          liblwip          |
++---------------------------+
++---------------------------+
+|        libuknetdev        |
++---------------------------+
++---------------------------+
+|        libkvmplat         |
++---------------------------+
+              |
+              V
+.---------------------------.
+( Virtual Network Interface )
+'---------------------------'
+```
+
+The Virtual File System (VFS) layer (provided by `libvfscore`) and the TCP/IP network stack (provided by `liblwip`) are complex subsystems that can introduce additional overhead.
+For high-performance Network Functions (NFs), it is often more efficient to bypass these OS components and interact directly with the driver or hardware, similar to frameworks like Intel DPDK.
+
+In this scenario, the library stack is simplified:
+
+```text
+.---------------------------.
+(    High performance NF    )
+'---------------------------'
+              |
+              V
++---------------------------+
+|        libuknetdev        |
++---------------------------+
++---------------------------+
+|        libkvmplat         |
++---------------------------+
+              |
+              V
+.---------------------------.
+( Virtual Network Interface )
+'---------------------------'
+```
+
+This guide demonstrates the process of developing a high-performance network packet generator using this direct-access model.
+
+## Requirements
+
+To develop and test high-performance networking unikernels, you need the Unikraft `kraft` tool and the following utilities:
+
+- `qemu-kvm`
+- `qemu-system-x86_64`
+- `bridge-utils`
+- `ifupdown`
+- `tshark`
+- `tcpdump`
+
+Installation on Debian/Ubuntu:
+
+```console
+$ sudo apt-get -y install qemu-kvm qemu-system-x86 sgabios socat bridge-utils ifupdown tshark tcpdump
+```
+
+## Getting Started
+
+The development process typically begins with a template containing basic building blocks, such as utilities for crafting IPv4/UDP packets.
+
+1. Create a copy of the packet generator template:
+
+   ```console
+   $ cp -a sol/pktgen path/to/your/copy
+   $ cd path/to/your/copy
+   ```
+
+1. Initialize and build the application with `kraft`:
+
+   ```console
+   $ kraft list update
+   $ kraft list pull
+   $ kraft configure
+   $ kraft build
+   ```
+
+1. Verify the resulting image by running it to see the Unikraft banner:
+
+   ```console
+   $ kraft run
+   ```
+
+## Interacting with the Network Device
+
+Direct interaction with network device drivers is achieved through Unikraft's internal `uknetdev` API.
+
+### Library Dependency
+
+First, ensure the application states a dependency on `libuknetdev` in its `Config.uk` file:
+
+```kconfig
+depends on LIBUKNETDEV
+```
+
+This provides access to the `<uk/netdev.h>` and `<uk/netbuf.h>` headers.
+
+### Bringing Up the Interface
+
+Bringing up a network interface involves transitioning the device through several configuration states before it can process traffic:
+
+1. **Discovery**: Determine the number of available interfaces using `uk_netdev_count()`.
+
+1. **Retrieval**: Retrieve the `struct uk_netdev *` handle for the desired device (e.g., device `0`).
+
+1. **Configuration**: Specify how many receive (RX) and transmit (TX) queues the device should provide.
+   Note that drivers typically require at least one queue in each direction even if only one is used.
+
+   ```c
+   struct uk_netdev_conf ifconf = {
+       .nb_rx_queues = 1,
+       .nb_tx_queues = 1
+   };
+   ```
+
+1. **Queue Setup**: Configure the RX and TX queues, specifying the size and the allocators for internal descriptors and buffers.
+
+1. **Probing**: Use `uk_netdev_probe()` to transition the device from an unprobed to an unconfigured state.
+
+1. **Starting**: Use `uk_netdev_start()` to enable the device for operational traffic.
+
+### Testing Environment
+
+To test the unikernel's networking capabilities, a network bridge must be created on the Linux host:
+
+```console
+# Ensure permissions for STP and create bridge 'usocbr0'
+sudo sysctl -w net.bridge.bridge-nf-call-arptables=0
+sudo brctl addbr usocbr0
+sudo brctl setfd usocbr0 0
+sudo brctl stp usocbr0 off
+sudo ifconfig usocbr0 0.0.0.0 up
+
+# Disable packet filtering on bridge interfaces
+echo 0 | sudo tee /proc/sys/net/bridge/bridge-nf-call-arptables
+echo 0 | sudo tee /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 0 | sudo tee /proc/sys/net/bridge/bridge-nf-call-ip6tables
+```
+
+Launch the unikernel attached to the bridge:
+
+```console
+$ kraft run -b usocbr0
+```
+
+## Packet Generation and Transmission
+
+### Generating Frames
+
+The provided `genpkt_udp4()` function (or the shorthand `genpkt_usoc21()`) generates Ethernet-IPv4-UDP frames.
+The generation requires specific parameters retrieved from the device via `uk_netdev_info_get()`, such as `ioalign` for buffer alignment and `nb_encap_tx` for headroom (reserved space for driver encapsulation).
+
+For performance testing, minimum-sized packets (60 bytes) are recommended, as they place the most stress on software and hardware parsing components.
+
+### Sending Packets
+
+Transmission is performed using `uk_netdev_tx_one()`.
+It is critical to manage the packet buffers correctly:
+
+- If a packet is successfully enqueued, the driver takes ownership and will free it automatically.
+- If transmission fails, the application must manually call `uk_netbuf_free()` to avoid memory leaks.
+
+```c
+status = uk_netdev_tx_one(netif, 0, pkt);
+if (!uk_netdev_status_successful(status)) {
+    uk_netbuf_free(pkt);
+}
+```
+
+Traffic can be verified on the host using tools like `tshark` or `tcpdump` attached to the bridge:
+
+```console
+$ tshark -i usocbr0
+```
+
+## Performance Optimization
+
+### Throttled Instrumentation
+
+Measuring performance requires tracking the total number of packets and bytes sent.
+However, synchronous printing in Unikraft is expensive and can significantly slow down the application.
+It is recommended to throttle statistics printing using a bitmask or counter:
+
+```c
+if ((total_nb_pkts & 0x3fffff) == 0x0) {
+    print_netspeed(total_nb_pkts, total_nb_bytes);
+}
+```
+
+### Optimization Techniques
+
+Several techniques can be applied to increase the packet rate:
+
+1. **Compiler Optimizations**: Enable *Link Time Optimizations* (LTO) and *Dead Code Elimination* (DCE) in the build options via `menuconfig`.
+
+1. **Persistent Packets**: Instead of freeing and regenerating packets on transmission failure, retry sending until the TX queue has space.
+
+1. **Packet Duplication**: Use `uk_netbuf_dup_single()` to `memcpy` from a primordial packet buffer, which can be cheaper than full header generation.
+
+1. **Memory Pools**: Use `libukallocpool` for $O(1)$ allocation and deallocation.
+   This replaces the general-purpose allocator with a pre-allocated list of objects.
+
+   ```c
+   /* Add 'depends on LIBUKALLOCPOOL' to Config.uk */
+   pool = uk_allocpool_alloc(uk_alloc_get_default(), 1024, 2048, info.ioalign);
+   struct uk_alloc *p = uk_allocpool2ukalloc(pool);
+   ```
+
+1. **Zero-copy**: While virtio-net has current limitations, some drivers support increasing the `netbuf` reference counter to avoid freeing and reallocating the same packet for repeated transmission.
+
+1. **Batching**: Sending multiple packets in a single batch reduces the overhead of notifying the device backend (functionality introduced in PR#243).
+
+## Receiving Traffic
+
+Implementing a receiver follows a similar pattern to the transmitter but requires a proper receive buffer allocation function (`alloc_rxpkts`).
+This callback is used by the driver to replenish the RX queue with empty buffers.
+
+```c
+uint16_t alloc_rxpkts(void *argp, struct uk_netbuf *pkts[], uint16_t count) {
+    uint16_t i;
+    for (i=0; i<count; ++i) {
+        pkts[i] = uk_netbuf_alloc_buf(p, 2048, info.ioalign, info.nb_encap_rx, 0, NULL);
+        if (!pkts[i]) break;
+    }
+    return i;
+}
+```
+
+The receive loop then polls the device:
+
+```c
+status = uk_netdev_rx_one(netdev, 0, &pkt);
+if (uk_netdev_status_successful(status)) {
+    // Process counters and free the received packet
+    uk_netbuf_free(pkt);
+}
+```
