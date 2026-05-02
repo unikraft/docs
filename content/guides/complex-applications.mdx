@@ -1,0 +1,495 @@
+---
+title: Complex Applications
+description: |
+  Learn how to configure and run complex applications using external filesystems and networking.
+---
+
+This guide is a resurface of the USoC 21 Session 04.
+It covers how to run applications that require external filesystems, networking, and specific boot parameters.
+
+> **Note:** The original guide relied heavily on the legacy Make-based build system and `qemu-guest`.
+It has been updated to use the modern `kraftkit` tooling.
+
+## Prerequisites
+
+To follow this guide, you need to have **Docker** and **KraftKit** installed.
+Docker is used by KraftKit to provide a consistent build environment.
+
+### Installing KraftKit
+
+If you are on Linux or WSL2, you can install KraftKit with a single command:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://get.kraftkit.sh | sh
+```
+
+To verify the installation, check the version:
+
+```bash
+kraft version
+```
+
+### Enable KVM (Recommended)
+
+For better performance when running unikernels, ensure your user has permissions to access the KVM device:
+
+```bash
+sudo chmod 666 /dev/kvm
+```
+
+## 01. SQLite (Tutorial)
+
+The goal of this tutorial is to get you to set up and run SQLite on top of Unikraft using the modern `kraftkit` tooling.
+
+[SQLite](https://www.sqlite.org/index.html) is a C library that implements an encapsulated SQL database engine that does not require any setting or administration.
+It is one of the most popular in the world and it differs from other SQL database engines because it is simple to administer, use, maintain, and test.
+Thanks to these features, SQLite is a fast, secure, and (most crucial) simple application.
+
+To successfully compile and run the SQLite application, we no longer need to manually clone repositories or write Makefiles.
+Instead, we use a declarative `kraft.yaml` file.
+
+### SQLite Setup & Configuration
+
+First, create a new directory for your application and navigate into it:
+
+```bash
+mkdir app-sqlite
+cd app-sqlite
+```
+
+Inside this directory, create a file named `kraft.yaml`.
+This file tells KraftKit which Unikraft core, libraries, and configurations to use.
+Since SQLite needs to read external files (our database script), we also configure the `9pfs` filesystem directly in this file.
+
+Paste the following into your `kraft.yaml`:
+
+```yaml
+spec: v0.6
+name: app-sqlite
+unikraft:
+  version: stable
+libraries:
+  pthread-embedded:
+    version: stable
+  newlib:
+    version: stable
+  sqlite:
+    version: stable
+targets:
+  - architecture: x86_64
+    platform: qemu
+kconfig:
+  - CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS=y
+  - CONFIG_LIBVFSCORE_ROOTFS_9PFS=y
+  - CONFIG_LIBVFSCORE_ROOTDEV="fs0"
+```
+
+### SQLite Build
+
+We build the application by simply running:
+
+```bash
+$ kraft build
+```
+
+KraftKit will automatically download the required dependencies (Unikraft core, `newlib`, `pthread-embedded`, and `lib-sqlite`) and build the unikernel.
+
+### SQLite Test
+
+For testing, we can use a simple SQLite script that inserts ten values into a table. First, create a folder called `sqlite_files` and a file named `script.sql` inside it with the following command:
+
+```bash
+mkdir sqlite_files
+cat << 'EOF' > sqlite_files/script.sql
+CREATE TABLE tab (d1 int, d2 text);
+
+INSERT INTO tab VALUES 
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text)),
+  (random(), cast(random() as text));
+EOF
+```
+
+When you run the application, you can map the newly created local folder to the unikernel's root filesystem using the `-v` (volume) flag (be sure to be in the app-sqlite directory when you run it):
+
+```bash
+$ kraft run --rm -v ./sqlite_files:/
+```
+
+Once the unikernel boots, you will be dropped into the SQLite prompt.
+Run the following commands to load your script and view the data:
+
+```bash
+sqlite> .read script.sql
+sqlite> select * from tab;
+```
+
+You should see an output with 10 random rows of data.
+When you are done, simply type `.exit` to shut down the unikernel.
+
+## 02. SQLite New Filesystem (Tutorial)
+
+In the previous work item, we chose to use 9PFS as the filesystem.
+For this work item, we want to change the filesystem to InitRD and load the SQLite script just as we did before.
+
+First, we need to change the filesystem to InitRD in our configuration.
+Open your `kraft.yaml` file and replace the `kconfig` section with the following:
+
+```yaml
+spec: v0.6
+name: app-sqlite
+unikraft:
+  version: stable
+libraries:
+  pthread-embedded:
+    version: stable
+  newlib:
+    version: stable
+  sqlite:
+    version: stable
+targets:
+  - architecture: x86_64
+    platform: qemu
+kconfig:
+  - CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS=y
+  - CONFIG_LIBVFSCORE_ROOTFS_INITRD=y
+```
+
+Notice that we removed the `ROOTDEV` variable and replaced `9PFS` with `INITRD`.
+Rebuild the application to apply the new filesystem configuration:
+
+```bash
+$ kraft build
+```
+
+The InitRD filesystem can load only [cpio archives](https://www.ibm.com/docs/en/zos/2.2.0?topic=formats-cpio-format-cpio-archives).
+In order to load our SQLite script into the InitRD, we need to create a cpio archive out of the `sqlite_files` folder we created in the previous section.
+
+Navigate into the folder and run the `bsdcpio` command:
+
+```bash
+$ cd sqlite_files
+$ find -type f | bsdcpio -o --format newc > ../archive.cpio
+$ cd ..
+```
+
+This creates an archive called `archive.cpio` in your main application directory.
+
+Next, we run the unikernel using `kraft run`. Instead of mounting a volume, we pass the archive directly into memory using the `--initrd` flag:
+
+```bash
+$ kraft run --rm --initrd ./archive.cpio
+```
+
+Once the unikernel boots, run the same commands as before:
+
+```bash
+sqlite> .read script.sql
+sqlite> select * from tab;
+```
+
+If everything runs as expected, you will see the 10 random rows printed to the console, proving that the database successfully read the script from the RAM disk!
+Type `.exit` to close the instance.
+
+## 03. Redis (Tutorial)
+
+The goal of this tutorial is to get you to set up and run Redis on top of Unikraft.
+
+[Redis](https://redis.io/topics/introduction) is one of the most popular key-value databases, with a design that facilitates the fast writing and reading of data from memory, as well as the storage of data on disk in order to be able to reconstruct the state of data in memory in case of a system restart.
+Unlike other data storage systems, Redis supports different types of data structures such as lists, maps, strings, sets, bitmaps, streams.
+
+The Redis application depends on other ported libraries for Unikraft (`pthread-embedded`, `newlib`, and `lwip` for networking).
+We will use `kraftkit` to automatically fetch these dependencies and configure the network.
+
+### Redis Setup & Configuration
+
+First, create a new directory for your Redis application and navigate into it:
+
+```bash
+mkdir app-redis
+cd app-redis
+```
+
+Next, create the `kraft.yaml` file.
+This configuration will be slightly larger than the SQLite one because we need to enable the `lwip` network stack (IPv4, TCP, UDP, DHCP, and Sockets) so Redis can communicate with the outside world, alongside the `9pfs` filesystem to read its configuration file.
+
+Paste the following into your `kraft.yaml`:
+
+```yaml
+spec: v0.6
+name: app-redis
+unikraft:
+  version: stable
+libraries:
+  pthread-embedded:
+    version: stable
+  newlib:
+    version: stable
+  lwip:
+    version: stable
+  redis:
+    version: stable
+targets:
+  - architecture: x86_64
+    platform: qemu
+kconfig:
+  - CONFIG_LIBLWIP=y
+  - CONFIG_LWIP_IPV4=y
+  - CONFIG_LWIP_TCP=y
+  - CONFIG_LWIP_UDP=y
+  - CONFIG_LWIP_SOCKET=y
+  - CONFIG_LWIP_DHCP=y
+  - CONFIG_LIBPOSIX_EVENT=y
+  - CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS=y
+  - CONFIG_LIBVFSCORE_ROOTFS_9PFS=y
+  - CONFIG_LIBVFSCORE_ROOTDEV="fs0"
+```
+
+### Redis Build
+
+Build the Redis unikernel by running:
+
+```bash
+$ kraft build
+```
+
+### Redis Test
+
+Before running Redis, let's create a directory to hold our configuration file.
+We will mount this directory to the unikernel just like we did with SQLite.
+
+```bash
+mkdir redis_files
+touch redis_files/redis.conf
+```
+
+In the old Make-based system, setting up the network required manually configuring bridges and DHCP servers on your host machine.
+With KraftKit, networking is heavily simplified.
+We can expose the Redis port (6379) to our host machine simply by using the `-p` flag, similar to Docker.
+
+Start the Redis server:
+
+```bash
+$ kraft run --rm -p 6379:6379 -v ./redis_files:/
+```
+
+You should see the classic Redis ASCII art logo appear in your terminal, indicating that the server has initialized and is ready to accept connections.
+
+Open a new terminal window on your machine (leave the unikernel running in the first one) and use the `redis-cli` tool to connect to it.
+Since we mapped the port to our host, we can connect directly via `localhost` (`127.0.0.1`):
+
+```bash
+$ redis-cli -h 127.0.0.1 -p 6379
+127.0.0.1:6379> PING
+PONG
+127.0.0.1:6379>
+```
+
+If you get a `PONG` response, congratulations!
+You are communicating over the network with a Redis server running inside a Unikraft unikernel.
+
+## 04. Redis Static IP Address
+
+In the previous section, we exposed the Redis server to our host machine using KraftKit's port mapping (`-p 6379:6379`).
+Behind the scenes, KraftKit automatically assigned a dynamic IP to the unikernel.
+
+If you ever need to bypass this and assign a specific static IP address to the unikernel's network interface directly, you can pass kernel boot arguments to the `lwip` network stack.
+In modern KraftKit, any arguments added to the end of the `kraft run` command (after a `--` separator) are passed directly to the Unikraft kernel.
+
+To start Redis with a static IP address of `172.88.0.2`, run the following command:
+
+```bash
+$ kraft run --rm -v ./redis_files:/ -- netdev.ipv4_addr=172.88.0.2 netdev.ipv4_subnet_mask=255.255.255.0
+```
+
+*Note: Depending on how KraftKit's default virtual bridge is configured on your machine, your host might not have a direct route to the `172.88.0.x` subnet.
+If you cannot reach it directly via `redis-cli -h 172.88.0.2 -p 6379`, it is highly recommended to stick to the port mapping method (`-p 6379:6379`) used in Section 03 for seamless host-to-unikernel communication.*
+
+## 05. Redis Benchmarking (Tutorial)
+
+We aim to benchmark the Redis app running on top of Unikraft and compare it with Redis running natively on top of Linux.
+You will need the `redis-benchmark` utility installed on your host machine (this is usually included when you install `redis-tools` or `redis-server` on Linux).
+
+First, let's benchmark `app-redis` running on Unikraft.
+Start the Redis unikernel with port mapping as we did in Section 03:
+
+```bash
+$ kraft run --rm -p 6379:6379 -v ./redis_files:/
+```
+
+Leave it running, open a second terminal on your host machine, and run the following benchmarking command against `localhost` (`127.0.0.1`):
+
+```bash
+$ redis-benchmark --csv -q -r 100 -n 10000 -c 1 -h 127.0.0.1 -p 6379 -P 8 -t set,get
+```
+
+The description of the used options can be seen here:
+
+```text
+Usage: redis-benchmark [-h <host>] [-p <port>] [-c <clients>] [-n <requests>] [-k <boolean>]
+
+ -h <hostname>      Server hostname (default 127.0.0.1)
+ -p <port>          Server port (default 6379)
+ -c <clients>       Number of parallel connections (default 50)
+ -n <requests>      Total number of requests (default 100000)
+ -P <numreq>        Pipeline <numreq> requests. Default 1 (no pipeline).
+ -q                 Quiet. Just show query/sec values
+ --csv              Output in CSV format
+ -t <tests>         Only run the comma separated list of tests. The test
+                    names are the same as the ones produced as output.
+```
+
+If everything runs as expected, you'll see an output similar to this:
+
+```csv
+"SET","265252.00"
+"GET","276701.72"
+```
+
+The printed values represent `requests/second` for the `set` and `get` operations.
+You can now run a native Linux Redis server and test it using the same benchmark command to compare the performance!
+
+## 06. Nginx
+
+The aim of this work item is to set up and run Nginx, a popular open-source web server.
+Find the support files in the `work/06-set-up-and-run-nginx/` folder of the session directory.
+
+From the point of view of library dependencies, the Nginx app has the same requirements as the Redis app.
+We just replace `lib-redis` with an external library called [lib-nginx](https://github.com/unikraft/lib-nginx).
+Using `kraftkit`, this transition is seamless.
+
+### Nginx Setup & Configuration
+
+Create a new directory for your Nginx application and navigate into it:
+
+```bash
+mkdir app-nginx
+cd app-nginx
+```
+
+Create the `kraft.yaml` file.
+We need the same `lwip` network stack and `9pfs` filesystem configurations as we used for Redis, so Nginx can serve web pages and read its HTML/config files.
+
+Paste the following into your `kraft.yaml`:
+
+```yaml
+spec: v0.6
+name: app-nginx
+unikraft:
+  version: stable
+libraries:
+  pthread-embedded:
+    version: stable
+  newlib:
+    version: stable
+  lwip:
+    version: stable
+  nginx:
+    version: stable
+targets:
+  - architecture: x86_64
+    platform: qemu
+kconfig:
+  - CONFIG_LIBLWIP=y
+  - CONFIG_LWIP_IPV4=y
+  - CONFIG_LWIP_TCP=y
+  - CONFIG_LWIP_UDP=y
+  - CONFIG_LWIP_SOCKET=y
+  - CONFIG_LWIP_DHCP=y
+  - CONFIG_LIBPOSIX_EVENT=y
+  - CONFIG_LIBVFSCORE_AUTOMOUNT_ROOTFS=y
+  - CONFIG_LIBVFSCORE_ROOTFS_9PFS=y
+  - CONFIG_LIBVFSCORE_ROOTDEV="fs0"
+```
+
+### Nginx Build
+
+Build the Nginx unikernel by running:
+
+```bash
+$ kraft build
+```
+
+### Nginx Test
+
+In the support folder of this work item, there is a subfolder called `nginx` with the following structure:
+
+```text
+nginx_files
+`-- nginx/
+    |-- conf/
+    |   |-- fastcgi.conf
+    |   |-- fastcgi_params
+    |   |-- koi-utf
+    |   |-- koi-win
+    |   |-- mime.types
+    |   |-- nginx.conf
+    |   |-- nginx.conf.default
+    |   |-- scgi_params
+    |   |-- uwsgi_params
+    |   `-- win-utf
+    |-- data/
+    |   `-- images/
+    |       `-- small-img100.png
+    |-- html/
+    |   |-- 50x.html
+    |   `-- index.html
+    `-- logs/
+        |-- error.log
+        `-- nginx.pid
+```
+
+Copy this `nginx_files` folder into your current working directory.
+The path to this folder must be mapped to the unikernel's root filesystem so Nginx can find its `html/` directory.
+
+We will also expose Nginx's default port (80) to our host machine on port 8080 (to avoid needing root privileges). Run the unikernel:
+
+```bash
+$ kraft run --rm -p 8080:80 -v ./nginx_files:/
+```
+
+If everything works as expected, you should be able to open your web browser and navigate to `http://localhost:8080` to see the Nginx web page!
+
+<Image
+      src="/images/nginx_output.png"
+      className="w-auto mx-auto"
+      title="Nginx Output"
+      description="Expected nginx output"
+      position="center"
+/>
+
+## 07. Nginx Benchmarking (Tutorial)
+
+Benchmarking Nginx running on top of Unikraft can be achieved with a utility called `iperf`.
+The package can be easily installed on your host machine using the following command:
+
+```bash
+sudo apt-get install -y iperf
+```
+
+With your Nginx unikernel still running from the previous step, open an additional terminal on your host machine.
+
+Since we mapped the port locally, we can start the `iperf` client by connecting to `localhost` (`127.0.0.1`) on the mapped port `8080`:
+
+```bash
+$ iperf -c 127.0.0.1 -p 8080
+```
+
+If everything runs as expected, you will see an output indicating the transfer speed and bandwidth handled by the Unikraft network stack:
+
+```bash
+------------------------------------------------------------
+Client connecting to 127.0.0.1, TCP port 8080
+TCP window size: 85.0 KByte (default)
+------------------------------------------------------------
+[  3] local 127.0.0.1 port 33262 connected with 127.0.0.1 port 8080
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.0 sec  1.28 GBytes  1.10 Gbits/sec
+```
