@@ -68,17 +68,12 @@ Building the site inside a Docker environment is highly recommended, since you w
 To deploy the site, run (in the directory of the repository clone):
 
 ```console
-docker build -t ghcr.io/unikraft/docs:base --target base .
+docker build -t ghcr.io/unikraft/docs:dev --target dev .
 
-docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 --entrypoint sh ghcr.io/unikraft/docs:base
-
-# The commands below should be used in the docker container
-
-yarn install
-yarn run dev
+docker run -it --rm -v $(pwd):/docs -v unikraft_modules:/docs/node_modules -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
 ```
 
-You may need admin privileges to run the first 2 commands.
+You may need admin privileges to run the commands.
 Open up your browser and point to http://localhost:3000 to check the deployed documentation website.
 
 #### Building the Website Natively
@@ -95,8 +90,11 @@ These problems can be avoided by building the website inside a Docker environmen
 Then, to build and deploy the site, run:
 
 ```console
-yarn install
-yarn run dev
+npm install
+
+npm run search-meta:gen
+
+npm run dev
 ```
 
 As above, open up your browser and point to http://localhost:3000 to check the deployed documentation website.
