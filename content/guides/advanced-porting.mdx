@@ -10,7 +10,7 @@ Today, we will learn how to properly port a more complex application, using mult
 
 We will use [`iperf3`](https://github.com/esnet/iperf/tree/master) as an example, a network benchmarking tool.
 
-### The Unikraft Build Lifecycle
+## The Unikraft Build Lifecycle
 
 The lifecycle of the construction of a Unikraft unikernel includes several distinct steps:
 
@@ -404,6 +404,7 @@ As such, if you update the library or application's code (i.e. by updating, for 
 To make a patch:
 
 1. First, ensure that the remote origin code has been downloaded to the application's `build/` folder:
+
    ```console
    cd ~/workspace/apps/iperf3
    make fetch
