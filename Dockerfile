@@ -11,11 +11,15 @@ WORKDIR /docs
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Install dependencies separately to leverage Docker cache
+COPY package.json package-lock.json ./
+RUN npm install --ignore-scripts
+
+# Copy source code
 COPY . .
 
-RUN npm install
-
-CMD ["npm", "run", "dev"]
+# Generate search-meta at runtime so it populates the mounted volume, then start dev
+CMD ["sh", "-c", "npm run search-meta:gen && npm run dev"]
 
 # Rebuild the source code only when needed
 FROM dev AS builder
