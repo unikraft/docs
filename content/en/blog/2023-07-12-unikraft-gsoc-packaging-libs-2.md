@@ -1,9 +1,10 @@
-+++
-title = "GSoC'23: Packaging Pre-built Micro-libraries for Faster and More Secure Builds (Part 2)"
-date = "2023-07-12T00:20:00+08:00"
-author = "Zeyu Li"
-tags = ["GSOC'23", "Build tools"]
-+++
+---
+title: "GSoC'23: Packaging Pre-built Micro-libraries for Faster and More Secure Builds (Part 2)"
+description: "GSoC'23: Packaging Pre-built Micro-libraries for Faster and More Secure Builds (Part 2)"
+publishedDate: "2023-07-12T00:20:00+08:00"
+authors: ["Zeyu Li"]
+tags: ["GSOC'23", "Build tools"]
+---
 
 <img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-2023-badge.svg" align="right" />
 
