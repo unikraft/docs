@@ -55,7 +55,7 @@ Building inside a Docker environment is **strongly recommended**, since you will
 
 You can build the site inside a Docker environment.
 For this, you will need to install Docker-CE.
-You can do that by following the instructions [here](https://github.com/docker/docker-install), or by running:
+You can do that by following the [install instructions](https://github.com/docker/docker-install), or by running:
 
 ```console
 curl -fsSL https://get.docker.com/ | sh
@@ -68,24 +68,19 @@ Building the site inside a Docker environment is highly recommended, since you w
 To deploy the site, run (in the directory of the repository clone):
 
 ```console
-docker build -t ghcr.io/unikraft/docs:base --target base .
+docker build -t ghcr.io/unikraft/docs:dev --target dev .
 
-docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 --entrypoint sh ghcr.io/unikraft/docs:base
-
-# The commands below should be used in the docker container
-
-yarn install
-yarn run dev
+docker run -it --rm -v $(pwd):/docs -v unikraft_modules:/docs/node_modules -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
 ```
 
-You may need admin privileges to run the first 2 commands.
+You may need admin privileges to run the commands.
 Open up your browser and point to http://localhost:3000 to check the deployed documentation website.
 
 #### Building the Website Natively
 
 You can also build the site natively.
 For a native build, you need to install `node`.
-You can do it by following the instructions [here](https://nodejs.org/en/download).
+You can do it by following the [download instructions](https://nodejs.org/en/download).
 
 <Info>
 This may lead to errors due to different `node` versions or other environment problems.
@@ -95,8 +90,11 @@ These problems can be avoided by building the website inside a Docker environmen
 Then, to build and deploy the site, run:
 
 ```console
-yarn install
-yarn run dev
+npm install
+
+npm run search-meta:gen
+
+npm run dev
 ```
 
 As above, open up your browser and point to http://localhost:3000 to check the deployed documentation website.
@@ -141,7 +139,7 @@ For the Unikraft documentation repository, used and useful linters are:
 - [`textlint`](https://textlint.github.io/)
 - [`jscpd`](https://github.com/kucherenko/jscpd)
 
-To run the `super-linter` locally, follow the instructions from [here](https://github.com/github/super-linter/blob/main/docs/run-linter-locally.md).
+To run the `super-linter` locally, follow the [setup instructions](https://github.com/github/super-linter/blob/main/docs/run-linter-locally.md).
 Note that this will require quite a lot of storage, since it will pull the `super-linter` Docker image.
 
 You will need to install Docker, following the [official documentation](https://docs.docker.com/install/).
@@ -203,7 +201,7 @@ node --version # Check node version.
 ```
 
 The `textlinter` will require installation of rules.
-You can find a list of rules [here](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule).
+Here you can find a [list of rules](https://github.com/textlint/textlint/wiki/Collection-of-textlint-rule).
 
 ```console
 npm install textlint-rule-terminology
