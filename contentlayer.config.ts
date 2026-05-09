@@ -51,7 +51,7 @@ const Guides = defineDocumentType(() => ({
 
 const Blogs = defineDocumentType(() => ({
   name: 'Blog',
-  filePathPattern: 'blog/**/*.mdx',
+  filePathPattern: '**/blog/**/*.{md,mdx}',
   contentType: 'mdx',
   fields: {
     title: { type: 'string', required: true },
@@ -206,9 +206,21 @@ const Releases = defineDocumentType(() => ({
   },
 }))
 
+const Other = defineDocumentType(() => ({
+  name: 'Other',
+  filePathPattern: '*.md',
+  contentType: 'markdown',
+  fields: {
+    title: { type: 'string' },
+    datetime: { type: 'string' },
+    enableToc: { type: 'boolean' },
+  },
+  computedFields,
+}))
+
 const contentLayerConfig = makeSource({
   contentDirPath: 'content',
-  documentTypes: [Docs, Guides, Community, Releases, Blogs, Hackathons],
+  documentTypes: [Docs, Guides, Community, Releases, Blogs, Hackathons, Other],
   mdx: {
     rehypePlugins: [rehypeMdxCodeMeta],
     remarkPlugins: [remarkSlug, remarkGfm, remarkEmoji],
