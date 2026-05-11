@@ -298,7 +298,7 @@ So we have a list of dependencies.
 With the information above we construct a minimized Docker environment in a `Dockerfile`:
 
 ```dockerfile
-FROM redis:7.2-bookworm as build
+FROM redis:7.2-bookworm AS build
 
 FROM scratch
 
