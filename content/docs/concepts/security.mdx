@@ -112,6 +112,7 @@ impact on performance, and to easily try a wide range of different design
 choices in the security versus performance trade-off space (see graph below:
 each column is one such point in the design space).
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'3xl'}
@@ -120,7 +121,9 @@ each column is one such point in the design space).
   title="Redis performance with varying security"
   description="Components are on the left. Software hardening can be enabled [●] or disabled [○] for each component. The white/blue/red color indicates the compartment the component is placed into. Isolation is achieved with MPK and DSS."
 />
+<!-- markdownlint-enable MD034 -->
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'3xl'}
@@ -129,6 +132,7 @@ each column is one such point in the design space).
   title="NGINX performance with varying security"
   description="Components are on the left. Software hardening can be enabled [●] or disabled [○] for each component. The white/blue/red color indicates the compartment the component is placed into. Isolation is achieved with MPK and DSS."
 />
+<!-- markdownlint-enable MD034 -->
 
 If you're interested in contributing to security features in Unikraft, or simply
 in following the discussion about ongoing security work, please feel free to

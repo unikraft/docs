@@ -1,9 +1,9 @@
 ---
 title: "Unikraft vs. UKL: What's the Difference?"
 description: |
-  You may have seen recent news about a set of patches] hitting the 
-  Linux kernel mailing list for Unikernel Linux (UKL), "... a research 
-  project aimed at integrating application-specific optimizations to the 
+  You may have seen recent news about a set of patches] hitting the
+  Linux kernel mailing list for Unikernel Linux (UKL), "... a research
+  project aimed at integrating application-specific optimizations to the
   Linux kernel.
 publishedDate: 2022-10-19
 authors:
@@ -18,16 +18,16 @@ In fact, [the original UKL paper was published back in 2019](https://dl.acm.org/
 But what exactly is a unikernel?
 Perhaps the easiest definition is that it is a virtual machine specialized to the needs of a particular target application, the key word being specialized.
 And because of specialization the resulting unikernel can provide efficiency much higher than a general-purpose operating system such as Linux or FreeBSD could.
-Here I am using efficiency as an umbrella term to mean higher I/O throughput, smaller images, lower memory consumption, lower latency and quick boot times, among others. And, because the entire software stack is specialized, that typically results in a much smaller Trusted Computing Base (TCB) and potentially fewer vulnerabilities. 
+Here I am using efficiency as an umbrella term to mean higher I/O throughput, smaller images, lower memory consumption, lower latency and quick boot times, among others. And, because the entire software stack is specialized, that typically results in a much smaller Trusted Computing Base (TCB) and potentially fewer vulnerabilities.
 
 In addition to specialization, many unikernels have a single-memory address space: since many of them target cloud or virtual deployments where a hypervisor is running underneath and providing isolation already, they get rid of the user-space/kernel divide since it's a source of overhead.
 
 Having a single memory address space is what projects like Unikernel Linux do; unfortunately, they obviate one of the main features of "true" unikernels: specialization.
-In UKL, the Linux kernel is still there as it would be with a standard Ubuntu or Debian virtual machine, just running in the same address space as the application. 
+In UKL, the Linux kernel is still there as it would be with a standard Ubuntu or Debian virtual machine, just running in the same address space as the application.
 
 Why would one bother turning a general-purpose OS like Linux into a unikernel in the first place, given that it was clearly not intended for unikernels/specialization?
 The answer is great application compatibility: ultimately it's still Linux underneath, so all your favorite apps still run unmodified – or at least that's the theory.
-In practice, UKL requires recompiling all applications/runtimes against a custom glibc and the kernel. 
+In practice, UKL requires recompiling all applications/runtimes against a custom glibc and the kernel.
 
 In short, there are two ways to go about application compatibility:
 
@@ -43,6 +43,7 @@ This type of libc-level compatibility, also offered by UKL, is less than ideal: 
 This is problematic for certain languages (e.g. Go), for which most such invocations are made directly by the runtime and not through the libc.
 In contrast, Unikraft offers system-call level compatibility, seamlessly boosting the performance of all kernel invocations.
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -50,6 +51,7 @@ In contrast, Unikraft offers system-call level compatibility, seamlessly boostin
   src="https://raw.githubusercontent.com/unikraft/eurosys21-artifacts/master/plots/fig_13_nginx-perf.svg"
   description="Performance of NGINX on Unikraft vs. other runtime implementations."
 />
+<!-- markdownlint-enable MD034 -->
 
 We designed and built Unikraft with specialization in mind from the beginning, around a highly modular architecture where every component is a library that can be added, removed or configured, from low-level architecture-specific code, to schedulers, memory allocators and network stacks.
 The result is Unikraft images that contain only the code that an application needs to run, nothing more, nothing less, always with optimization and performance in mind.

@@ -139,7 +139,7 @@ area that uses 2MB pages. The size must be a multiple of 2MB.
    uk_vma_advise(uk_vas_get_active(), vaddr, 0x100000, UK_VMA_ADV_DONTNEED, 0);
    ```
 
-7. Create a linear ring buffer that mirrors the buffer at the end to avoid copying (see https://en.wikipedia.org/wiki/Circular_buffer#Optimization).  Note: Precede an address reservation for the whole 2 * PAGE_SIZE * PAGES range to ensure race free allocation of the virtual addresses.  Note: Physical memory mapped with `uk_vma_map_dma()` will not be freed automatically when the VMA is unmapped.
+7. Create a linear ring buffer that mirrors the buffer at the end to avoid copying (see <https://en.wikipedia.org/wiki/Circular_buffer#Optimization>).  Note: Precede an address reservation for the whole 2 * PAGE_SIZE * PAGES range to ensure race free allocation of the virtual addresses.  Note: Physical memory mapped with `uk_vma_map_dma()` will not be freed automatically when the VMA is unmapped.
 
    ```clike
    struct uk_vas *vas = uk_vas_get_active();

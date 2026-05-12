@@ -18,6 +18,7 @@ As shown, Unikraft images are smaller than all other unikernel projects and comp
 they do not include the size of glibc nor the kernel).
 This is a consequence of Unikraft's modular approach, drastically reducing the amount of code to be compiled and linked (e.g., for helloworld, no scheduler and no memory allocator are needed).
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -26,7 +27,9 @@ This is a consequence of Unikraft's modular approach, drastically reducing the a
   title="Figure 1"
   description="Image sizes of Unikraft applications with and without LTO and DCE"
 />
+<!-- markdownlint-enable MD034 -->
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -35,6 +38,7 @@ This is a consequence of Unikraft's modular approach, drastically reducing the a
   title="Figure 2"
   description="Image sizes for Unikraft and other OSes, stripped, w/o LTO and DCE"
 />
+<!-- markdownlint-enable MD034 -->
 
 
 ## Boot Times
@@ -42,6 +46,7 @@ This is a consequence of Unikraft's modular approach, drastically reducing the a
 In our evaluation, we use standard virtualization toolstacks instead, and wish to understand how quickly Unikraft VMs can boot.
 When running experiments, we measure both the time taken by the VMM (e.g. Firecracker, QEMU, Solo5) and the boot time of the actual unikernel/VM, measured from when the first guest instruction is run until `main()` is invoked.
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -50,6 +55,7 @@ When running experiments, we measure both the time taken by the VMM (e.g. Firecr
   title="Figure 3"
   description="Boot time for Unikraft images with different virtual machine monitors."
 />
+<!-- markdownlint-enable MD034 -->
 
 The results are shown in Figure 3, showing how long a helloworld unikernel needs to boot with different VMMs.
 Unikraft's boot time on QEMU and Solo5 (guest only, without VMM overheads) ranges from tens (no NIC) to hundreds of microseconds (one NIC).
@@ -65,6 +71,7 @@ These results show that Unikraft can be readily used in scenarios where just-in-
 How much memory does Unikraft actually need when running real-world applications?
 To answer this question we ran experiments to measure the minimum amount of memory required to boot various applications as unikernels, finding that 2-6MBs of memory suffice for Unikraft guests (Figure 4).
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -73,6 +80,7 @@ To answer this question we ran experiments to measure the minimum amount of memo
   title="Figure 4"
   description="Minimum memory needed to run different applications using different OSes, including Unikraft."
 />
+<!-- markdownlint-enable MD034 -->
 
 
 ## Application Performance
@@ -81,6 +89,7 @@ We conduct all measurements with the same application config and where possible 
 We did not optimize application or kernel configs for performance, however we took care of removing obvious performance bottlenecks for each system, e.g., switching on memory pools in Unikraft's networking stack (based on lwIP), or porting Lupine to QEMU/KVM in order to avoid Firecracker performance bottlenecks.
 Unikraft measurements use Mimalloc as the memory allocator.
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -89,6 +98,7 @@ Unikraft measurements use Mimalloc as the memory allocator.
   title="Figure 5"
   description="Redis perf (30 conns, 100k reqs, pipelining 16) with QEMU/KVM and Firecracker (FC)"
 />
+<!-- markdownlint-enable MD034 -->
 
 The results are shown in Figures 5 and 6.
 For both apps, Unikraft is around 30%-80% faster than running the same app in a container, and 70%-170% faster than the same app running in a Linux VM.
@@ -98,6 +108,7 @@ unfortunately it is not possible to use Mimalloc as kernel allocator in Linux wi
 Note that we did try to LD_PRELOAD Mimalloc into Redis, but the performance improvement was not significant.
 We expect that the improvement would be more notable if Mimalloc were present at compile time instead of relying on the preloading mechanism (making the compiler aware of the allocator allows it to perform compile/link time optimizations) but we could not perform this experiment since Mimalloc is not natively supported by the current Redis code base.
 
+<!-- markdownlint-disable MD034 -->
 <Image
   border
   maxW={'2xl'}
@@ -106,6 +117,7 @@ We expect that the improvement would be more notable if Mimalloc were present at
   title="Figure 6"
   description="Nginx (and Mirage HTTPreply) performance with wrk (1 minute, 14 threads, 30 conns, static 612B page)"
 />
+<!-- markdownlint-enable MD034 -->
 
 Compared to Lupine on QEMU/KVM, Unikraft is around 50% faster on both Redis and Nginx.
 These results may be due to overcutting in Lupine's official configuration, scheduling differences (we select Unikraft's cooperative scheduler since it fits well with Redis's single threaded approach), or remaining bloat in Lupine that could not be removed via configuration options.
