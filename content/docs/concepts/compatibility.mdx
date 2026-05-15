@@ -88,10 +88,10 @@ applications, respectively, suggesting that a large implementation effort would
 be required for an OS aiming at supporting even a small number of applications.
 
 However, in the process of implementing POSIX system calls and checking whether
-applications where actually running, we gathered anecdotal evidence that these
+applications were actually running, we gathered anecdotal evidence that these
 requirements were not as stringent as they seemed: whenever a system call is
 missing, the default behavior of Unikraft's system call shim layer is to stub it
-by returning `ENOSYS`; the result of this was that some applications where
+by returning `ENOSYS`; the result of this was that some applications were
 correctly running despite not having some of the system calls they invoked
 implemented, so we decided to take a closer look.
 
