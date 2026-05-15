@@ -180,8 +180,8 @@
       "join-discord": "Join us on Discord!"
     },
     "unikraft-cloud-strip": {
-      "heading": "Get the most out of your application and Unikraft",
-      "description": "The only cloud platform scaling to zero, with 'only on' pricing, and cold-starting in 20ms.",
+      "heading": "The compute platform for sandboxes, AI agents, or any workload.",
+      "description": "Get the most out of scale-to-zero, 'only on' pricing, and <10ms cold-starts.",
       "learn-more": "Learn more"
     },
     "edit-page-button": {
