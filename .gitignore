@@ -1,3 +1,4 @@
 node_modules
 .contentlayer
 .next
+configs/search-meta.json
