@@ -1,0 +1,89 @@
+---
+title: "GSoC'25: Testing Framework for Unikraft Builds | Part II"
+description: |
+  This GSoC project is aimed to develop a testing framework that is able to multiplex the variety of configuration options, VMMs, hypervisors, architectures, boot protocols, to validate the successful building and running of unikernel images. 
+publishedDate: 2025-07-15
+tags:
+- gsoc
+- gsoc25
+- testing & validation
+- automation
+- devops
+authors:
+- Shashank Srivastava
+---
+
+<img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-generic-badge.svg" align="right" />
+
+## Project Overview
+
+The aim of this project is to develop a robust testing framework that can handle a wide range of configuration options—covering different VMMs, hypervisors, architectures, and boot protocols—to validate the successful build and execution of unikernel images. The framework, written in Python, is designed to configure, build, run, and test various Unikraft builds, and there’s scope for further improvements and refactoring as we go.
+
+The main focus is to enhance the existing testing infrastructure and make it smooth and intuitive for both Unikraft developers and users. To achieve this, I am working towards the following key goals:
+
+- Extract and consolidate the testing framework into a dedicated, standalone repository.
+
+- Ensure that the framework works seamlessly with the catalog and catalog-core repositories right out of the box.
+
+- Integrate the framework into the CI/CD pipeline used across Unikraft organization repositories, so that it can automatically validate builds whenever a pull request is opened.
+
+## Recap of Part I
+
+*Last time (Part I),* I extracted and modularized the Unikraft testing framework into its own repository, implemented isolated sandboxing via the `.app` directory, and set up the foundations for dynamic configuration by parsing each app’s `README.md`. We also enforced code quality with `pylint`, `black`, and `isort`, and laid out our goals for a seamless CI/CD integration.
+
+## Current Progress
+
+Over the past three weeks, the framework has seen major enhancements in configurability, reliability, and observability. Here’s a deep dive into the key improvements:
+
+### 1. Restructured Test Configuration & LLM‑powered RunConfig Generation
+
+- **Directory alignment:** I now replicate the `catalog` and `catalog‑core` subdirectory layout under `test-app-config/`, not to duplicate source files, but to provide a clear, versioned home for each application’s `RunConfig.yaml` and `BuildConfig.yaml`. This organized approach ensures the correct configs are easy to locate and apply when testing the real applications in `catalog` and `catalog-core`.
+- **LLM‑driven defaults:** If an app doesn’t already ship its own `RunConfig.yaml`, we invoke an LLM (via a simple Python wrapper) to synthesize one from the `README.md` metadata—pulling out memory, exposed ports, and test commands in one shot.
+
+### 2. Richer Test Categories & Refactored Execution Logic
+
+Tests are now explicitly classified into three types, each with its own execution path:
+
+| Category            | Purpose                                                                          |
+| ------------------- | -------------------------------------------------------------------------------- |
+| **curl**            | Hit a public HTTP endpoint to verify service availability.                       |
+| **list‑of‑command** | Run arbitrary CLI commands against the running unikernel and match their stdout. |
+| **no‑command**      | Simply boot the unikernel—if it comes up, consider the test passed.              |
+
+- I consolidated the old `_test_target_run()` into discrete handlers for each category, improving readability and ease of extension.
+- Detailed, structured logging replaced ad‑hoc prints—every step (build invocation, container startup, curl result) now emits JSON logs with timestamps and severity levels.
+
+### 3. Automated Reporting
+
+At the end of each test run, the framework produces two CSV summaries:
+
+- **`build_report.csv`**: one line per target build, listing build status, build time, and build config.
+- **`run_report.csv`**: one line per test run of respective build, covering run status and run config.
+
+These reports can be consumed by dashboards or pulled into GitHub Actions annotations for quick visibility on PRs.
+
+### 4. Documentation & Cleanup
+
+- Created `CONTRIBUTING.md` with contribution guidelines, `COPYING.md` containing the BSD 3‑Clause license, and an initial `README.md` outlining setup and run instructions.
+- Removed deprecated methods and configs (`config.yaml`), keeping the codebase lean.
+
+## Next Steps
+
+In the coming weeks I’ll be focusing on:
+
+- **Stabilizing full support for `catalog/library`:** resolving all remaining issues so the testing framework reliably validates every library application before expanding to `catalog/native` and `catalog/examples`.
+- **CI/CD integration:** once library support is rock‑solid, hooking the framework into GitHub Actions so each PR runs the full test suite and publishes CSV reports.
+
+I look forward to sharing Part III soon—where we’ll bring the framework live in CI and celebrate our first fully‑automated unikernel validation on every pull request!
+
+## Acknowledgement
+
+I would especially like to thank my mentors, [Razvan Deaconescu](https://github.com/razvand) and [Razvan Virtan](https://github.com/razvanvirtan). Razvan D. patiently resolved every little problem I encountered, answered all of my questions, and guided me step by step to complete such a significant portion of the project.
+
+I’m additionally grateful to the entire Unikraft community for their warm support and helpfulness throughout this journey.
+
+## About me
+
+I'm [Shashank Srivastava](https://github.com/shank250/) undergraduate student at GL Bajaj Institute of Technology and Management, B. Tech in Computer Science and Engineering with Specialisation in Artificial Intelligence and Machine Learning, with a strong passion for AI and Cloud.
+
+Feel free to [connect](https://www.linkedin.com/in/shashank-srivastava-375412250/)!
