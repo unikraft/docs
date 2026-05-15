@@ -4,8 +4,8 @@
       "title": "Community",
       "routes": [
         {
-          "title": "Team",
-          "path": "/community/team"
+          "title": "About",
+          "path": "/community/about"
         },
         {
           "title": "Hackathons and Workshops",
