@@ -21,7 +21,10 @@ const PullExample = (props) => {
   const { title, snippet } = props
   return (
     <GridItem
-      colSpan={3}
+      colSpan={{
+        base: 2,
+        sm: 3
+      }}
       border={'solid 2px'}
       borderColor={'slate.400'}
       borderRadius={'lg'}
@@ -41,29 +44,42 @@ const PullExample = (props) => {
       <Box
         id='codeblock'
         position='relative'
-        display={{
-          base: 'none',
-          sm: 'block'
-        }}
+        display='block'
+        fontSize='sm'
         zIndex='0'
       >
         <CodeContainer
           fontFamily={'mono'}
-          fontSize={'md'}
-          p='20px'
+          fontSize={{ base: 'xs', sm: 'md' }}
+          p={{ base: '16px 12px', sm: '20px' }}
           rounded={'md'}
           borderColor={'slate.400 !important'}
           m='0'
           color={'slate.900'}
           bg='slate.100 !important'
+          whiteSpace='pre-wrap'
+          wordBreak='break-word'
+          overflowX='auto'
+          maxW='100%'
+          minH='60px'
+          display='flex'
+          alignItems='center'
+          sx={{
+            '@media screen and (max-width: 30em)': {
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word'
+            }
+          }}
         >
           {snippet}
         </CodeContainer>
         <CopyButton
           code={snippet}
           mt='0'
-          top='1rem'
-          right='1rem'
+          position='absolute'
+          top='50%'
+          transform='translateY(-50%)'
+          right='0.75rem'
           bg='white'
           borderColor='slate.400'
           color='slate.500'
@@ -135,8 +151,9 @@ export function CatalogStrip(props: BoxProps) {
           mt='6'
           gap='40px'
           fontSize='6xl'
+          gridAutoFlow='row'
           gridTemplateColumns={{
-            base: 'repeat(1, 1fr)',
+            base: 'repeat(2, 1fr)',
             sm: 'repeat(3, 1fr)',
             md: 'repeat(4, 1fr)',
             lg: 'repeat(6, 1fr)',
