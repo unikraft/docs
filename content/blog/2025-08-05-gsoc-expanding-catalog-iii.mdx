@@ -1,0 +1,78 @@
+---
+title: "GSoC'25: Expanding the Unikraft Software Support Ecosystem"
+description: |
+  This GSoC project aims to expand Unikraft’s software support by adding new applications via binary-compatibility mode into the application catalog.
+publishedDate: 2025-08-05
+image: /images/gsoc25.jpeg
+authors:
+- Prasoon Kumar
+tags:
+- gsoc
+- gsoc25
+- catalog
+- MAP_SHARED
+- deno
+- prometheus
+- netdata
+---
+
+## Project Overview
+
+Unikraft makes it easy to run existing applications in two ways:
+1. **Musl libc support**
+
+2. [**Binary-compatibility mode**](https://unikraft.org/docs/concepts/compatibility):
+Unikraft can run unmodified Linux ELF binaries by using an ELF loader app and a system-call shim layer.
+When a binary-compatible unikernel starts, the app-elfloader parses and maps the ELF segments into memory, then transfers control to the application entry point.
+Whenever the application invokes a Linux system call, the syscall shim intercepts the call number and routes it to the corresponding Unikraft handler.
+Unimplemented calls return ENOSYS, which many applications can handle or fake because Unikraft follows Linux’s x86_64 ABI closely.
+This helps when running on hypervisors like KVM, QEMU, or Firecracker.
+
+## Current Progress
+
+After successful investigation of around 14 applications in the first 6 weeks, I started contributing to the system call layer of Unikraft, from week 7.
+In those first 6 weeks, I found three features blocking support for many applications:
+1. **No support for writable MAP_SHARED**:
+    - `deno`, `netdata`, `prometheus`, `rabbitMQ`, `tomcat`
+
+2. **No support for NETLINK sockets**
+    - `consul`, `etcd`, `influxDB`, `minio`, `netdata`, `rabbitMQ`, `syncthing`, `tomcat`, `vault`, `wireguard`
+
+3. **No support for clone without CLONE_VM**
+    - `gitea`
+
+In the last three weeks I have been working on implementing a workaround for writable `MAP_SHARED` (see draft PR: https://github.com/unikraft/unikraft/pull/1679).
+The workaround converts writable shared mappings into private ones.
+This is useful only when neither persistence, nor synchronization with read / write is required for the mapped file.
+From the applications which I tested earlier, this workaround should work for `deno`, `prometheus` and `netdata`.
+It won't help workloads that rely on writeback / synchronization, such as `rabbitMQ` and `tomcat`.
+I tested the workaround on `prometheus` and it worked as expected.
+
+  <Image
+        src="/images/bincompat-prometheus.png"
+        title="Prometheus Server Starting on Unikraft with Binary Compatibility"
+  />
+  
+  <Image
+        src="/images/bincompat-prometheus-targets.png"
+        title="Target Discovery on Prometheus Server Running on Unikraft"
+  />
+
+## Next Steps
+
+For the next three weeks, I plan to focus on the following tasks:
+- Resolve the comments I receive on any of my several PRs I created during the program.
+- Make the `MAP_SHARED` workaround I implemented in the last 3 weeks configurable.
+- Find a workaround or proper implementation for `clone()` without `CLONE_VM`.
+
+## Acknowledgement
+
+I would like to thank my mentors, [Razvan Virtan](https://github.com/razvanvirtan) and [Razvan Deaconescu](https://github.com/razvand), for their guidance throughout this project.
+I’m also grateful to the entire Unikraft community for being so welcoming and helpful.
+
+## About Me
+
+I am a second-year MTech student at IIT Bombay.
+I have experience across many areas of computer science, including operating systems, virtualization, Web3, web development, and algorithms.
+In my free time, I love solving challenging math and algorithmic problems.
+- Socials: [Linkedin](https://www.linkedin.com/in/prasoon054/)  [Twitter](https://x.com/prasoon054) [Github](https://github.com/prasoon054)
