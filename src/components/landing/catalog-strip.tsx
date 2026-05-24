@@ -198,7 +198,7 @@ export function CatalogStrip(props: BoxProps) {
             <Image alt='Flask' src='/logos/framework-flask.svg' maxW='20' minH='24' mx='auto' />
           </AppLink>
           <AppLink
-            href='https://github.com/unikraft/catalog/tree/main/examples/http-go1.21'
+            href='https://github.com/unikraft/catalog/tree/main/examples/httpserver-go1.21'
             accentColor='#01ADD7'
             name='Go'
           >
