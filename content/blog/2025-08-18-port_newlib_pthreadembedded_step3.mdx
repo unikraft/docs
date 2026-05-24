@@ -1,0 +1,167 @@
+---
+title: "Port Newlib PThread-Embedded — Step 3: Benchmarks vs musl"
+description: |
+  Comparing Newlib and musl on Unikraft with three simple benchmarks: a Python synthetic test,
+  Redis (redis-benchmark), and Nginx. We explain how we ran them, show results, and discuss why
+  the libraries differ depending on the workload.
+publishedDate: 2025-08-18
+image: /images/gsoc25.jpeg
+authors:
+- Salar Samani
+tags:
+- gsoc25
+- newlib
+- musl
+- pthread-embedded
+- benchmarking
+- unikraft
+- python
+- redis
+- nginx
+---
+
+<img src="https://summerofcode.withgoogle.com/assets/media/logo.svg"
+      alt="Google Summer of Code Logo" />
+
+This is the third update of my work on porting **Newlib 4.5** and **pthread-embedded** to **Unikraft**. In the [previous post](/blog/2025-07-16-port_newlib_pthreadembedded_step2) I focused on integration work. This time I compare **Newlib** against **musl** with three practical benchmarks:
+
+1. A **Python** synthetic test (CPU, memory, and file I/O).
+2. **Redis** using the standard `redis-benchmark` tool.
+3. **Nginx** using a small `curl` loop.
+
+The goal is not to crown a single winner, but to understand **where each libc is stronger**.
+
+## Benchmark Setup (short)
+- Target: Unikraft, two builds: one with **musl**, one with **Newlib**.
+- Same hardware, same TAP/bridge setup, same app configs.
+- Each test run multiple times and I report the **averages** you see below.
+
+---
+
+## 1) Python Synthetic Benchmark
+The Python test has three parts: CPU, memory, and file I/O.
+
+**Important code parts (simplified):**
+```python
+def is_prime(n):  # CPU
+    # simple 6k±1 primality test
+    ...
+
+def stress_memory(size_in_mb):  # Memory
+    data = ['A' * 1024] * (size_in_mb * 1024)
+    return sum(len(x) for x in data)
+
+def stress_io(path, size_in_mb):  # File I/O
+    block = b'A' * (1024 * 1024)
+    with open(path, 'wb') as f:
+        for _ in range(size_in_mb):
+            f.write(block)
+    with open(path, 'rb') as f:
+        while f.read(1024 * 1024):
+            pass
+```
+I ran **10 heavier iterations** (fewer runs but more work per run) to avoid overhead from loop counts.
+
+**Results**
+
+**musl**
+```
+Average CPU time:   0.1006s
+Average Memory time:0.0466s
+Average I/O time:   4.9782s
+```
+
+**Newlib**
+```
+Average CPU time:   0.1052s
+Average Memory time:0.0584s
+Average I/O time:   4.3081s
+```
+
+**Interpretation**  
+- **CPU:** Almost the same (Newlib ~4–5% slower; likely noise for this test size).
+- **Memory:** **musl** is faster (~25% better). This matches musl’s reputation for efficient memory routines.
+- **File I/O:** **Newlib** is better here (**~13–14% faster**: 4.31s vs 4.98s). This is important for I/O-heavy apps.
+
+**Takeaway:** For Python, file handling favors **Newlib**, while memory ops favor **musl**. CPU-bound parts look equal.
+
+---
+
+## 2) Redis (redis-benchmark)
+I used the standard `redis-benchmark` with default settings to stress request/response latency and throughput.
+
+**Results**
+
+**musl**
+```
+Throughput: 344,827.59 req/s
+Latency (ms):
+  avg 0.117 | p50 0.111 | p95 0.167 | p99 0.263 | max 1.151
+```
+
+**Newlib**
+```
+Throughput: 326,797.41 req/s
+Latency (ms):
+  avg 0.118 | p50 0.111 | p95 0.175 | p99 0.463 | max 1.439
+```
+
+**Interpretation**  
+- **Throughput:** **musl** is ~5.5% higher.
+- **Latency:** medians are equal, but **tail latency** is better with **musl** (p99 0.263 ms vs 0.463 ms, lower is better).
+- **Why:** Redis is very sensitive to event-loop latency and syscall paths. The tighter tail behavior suggests musl keeps the critical path predictable under load.
+
+**Takeaway:** For cache/database style loads like Redis, **musl** wins on throughput and on tail latency.
+
+---
+
+## 3) Nginx
+**How I tested:** I ran a simple shell loop that hits the server 1000 times and records per-request time via `curl`:
+```sh
+URL="http://172.44.0.2"
+for i in $(seq 1 1000); do
+  curl -o /dev/null -s -w "%{time_total}
+" "$URL"
+done
+```
+The Nginx server serves a small static HTML page. This still exercises the file read path in the web server.
+
+**Results**
+
+**musl**
+```
+Total: 0.986 s for 1000 req
+Average per request: 0.000986 s  (~986 µs)
+≈ 1,014 requests/sec
+```
+
+**Newlib**
+```
+Total: 0.864 s for 1000 req
+Average per request: 0.000864 s  (~864 µs)
+≈ 1,157 requests/sec
+```
+
+**Interpretation**  
+- **Newlib is ~12% faster** for this static-file Nginx test.
+- This matches what we saw in Python: **file handling is faster with Newlib** in my setup. Since Nginx must **read static files**, this can explain the advantage.
+
+**Takeaway:** For static web serving, **Newlib** looks attractive.
+
+---
+
+## Cross-Benchmark Summary
+- **CPU-bound:** Tie.
+- **Memory-bound:** **musl** is better.
+- **File I/O-bound:** **Newlib** is better (Python I/O and Nginx agree).
+
+This shows there is **no single best libc**. The right choice depends on the **dominant bottleneck** of your workload. If your app reads files a lot (static content, logs, artifacts), **Newlib** can help. If your app does many small syscalls and needs tight latency bounds (like Redis), **musl** may be safer.
+
+---
+
+## Notes on Validity
+- Both builds used the same Unikraft versions and similar configs.
+- Each test was repeated; I report the averages shown above.
+- The absolute numbers depend on the host and network setup; the **relative trends** are the key result.
+
+---

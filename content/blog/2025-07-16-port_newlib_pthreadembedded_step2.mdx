@@ -1,0 +1,129 @@
+---
+title: "Port Newlib PThread-Embedded — Step 2"
+description: |
+  Midterm update (weeks 4–7) on porting Newlib 4.5 and pthread-embedded to Unikraft,
+  covering source extraction, header fixes, syscall integration, pthread patches, and initial app tests.
+publishedDate: 2025-07-16
+image: /images/gsoc25.jpeg
+authors:
+- Salar Samani
+tags:
+- gsoc25
+- newlib
+- pthread-embedded
+- libc
+- unikraft
+---
+
+<img src="https://summerofcode.withgoogle.com/assets/media/logo.svg"
+      alt="Google Summer of Code Logo" />
+
+Building on my [first update](https://github.com/unikraft/docs/blob/main/content/blog/2025-06-26-port_newlib_pthreadembedded_step1.mdx), this post covers the middle phase of the project (weeks 4–7). It includes detailed steps on extracting Newlib sources, resolving header and compatibility issues, aligning system calls, patching the stale pthread-embedded library, and validating the port with real-world applications.
+
+## Extracting and Preparing Newlib Sources for the Unikraft Build System
+
+As mentioned in my previous blog post, one of the core tasks in porting Newlib to Unikraft is selecting the right set of source files and headers that the library depends on and the macros and flags for building the library. Since Newlib was not designed with Unikraft in mind, we can’t just drop its entire source tree into the project and expect things to work. Instead, we need to carefully extract and prepare only what’s necessary.
+
+To begin with, I relied on Newlib’s own build system to help identify which source files and headers are actually used. This is because Newlib’s build process dynamically determines many of its dependencies and configurations based on the target platform, the toolchain, and other environmental factors.
+
+One important insight during this process was realizing that Newlib doesn’t just use static headers — it also generates some during the build process. For instance, a key header file called `newlib.h` is created in the `targ-include` directory by Newlib’s configure scripts. This file is essential because it contains numerous platform-specific macros and flags that affect how the library is compiled. These macros include:
+
+- `-D_ATEXIT_DYNAMIC_ALLOC=1`
+- `-D_ELIX_LEVEL=1`
+- `-D_FSEEK_OPTIMIZATION=1`
+- …
+- `-DGETREENT_PROVIDED`
+
+These define various internal options, feature levels, and optimizations that Newlib enables based on the selected configuration. Without them, many source files would fail to compile or behave incorrectly.
+
+In addition to what’s inside `newlib.h`, the build system also passes several compiler flags directly through the compile commands. These are not written in any file but are injected during compilation. Examples include:
+
+- `-DHAVE_CONFIG_H`
+- `-DMISSING_SYSCALL_NAMES`
+- `-D_HAVE_INIT_FINI`
+- `-D_LIBC`
+
+These define important switches that influence conditional compilation throughout the library.
+
+To capture all of this information accurately, I wrote a Python script (available in the `scripts/` directory of the `lib-newlib` Unikraft library). This script parses the build logs and configuration files from a real Newlib build and extracts the relevant source files, include paths, and compiler flags. This ensures that the Unikraft build system gets a list of exactly what’s needed — no more, no less.
+
+Another important detail is that the `targ-include` directory, which contains the generated `newlib.h` and other machine-specific headers, does not exist when you first clone Newlib from its repository. It only appears after you build Newlib with its own build system. Therefore, as part of the porting process, I ran a standalone Newlib build, then copied the resulting `targ-include` into the `lib-newlib` directory within Unikraft. Finally, I added it to the library’s include paths so it would be available during the Unikraft build process.
+
+In summary, this step was not just about copying files — it was about reproducing Newlib’s own build-time decisions in a static, portable form so that Unikraft could build and use the library correctly. The process combined automation (via scripts) and careful manual selection, ensuring compatibility without introducing unnecessary bloat.
+
+## Handling Header and Compatibility Issues
+
+As I moved forward with porting Newlib into the Unikraft ecosystem, I began encountering several compatibility issues — mostly revolving around missing headers and conflicting declarations between the two projects. This was expected, since Newlib is designed to be flexible across platforms, while Unikraft has its own conventions and abstractions.
+
+One of the first issues came up early on: the build failed while assembling KVM-specific code because sys/param.h was missing. This happened since assembly files didn’t get the same include paths as C files. I fixed it by updating Makefile.uk to include Newlib headers for assembly too.
+
+Later on, a different type of compatibility issue surfaced in Newlib’s own headers. Specifically, I found that `time.h` was referencing `xlocale.h`, which doesn’t exist in the environment. This header is more common in glibc-based systems and isn’t relevant for our bare-metal, minimalist setup. I resolved this mismatch by pointing the include to the more appropriate `locale.h`, which serves the same role in Newlib’s context without pulling in unavailable or irrelevant dependencies.
+
+Beyond these direct errors, I also encountered a handful of problems where Newlib’s bundled headers were either outdated, incompatible with Unikraft’s assumptions, or simply missing necessary system-level declarations. To address these, I curated a minimal but functional replacement set:
+
+- Replaced `lib-newlib/include/fcntl.h` with a correct version.
+- Added `sys/prctl.h` and `sys/wait.h` in `lib-newlib/musl-imported/include/sys`.
+- Updated `signal.h` content in `lib-newlib/musl-imported/include`.
+- Added `sys/membarrier.h` in `lib-newlib/musl-imported/include`.
+
+Alongside these structural fixes, I updated several legacy declarations in `time.h` to use standard C syntax, reducing compiler warnings and ensuring better cross-toolchain compatibility.
+
+Finally, one subtle but important step involved excluding unwanted sources from being compiled altogether. I modified `newlib/configure.host` to prevent signal-related sources from building (by setting `signal_dir=` instead of `signal_dir=signal`), and I commented out internal timezone structures in `time.h` to avoid conflicts with other parts of the system.
+
+Together, these changes formed of adapting Newlib to a clean and usable state within the Unikraft environment. While they might seem scattered, they all stem from aligning two independently developed projects with different assumptions — one focused on POSIX compliance, the other on minimalist, high-performance unikernel design.
+
+## Leveraging Unikraft's Syscall-Shim for Newlib Compatibility
+
+Newlib supports multiple strategies for integrating system calls, and Unikraft provides its own **syscall-shim** to expose POSIX-like functions. Newlib’s `sys/syslist.h` header contains conditional mappings that alias prefixed names (`_open`, `_read`, etc.) to their standard versions (`open`, `read`, etc.) when `MISSING_SYSCALL_NAMES` is defined.
+
+The four supported strategies are:
+
+1. **Reentrant syscalls** (`_open_r`, `_read_r`, etc.)  
+   True thread safety, and requires explicit support and namespace cleanup (`-DREENTRANT_SYSCALLS_PROVIDED`, `syscall_dir=syscalls`).
+
+2. **Namespace-clean versions** (`_open`, `_close`, etc.)  
+   Avoids polluting the global namespace.  
+
+3. **Regular syscall names** (`open`, `read`, `write`, etc.) — **chosen method**  
+   The integration, matches Unikraft’s syscall-shim.    
+
+4. **Fallback mode** (only regular names, reentrant versions redirected internally)  
+   Minimal setup, and limited control, less explicit.
+
+I chose **option 3** because Unikraft already implements standard functions like `open()`, `read()`, and `write()` via macros such as:
+
+```c
+UK_SYSCALL_R_DEFINE(ssize_t, read, int, void *, size_t)
+```
+
+These macros ensure consistent syscall signatures and integration with Unikraft’s modular build system. As a result, Newlib functions seamlessly within a POSIX-like environment, even though it’s inside a unikernel.
+
+## Patching and Modernizing `pthread-embedded`
+
+Porting Newlib 4.5 required several patch files and a dedicated `Makefile.uk`. Meanwhile, the **`pthread-embedded`** library — untouched for over six years — needed light re-porting rather than a comprehensive overhaul. Key updates included:
+
+- **Correct syscall definitions** in Newlib for syscalls like `lstat` and `getcwd`, which weren’t originally present, or have type confilict with Unikraft.
+- **Header path updates** for renamed Unikraft files (e.g., `uk/arch/atomic`).
+- **Function wrapper renames** for atomic operations to match current Unikraft APIs.
+
+After applying these patches and rebuilding, **Newlib 4.5 and `pthread-embedded`** compile cleanly and integrate smoothly within Unikraft.
+
+## Finalizing the Port and First Compatibility Tests
+
+With both libraries in place and integrated, I confirmed that:
+
+- **`lib-newlib`** builds without errors or warnings.
+- **`lib-pthread-embedded`** builds and links against Newlib.
+
+## Real-World Test: Running SQLite
+
+To validate the port, I built and ran **SQLite** inside Unikraft using the new libraries. SQLite is a multithreaded database engine that exercises both `libc` and `pthread`. It executed correctly on the first attempt, demonstrating that the port handles real-world workloads.
+
+## Next Steps
+
+The upcoming steps are:
+
+- Testing other Unikraft apps (e.g., `lib-python`, `lib-nginx`) to surface edge cases.
+- Benchmarking performance and binary size against the existing `musl` port.
+- Iterating on patches to improve stability and documentation, with an eye toward upstream contributions.
+
