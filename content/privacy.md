@@ -139,7 +139,7 @@ Germany<br />
 
 Email: info@unikraft.io
 
-Website: www.unikraft.io
+Website: https://unikraft.com
 
 ## 3.  Cookies
 

@@ -41,7 +41,7 @@ export const UnikraftCloudAd = () => {
         justifyContent='center'
         display='inline-flex'
         alignItems='center'
-        href='https://kraft.cloud'
+        href='https://unikraft.com'
         rel='noopener'
         target='_blank'
         fontWeight='bold'

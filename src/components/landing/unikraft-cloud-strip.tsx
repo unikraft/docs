@@ -60,7 +60,7 @@ export function UnikraftCloudStrip(props: BoxProps) {
             justifyContent='center'
             display='inline-flex'
             alignItems='center'
-            href='https://unikraft.cloud'
+            href='https://unikraft.com'
             rel='noopener'
             target='_blank'
             fontWeight='bold'
