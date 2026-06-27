@@ -1,0 +1,86 @@
+---
+title: "GSoC'26: Expanding the Unikraft Software Support Ecosystem"
+description: |
+ This project aims to add expand the app ecosystem on unikraft.
+publishedDate: 2026-06-19
+image: /images/unikraft-gsoc24.png
+authors:
+- Tushar Verma
+tags:
+- gsoc
+- gsoc26
+- virtualization
+- apps
+---
+
+## Project Overview
+
+For Unikraft to be a viable alternative to Docker in production, it needs to run the software people actually deploy.
+Right now, the catalog covers the basics — Nginx, Redis, SQLite etc — but there are major gaps.
+You can’t run a DNS server, a message broker, a time sync daemon, or a Git host as a unikernel without doing the porting work yourself.
+That’s a problem because engineers evaluating Unikraft for their stack will look at the catalog and, if their workload isn’t there, they move on.
+
+This project aims to fill those gaps by porting the missing pieces to the catalog .
+The first is **dnsmasq**, a DNS forwarder and cache, which now runs as a unikernel .
+Next on the list are **Chrony** for time synchronisation, **Gitea** for self-hosted Git, and a message broker such as **Mosquitto/NATS** for MQTT.
+
+Another goal of this project is filling the gaps underneath it too, such as missing/outdated libraries or platform support, so that the applications which follow have less friction.
+
+## Progress
+
+### dnsmasq
+
+[dnsmasq](https://thekelleys.org.uk/dnsmasq/doc.html) is a lightweight DNS forwarder and cache.
+It is exactly the kind of small, always on infrastructure a unikernel suits well — one job, a tiny attack surface, and no full Linux userland to carry underneath.
+Porting it gives the catalog a real  DNSSEC-validating DNS server that boots in milliseconds, and it was the first application I took on.
+
+Getting it running meant working around bits of gap in Unikraft's networking and crypto stacks.
+
+**No `IP_PKTINFO` in lwIP.**
+dnsmasq uses the `IP_PKTINFO` socket option to learn which local address a query arrived on, but lwIP does not implement it.
+The `setsockopt()` call failed outright, and even past that the missing control message made dnsmasq silently drop the UDP reply.
+Three small patches handle this: they make the `setsockopt()` non-fatal, stop attaching the pktinfo control message when sending, and stop requiring it when receiving.
+
+**Interface discovery over netlink.**
+dnsmasq enumerates network interfaces by talking `NETLINK_ROUTE`, support for which only landed in Unikraft recently.
+Once it was wired up every query hung: Unikraft's netlink ignores the flags passed to `recvmsg`, so dnsmasq's `MSG_PEEK` sizing pass actually consumed the message and the real read then blocked forever.
+A patch drops the peek-and-resize step and reads each message once into a pre-grown buffer.
+
+**DNSSEC needs portable crypto.**
+Validating signatures needs public key crypto, which dnsmasq pulls from nettle and its companion lib hogweed.
+'lib-nettle' already existed in the catalog, but it was an old release tied to hand-written x86_64 assembly and a full GMP, so it only ever built on x86.
+I rebuilt it on a current nettle layered over mini-gmp, generating the elliptic-curve tables at build time instead of shipping assembly, which makes the crypto architecture-independent and lets it run on arm64 too.
+A final patch adapts dnsmasq to the reworked hash and digest API in the newer nettle.
+
+The result builds on both x86_64 and arm64 and runs a full DNS and DNSSEC suite in CI.
+**Related PRs:** [lib-dnsmasq](https://github.com/unikraft/lib-dnsmasq/pull/2), [catalog-core](https://github.com/unikraft/catalog-core/pull/107) and [lib-nettle](https://github.com/unikraft/lib-nettle/pull/2).
+
+### lighttpd
+
+[lighttpd](https://www.lighttpd.net/), a lightweight web server, currently running through Unikraft's binary-compatibility mode.
+It was straight forward , ldd is you best friend during the process.
+
+**Related PRs:** [catalog](https://github.com/unikraft/catalog/pull/282)
+
+### nginx
+
+I added a newer [nginx](https://nginx.org/) release to the `catalog/library` collection.
+I've also addressed the recent [rift CVE](https://nvd.nist.gov/vuln/detail/CVE-2026-42945).
+
+**Related PRs:** [catalog](https://github.com/unikraft/catalog/pull/280)
+
+## Next Steps
+
+- Port lighttpd to catalog-core, and keep filling catalog gaps
+- Fix the arm clock, which is hindering DNSSEC on the arm build
+
+## Acknowledgements
+
+Special thanks to Răzvan Deaconescu and Răzvan Vîrtan, my two amazing mentors, for their support along the way.
+I would also like to thank Alex Andrei Cioc, Cezar Craciunoiu, and the entire Unikraft community for all the work, discussions, and guidance.
+
+## About Me
+
+I'm [Tushar Verma](https://www.linkedin.com/in/tushar-verma-32847b324), a second-year undergraduate student @ IIT Jodhpur.
+I am passionate about operating systems, systems programming and cloud.
+Outside of tech, I enjoy tinkering, making music, swimming and exploring whatever captures my curiosity at the moment.
