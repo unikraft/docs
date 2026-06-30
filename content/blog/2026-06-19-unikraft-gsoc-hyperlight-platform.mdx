@@ -1,0 +1,141 @@
+---
+title: "GSoC'26: Add Hyperlight Platform in KraftKit"
+description: In this post, I share how I implemented the Hyperlight platform (VMM) in KraftKit, enabling KraftKit to run Unikraft unikernels on Hyperlight. I discuss the platform's benchmarks compared to QEMU and Firecracker.
+publishedDate: 2026-06-19
+image: /images/hyperlight/gsoc_hyperlight_hero.png
+authors:
+- Jaidev Singh
+tags:
+- gsoc
+- gsoc26
+- kraftkit
+- hyperlight
+- unikraft
+---
+
+## Project Overview
+
+Hyperlight is a lightweight micro-VM / sandbox runtime that provides an ultra-secure and lightweight environment for running VMs.
+To me, Unikraft and Hyperlight look similar: in Unikraft you can create a lightweight kernel by cherry-picking the components you need, and in Hyperlight you create your own host functions that can be called by the guest, providing a lightweight and ultra-secure environment with ultra-fast boot times.
+In this project, we are integrating Hyperlight into Unikraft and KraftKit, so you can run Unikraft unikernels on Hyperlight.
+
+## Objectives
+
+The main objective of this project is to integrate [Hyperlight](https://github.com/hyperlight-dev/hyperlight) as a [KraftKit](https://github.com/unikraft/kraftkit) machine platform, enabling users to run [Unikraft](https://github.com/unikraft/unikraft) unikernels on Hyperlight.
+This involves creating a new machine driver for Hyperlight, mapping KraftKit CLI flags and project configuration to Hyperlight runtime options, and supporting essential features such as volumes, networking, ports, and lifecycle commands (run/stop/logs/etc.).
+
+## Current Progress
+
+[Dan Chiarlone](https://github.com/danbugs) (Hyperlight maintainer) is maintaining the Hyperlight host (the binary that runs unikernels) ([Hyperlight-Unikraft](https://github.com/hyperlight-dev/hyperlight-unikraft)) to run Unikraft unikernels on Hyperlight.
+I have been working with him to implement the Hyperlight platform in KraftKit.
+In this first stage, I have successfully implemented all the Hyperlight platform-supported features for Unikraft with the combined efforts of my mentors and the Hyperlight and Unikraft teams.
+
+### Hyperlight machine driver scaffolding
+
+- Platform-specific run flags
+- Driver input validation and command/lifecycle hardening
+- Platform alias acceptance in machine commands
+
+### Volume and filesystem mapping
+
+- KraftKit volume → Hyperlight mount mapping
+- Rootfs / ROM filesystem metadata propagation
+- `no-rootfs` and default rootfs type handling
+
+### Networking and ports
+
+- Guest port mappings (`--port GUEST:GUEST`)
+- `--hyperlight-net`, `--hyperlight-net-allow`, `--hyperlight-net-block` flags
+- Network policy validation (mutually exclusive allow/block lists)
+
+### Lifecycle, logging, and edge cases
+
+- Log following after machine exit
+- Watch mode terminal state transitions
+- Pause/cleanup behavior
+
+### Documentation
+
+- README updates for supported run options and Hyperlight binary source
+
+### Testing the Hyperlight platform
+
+I have tested the Hyperlight platform with various Unikraft unikernels/examples and have verified that it functions correctly under different scenarios.
+[Here are some examples to try](https://github.com/unikraft/catalog/tree/main/examples/hyperlight).
+
+## Benchmarks
+
+Enough talking — let's see how Hyperlight performs compared to other VMMs like QEMU and Firecracker.
+
+### Boot Time
+
+<Image
+  src="/images/hyperlight/native-boottime.png"
+  title="Boot Time benchmarks chart for Hyperlight, QEMU and Firecracker"
+  description="Boot time benchmark comparing Hyperlight, QEMU, and Firecracker."
+/>
+
+Hyperlight has ultra-fast boot times, around 246x faster than QEMU and 214x faster than Firecracker.
+Tested with [Native C application Unikernel](https://github.com/unikraft/catalog/tree/main/examples/hyperlight/helloworld-c-native).
+
+### Network Latency
+
+<Image
+  src="/images/hyperlight/vegeta_get_latency.png"
+  title="Network Latency chart for Hyperlight, QEMU and Firecracker. Testing with Vegeta"
+  description="Vegeta GET latency benchmark comparing Hyperlight, QEMU, and Firecracker."
+/>
+
+Hyperlight has slightly lower network latency compared to QEMU and Firecracker.
+Async networking support was in development at the time of testing, so the tests were done with sync/blocking networking on a [Go syscall-blocking HTTP server](https://github.com/unikraft/catalog/tree/main/examples/hyperlight/httpserver-go1.21) with Vegeta load testing on `GET` requests.
+Note that async networking is supported at the time of writing.
+
+<Image
+  src="/images/hyperlight/wrk_get_latency.png"
+  title="Network Latency chart for Hyperlight, QEMU and Firecracker. Testing with wrk"
+  description="wrk GET latency benchmark comparing Hyperlight, QEMU, and Firecracker."
+/>
+
+Same application and setup as Vegeta, but with wrk load testing.
+Hyperlight has slightly higher latency compared to Firecracker and lower than QEMU.
+
+### Requests per second
+
+<Image
+  src="/images/hyperlight/wrk_get_requests_per_sec.png"
+  title="Requests per second chart for Hyperlight, QEMU and Firecracker. Testing with wrk"
+  description="wrk requests-per-second benchmark comparing Hyperlight, QEMU, and Firecracker."
+/>
+
+Hyperlight has higher req/sec compared to both QEMU and Firecracker.
+Same application and setup as the latency test with wrk load testing.
+
+> These benchmarks are not exhaustive and may vary based on the unikernel, workload, and system configuration.
+> However, they provide a good indication of Hyperlight's performance characteristics.
+
+## Thoughts on Hyperlight
+
+Hyperlight is a very promising VMM with ultra-fast boot times and strong security.
+It is still in development, and a smart team is working on it.
+I am excited to see how Hyperlight evolves in the future and how it can be used in various use cases.
+You can create your own hosts according to your needs using the SDK, or you can use Unikraft to run lightweight unikernels without directly working with the Hyperlight SDK.
+The Unikraft and Hyperlight teams are working hard to unlock its full capabilities.
+
+## Next Steps
+
+Here are some of the next steps for the Hyperlight platform in Unikraft/KraftKit:
+
+- CI / integration tests for the Hyperlight driver
+- Example unikernel workflows end-to-end
+- Additional Hyperlight runtime surfaces or unsupported flag handling for future Hyperlight features
+
+## Acknowledgements
+
+I would like to thank my mentors ([Cezar Craciunoiu](https://github.com/craciunoiuc), [Alex-Andrei Cioc](https://github.com/nurof3n)) and [Dan Chiarlone](https://github.com/danbugs) for their help with Hyperlight integration on Unikraft, and the Unikraft and Hyperlight teams for their support and guidance throughout this project.
+This work would not have been possible without their help and collaboration.
+
+## About Me
+
+Hi, I'm [Jaidev](https://github.com/ijaidev), a final-year undergraduate student.
+Learning and writing code to make the machine work.
+FIGURING IT OUT :)
