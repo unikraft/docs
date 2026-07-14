@@ -1,0 +1,141 @@
+---
+title: "GSoC'26: Add Hyperlight Platform in KraftKit, Part II"
+description: In this post, I share how I added unit and end-to-end tests for the Hyperlight machine driver in KraftKit, covering config marshaling, validation, machine lifecycle, and a full Go HTTP unikernel workflow.
+publishedDate: 2026-07-14
+image: /images/hyperlight/gsoc_hyperlight_hero.png
+authors:
+- Jaidev Singh
+tags:
+- gsoc
+- gsoc26
+- kraftkit
+- hyperlight
+- unikraft
+- testing
+---
+
+## Project Overview
+
+This is the second post in my GSoC'26 series on adding [Hyperlight](https://github.com/hyperlight-dev/hyperlight) as a machine platform in [KraftKit](https://github.com/unikraft/kraftkit).
+In [Part I](/blog/2026-06-19-unikraft-gsoc-hyperlight-platform), I covered the Hyperlight machine driver implementation — platform flags, volumes, networking, lifecycle handling, and compared Hyperlight's performance to QEMU and Firecracker.
+
+That work made the platform usable.
+Now these tests help to make it reliable and ready for future development.
+
+## Test goals
+
+After the first stage, Hyperlight support was verified mainly by hand against catalog examples.
+That is fine for initial development, but we need tests to ensure continuous quality and reliability as the project evolves and the development continues across `kraftkit` and `hyperlight-unikraft`.
+
+The test goals for this phase are:
+
+1. **Unit tests** that lock down config marshaling, validation, and `Create`/`Start` behavior without needing KVM or a Hyperlight host binary
+1. **End-to-end tests** that exercise the real user path: `kraft build` / `kraft run` / `kraft ps` / `kraft logs` / `kraft stop` / `kraft rm` on Hyperlight
+1. A path toward **CI**, so these checks run automatically on every change push instead of locally
+
+## Unit tests
+
+The unit suite lives next to the driver under `machine/hyperlight/`.
+It is plain Go `testing` table-driven code.
+
+### Config → host argument mapping
+
+`HyperlightConfig.MarshalArgs` is the boundary between KraftKit and the `hyperlight-unikraft` CLI.
+Unit tests pin how memory, stack, tools, networking, ports, initrd, mounts, repeat, exec, and application arguments are turned into host argv.
+
+This keeps the host invocation stable when someone refactors the config struct later.
+
+### Runtime config and mount validation
+
+Validation is where many Hyperlight-specific rules live.
+The suite covers:
+
+- Stack quantity parsing (invalid strings, non-positive sizes)
+- Mutually exclusive `--net-allow` / `--net-block` policies
+- Allow-list trimming and deduplication
+- Guest port ranges and duplicate ports
+- Guest mount paths that must be absolute and must not shadow reserved directories (`/`, `/bin`, `/usr`, …)
+- Mount specs that require a directory host source and a non-empty guest destination
+- Kernel/initrd path checks (must exist and be a file, not a directory)
+
+These tests encode Hyperlight's model of mounts and sandbox ports so KraftKit fails early with clear errors instead of launching a broken host process.
+
+### Port and volume mapping from Machine specs
+
+KraftKit's generic machine API is broader than what Hyperlight supports today.
+Unit tests document and enforce that contract:
+
+- Same-port guest listen permissions (`8080:8080`) are accepted; host→guest port forwarding is rejected
+- Host IP binding other than unrestricted `0.0.0.0` is rejected
+- Only TCP ports are accepted
+- Writable `9pfs` directory volumes map to `HOST:GUEST` mounts
+- Unsupported volume drivers and read-only volumes are rejected
+
+### Machine Create / Start behavior
+
+On the service layer, tests cover:
+
+- Rejecting unsupported features: emulation mode, network attachments, environment injection, and kernel arguments
+- Failing clearly when the `hyperlight-unikraft` binary is missing from `$PATH`
+- A successful `Create` that builds a `HyperlightConfig` whose marshaled args match memory, default stack, ports, initrd, mounts, kernel, and app args
+- `Start` rejecting `--hyperlight-exec` when application arguments are also set, and marking the machine failed
+
+Where a real binary is not needed, tests inject a stub `hyperlight-unikraft` on `PATH` so Create can complete without talking to KVM.
+
+## End-to-end tests
+
+Unit tests prove the driver logic.
+E2E tests prove the full product path with a real Hyperlight host.
+
+The suite lives under `test/e2e/cli/hyperlight/` and uses KraftKit's existing Ginkgo/Gomega e2e framework (same style as the other CLI suites).
+
+### Prerequisites
+
+Runtime tests only run when the host is actually ready:
+
+- A running Linux distro
+- `/dev/kvm` available
+- `hyperlight-unikraft` in `$PATH`
+- Docker available for rootfs builds during `kraft build`
+
+Otherwise the suite skips cleanly, so developers without Hyperlight can still run the rest of the e2e suite.
+
+### CLI validation
+
+A lightweight validation case runs `kraft run --help` and checks that Hyperlight-specific flags surface in the help text, including:
+
+- `--hyperlight-stack`
+- `--hyperlight-repeat`
+- `--hyperlight-net`
+
+This catches regressions where platform flags fail to register on the CLI.
+
+### Full Go HTTP unikernel workflow
+
+The main runtime suite builds a small Go HTTP server as a Hyperlight unikernel from an in-test fixture project (`main.go`, `Dockerfile`, `kraft.yaml`), then exercises the lifecycle users care about:
+
+1. **`kraft build --plat hyperlight --arch x86_64`** — produces the kernel and initrd artifacts
+1. **`kraft run --plat hyperlight`** with networking and guest port `8080:8080`, in detached mode
+1. **`kraft ps --plat hyperlight`** — instance appears as running
+1. **`kraft logs`** — guest output includes the expected server banner
+1. **`curl http://localhost:8080/`** — response body is `Hello from Hyperlight-Unikraft!`
+1. A second case walks **run -> ps -> logs -> stop -> rm**, checking that the instance disappears from `ps` after stop and can be removed cleanly
+
+## Next Steps
+
+Here are the next steps for the Hyperlight platform in Unikraft/KraftKit:
+
+- Include these unit and end-to-end tests in CI so regressions are caught on every pull request
+- Expand e2e coverage for additional workflows (volumes/mounts, net allow/block policy, more catalog examples)
+- Cover Additional Hyperlight runtime surfaces or unsupported flag handling as the host gains features
+- Keep documentation and examples aligned with the tested CLI surface
+
+## Acknowledgements
+
+I would like to thank my mentors ([Cezar Craciunoiu](https://github.com/craciunoiuc) and [Alex-Andrei Cioc](https://github.com/nurof3n)), and [Dan Chiarlone](https://github.com/danbugs) for their help with Hyperlight integration on Unikraft, and the Unikraft and Hyperlight teams for their support and guidance throughout this project.
+
+## About Me
+
+Hi, I'm [Jaidev](https://github.com/ijaidev), a final-year undergraduate student.
+Learning and writing code to make the machine work.
+FIGURING IT OUT ;)
