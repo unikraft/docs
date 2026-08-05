@@ -1,0 +1,129 @@
+---
+title: "GSoC'26: Add Hyperlight Platform in KraftKit, Part III"
+description: In this third post of my GSoC'26 series, I share how we brought pre-built base runtimes, automated CI workflows, and multi-language application examples to Hyperlight in Unikraft.
+publishedDate: 2026-08-05
+image: /images/hyperlight/gsoc_hyperlight_hero.png
+authors:
+- Jaidev Singh
+tags:
+- gsoc
+- gsoc26
+- kraftkit
+- hyperlight
+- unikraft
+- catalog
+---
+
+## Project Overview
+
+Welcome to the third post in my GSoC'26 series!
+
+In [Part I](/blog/2026-06-19-unikraft-gsoc-hyperlight-platform), I introduced Hyperlight and walked through implementing the initial Hyperlight machine driver in KraftKit, complete with performance benchmarks against QEMU and Firecracker.
+In [Part II](/blog/2026-07-14-unikraft-gsoc-hyperlight-platform-2), we added unit and end-to-end tests to make sure the machine driver stays rock-solid as KraftKit and `hyperlight-unikraft` evolve.
+
+With the core driver built and tested, the next big goal was developer experience.
+How can someone take an existing application written in C, Rust, Zig, Go, or Python and run it on Hyperlight in seconds without compiling a Unikraft kernel from source every single time?
+
+In this post, I'll share how we made Hyperlight support official in KraftKit, built the pre-built `base-hyperlight` runtime in `catalog`, automated image builds in CI, and created polyglot application examples to show it off.
+
+## Merging Hyperlight into KraftKit Upstream
+
+Some great news: official support for the Hyperlight platform has been merged into KraftKit ([#2888](https://github.com/unikraft/kraftkit/pull/2888)) and is now available as of the [`v0.12.15`](https://github.com/unikraft/kraftkit/releases/tag/v0.12.15) release!
+I'm glad to be a part of it.
+
+This integration brings together the driver work, CLI flags (`--hyperlight-stack`, `--hyperlight-net`, etc.), validation, and testing suites into KraftKit.
+Additionally, we updated KraftKit's CI build environments (`github-action` images) to include `hyperlight-unikraft` tools out of the box, ensuring future pull requests can build and validate Hyperlight targets automatically.
+
+## Instant Execution with `base-hyperlight`
+
+Unikraft's secret sauce is its modularity — compiling a custom kernel tailored to a specific application yields ultra-small, hyper-optimized binaries.
+But during rapid development or when running standard pre-compiled binaries, developers want instant startup.
+
+To solve this, we introduced `base-hyperlight` (`library/base-hyperlight`) in the Unikraft [catalog](https://github.com/unikraft/catalog).
+
+`base-hyperlight` is a general-purpose ELF-loader runtime pre-configured for the Hyperlight platform (`plat: hyperlight`, `arch: x86_64`).
+It packages an ELF loader (`app-elfloader`) alongside the POSIX features required by modern runtimes and compilers:
+
+- **Host Filesystem RPC (`hostfs`)**: Transparent file access auto-mounted at `/host` via Hyperlight host calls (`/dev/hcall`).
+- **Proxied Networking (`hostsock`)**: Host-proxied socket support for guest applications.
+- **Rootfs Mounting (`cpiovfs`)**: Fast, zero-copy initrd rootfs automounting at `/`.
+- **Full POSIX Subsystem**: Support for threading, signals, futexes, `mmap` (via `ukmmap`), multiprocess capabilities (`execve`), and environment variables.
+
+Now, instead of compiling Unikraft kernel source files locally, KraftKit can pull a pre-compiled `base-hyperlight` kernel image and execute user applications immediately.
+
+> Note: While the runtime source definition in the catalog repository lives under [`library/base-hyperlight`](https://github.com/unikraft/catalog/tree/main/library/base-hyperlight), the published OCI image is `base:latest` (`unikraft.org/base:latest`).
+> When configuring KraftKit, you simply specify `runtime: base:latest` alongside the target `platform: hyperlight`.
+
+Now you can use the base runtime to run Unikraft unikernels on Hyperlight:
+
+```yaml
+spec: v0.7
+
+name: httpserver-gcc13.2-hyperlight
+
+runtime: base:latest
+
+targets:
+  - platform: hyperlight
+    architecture: x86_64
+
+rootfs: ./rootfs.cpio
+
+cmd: ["/http_server"]
+```
+
+or via CLI:
+
+```bash
+kraft run --rootfs rootfs.cpio --plat hyperlight unikraft.org/base:latest -- /bin
+```
+
+## Automated CI Workflows for Base Images
+
+A base runtime is only useful if it's readily accessible to everyone.
+We updated the catalog's GitHub Actions workflow (`.github/workflows/library-base.yaml`) to include `library/base-hyperlight`.
+
+Now, whenever changes land, GitHub Actions automatically builds and publishes the `hyperlight/x86_64` base runtime image to OCI registries alongside the standard `qemu/x86_64` and `fc/x86_64` targets.
+Developers can target `runtime: base:latest` with `--plat hyperlight` and get a fully working setup immediately.
+
+## Hyperlight Examples
+
+KraftKit grabs the `base:latest` image, packs the compiled binary into an initrd, launches the Hyperlight micro-VM, and starts serving requests in milliseconds.  
+With `base-hyperlight` published, we added a series of new examples under `examples/hyperlight/` to demonstrate running different programming languages on Hyperlight micro-VMs:
+
+### 1. C HTTP Server (`examples/hyperlight/httpserver-gcc13.2`)
+
+A lightweight HTTP server written in C compiled with GCC 13.2
+
+### 2. Rust HTTP Server (`examples/hyperlight/httpserver-rust1.75`)
+
+A single-file HTTP server written in Rust using std networking.
+
+### 3. Zig Hello World (`examples/hyperlight/helloworld-zig0.11`)
+
+A minimal Zig application running natively on Hyperlight.
+
+## Looking Back on GSoC'26
+
+This project has been an incredible journey.
+Over the summer, we went from zero Hyperlight support in KraftKit to:
+
+- A fully functional Hyperlight machine driver supporting volumes, custom flags, logging, and networking;
+- Comprehensive unit and end-to-end test suites integrated into KraftKit;
+- Upstream integration in `kraftkit` and CI image environments;
+- A pre-built `base-hyperlight` ELF-loader runtime published automatically via CI workflows;
+- A rich set of polyglot examples in `catalog` spanning C, Rust, Zig, Go, Python, Dotnet, and NodeJS.
+
+Hyperlight brings sub-millisecond boot times and ultra-lightweight microVM isolation.
+Pairing it with Unikraft and KraftKit makes running microVM workloads fast, simple, and accessible.
+
+## Acknowledgements
+
+I want to express my deepest gratitude to my mentors ([Cezar Craciunoiu](https://github.com/craciunoiuc) and [Alex-Andrei Cioc](https://github.com/nurof3n)) for their unwavering support, advice, and code reviews throughout GSoC.
+Special thanks to [Dan Chiarlone](https://github.com/danbugs) for his invaluable help with Hyperlight host features and initial KraftKit work, and to the entire Unikraft and Hyperlight communities for welcoming me and guiding me through this project.
+
+## About Me
+
+Hi, I'm [Jaidev](https://github.com/ijaidev), a final-year undergraduate student.
+Learning and writing code to make the machine work.
+FIGURING IT OUT :)
