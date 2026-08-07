@@ -1,0 +1,145 @@
+---
+title: "GSoC'26: Finishing Python3, Reworking Redis, and Upgrading libgo"
+description: |
+  A technical update on the final stretch of Google Summer of Code 2026 with
+  Unikraft, covering the completed Python3 upgrade, dropping a C++ dependency
+  from the Redis port, and bringing libgo back to a buildable state.
+publishedDate: 2026-08-07
+authors:
+- RaduAndreiTudorica
+tags:
+- gsoc
+- gsoc2026
+- lib-ports
+- python3
+- redis
+- libgo
+---
+
+## Recap
+
+The [second blog post](/blog/2026-07-14-gsoc-nginx-upgrade-stream-module-python3) ended with the Python3 upgrade still in progress.
+This post covers finishing it, going back to the Redis port to remove a dependency that should never have been there, and upgrading libgo, which turned out to be unbuildable on any current distribution.
+
+## lib-python3: Finishing the Upgrade
+
+The port compiled and linked, but the unikernel booted and then went quiet.
+No output, no crash, no error.
+
+The first mistake I made was assuming the problem was in Python.
+I spent a long time inside the interpreter's startup path: checking whether semaphores worked, whether threads were being created, whether anything was blocking.
+I attached GDB, walked the scheduler's thread list by hand, and found that the application thread was simply not there, while the system threads sat idle.
+
+What I should have checked first was whether anything could print at all.
+The Unikraft banner is written with `fprintf` to `stdout`, and it was missing too.
+That single observation would have told me the problem had nothing to do with Python: userspace `stdout` was not reaching the console, so any error message the interpreter produced went nowhere.
+
+The cause was mundane.
+My build had stale objects from before I updated the core, and the core had since gained a fix in `lib/posix-tty`.
+A clean rebuild brought the banner back, and with it the actual error:
+
+```text
+RuntimeError: cannot read ticks_per_second
+Fatal Python error: _PyImport_InitExternal: external importer setup failed
+```
+
+### A missing sysconf value
+
+CPython `3.13` reads `_SC_CLK_TCK` while initialising the `posix` module and treats a non-positive result as fatal.
+Unikraft's `sysconf()` handles a small set of names and returns `0` for everything else, and `_SC_CLK_TCK` was not among them.
+
+In `3.10` this value was read lazily, only when `os.times()` was called, so a platform that did not provide it worked fine until something asked.
+In `3.13` it is read at startup, which means no Python application could start on Unikraft at all.
+
+The fix is three lines in `lib/posix-sysinfo`, returning `100` to match what musl reports on Linux.
+With that in place, the unikernel runs `hello.py`.
+
+Relevant pull requests: [unikraft/lib-python3#25](https://github.com/unikraft/lib-python3/pull/25) and [unikraft/unikraft#1877](https://github.com/unikraft/unikraft/pull/1877)
+
+## lib-redis: Dropping the C++ Dependency
+
+While preparing testing instructions for the open pull requests, I rebuilt the Redis port from scratch in a clean directory and it failed.
+It had worked when I first tested it, which was the useful part: something about my original environment had been hiding the problem.
+
+Redis 8 introduces `fast_float`, a C++ implementation of `strtod` used when parsing doubles.
+My original approach was to bring the C++ toolchain into the build to satisfy it.
+That works on paper, but in practice it meant libcxx, libcxxabi, libunwind and compiler-rt all had to be wired into an application that otherwise needs none of them, and the combination of libcxx with a GCC host toolchain turned out to be fragile.
+
+The better answer was to not compile C++ at all.
+`fast_float` is a performance optimisation, and Redis already falls back to `strtod` for inputs it cannot handle, such as hexadecimal literals.
+Replacing it with a small `strtod`-based implementation keeps behaviour identical and removes the dependency entirely.
+
+Two more link errors surfaced after that, both from the same cause.
+`bitops.c` and `hyperloglog.c` call `__builtin_cpu_supports()` to pick between optimised and generic code paths, which pulls in `__cpu_model` from libgcc.
+libgcc is not linked into the unikernel, so the build fails at link time.
+Both call sites are guarded by macros that Redis defines in its own `config.h`, and both have generic fallbacks, so leaving `HAVE_POPCNT` and `HAVE_AVX2` undefined resolves it.
+
+Relevant pull request: [unikraft/lib-redis#17](https://github.com/unikraft/lib-redis/pull/17)
+
+## lib-libgo: A Port That Could Not Be Built
+
+The libgo port bundles a full GCC release and builds the Go runtime from it.
+It was pinned to GCC `12.1.0`.
+
+Before changing anything I tried to build it as it was, to have a baseline to compare against.
+It did not build, and the reason had nothing to do with Unikraft:
+
+```text
+error: implicit declaration of function '__builtin_ia32_cvtne2ps2bf16_v16hi';
+did you mean '__builtin_ia32_cvtne2ps2bf16_v16bf'?
+```
+
+GCC `12.1.0`'s own i386 intrinsics headers reference built-ins that were renamed in later releases, so they no longer compile against a GCC 13 or newer host compiler.
+Since current distributions ship GCC 13, 14 or 15, the port could not be built at all.
+Installing `gcc-12` alongside confirmed the baseline worked, which made it clear the upgrade was not a nice-to-have.
+
+### Generated files that stay behind
+
+The port carries a set of Go files under `libgo/` and `libgo/x86/`: `sysinfo.go`, `libcalls.go`, `goroot.go`, several `linknames` files and others.
+These are not written by hand.
+A normal GCC build generates them with `mksysinfo.sh`, `mkrsysinfo.sh` and `mklinknames.awk`, which read the system headers and the Go sources to produce them.
+
+The ones in the port had been generated by a `12.1.0` build, and the `14.x` runtime references symbols that only exist in the newer versions, such as `prlimit`, `_libgo_loff_t_type` and `buildVersion`.
+Regenerating them meant configuring and building GCC `14.4.0` on the host, which takes a while but is the only reliable way to get them right.
+
+This is easy to miss.
+The port keeps compiling happily until the Go runtime reaches a symbol that is not there, and the error points at a Go source file rather than at the generated file that should have defined it.
+
+Two sources new in `14.x` also had to be added, `runtime/go-mmap.c` and `runtime/go-strerror.c`, and one was renamed upstream.
+All three existing patches still applied cleanly.
+
+Relevant pull request: [unikraft/lib-libgo#10](https://github.com/unikraft/lib-libgo/pull/10)
+
+## Testing Instructions
+
+My mentors asked for a short document describing how to test each open pull request, so that reviewing could focus on the code rather than on working out how to exercise it.
+
+Writing it turned out to be more valuable than expected.
+Rather than reconstructing the commands from memory, I ran every one of them from scratch in a clean directory, which is how the Redis problem above surfaced in the first place.
+It also caught several details that only exist in one's own environment: `unzip` is needed for the SQLite port and is not in the documented requirements, `gccgo` must be installed on the host for libgo and fails silently without it, and `-cpu max` is required for anything using lwip because the default emulated CPU has no `RDRAND`.
+
+None of those are in any README.
+Every one of them would have cost a reviewer time.
+
+## What I Learned
+
+The Python3 debugging session taught me something I expect to keep using.
+When a program produces no output, the first question is not what the program is doing wrong, but whether output works at all.
+I spent hours reasoning about interpreter internals when the answer was that `stderr` was not connected to anything, and the program had been telling me exactly what was wrong the whole time.
+
+The second lesson is about generated files.
+Both the Python and libgo ports carry files that a normal upstream build produces and that a port has to supply itself.
+They are invisible during an upgrade because nothing about them changes, they keep working for a while, and then something references a symbol that a newer generator would have emitted.
+It is worth listing them explicitly when upgrading, rather than waiting for the linker to find them one at a time.
+
+The third is that a working build in one environment says less than it seems.
+Redis built fine for me and failed in a clean directory, and libgo's own baseline turned out to be unbuildable on any modern distribution.
+Testing from scratch, in a directory that knows nothing about how the work was done, is the only version of "it works" that means anything.
+
+## Where Things Stand
+
+All six library ports are now upgraded and validated end to end: SQLite, Lua, Nginx, Redis, Python3 and libgo.
+The Nginx STREAM module works for the first time.
+Three fixes went into the Unikraft core along the way, one of which was blocking every Python application on the platform.
+
+Thanks to Razvan Deaconescu, Stefan Jumarea and Sriprad Potukuchi for their guidance throughout, and in particular for the suggestion to write up the testing instructions, which found more problems than it documented.
