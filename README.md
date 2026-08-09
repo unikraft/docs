@@ -5,7 +5,7 @@ It is deployed on the [Unikraft website](https://unikraft.org/)
 It provides information for the latest version of [Unikraft](https://github.com/unikraft/unikraft) and [KraftKit](https://kraftkit.sh).
 
 Documentation is written in [MDX](https://mdxjs.com/) format.
-Building and deploying it requires Node and NPM.
+Building and deploying it requires Node and npm.
 You can build and run either natively or using Docker.
 
 ## Building and Testing Natively
@@ -29,7 +29,7 @@ For local development:
 ```console
 docker build -t ghcr.io/unikraft/docs:dev --target dev .
 
-docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
+docker run -it --rm -v $(pwd):/docs -v unikraft_modules:/docs/node_modules -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
 ```
 
 For production deployment:
