@@ -1,9 +1,10 @@
-+++
-title = "GSoC'23: Enhancing VS Code Developer Experience"
-date = "2023-07-13T00:00:00+01:00"
-author = "Md Sahil"
-tags = ["GSoC'23", "VS Code", "IDE Extension"]
-+++
+---
+title: "GSoC'23: Enhancing VS Code Developer Experience"
+description: "GSoC'23: Enhancing VS Code Developer Experience"
+publishedDate: "2023-07-13T00:00:00+01:00"
+authors: ["Md Sahil"]
+tags: ["GSoC'23", "VS Code", "IDE Extension"]
+---
 
 <img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-2023-badge.svg" align="right" />
 
