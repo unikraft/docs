@@ -1,0 +1,172 @@
+---
+title: Porting External Libraries to Unikraft
+description: |
+  We explore how to port external library dependencies on top of Unikraft.
+---
+
+## Porting External Libraries
+
+Being a library operating system, Unikraft unikernels are mainly a collection of internal and external libraries, alongside the ported application.
+As a consequence, a large library pool is mandatory in order to make the project compatible with as many applications as possible.
+
+An application ported on top of Unikraft is essentially a library with an already provided main() function.
+External libraries require files specific to the Unikraft build system (Config.uk, Makefile.uk, Makefile) together with glue code that might be missing from the Unikraft ecosystem.
+
+## Directory Structure
+
+External libraries should be placed in the `.unikraft/libs` folder.
+The standard working directory structure looks like this:
+
+```plaintext
+app-directory/
+|-- Makefile
+|-- Makefile.uk
+`-- .unikraft/
+    |-- libs/
+    |   `-- lib-mylib/
+    `-- unikraft/
+```
+
+## Examining a Ported Library: lib-libhogweed
+
+Let's examine core components of an existing port, such as lib-libhogweed.
+
+### Glue Code
+
+Sometimes, an external library's requirements are not fully present in Unikraft.
+The solution is to add "glue code" manually to the library's sources.
+Glue code is also useful when a library includes test modules; you can wrap them into a single function that Unikraft can invoke.
+
+### Configuration: Config.uk
+
+The `Config.uk` file defines the menu configuration for `make menuconfig`:
+
+```plaintext
+menuconfig LIBHOGWEED
+    bool "libhogweed - Public-key algorithms"
+    default n
+    select LIBMUSL # Include dependencies
+```
+
+You can also create auxiliary menus for test cases:
+
+```plaintext
+config TESTSUITE
+    bool "testsuite - tests for libhogweed"
+    default n
+    if TESTSUITE
+        config TEST_X
+            bool "test x functionality"
+            default y
+    endif
+```
+
+### Build Rules: Makefile.uk
+
+The `Makefile.uk` sets header search paths and can trigger configuration scripts like `./configure`:
+
+```makefile
+# Include glue header paths
+LIBHOGWEED_COMMON_INCLUDES-y += -I$(LIBHOGWEED_BASE)/include
+
+# Trigger internal configuration scripts
+$(LIBHOGWEED_EXTRACTED)/config.h: $(LIBHOGWEED_BUILD)/.origin
+    $(call verbose_cmd,CONFIG,libhogweed: $(notdir $@), \
+        cd $(LIBHOGWEED_EXTRACTED) && ./configure --enable-mini-gmp \
+    )
+LIBHOGWEED_PREPARED_DEPS = $(LIBHOGWEED_EXTRACTED)/config.h
+```
+
+## Practical Work: Porting kdtree
+
+Now that you understand the process of porting libraries, let's practice by porting the kdtree library.
+This exercise will help you apply what you've learned about the Unikraft build system and glue code.
+
+### Step 1: Set up the Library Structure
+
+First, define helper variables in your `Makefile.uk` to point to the extracted archive.
+After running `make prepare`, the library content will be under `build/libkdtree/origin/`.
+Use variables to reference these paths consistently:
+
+```makefile
+LIBKDTREE_BASE = $(UK_LIBS)/libkdtree
+LIBKDTREE_EXTRACTED = build/libkdtree/origin
+```
+
+### Step 2: Add Headers to the Build
+
+Identify where the library's header files are located and add them to the build system's include paths:
+
+```makefile
+LIBKDTREE_COMMON_INCLUDES-y += -I$(LIBKDTREE_EXTRACTED)/include
+```
+
+This tells the build system where to find the library's public headers.
+
+### Step 3: Register Source Files
+
+Add the library's C source code files to the build system.
+Identify the core source files and register them in `Makefile.uk`:
+
+```makefile
+LIBKDTREE_SRCS-y += $(LIBKDTREE_EXTRACTED)/src/kdtree.c
+LIBKDTREE_SRCS-y += $(LIBKDTREE_EXTRACTED)/src/kdutil.c
+```
+
+### Step 4: Verify Initial Compilation
+
+Run `make` to check if there are any compilation errors:
+
+```console
+$ make
+```
+
+If you encounter unresolved dependencies, try adding `musl` to your `Config.uk`:
+
+```plaintext
+select LIBMUSL
+```
+
+A successful compilation will show libkdtree objects in the build output.
+
+### Step 5: Add Test Configurations
+
+If the library includes test cases, add configuration variables for them in `Config.uk`:
+
+```plaintext
+config LIBKDTREE_TESTS
+    bool "kdtree tests"
+    default n
+```
+
+### Step 6: Register Test Sources
+
+In your `Makefile.uk`, register the test source files.
+Use compiler flags (`-D`) to rename main functions and avoid conflicts:
+
+```makefile
+LIBKDTREE_SRCS-$(CONFIG_LIBKDTREE_TESTS) += $(LIBKDTREE_EXTRACTED)/tests/test_kdtree.c
+LIBKDTREE_CFLAGS-$(CONFIG_LIBKDTREE_TESTS) += -Dmain=test_kdtree_main
+```
+
+### Step 7: Integrate Tests with Your Application
+
+In your application's `main.c`, call the test wrapper function:
+
+```c
+#ifdef CONFIG_LIBKDTREE_TESTS
+extern int test_kdtree_main(void);
+test_kdtree_main();
+#endif
+```
+
+### Success Criteria
+
+When you run the unikernel with the tests enabled, you should see output like:
+
+```plaintext
+Total tests : 2
+Total errors: 0
+```
+
+This indicates that the library has been successfully ported and all tests are passing.
