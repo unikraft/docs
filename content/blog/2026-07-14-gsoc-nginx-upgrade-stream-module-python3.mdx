@@ -1,0 +1,165 @@
+---
+title: "GSoC'26: Nginx Upgrade, Completing the STREAM Module, and Starting Python3"
+description: |
+  A technical update on weeks four to six of Google Summer of Code 2026 with
+  Unikraft, covering the Nginx port upgrade, completing the STREAM module that
+  had never linked successfully, and the ongoing Python3 upgrade.
+publishedDate: 2026-07-14
+authors:
+- RaduAndreiTudorica
+tags:
+- gsoc
+- gsoc2026
+- lib-ports
+- nginx
+- python3
+---
+
+## Recap
+
+In the first blog post I covered the upgrades of the SQLite, Lua, and Redis library ports, along with a core fix that was needed for the Redis C++ dependency.
+This post covers the next stretch of work: the Nginx upgrade, completing the STREAM module, and the ongoing Python3 upgrade.
+
+## lib-nginx: Upgrade from `1.15.6` to `1.30.0`
+
+The Nginx port was stuck at `1.15.6`, released back in 2018.
+Upgrading to `1.30.0` meant crossing eight years of upstream changes, so a plain version bump was never going to be enough.
+
+Instead of guessing what had changed, I compared the source files referenced in `Makefile.uk` against the files that actually exist in the `1.30.0` tarball.
+That comparison produced a precise list of what to fix, rather than discovering problems one build error at a time.
+
+### Relocated HTTP/2 Huffman sources
+
+The Huffman coding sources moved between versions.
+In `1.15.6` they lived in `src/http/v2/` as `ngx_http_v2_huff_decode.c` and `ngx_http_v2_huff_encode.c`.
+In `1.30.0` they were renamed and moved up one level, to `src/http/ngx_http_huff_decode.c` and `src/http/ngx_http_huff_encode.c`.
+
+### A new module required at link time
+
+The build compiled cleanly but failed at the link stage:
+
+```text
+ngx_http_proxy_module.c:878: undefined reference to `ngx_http_proxy_v2_handler'
+```
+
+Nginx `1.30.0` split HTTP/2 proxy support into a separate module, `ngx_http_proxy_v2_module.c`.
+The existing proxy module calls into it, so it is not optional: the port does not link without it.
+
+### Cleanup along the way
+
+While updating the source list I found that `ngx_http_limit_req_module.c` was listed twice, once correctly under `CONFIG_LIBNGINX_HTTP_LIMIT_REQ` and once under `CONFIG_LIBNGINX_HTTP_REALIP`, which looks like a copy-paste slip.
+The duplicate entry was removed.
+
+Two sources that no longer exist upstream, `ngx_http_status_module.c` and `ngx_stream_upstream_module.c`, were dropped as well.
+
+The upgrade was tested on `qemu/x86_64`: the unikernel builds, boots, and serves HTTP, with the response header confirming `Server: nginx/1.30.0`.
+
+Relevant pull request: [unikraft/lib-nginx#22](https://github.com/unikraft/lib-nginx/pull/22)
+
+## lib-nginx: Completing the STREAM module
+
+While removing `ngx_stream_upstream_module.c` I noticed something odd about the STREAM section of `Makefile.uk`, and following that thread turned into a separate piece of work.
+
+STREAM is the Nginx module that proxies raw TCP and UDP connections, rather than HTTP requests.
+It is what you use to put Nginx in front of a database or any other non-HTTP service.
+
+The section listed plenty of feature modules, proxy, log, SSL, geo, and others, but it was missing the core source files those modules depend on: `ngx_stream_handler.c`, `ngx_stream_variables.c`, `ngx_stream_script.c`, `ngx_stream_upstream.c`, and `ngx_stream_upstream_round_robin.c`.
+These are not new files.
+They have been part of Nginx for years, which means STREAM had almost certainly never linked successfully in this port.
+
+Enabling `CONFIG_LIBNGINX_STREAM` confirmed it: the link stage produced a long list of undefined references, all pointing at functions defined in exactly those missing files.
+
+### A macro that was never defined
+
+Adding the five files was not quite enough.
+The `ngx_stream_upstream_zone_module.c` source failed to compile with errors like:
+
+```text
+error: 'ngx_stream_upstream_srv_conf_t' has no member named 'shm_zone'
+```
+
+The struct members it needs are guarded upstream by `#if (NGX_STREAM_UPSTREAM_ZONE)`.
+In a normal Nginx build, the `configure` script defines that macro.
+Unikraft does not run `configure`, it ships a static `ngx_auto_config.h` instead, and while the HTTP equivalent `NGX_HTTP_UPSTREAM_ZONE` was defined there, the STREAM one was missing entirely.
+Adding it, gated by `CONFIG_LIBNGINX_STREAM_UPSTREAM_ZONE` to mirror the HTTP side, resolved the compile errors.
+
+### Validating it end to end
+
+Building and linking is not the same as working, so I validated the module with a real TCP proxy.
+I configured Nginx with a `stream` block listening on port `9000` and forwarding to a backend running on the host, then sent a request through it.
+The response came back from the backend, which means the module accepts the connection, routes it through the proxy, and relays the data.
+
+Relevant pull request: [unikraft/lib-nginx#23](https://github.com/unikraft/lib-nginx/pull/23)
+
+## lib-python3: Upgrade from `3.10.11` to `3.13.14` (in progress)
+
+Python is the largest upgrade in the project so far, and it is still in progress.
+The port sits at `3.10.11`, and the target is `3.13.14`, the latest maintenance release of the `3.13` series.
+
+### The patches had to be rewritten
+
+The port carries five patches, and four of them stopped applying against `3.13`.
+Each one had to be understood rather than just re-applied, because upstream had restructured the code they touched.
+
+Patch `0000` disabled `fork` and `execve` by deleting the define lines from `posixmodule.c`.
+Those lines no longer exist in `3.13`: the macros now come from `pyconfig.h`.
+The port already ships its own `pyconfig.h` with both explicitly disabled, so the patch turned out to be redundant and was dropped entirely.
+
+Patch `0001` replaces the AF_UNIX socket pair that asyncio uses internally with a pipe pair, since AF_UNIX sockets are not supported in Unikraft.
+Only the import block needed fixing: `3.13` already imports `os` upstream, so only `io` had to be added.
+
+Patches `0002` and `0003` disable compiling Python and C files during library install.
+Both target `Makefile.pre.in`, which was restructured: the seven `compileall` invocations were consolidated into two, and the `libinstall` target now depends on `all` rather than `build_all`.
+
+### Sources moved, and some disappeared
+
+Python `3.13` reorganized a fair amount of source code.
+The single `Parser/tokenizer.c` was split into eight files across `Parser/lexer/` and `Parser/tokenizer/`.
+The `sha256module.c` and `sha512module.c` sources were unified into `sha2module.c`, and `_sha3/sha3module.c` moved up to `Modules/`.
+`Modules/_sre.c` became `Modules/_sre/sre.c`.
+Meanwhile `Objects/accu.c`, `Objects/interpreteridobject.c`, `Modules/_math.c`, and `Modules/_sqlite/cache.c` were removed upstream altogether.
+
+### Frozen modules
+
+The build then failed on a missing header:
+
+```text
+Python/frozen.c: fatal error: frozen_modules/importlib._bootstrap.h: No such file or directory
+```
+
+CPython freezes a set of core modules, `importlib`, `zipimport`, `os`, `site`, and others, into generated C headers.
+Those headers are produced during CPython's own build, but the Unikraft build compiles the sources directly and never triggers that step.
+I added a `UK_PREPARE` rule that generates them before compilation, which is the same pattern the Redis port uses to generate `release.h`.
+
+### A configuration file six versions out of date
+
+The port ships a `_sysconfigdata.py` file, which holds the build configuration that the `sysconfig` module reads at runtime.
+The one in the tree was generated for Python `3.7`, six releases behind the `3.10` the port actually claimed to build.
+It still referenced `libpython3.7m.a`, using an ABI suffix that was removed back in Python `3.8`.
+I regenerated it from a clean `3.13.14` build.
+
+A related bit of drift: `Library.uk` declared version `3.7.4` while `Makefile.uk` built `3.10.11`.
+Both now agree on `3.13.14`.
+
+The upgrade currently builds most of the way through, with the remaining work being a compilation issue in the host-side bootstrap step.
+A pull request will follow once it builds and runs cleanly.
+
+## What I Learned
+
+The most useful habit from this stretch of work was to stop guessing.
+When a port referenced files that no longer exist, comparing the Makefile source list against the actual upstream tree gave me a complete list of problems in one shot, instead of rediscovering them one build error at a time.
+The same applies to patches: a patch that no longer applies is telling you that the code beneath it has changed, and the only way forward is to understand why the patch existed in the first place.
+
+The other lesson is that a port can be broken in ways nobody has noticed.
+STREAM had been listed in the Makefile for years without ever linking, simply because nobody had enabled it.
+Building is not the same as working, which is why every upgrade in this project is validated by actually running the unikernel and talking to it, not just by watching the compiler succeed.
+
+## Next Steps
+
+- Finish the Python3 upgrade: resolve the remaining build issue, validate at runtime, and open the pull request.
+- Move on to libgo, upgrading the Go runtime that ships with GCC from `12.1` to a newer release.
+- Address review feedback on the open pull requests.
+
+## Acknowledgements
+
+Thanks to Razvan Deaconescu, Stefan Jumarea, and Sriprad Potukuchi for their guidance and quick feedback, and in particular for steering the STREAM work into a separate pull request and confirming the direction on the native Python port.
