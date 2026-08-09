@@ -1,0 +1,380 @@
+---
+title: "Contributing to Documentation"
+description: |
+  Learn how to contribute clear, high-quality documentation to the Unikraft project.
+  This guide covers setup, editing, linting, and the pull request workflow.
+---
+
+## Introduction
+
+Unikraft relies on good documentation to help users and contributors get productive quickly.
+Clear docs reduce support load.
+They make advanced features discoverable.
+They help new contributors ramp up.
+Improving the docs is one of the easiest and most impactful ways to contribute to the project.
+You do not need to be a kernel or systems expert to help.
+If you can follow a tutorial, fix a typo, or clarify a confusing sentence, you can contribute.
+
+This guide explains how to set up the docs environment, edit MDX files, preview changes, run linters, and open a pull request.
+It assumes basic familiarity with Git, GitHub, and the command line.
+
+## Setup
+
+### Clone the repository
+
+First, fork the `unikraft/docs` repository on GitHub.
+Then clone your fork locally.
+
+```bash
+git clone git@github.com:<your-username>/docs.git
+cd docs
+git remote add upstream git@github.com:unikraft/docs.git
+```
+
+Periodically sync your local `main` with upstream to avoid conflicts.
+
+```bash
+git checkout main
+git fetch upstream
+git merge upstream/main
+git push origin main
+```
+
+### Install Hugo (extended)
+
+The documentation site is built with [Hugo](https://gohugo.io/).
+You need the **extended** version of Hugo to build and preview the docs.
+
+**Important**: You need the **extended** version of Hugo for full MDX and SCSS support.
+
+Check your Hugo installation.
+
+```bash
+hugo version
+```
+
+Ensure that the output mentions `extended`.
+If it does not, install or upgrade Hugo Extended.
+On many Linux distributions you can use a package manager, but often the easiest path is to download the binary from the official releases page.
+
+For example, using `snap`:
+
+```bash
+sudo snap install hugo --channel=extended
+```
+
+Consult the [Hugo installation docs](https://gohugo.io/getting-started/installing/) if you are unsure.
+
+### Install Node.js dependencies (if needed)
+
+Some parts of the toolchain depend on Node.js.
+From the `docs` repository root, install dependencies once.
+
+```bash
+npm install
+```
+
+This makes commands like `npm run lint` or other scripts available when the repository defines them.
+
+## Editing documentation
+
+Documentation pages live under the `content/` directory and are written in **MDX**.
+MDX is Markdown with support for embedded JSX components.
+In practice, you can treat most files as normal Markdown plus a few extra features.
+
+### One sentence per line
+
+This project enforces a "one sentence per line" rule via markdownlint.
+Each sentence should be on its own line.
+This makes diffs smaller, reviewing easier, and translation tools more reliable.
+
+Bad:
+
+```text
+Unikraft is a unikernel project. It is designed for performance and efficiency.
+```
+
+Good:
+
+```text
+Unikraft is a unikernel project.
+It is designed for performance and efficiency.
+```
+
+When editing text, try to preserve this style.
+
+### Code fences and language specifiers
+
+Every fenced code block must declare a language.
+This is required by the markdown linter and improves syntax highlighting.
+
+Use these conventions:
+
+- Commands the user types: **bash**
+
+```bash
+kraft run -W unikraft.org/helloworld
+```
+
+- Pure command output, logs, and listings: **text**
+
+```text
+i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/helloworld
+Hello from Unikraft!
+```
+
+- Configuration files:
+  - `yaml` for `Kraftfile` examples
+  - `json` for JSON
+  - `dockerfile` for Dockerfiles
+  - `make` for Makefiles
+
+Example:
+
+```yaml
+spec: v0.6
+runtime: base:latest
+rootfs: ./Dockerfile
+cmd: ["/server"]
+```
+
+### Mixed console sessions
+
+Do **not** put prompt, command, and output all in one block with `console` or with no language.
+Instead, split them into two blocks.
+
+Bad:
+
+```text
+```console
+$ kraft run -W unikraft.org/helloworld
+i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/helloworld
+Hello from Unikraft!
+```
+```
+
+Good:
+
+```bash
+$ kraft run -W unikraft.org/helloworld
+```
+
+```text
+i  using arch=x86_64 plat=qemu
+[+] pulling unikraft.org/helloworld
+Hello from Unikraft!
+```
+
+Always leave a blank line before the first fence and after the last fence in a group.
+
+## Previewing the site locally
+
+When you are editing docs, it is best to preview them locally with Hugo.
+
+From the repository root:
+
+```bash
+hugo server -D
+```
+
+Hugo will build the site and serve it on `http://localhost:1313` by default.
+Open this URL in your browser and navigate to the page you are editing.
+Hugo watches files and reloads the browser when you save changes.
+
+If you see build errors, read the terminal output carefully.
+Common causes include invalid frontmatter, broken shortcodes, or MDX syntax errors.
+
+## Linting and quality checks
+
+The CI pipeline runs markdown and general code linters.
+To avoid surprises, run at least the markdown checks locally before opening a PR.
+
+### Markdown linting
+
+If the project uses a Node-based markdown linter, you can usually run:
+
+```bash
+npx markdownlint 'content/**/*.mdx'
+```
+
+Or, if there is an npm script defined:
+
+```bash
+npm run lint:markdown
+```
+
+Pay attention to these common rules:
+
+- **MD031**: fenced code blocks must be surrounded by blank lines.
+- **MD040**: fenced code blocks must specify a language.
+- **Custom MD104**: one sentence per line.
+
+Fix warnings in the files you touched.
+If linting complains about files you did not edit, double-check that your changes did not accidentally reformat a larger region.
+
+### Super-linter or Docker-based checks
+
+Some projects use [super-linter](https://github.com/github/super-linter) or a similar Docker-based tool.
+You can often reproduce this locally with a command like:
+
+```bash
+docker run --rm -e RUN_LOCAL=true \
+  -v "$(pwd)":/tmp/lint \
+  ghcr.io/github/super-linter:slim-latest
+```
+
+Consult the repository’s `.github/workflows/` directory for the exact tools and configuration.
+
+### Useful commands quick reference
+
+- **Preview site**: `hugo server -D`
+- **Lint Markdown**: `npx markdownlint 'content/**/*.mdx'`
+- **Format code** (if the project has Prettier configured): `npm run format`
+- **Search for potential broken-link mentions in built content**: `grep -r "404" content/`
+
+## Common fixes
+
+When you are iterating on a docs PR, reviewers and CI will often point out a few recurring issues.
+Here is how to handle the most common ones.
+
+- **Broken links**
+  - Check GitHub URLs actually exist.
+  - Update catalog paths when directories are renamed (for example, `http-go1.21` → `httpserver-go1.21`).
+  - Prefer full, stable URLs over fragile relative links when pointing to external projects.
+
+- **Duplicate headings**
+  - Avoid repeated headings at the same level with identical text in a single file.
+  - If you need a similar heading, make it more specific, for example:
+    - `#### Debug: redis`
+    - `#### Porting: node`
+
+- **Code fence issues**
+  - Add a blank line before and after every fenced block.
+  - Ensure every block has a language.
+  - Split mixed console sessions into `bash` + `text` as described above.
+
+- **Spacing and lists**
+  - Indent list items consistently.
+  - Avoid unnecessary multiple blank lines.
+
+These fixes are usually straightforward but have a big impact on CI and readability.
+
+## Pull request process
+
+### Branch naming
+
+Create a feature branch for your changes instead of committing directly to `main`.
+
+```bash
+git checkout -b docs/fix-catalog-links
+```
+
+Choose a short, descriptive name.
+For example:
+
+- `docs/catalog-link-fixes`
+- `docs/add-firecracker-guide`
+- `docs/update-getting-started`
+
+### Commit messages
+
+Use **imperative mood** in commit titles.
+Keep them concise but descriptive.
+
+Examples:
+
+- `Fix Lua and Redis catalog links`
+- `Add trailing newline to tsconfig.json`
+- `Document using the application catalog`
+
+Each commit must be signed off to satisfy the Developer Certificate of Origin (DCO).
+You can add the sign-off automatically with:
+
+```bash
+git commit -s -m "Fix catalog Lua link"
+```
+
+If you forgot to sign off, you can amend the last commit (before pushing):
+
+```bash
+git commit --amend -s
+```
+
+### Opening the PR
+
+Push your branch to your fork:
+
+```bash
+git push origin docs/fix-catalog-links
+```
+
+Then open a pull request on GitHub from your branch to the upstream `docs` repository.
+Fill in the PR description with:
+
+- What you changed.
+- Why the change is needed.
+- How you tested it (for example, “Previewed with `hugo server` and fixed markdownlint errors”).
+
+If you want early feedback, open it as a **draft PR** (there is a checkbox at the bottom of the create-PR form).
+
+Respond to CI results.
+If markdownlint or other jobs fail, click through to see the exact errors, fix them locally, and push new commits.
+
+### Resolving review conversations
+
+Reviewers may leave comments or request small changes.
+Address each comment with a follow-up commit, then mark the conversation as resolved on GitHub when appropriate.
+
+Keep the conversation friendly and factual.
+If you disagree with a suggestion, explain your reasoning and be open to compromise.
+
+## DCO sign-off
+
+Unikraft uses the [Developer Certificate of Origin](https://developercertificate.org/) to certify that contributions are made with proper rights and permissions.
+The sign-off is a simple line in each commit message:
+
+```text
+Signed-off-by: Your Name <you@example.com>
+```
+
+When you run `git commit -s`, Git adds this line automatically using your configured name and email.
+Make sure your Git configuration is correct:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+Every commit in your PR must include this sign-off for CI to pass.
+
+## Tips for successful documentation contributions
+
+- **Start small**
+  - Fix a typo, clarify a single section, or correct a handful of links.
+  - Small, focused PRs are easier to review and merge.
+
+- **Follow existing style**
+  - Look at similar pages in `content/` for tone, structure, and formatting.
+  - Reuse headings and patterns where it makes sense.
+
+- **Test what you write**
+  - Try commands and code snippets in a real environment when possible.
+  - Make sure examples work as written.
+
+- **Keep readers in mind**
+  - Assume the reader is new to Unikraft but comfortable with basic Linux and development tools.
+  - Prefer clear, direct explanations over clever wording.
+
+- **Ask for help**
+  - If you are unsure about technical details, open a draft PR and ask maintainers to check the content.
+  - Use comments in the PR to call out areas where you would like extra review.
+
+With these guidelines, you should be able to contribute valuable improvements to Unikraft’s documentation and help others get the most out of the project.
+
+## Need help?
+
+- Join the Unikraft Discord (for example, in the `#docs` or `#general` channels).
+- Ask questions directly in the comments of your pull request.
+- If you are stuck, politely tag a maintainer and explain what you need help with.
