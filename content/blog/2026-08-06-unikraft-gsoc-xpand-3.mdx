@@ -1,0 +1,113 @@
+---
+title: "GSoC'26: Expanding the Unikraft Software Support Ecosystem"
+description: |
+ This is the third blog post related to my GSoC project on expanding the app ecosystem on Unikraft.
+publishedDate: 2026-08-07
+image: /images/unikraft-gsoc24.png
+authors:
+- Tushar Verma
+tags:
+- gsoc
+- gsoc26
+- virtualization
+- apps
+---
+
+## Project Overview
+
+This is the third blog post related to my GSoC project on expanding the app ecosystem on Unikraft.
+Part II covered the lighttpd native port, a round of library fixes, and getting chronyd to sync.
+
+## Progress
+
+### chronyd
+
+The two chronyd images from Part II — `chronyd/4.8` and `chronyd/4.8-nts` — are up as [catalog#288](https://github.com/unikraft/catalog/pull/288).
+Most of the remaining work was checking they were right rather than just running.
+
+**Testing it.**
+The images ship a small NTP client for testing: send the 48-byte client packet, read the transmit timestamp at bytes 40–43, subtract the 1900→1970 epoch offset, report the stratum and the reference ID of the selected upstream.
+It is plain Python with no dependencies, so CI runs it directly; it exits non-zero on stratum 0, chrony's way of saying "answering, but not synchronised yet".
+
+**Verifying NTS is harder than it looks.**
+`chronyc authdata` shows key-establishment state per source, but not remotely: over UDP 323 chrony permits only `sources`, `sourcestats`, `tracking` and `activity`.
+`authdata`, `ntpdata`, `selectdata` and `serverstats` are Unix-socket-only and answer `501 Not authorised` however permissive `cmdallow` is.
+That's deliberate, so no remote command will ever say "NTS is on".
+
+The usable proof is a property of chrony: a source declared `nts` is not downgraded — if NTS-KE fails it stays unreachable.
+So an `nts` source that appears as *selected* in `chronyc sources` proves the key exchange on port 4460 completed.
+
+Cloudflare's NTS-KE endpoint refused connections intermittently during testing — `162.159.200.123:4460` timing out while `162.159.200.1:4460` stayed open, an anycast issue on their side.
+The shipped config lists several NTS servers so one dead endpoint won't stall the boot.
+
+### Gitea: an investigation, not a port
+
+Gitea was next on the project list.
+It isn't portable today, and finding out why was the useful part.
+
+Gitea doesn't implement git, it runs the binary — from hundreds of call sites, and `routers/init.go` aborts startup outright if `git version` fails.
+The `gogit` build tag doesn't change that; it still shells out.
+So the whole question is whether a unikernel can spawn a subprocess.
+
+Go doesn't use plain `fork`: `syscall/exec_linux.go` sets `CLONE_VFORK | CLONE_VM`, and posix-process's `clone` rejects only the case where `CLONE_VM` is *unset*.
+In theory the two are compatible.
+
+In practice, half of it works.
+With `CONFIG_LIBPOSIX_PROCESS_MULTIPROCESS=y`, a C probe using `vfork()` + `execv()` + `waitpid()` runs real git inside the unikernel:
+
+```console
+PROBE /bin/busybox    -> status=0
+git version 2.47.3
+PROBE /usr/bin/git    -> status=0
+```
+
+The Go probe doesn't get that far — the trace shows zero `execve` calls, the child faulting before it can hand over.
+
+The cause is TLS(Thread Local Storage), and it starts with a design decision documented in `posix-process/clone.c`:
+
+```c
+ *       `uk_clone()` assumes that a passed TLS pointer is an Unikraft TLS.
+ *       [...]
+ *       The reason is that Unikraft libraries place TLS variables and use
+ *       the TLS effectively as TCB.
+```
+
+So vfork here isn't the traditional one.
+On Linux the child is built from the parent's registers, thread pointer included, that is expected to do nothing but `execve`.
+On Unikraft the child is a `uk_thread` resumed through the scheduler, so it has to carry an Unikraft TLS:
+
+```c
+    if (flags & CLONE_VFORK) {
+#if CONFIG_LIBPOSIX_PROCESS_MULTIPROCESS
+        /* We will be blocking the parent and pass control to the child
+         * via the scheduler. Therefore we need to set the child's TLS
+         * pointer the Unikraft TLS.
+         */
+        child->tlsp = child->uktlsp;
+```
+
+musl never notices: its vfork's child is a handful of assembly instructions that reaches `execve` without ever reading the thread pointer.
+Go's child does: before `execve` it runs compiled Go, resetting signal handlers, fixing up file descriptors & Go finds the running goroutine by reading that same thread pointer.
+With the Unikraft TLS installed there is no goroutine to find, so the child faults on the first such lookup.
+The trace agrees: the `rt_sigaction` calls succeed, then the guest dies with no `execve` at all.
+
+So the gap is specific to Go's vfork path, not to subprocesses in general.
+
+Gogs has the same architecture and is blocked the same way, though it at least avoids Gitea's cgo dependency by using `glebarez/go-sqlite`.
+
+## Next Steps
+
+- Move to the message broker on the project list.
+- Upstream `recvmmsg` in `lib/posix-socket`.
+- Investigate [lwIP's SNTP application module](https://www.nongnu.org/lwip/2_0_x/group__sntp.html).
+
+## Acknowledgements
+
+Special thanks to Răzvan Deaconescu and Răzvan Vîrtan, my two amazing mentors, for their support along the way.
+I would also like to thank Alex Andrei Cioc, Cezar Craciunoiu, and the entire Unikraft community for all the work, discussions, and guidance.
+
+## About Me
+
+I'm [Tushar Verma](https://www.linkedin.com/in/tushar-verma-32847b324), a third-year undergraduate student @ IIT Jodhpur.
+I am passionate about operating systems, systems programming and cloud.
+Outside of tech, I enjoy tinkering, making music, swimming and exploring whatever captures my curiosity at the moment.
