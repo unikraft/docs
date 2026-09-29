@@ -1,0 +1,12 @@
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+# Context7 uses a public key to prove that we own the repository and the
+# website. The key must be public, so it is not a leak.
+[allowlist]
+description = "Context7 public keys"
+regexes = [
+  '''pk_[A-Za-z0-9]+''',
+]
