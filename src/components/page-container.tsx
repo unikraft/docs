@@ -88,6 +88,7 @@ function PageContainer(props: PageContainerProps) {
         }]
       }} />
       <Grid
+        key={frontmatter.slug ?? title}
         w='100vw'
         h='100vh'
         gridTemplateColumns={'1fr'}
