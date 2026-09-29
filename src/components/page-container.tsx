@@ -15,6 +15,7 @@ import Footer from 'components/footer'
 import Header from 'components/header'
 import SEO from 'components/seo'
 import TableOfContent from 'components/table-of-content'
+import ScrollToTop from 'components/scroll-to-top'
 import { convertBackticksToInlineCode } from 'utils/convert-backticks-to-inline-code'
 import { t } from 'utils/i18n'
 import { FrontmatterHeading } from 'src/types/frontmatter'
@@ -61,9 +62,9 @@ function PageContainer(props: PageContainerProps) {
     rightSidebar,
     pagination,
     hideToc,
-    maxWidth = '48rem',
   } = props
 
+  const bodyRef = React.useRef<HTMLDivElement>(null)
   useHeadingFocusOnRouteChange()
 
   if (!frontmatter) return <></>
@@ -101,6 +102,7 @@ function PageContainer(props: PageContainerProps) {
           <Header />
         </GridItem>
         <GridItem
+          ref={bodyRef}
           area={'body'}
           overflow='auto'
           display={'grid'}
@@ -204,6 +206,7 @@ function PageContainer(props: PageContainerProps) {
           </GridItem>
         </GridItem>
       </Grid>
+      <ScrollToTop scrollContainerRef={bodyRef} />
     </>
   )
 }
