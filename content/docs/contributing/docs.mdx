@@ -68,9 +68,10 @@ Building the site inside a Docker environment is highly recommended, since you w
 To deploy the site, run (in the directory of the repository clone):
 
 ```console
-docker build -t ghcr.io/unikraft/docs:base --target base .
 
-docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 --entrypoint sh ghcr.io/unikraft/docs:base
+docker build -t ghcr.io/unikraft/docs:dev --target dev .
+
+docker run -it --rm -v $(pwd):/docs -w /docs -p 3000:3000 ghcr.io/unikraft/docs:dev
 
 # The commands below should be used in the docker container
 
