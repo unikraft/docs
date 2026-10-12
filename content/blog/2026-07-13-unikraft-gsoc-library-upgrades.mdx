@@ -1,0 +1,94 @@
+---
+title: "GSoC'26: Expanding the Unikraft Software Support Ecosystem"
+description: |
+  A technical update on the first weeks of Google Summer of Code 2026 with Unikraft,
+  covering the upgrade of musl libc from 1.2.3 to 1.2.5 and lwIP from 2.1.x to 2.2.1,
+  along with integration test results across QEMU, Firecracker, and Xen.
+publishedDate: 2026-07-10
+image: /images/unikraft-gsoc24.png
+authors:
+- Cristian Andrei
+tags:
+- gsoc
+- gsoc26
+- virtualization
+- operating systems
+---
+
+## Project Overview
+
+The core external libraries that power Unikraft — musl, lwIP, and GCC — are several major versions behind their upstream releases.
+This creates technical debt and prevents developers from benefiting from security fixes, bug fixes, and modern language features available in newer versions.
+
+This project upgrades these libraries to their latest stable releases: musl to `1.2.5`, lwIP to `2.2.1`, and GCC to `14.2.0`.
+Rather than replacing the old versions outright, the project implements Unikraft's new Microlibrary Versioning RFC: each library gains a version choice in its `Config.uk`, allowing users to select a version at build time through `menuconfig`.
+The old versions are preserved as selectable options, so existing projects can continue using them without any changes.
+
+## The musl Library
+
+musl is a lightweight, standards-compliant C standard library that Unikraft uses by default.
+Upgrading from `1.2.3` to `1.2.5` required three categories of changes.
+
+First, a version choice block was added to `Config.uk` so users can select the musl version in `menuconfig`, with `1.2.5` as the new default.
+
+Second, the original root-level patches were moved into a `patches/1.2.3/` subdirectory.
+A new `patches/1.2.5/` directory was added containing all 20 Unikraft compatibility patches adapted for the `1.2.5` source.
+`Makefile.uk` selects the correct patch directory and fetch URL based on the active config.
+
+Third, the patches themselves needed adaptation.
+Most applied cleanly after rebasing context lines.
+One notable fix was in patch `0014` (getdents64): the `_LARGEFILE64_SOURCE` preprocessor guard was removed from the `dirent64` type alias.
+In musl `1.2.5` this guard was preventing the alias from being visible to vfscore's function declarations, causing a compile error.
+
+Testing on nginx showed that the patch applies smoothly for x86_64, with QEMU, Firecracker, and Xen all passing.
+The arm64 build is blocked by a missing header in core — a pre-existing issue unrelated to this project.
+
+Relevant [pull request](https://github.com/unikraft/lib-musl/pull/98).
+
+## Core Fix: QEMU SIGTTIN in catalog-core
+
+While running integration tests, QEMU processes launched in the background were silently hanging.
+The root cause is SIGTTIN: when a background process tries to read from a terminal, the kernel suspends it rather than feeding it input.
+The `-nographic` QEMU flag reads from stdin, which triggers this.
+
+The fix is redirecting stdin from `/dev/null` so QEMU never tries to read from the terminal.
+This one-line change was applied to all 25 QEMU run scripts across every app in `catalog-core`.
+
+Relevant [pull request](https://github.com/unikraft/catalog-core/pull/108).
+
+## The lwIP Library
+
+lwIP (lightweight IP) is a small TCP/IP stack designed for embedded systems and the default network stack for Unikraft.
+Upgrading from `2.1.x` to `2.2.1` introduced more changes than musl did, spread across configuration, the build system, patches, and Unikraft's own glue code.
+
+Following the same versioning pattern as musl, a version choice block was added to `Config.uk` with four options covering both the old and new versions, and `2.2.1` set as the new default.
+Existing patches were moved into `patches/2.1.x/` and a new `patches/2.2.1/` directory was created with 14 adapted patches for the `2.2.1` release.
+
+On the build system side, lwIP `2.2.1` introduced a new Address Conflict Detection module (`acd.c`) that is called by `dhcp.c` during IPv4 address assignment but was not listed in `Makefile.uk`.
+Without registering it, the linker fails with undefined references.
+It was added conditionally so it is only included when building the `2.2.1` version.
+
+On the patch side, patch `0007` strips most of lwIP's `sockets.h` to avoid conflicts with musl's definitions.
+In `2.2.1`, lwIP's internal `api/sockets.c` uses a new type `msg_iovlen_t` that is not provided by musl.
+Because the patch was stripping it along with everything else, the build failed.
+The fix preserves this type in the patch output.
+
+Finally, in Unikraft's own `sockets.c` glue layer, a struct field was renamed between versions: the socket file descriptor number moved from `conn->socket` in `2.1.x` to `conn->callback_arg.socket` in `2.2.1`.
+A version-conditional guard was added at the relevant sanity check so the right field name is used depending on the selected version.
+
+One additional discovery during Xen testing: lwIP `2.2.1`'s UDP initialisation requires a randomness source (`CONFIG_LIBUKRANDOM_LCPU`) that KVM implies automatically but Xen does not.
+Without it, the unikernel fails at boot with a randomness error.
+This config option was added to the Xen defconfig files in `catalog-core`.
+
+Testing covered nginx, redis, and sqlite across multiple platforms.
+The redis + Xen combination fails due to a crash in auxiliary signal stack setup code that fires before lwIP is ever initialised — nginx, running with identical lwIP configuration, passes on Xen without issue, confirming this is a pre-existing redis+Xen incompatibility unrelated to the lwIP changes.
+
+## Next Steps
+
+- Get the pull requests reviewed and merged.
+- Make the pull request for lib-lwip.
+- Begin the lib-gcc upgrade to `14.2.0`.
+
+## Acknowledgements
+
+Special thanks to my mentors Razvan Deaconescu and Shashank Srivastava for their guidance and support along the way.
