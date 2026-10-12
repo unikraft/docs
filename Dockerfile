@@ -3,19 +3,26 @@ FROM node:20-alpine AS base
 # Install dependencies only when needed
 FROM base AS dev
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-
-RUN apk add --no-cache libc6-compat
+# libc6-compat & gcompat are needed for native modules (e.g. esbuild) on alpine.
+# openssl is required for HTTPS requests (Octokit).
+# git is required for husky, lint-staged, and metadata scripts.
+RUN apk add --no-cache libc6-compat gcompat openssl git
 
 WORKDIR /docs
 
 ENV NODE_ENV=development
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Install dependencies separately to leverage Docker cache
+COPY package.json package-lock.json ./
+# Bypass postinstall since it requires source code which isn't copied yet
+RUN npm pkg delete scripts.postinstall && npm install
+
+# Copy source code
 COPY . .
 
-RUN npm install
-
-CMD ["npm", "run", "dev"]
+# Generate search-meta at runtime so it populates the mounted volume, then start dev
+CMD ["sh", "-c", "npm run search-meta:gen && npm run dev"]
 
 # Rebuild the source code only when needed
 FROM dev AS builder
@@ -41,6 +48,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN set -xe; \
+    apk add --no-cache openssl; \
     addgroup --system --gid 1001 nodejs; \
     adduser --system --uid 1001 nextjs
 
