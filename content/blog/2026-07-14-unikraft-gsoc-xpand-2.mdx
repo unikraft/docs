@@ -1,0 +1,109 @@
+---
+title: "GSoC'26: Expanding the Unikraft Software Support Ecosystem"
+description: |
+This is the second blog post related to my GSoC project on expanding the app ecosystem on Unikraft.
+publishedDate: 2026-07-14
+image: /images/unikraft-gsoc24.png
+authors:
+- Tushar Verma
+tags:
+- gsoc
+- gsoc26
+- virtualization
+- apps
+---
+
+## Project Overview
+
+This is the second blog post related to my GSoC project on expanding the app ecosystem on Unikraft.
+In Part I, I covered dnsmasq, lighttpd(bincompat-port) and the nginx update.
+
+## Progress
+
+### lighttpd
+
+[lighttpd](https://www.lighttpd.net/), a lightweight web server, now has a native port!
+The earlier route was binary-compatibility mode — package the binary and its shared libraries into a rootfs and ran under the ELF loader.
+
+The deeper route is a native source port which is often more performant, `lib-lighttpd`:(lighttpd version `1.4.84`) can now be compiled directly into the unikernel against musl and lwIP.
+A source port produces a smaller, single-purpose image and gives Kconfig-level control over which modules exist at all — but it means taking over the app's build system, and that's where the interesting problems were.
+
+**Escaping Meson**
+lighttpd builds with meson/cmake/automake , all of which generate files before compiling: a `config.h` of platform feature probes, and a configuration-file parser produced by [lemon](https://sqlite.org/lemon.html) (SQLite's parser generator) from a grammar file.
+Unikraft's build is plain make and fetches a tarball, so none of that generation happens.
+The port ships those artifacts pre-generated in the library repo instead: a hand-written `config.h` describing what musl + lwIP actually provide (epoll via `posix-poll`, IPv6, `getrandom`; no `fork`, no `sendfile`), and `configparser.c` taken straight from midway through meson's build pipeline.
+
+**TLS as a Kconfig option.**
+`mod_openssl` compiles against Unikraft's `lib-openssl` behind a single `LIBLIGHTTPD_OPENSSL` option, so HTTPS support — and the whole OpenSSL dependency — is one menuconfig toggle.
+`lib-openssl` still ships OpenSSL `1.1.1c`; moving it to a current `3.x` LTS is a heavy port of its own (provider model, ~900 source files), left for future work.
+
+**Entry-Point Gotcha.**
+One entry-point subtlety worth recording: lighttpd's `server.c` wraps its `main()` in `#ifndef main / #define server_main main`, so the usual `-Dmain=app_main` rename trick silently leaves the symbol as `server_main` — the port's `main()` wrapper calls that directly.
+
+**Related PRs:** [lib-lighttpd](https://github.com/unikraft/lib-lighttpd/pull/1)
+
+### Library housekeeping
+
+Native ports keep tripping over the same class of outdated libs , so some fixes landed in the libraries themselves:
+
+**`lib-openssl`: dead download URL.**
+`openssl.org` retired its `/source/old/` archive, so build failed at the fetch step with a tarball that no longer existed.
+The fetch URL now points at the GitHub release tag, which is permanent.
+
+**`lib-pcre`: dead download URL.**
+The archive for `lib-pcre` moved from `pcre-org` to `sourceforge`.
+
+**`lib-zlib`: hard-wired to the deprecated filesystem stack.**
+The `Config.uk` for `lib-zlib` hard-selected `vfscore` components, which breaks any image built on the new posix-vfs stack.
+The selects are gone now; the application decides its filesystem stack.
+
+**Related PRs:** [lib-openssl](https://github.com/unikraft/lib-openssl/pull/11), [lib-pcre](https://github.com/unikraft/lib-pcre/pull/5), [lib-zlib](https://github.com/unikraft/lib-zlib/pull/13)
+
+### chronyd
+
+[chrony](https://chrony-project.org/) is an NTP implementation, and the time-sync daemon from the original project list.
+A unikernel can't adjust its own clock anyway — Unikraft's `settimeofday`/`clock_settime` are stubs — but chronyd's `-x` mode is built for exactly this situation, it tracks the offset to upstream servers in software and serves *corrected* time to clients without ever touching the system clock.
+The result is an NTP server appliance: boot it, it syncs to the pool, and every machine on the network can get accurate time from it.
+
+It runs in binary-compatibility mode , but getting there surfaced some gaps.
+
+**An empty `resolv.conf`, injected by the loader.**
+With output visible, the syscall trace showed DNS queries going nowhere: `read(/etc/resolv.conf) = 0`.
+The elfloader's host-filesystem helper (`APPELFLOADER_HFS_ETCRESOLVCONF`) is supposed to inject the host's resolver configuration, but under `kraft run` it creates an *empty* file — and with `HFS_REPLACEEXIST` it even overwrites the one shipped in the rootfs.
+Disabling the helper and baking a static `resolv.conf` (public resolvers;  queried in parallel) fixed upstream resolution.
+
+**No `recvmmsg` in Unikraft.**
+Replies from the pool arrived, `select()` reported the socket readable, and chronyd still never read a packet.
+Alpine's chrony is compiled with `HAVE_RECVMMSG` and has no runtime fallback, while Unikraft's syscall shim returns `-ENOSYS` — so chronyd busy-looped on a socket it could never consume.
+I verified two fixes: an `LD_PRELOAD` shim that rewrites `recvmmsg` into a `recvmsg` loop (keeps the stock distro binary), and building chrony from source with `HAVE_RECVMMSG` removed from `config.h`.
+I finally settled on removing `HAVE_RECVMMSG`, because that was the simpler long-term fix and also enables to remove features that are dead weight in a unikernel (`cmdmon`, refclocks, privilege dropping, seccomp) and strip the binary down to ~250 KB.
+
+**A dual-stack compile bug in lib-lwip.**
+Enabling IPv6 broke the build in Unikraft's netlink glue: `netif->address.type` — a field that doesn't exist; lwIP calls it `ip_addr`.
+The broken line only compiles when netlink and IPv6 are enabled together.
+One-word fix, headed upstream. (IPv6 stayed off in the shipped images: with `AF_INET6` sockets available chrony preferred the unreachable v6 addresses of every upstream and never synced.)
+
+**One decision worth explaining: two images.**
+The port ships as `chronyd/4.8` and `chronyd/4.8-nts`.
+NTS (Network Time Security) authenticates the NTP exchange over TLS, which is a real upgrade — but it drags in gnutls and its whole dependency closure plus a CA bundle, inflating the rootfs from **~2 MB to ~10 MB**.
+Deployments syncing within trusted infrastructure shouldn't pay a 5x size cost for certificates they don't check, so the plain image stays minimal and the NTS image is there when authenticated time matters.
+Both were verified end-to-end: the plain image syncs to the pool and answers clients at stratum 2; the NTS image completes NTS-KE against Cloudflare and PTB (all configurable).
+
+## Next Steps
+
+- Upstream the lighttpd's catalog-core app.
+- Upstream an [Odin](https://odin-lang.org/) hello-world program to catalog-core.
+- Upstream the fixes that fell out of the chrony port:`recvmmsg` in `lib/posix-socket`, the lib-lwip netlink dual-stack fix .
+- Investigate [Lwip'sntp application module](https://www.nongnu.org/lwip/2_0_x/group__sntp.html).
+- Continue down the project list: Investigate Gitea and a message broker.
+
+## Acknowledgements
+
+Special thanks to Răzvan Deaconescu and Răzvan Vîrtan, my two amazing mentors, for their support along the way.
+I would also like to thank Alex Andrei Cioc, Cezar Craciunoiu, and the entire Unikraft community for all the work, discussions, and guidance.
+
+## About Me
+
+I'm [Tushar Verma](https://www.linkedin.com/in/tushar-verma-32847b324), a second-year undergraduate student @ IIT Jodhpur.
+I am passionate about operating systems, systems programming and cloud.
+Outside of tech, I enjoy tinkering, making music, swimming and exploring whatever captures my curiosity at the moment.
