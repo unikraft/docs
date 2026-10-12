@@ -1,9 +1,10 @@
-+++
-title = "GSoC'23: Arm CCA Support for Unikraft (Part 3)"
-date = "2023-08-04T00:00:00+01:00"
-author = "Xingjian Zhang"
-tags = ["GSoC'23", "Security", "Arm CCA"]
-+++
+---
+title: "GSoC'23: Arm CCA Support for Unikraft (Part 3)"
+description: "GSoC'23: Arm CCA Support for Unikraft (Part 3)"
+publishedDate: "2023-08-04T00:00:00+01:00"
+authors: ["Xingjian Zhang"]
+tags: ["GSoC'23", "Security", "Arm CCA"]
+---
 
 <img width="100px" src="https://summerofcode.withgoogle.com/assets/media/gsoc-2023-badge.svg" align="right" />
 
